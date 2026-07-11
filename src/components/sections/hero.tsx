@@ -1,13 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { heroContent } from "@/config/site";
+import { Link } from "@/i18n/navigation";
+import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 
 export function Hero() {
+  const { heroContent } = useContent();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,

@@ -1,27 +1,28 @@
 "use client";
 
 import { MapPin } from "lucide-react";
-import { contact, mapLinks } from "@/config/site";
+import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Reveal, RevealGroup, revealItem } from "@/components/shared/reveal";
 import { motion } from "framer-motion";
 
-const mapButtons = [
-  { label: "네이버 지도", href: mapLinks.naver },
-  { label: "카카오맵", href: mapLinks.kakao },
-  { label: "구글 지도", href: mapLinks.google },
-];
-
 export function Directions() {
+  const { contact, mapLinks, ui } = useContent();
+  const mapButtons = [
+    { label: ui.directions.naverMapLabel, href: mapLinks.naver },
+    { label: ui.directions.kakaoMapLabel, href: mapLinks.kakao },
+    { label: ui.directions.googleMapLabel, href: mapLinks.google },
+  ];
+
   return (
     <section className="bg-white py-24 sm:py-32">
       <Container>
         <SectionHeading
-          eyebrow="Directions"
+          eyebrow={ui.directions.eyebrow}
           align="center"
-          title="오시는 길"
-          description="비발디파크에서 만나요. 편한 지도 앱으로 바로 길 찾기를 열어보세요."
+          title={ui.directions.title}
+          description={ui.directions.description}
         />
 
         <Reveal delay={0.1}>

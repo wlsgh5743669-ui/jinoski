@@ -3,26 +3,28 @@
 import Image from "next/image";
 import { ArrowUpRight, Clock } from "lucide-react";
 import { motion } from "framer-motion";
-import { lessonPrograms } from "@/config/site";
+import { Link } from "@/i18n/navigation";
+import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { RevealGroup, revealItem } from "@/components/shared/reveal";
 
 export function LessonProgram() {
+  const { lessonPrograms, ui } = useContent();
   return (
     <section id="lessons" className="bg-white py-24 sm:py-32">
       <Container>
         <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-end">
           <SectionHeading
-            eyebrow="Lesson Program"
+            eyebrow={ui.lessonProgram.eyebrow}
             title={
               <>
-                당신의 레벨에
+                {ui.lessonProgram.title[0]}
                 <br />
-                맞춘 커리큘럼
+                {ui.lessonProgram.title[1]}
               </>
             }
-            description="입문부터 상급, 원데이와 유아 레슨까지 — 목표에 맞는 코스를 선택하세요."
+            description={ui.lessonProgram.description}
           />
         </div>
 
@@ -31,13 +33,15 @@ export function LessonProgram() {
           className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           {lessonPrograms.map((program) => (
-            <motion.a
+            <motion.div
               key={program.slug}
-              href="/reserve"
               variants={revealItem}
               whileHover="hover"
-              className="group relative flex flex-col overflow-hidden rounded-3xl bg-ink-900"
             >
+              <Link
+                href="/reserve"
+                className="group relative flex flex-col overflow-hidden rounded-3xl bg-ink-900"
+              >
               <div className="relative aspect-[4/5] w-full overflow-hidden">
                 <motion.div
                   variants={{ hover: { scale: 1.08 } }}
@@ -80,7 +84,8 @@ export function LessonProgram() {
                   </div>
                 </div>
               </div>
-            </motion.a>
+              </Link>
+            </motion.div>
           ))}
         </RevealGroup>
       </Container>

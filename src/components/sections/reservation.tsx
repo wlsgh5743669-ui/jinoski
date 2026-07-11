@@ -1,25 +1,26 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { MessageCircle, Phone, ArrowRight, ShoppingBag } from "lucide-react";
-import { reservationSteps, contact } from "@/config/site";
+import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { RevealGroup, revealItem, Reveal } from "@/components/shared/reveal";
 
 export function Reservation() {
+  const { reservationSteps, contact, ui } = useContent();
   return (
     <section id="reservation" className="relative overflow-hidden bg-ink-900 py-24 sm:py-32">
       <div className="pointer-events-none absolute -right-40 -top-40 h-[480px] w-[480px] rounded-full bg-brand-500/20 blur-[120px]" />
 
       <Container className="relative">
         <SectionHeading
-          eyebrow="Reservation"
+          eyebrow={ui.reservation.eyebrow}
           light
           align="center"
-          title="지금, 예약을 시작하세요"
-          description="문의부터 레슨 진행까지, 4단계면 충분합니다."
+          title={ui.reservation.title}
+          description={ui.reservation.description}
         />
 
         <RevealGroup
@@ -50,12 +51,12 @@ export function Reservation() {
               href="/reserve"
               className="inline-flex h-16 w-full max-w-sm items-center justify-center gap-2 rounded-full bg-brand-500 px-8 text-[16px] font-semibold text-white shadow-[0_8px_30px_-8px_rgba(45,168,255,0.6)] transition-all hover:bg-brand-600 active:scale-[0.98]"
             >
-              온라인으로 예약하기
+              {ui.reservation.bookOnlineButton}
               <ArrowRight size={18} />
             </Link>
 
             <p className="text-[15px] text-white/60">
-              또는 전화나 카카오톡으로 편하게 문의해주세요.
+              {ui.reservation.orContactText}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               <a
@@ -65,7 +66,7 @@ export function Reservation() {
                 className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-8 text-[15px] font-medium text-white backdrop-blur-md transition-all hover:bg-white/15 active:scale-[0.98]"
               >
                 <MessageCircle size={18} />
-                카카오톡 문의
+                {ui.reservation.kakaoButton}
               </a>
               <a
                 href={contact.phoneHref}
@@ -83,7 +84,7 @@ export function Reservation() {
               className="mt-2 inline-flex items-center gap-1.5 text-[13.5px] font-medium text-white/50 underline-offset-4 transition-colors hover:text-white hover:underline"
             >
               <ShoppingBag size={14} />
-              네이버 스마트스토어에서도 구매하실 수 있어요
+              {ui.reservation.smartStoreLinkText}
             </a>
           </div>
         </Reveal>

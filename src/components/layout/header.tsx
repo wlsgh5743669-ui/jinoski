@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { navLinks, contact } from "@/config/site";
+import { Link } from "@/i18n/navigation";
+import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { cn } from "@/lib/utils";
 
 export function Header() {
+  const { navLinks, contact, ui } = useContent();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -62,17 +64,18 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="hidden lg:block">
+          <div className="hidden items-center gap-4 lg:flex">
+            <LanguageSwitcher dark={!scrolled} />
             <Link
               href="/reserve"
               className="inline-flex h-11 items-center rounded-full bg-brand-500 px-6 text-[14px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(45,168,255,0.65)] transition-all hover:bg-brand-600 active:scale-[0.98]"
             >
-              예약하기
+              {ui.header.bookNowButton}
             </Link>
           </div>
 
           <button
-            aria-label="메뉴 열기"
+            aria-label={ui.header.menuOpenAriaLabel}
             onClick={() => setOpen(true)}
             className={cn(
               "-mr-2 flex h-10 w-10 items-center justify-center rounded-full lg:hidden",
@@ -99,7 +102,7 @@ export function Header() {
                   JINO<span className="text-brand-500">SKI</span>
                 </span>
                 <button
-                  aria-label="메뉴 닫기"
+                  aria-label={ui.header.menuCloseAriaLabel}
                   onClick={() => setOpen(false)}
                   className="-mr-2 flex h-10 w-10 items-center justify-center rounded-full text-white"
                 >
@@ -138,6 +141,15 @@ export function Header() {
                   hidden: { opacity: 0, y: 16 },
                   visible: { opacity: 1, y: 0 },
                 }}
+                className="mt-6 flex items-center justify-center"
+              >
+                <LanguageSwitcher dark />
+              </motion.div>
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 16 },
+                  visible: { opacity: 1, y: 0 },
+                }}
                 className="mt-6 flex flex-col gap-3"
               >
                 <Link
@@ -145,7 +157,7 @@ export function Header() {
                   onClick={() => setOpen(false)}
                   className="inline-flex h-14 items-center justify-center rounded-full bg-brand-500 text-[16px] font-semibold text-white"
                 >
-                  예약하기
+                  {ui.header.bookNowButton}
                 </Link>
                 <a
                   href={contact.phoneHref}

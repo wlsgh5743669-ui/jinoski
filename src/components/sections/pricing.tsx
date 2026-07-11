@@ -3,12 +3,9 @@
 import { useState } from "react";
 import { Clock, Users, Ticket, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  scheduleTimes,
-  lessonPricing,
-  fullCarePrograms,
-  liftPassPricing,
-} from "@/config/site";
+import { useContent } from "@/lib/use-content";
+import { getProgramLabel, type ProgramValue } from "@/lib/booking-options";
+import type { SiteContent } from "@/config/content/types";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { RevealGroup, revealItem, Reveal } from "@/components/shared/reveal";
@@ -64,8 +61,12 @@ function InfoCard({
 
 function FullCareCard({
   program,
+  viewScheduleLabel,
+  recommendedForLabel,
 }: {
-  program: (typeof fullCarePrograms)[number];
+  program: SiteContent["fullCarePrograms"][number];
+  viewScheduleLabel: string;
+  recommendedForLabel: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -139,7 +140,7 @@ function FullCareCard({
         onClick={() => setOpen((o) => !o)}
         className="mt-auto flex items-center justify-between rounded-2xl border border-white/15 px-5 py-3.5 text-[14px] font-semibold text-white transition-colors hover:border-brand-400"
       >
-        상세 일정 보기
+        {viewScheduleLabel}
         <ChevronDown
           size={16}
           className={cn("transition-transform duration-300", open && "rotate-180")}
@@ -178,7 +179,7 @@ function FullCareCard({
             {"recommendedFor" in program && program.recommendedFor && (
               <div className="mt-6 border-t border-white/10 pt-6">
                 <p className="text-[12px] font-semibold uppercase tracking-[0.15em] text-white/40">
-                  추천 대상
+                  {recommendedForLabel}
                 </p>
                 <ul className="mt-3 flex flex-col gap-2">
                   {program.recommendedFor.map((t) => (
@@ -197,19 +198,23 @@ function FullCareCard({
 }
 
 export function Pricing() {
+  const content = useContent();
+  const { scheduleTimes, lessonPricing, fullCarePrograms, liftPassPricing, ui } =
+    content;
+
   return (
     <section id="pricing" className="bg-ice-gradient py-24 sm:py-32">
       <Container>
         <SectionHeading
-          eyebrow="Pricing"
+          eyebrow={ui.pricing.eyebrow}
           title={
             <>
-              투명하게 안내하는
+              {ui.pricing.title[0]}
               <br />
-              시간표 &amp; 요금
+              {ui.pricing.title[1]}
             </>
           }
-          description="시간표부터 비발디파크 패찰 비용까지, 예약 전에 미리 확인하세요."
+          description={ui.pricing.description}
         />
 
         <RevealGroup
@@ -218,7 +223,7 @@ export function Pricing() {
         >
           <InfoCard
             icon={Clock}
-            title="2시간 시간표"
+            title={ui.pricing.twoHourScheduleTitle}
             rows={scheduleTimes.twoHour.map((t) => ({
               label: t.label,
               value: t.time,
@@ -226,7 +231,7 @@ export function Pricing() {
           />
           <InfoCard
             icon={Clock}
-            title="3시간 시간표"
+            title={ui.pricing.threeHourScheduleTitle}
             rows={scheduleTimes.threeHour.map((t) => ({
               label: t.label,
               value: t.time,
@@ -234,7 +239,7 @@ export function Pricing() {
           />
           <InfoCard
             icon={Clock}
-            title="4시간 시간표"
+            title={ui.pricing.fourHourScheduleTitle}
             rows={scheduleTimes.fourHour.map((t) => ({
               label: t.label,
               value: t.time,
@@ -248,10 +253,10 @@ export function Pricing() {
         >
           {lessonPricing.map((group) => (
             <InfoCard
-              key={group.duration}
+              key={group.program}
               icon={Users}
-              title={group.duration}
-              subtitle="인원별 강습료"
+              title={getProgramLabel(group.program as ProgramValue, content)}
+              subtitle={ui.pricing.perPersonPricingSubtitle}
               rows={group.rows.map((r) => ({
                 label: r.people,
                 value: r.price,
@@ -265,7 +270,12 @@ export function Pricing() {
           className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-2"
         >
           {fullCarePrograms.map((program) => (
-            <FullCareCard key={program.slug} program={program} />
+            <FullCareCard
+              key={program.slug}
+              program={program}
+              viewScheduleLabel={ui.pricing.viewScheduleButton}
+              recommendedForLabel={ui.pricing.recommendedForLabel}
+            />
           ))}
         </RevealGroup>
 
@@ -273,26 +283,22 @@ export function Pricing() {
           <div className="mx-auto mt-6 max-w-md">
             <InfoCard
               icon={Ticket}
-              title="비발디파크 패찰비용"
-              subtitle="강습 허가권 (강습료 별도)"
+              title={ui.pricing.liftPassCardTitle}
+              subtitle={ui.pricing.liftPassCardSubtitle}
               rows={liftPassPricing.map((p) => ({
-                label: p.duration,
+                label: p.durationLabel,
                 value: p.price,
               }))}
             />
             <p className="mt-4 text-center text-[13px] leading-relaxed text-snow-500">
-              ※ 패찰이란 비발디파크에서 강습을 진행할 때 강사와 학생이
-              지정된 강습 구역·리프트를 이용하기 위해 리조트에서 발급하는
-              강습 전용 허가증입니다. 일반 리프트권과는 별도이며, 안전한
-              강습 진행을 위해 반드시 필요합니다.
+              ※ {content.bookingWizard.liftPassExplainer}
             </p>
           </div>
         </Reveal>
 
         <Reveal delay={0.15}>
           <p className="mt-6 text-center text-[13.5px] text-snow-500">
-            ※ 시간제 강습은 패찰 비용이 강습료와 별도이며, One Day / Night Full
-            Care는 패찰 비용이 포함되어 있습니다.
+            ※ {ui.pricing.footerNote}
           </p>
         </Reveal>
       </Container>

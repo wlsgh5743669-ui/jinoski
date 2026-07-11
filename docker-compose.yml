@@ -1,0 +1,16 @@
+services:
+  jinoski:
+    build: .
+    container_name: jinoski
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "file:/app/data/prod.db"
+      ADMIN_PASSCODE: ${ADMIN_PASSCODE}
+      AUTH_SECRET: ${AUTH_SECRET}
+    volumes:
+      - jinoski-data:/app/data
+
+volumes:
+  jinoski-data:

@@ -2,7 +2,7 @@
 
 import { Award, UserCheck, Mountain, Camera, type LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { whyJinoSki } from "@/config/site";
+import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { RevealGroup, revealItem } from "@/components/shared/reveal";
@@ -15,19 +15,20 @@ const icons: Record<string, LucideIcon> = {
 };
 
 export function WhyJinoSki() {
+  const { whyJinoSki, ui } = useContent();
   return (
     <section className="bg-ice-gradient py-24 sm:py-32">
       <Container>
         <SectionHeading
-          eyebrow="Why JinoSki"
+          eyebrow={ui.whyJinoSki.eyebrow}
           title={
             <>
-              평범한 레슨과
+              {ui.whyJinoSki.title[0]}
               <br />
-              JinoSki의 차이
+              {ui.whyJinoSki.title[1]}
             </>
           }
-          description="같은 슬로프, 다른 경험. 디테일이 완성도를 만듭니다."
+          description={ui.whyJinoSki.description}
         />
 
         <RevealGroup

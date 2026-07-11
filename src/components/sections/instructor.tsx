@@ -1,12 +1,13 @@
 "use client";
 
 import { Instagram, Youtube } from "lucide-react";
-import { instructor } from "@/config/site";
+import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Reveal } from "@/components/shared/reveal";
 
 export function Instructor() {
+  const { instructor, ui } = useContent();
   return (
     <section id="instructor" className="bg-ink-900 py-24 sm:py-32">
       <Container>
@@ -26,7 +27,7 @@ export function Instructor() {
               <div className="absolute inset-0 bg-gradient-to-t from-ink-900/50 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 rounded-2xl bg-white/10 p-4 backdrop-blur-md">
                 <p className="text-[13px] font-medium text-white/90">
-                  경력 {instructor.experienceYears}년+ · PADI OWSI · 스키 Level 2
+                  {ui.instructor.experienceBadge(instructor.experienceYears)}
                 </p>
               </div>
             </div>
@@ -34,7 +35,7 @@ export function Instructor() {
 
           <Reveal delay={0.1} className="w-full">
             <SectionHeading
-              eyebrow="Instructor"
+              eyebrow={ui.instructor.eyebrow}
               light
               title={
                 <>
@@ -63,7 +64,7 @@ export function Instructor() {
 
             <div className="mt-8">
               <h3 className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white/40">
-                Qualifications
+                {ui.instructor.qualificationsLabel}
               </h3>
               <ul className="mt-4 flex flex-col gap-3">
                 {instructor.certifications.map((cert) => (

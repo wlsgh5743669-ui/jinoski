@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useContent } from "@/lib/use-content";
 
 function toDateKey(date: Date): string {
   const y = date.getFullYear();
@@ -10,8 +11,6 @@ function toDateKey(date: Date): string {
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
-
-const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
 // 4월~10월(비시즌)에는 다가오는 12월(시즌 시작)을 기본으로 보여주고,
 // 11월~3월(시즌 중)에는 실제 이번 달을 그대로 보여줍니다.
@@ -31,6 +30,7 @@ export function DatePicker({
   value: string;
   onChange: (dateKey: string) => void;
 }) {
+  const { datePicker } = useContent();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -64,18 +64,18 @@ export function DatePicker({
         <button
           type="button"
           onClick={goPrevMonth}
-          aria-label="이전 달"
+          aria-label={datePicker.prevMonthAriaLabel}
           className="flex h-9 w-9 items-center justify-center rounded-full text-ink-700 transition-colors hover:bg-ice-200"
         >
           <ChevronLeft size={18} />
         </button>
         <span className="text-[16px] font-bold text-ink-900">
-          {viewYear}년 {viewMonth + 1}월
+          {datePicker.monthLabel(viewYear, viewMonth + 1)}
         </span>
         <button
           type="button"
           onClick={goNextMonth}
-          aria-label="다음 달"
+          aria-label={datePicker.nextMonthAriaLabel}
           className="flex h-9 w-9 items-center justify-center rounded-full text-ink-700 transition-colors hover:bg-ice-200"
         >
           <ChevronRight size={18} />
@@ -83,7 +83,7 @@ export function DatePicker({
       </div>
 
       <div className="mt-6 grid grid-cols-7 gap-1 text-center text-[12px] font-semibold text-snow-500">
-        {WEEKDAYS.map((w) => (
+        {datePicker.weekdays.map((w) => (
           <span key={w}>{w}</span>
         ))}
       </div>

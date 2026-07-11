@@ -2,25 +2,26 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { galleryItems } from "@/config/site";
+import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { RevealGroup, revealItem } from "@/components/shared/reveal";
 
 export function Gallery() {
+  const { galleryItems, ui } = useContent();
   return (
     <section id="gallery" className="bg-ice-gradient py-24 sm:py-32">
       <Container>
         <SectionHeading
-          eyebrow="Gallery"
+          eyebrow={ui.gallery.eyebrow}
           title={
             <>
-              기록되는 순간,
+              {ui.gallery.title[0]}
               <br />
-              JINO VISUALS
+              {ui.gallery.title[1]}
             </>
           }
-          description="스키, 스노보드 그리고 바닷속까지 — 렌즈에 담긴 JinoSki의 장면들."
+          description={ui.gallery.description}
         />
 
         <RevealGroup

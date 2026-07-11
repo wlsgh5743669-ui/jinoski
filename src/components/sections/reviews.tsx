@@ -2,12 +2,13 @@
 
 import { useRef } from "react";
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
-import { reviews } from "@/config/site";
+import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Reveal } from "@/components/shared/reveal";
 
 export function Reviews() {
+  const { reviews, ui } = useContent();
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (dir: 1 | -1) => {
@@ -19,25 +20,25 @@ export function Reviews() {
       <Container>
         <div className="flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-end">
           <SectionHeading
-            eyebrow="Review"
+            eyebrow={ui.reviews.eyebrow}
             title={
               <>
-                학생들이 남긴
+                {ui.reviews.title[0]}
                 <br />
-                진짜 후기
+                {ui.reviews.title[1]}
               </>
             }
           />
           <div className="hidden shrink-0 items-center gap-3 sm:flex">
             <button
-              aria-label="이전 후기"
+              aria-label={ui.reviews.prevAriaLabel}
               onClick={() => scroll(-1)}
               className="flex h-11 w-11 items-center justify-center rounded-full border border-snow-300 text-ink-900 transition-colors hover:border-brand-500 hover:text-brand-500"
             >
               <ChevronLeft size={19} />
             </button>
             <button
-              aria-label="다음 후기"
+              aria-label={ui.reviews.nextAriaLabel}
               onClick={() => scroll(1)}
               className="flex h-11 w-11 items-center justify-center rounded-full border border-snow-300 text-ink-900 transition-colors hover:border-brand-500 hover:text-brand-500"
             >
@@ -51,9 +52,9 @@ export function Reviews() {
             ref={scrollerRef}
             className="mt-14 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            {reviews.map((review) => (
+            {reviews.map((review, i) => (
               <div
-                key={review.name}
+                key={`${review.name}-${i}`}
                 className="flex w-[300px] shrink-0 snap-start flex-col gap-5 rounded-3xl border border-snow-300/60 bg-ice-200/60 p-8 sm:w-[360px]"
               >
                 <Quote size={28} className="text-brand-500" />

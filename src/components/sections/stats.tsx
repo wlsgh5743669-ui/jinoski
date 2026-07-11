@@ -1,13 +1,14 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { stats, statsEyebrow } from "@/config/site";
+import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { RevealGroup, revealItem } from "@/components/shared/reveal";
 import { AnimatedNumber } from "@/components/shared/animated-number";
 import { motion } from "framer-motion";
 
 export function Stats() {
+  const { stats, statsEyebrow } = useContent();
   return (
     <section className="relative bg-white py-16 sm:py-20">
       <Container>

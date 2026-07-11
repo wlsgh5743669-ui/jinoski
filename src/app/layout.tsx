@@ -1,54 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { siteConfig } from "@/config/site";
+import { getLocale } from "next-intl/server";
+import { getContent, defaultLocale } from "@/config/site";
 import "./globals.css";
 
+const fallback = getContent(defaultLocale);
+
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
+  metadataBase: new URL(fallback.siteConfig.url),
   title: {
-    default: siteConfig.title,
-    template: `%s | ${siteConfig.name}`,
+    default: fallback.siteConfig.title,
+    template: `%s | ${fallback.siteConfig.name}`,
   },
-  description: siteConfig.description,
-  keywords: siteConfig.keywords,
-  authors: [{ name: "박진호" }],
-  creator: "JinoSki",
-  applicationName: siteConfig.name,
-  formatDetection: { telephone: true, email: true, address: true },
-  openGraph: {
-    type: "website",
-    locale: siteConfig.locale,
-    url: siteConfig.url,
-    title: siteConfig.title,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
-    images: [
-      {
-        url: siteConfig.ogImage,
-        width: 1200,
-        height: 630,
-        alt: siteConfig.title,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: siteConfig.title,
-    description: siteConfig.description,
-    images: [siteConfig.ogImage],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  alternates: {
-    canonical: siteConfig.url,
-  },
+  description: fallback.siteConfig.description,
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
@@ -62,13 +25,15 @@ export const viewport: Viewport = {
   themeColor: "#0A0B0D",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
-    <html lang="ko">
+    <html lang={locale}>
       <body>{children}</body>
     </html>
   );

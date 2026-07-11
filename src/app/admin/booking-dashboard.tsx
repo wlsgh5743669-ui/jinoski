@@ -5,10 +5,15 @@ import type { Booking } from "@prisma/client";
 import { ChevronDown, Copy, Calendar, Download, LogOut, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getProgramLabel, type ProgramValue } from "@/lib/booking-options";
+import { ko } from "@/config/content/ko";
 import {
   formatDate,
   formatWon,
   equipmentLabel,
+  levelLabel,
+  groupSizeLabel,
+  liftPassPaymentLabel,
+  timeSlotLabel,
   buildGoogleCalendarUrl,
   buildConfirmationMessage,
   bookingTotal,
@@ -78,11 +83,11 @@ export function BookingDashboard({ bookings }: { bookings: Booking[] }) {
     const XLSX = await import("xlsx");
     const rows = filtered.map((b) => ({
       날짜: formatDate(b.date),
-      프로그램: getProgramLabel(b.program as ProgramValue),
-      시간대: b.timeSlot,
-      인원: b.groupSize,
+      프로그램: getProgramLabel(b.program as ProgramValue, ko),
+      시간대: timeSlotLabel(b.program, b.timeSlot),
+      인원: groupSizeLabel(b.groupSize),
       장비: equipmentLabel(b.equipment),
-      레벨: b.level,
+      레벨: levelLabel(b.level),
       촬영: b.wantsPhoto ? "희망" : "비희망",
       이름: b.name,
       연락처: b.phone,
@@ -91,7 +96,7 @@ export function BookingDashboard({ bookings }: { bookings: Booking[] }) {
       레슨료: b.basePrice,
       촬영비: b.photoAddOn,
       패찰비용: b.liftPassFee,
-      패찰결제방식: b.liftPassPayment,
+      패찰결제방식: liftPassPaymentLabel(b.liftPassPayment),
       지금결제할금액: b.priceOnRequest ? "별도 문의" : bookingTotal(b),
       상태: b.status,
       메모: b.memo ?? "",
@@ -182,10 +187,10 @@ export function BookingDashboard({ bookings }: { bookings: Booking[] }) {
                       {formatDate(booking.date)}
                     </span>
                     <span className="text-[13.5px] text-snow-600">
-                      {getProgramLabel(booking.program as ProgramValue)}
+                      {getProgramLabel(booking.program as ProgramValue, ko)}
                     </span>
                     <span className="text-[13.5px] text-snow-600">
-                      {booking.groupSize}
+                      {groupSizeLabel(booking.groupSize)}
                     </span>
                     <span className="text-[13.5px] font-semibold text-ink-800">
                       {booking.name}
@@ -216,14 +221,17 @@ export function BookingDashboard({ bookings }: { bookings: Booking[] }) {
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                       <Field label="연락처" value={booking.phone} />
                       <Field label="카카오톡 ID" value={booking.kakaoId || "-"} />
-                      <Field label="시간대" value={booking.timeSlot} />
+                      <Field label="시간대" value={timeSlotLabel(booking.program, booking.timeSlot)} />
                       <Field label="장비" value={equipmentLabel(booking.equipment)} />
-                      <Field label="레벨" value={booking.level} />
+                      <Field label="레벨" value={levelLabel(booking.level)} />
                       <Field
                         label="촬영 서비스"
                         value={booking.wantsPhoto ? "희망" : "비희망"}
                       />
-                      <Field label="패찰 결제 방식" value={booking.liftPassPayment} />
+                      <Field
+                        label="패찰 결제 방식"
+                        value={liftPassPaymentLabel(booking.liftPassPayment)}
+                      />
                     </div>
 
                     {booking.requestNote && (
@@ -250,7 +258,8 @@ export function BookingDashboard({ bookings }: { bookings: Booking[] }) {
                       {booking.liftPassFee > 0 && (
                         <div className="mt-1.5 flex items-center justify-between text-[13.5px] text-snow-500">
                           <span>
-                            패찰(강습 허가권) 비용 · {booking.liftPassPayment}
+                            패찰(강습 허가권) 비용 ·{" "}
+                            {liftPassPaymentLabel(booking.liftPassPayment)}
                           </span>
                           <span>{formatWon(booking.liftPassFee)}</span>
                         </div>
@@ -258,7 +267,7 @@ export function BookingDashboard({ bookings }: { bookings: Booking[] }) {
                       {!booking.priceOnRequest && (
                         <div className="mt-1.5 flex items-center justify-between border-t border-snow-300/60 pt-2 text-[13.5px] font-bold">
                           <span className="text-ink-900">
-                            {booking.liftPassPayment === "당일 결제"
+                            {booking.liftPassPayment === "pay-onsite"
                               ? "지금 결제할 금액"
                               : "합계"}
                           </span>
