@@ -19,7 +19,7 @@ export async function generateMetadata({
   const content = getContent(locale);
   const languages: Record<string, string> = {};
   for (const l of locales) {
-    languages[l] = l === "ko" ? "/" : `/${l}`;
+    languages[l] = `/${l}/`;
   }
 
   return {
@@ -36,7 +36,7 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       locale: content.siteConfig.locale,
-      url: locale === "ko" ? "/" : `/${locale}`,
+      url: `/${locale}/`,
       title: content.siteConfig.title,
       description: content.siteConfig.description,
       siteName: content.siteConfig.name,
@@ -66,7 +66,7 @@ export async function generateMetadata({
       },
     },
     alternates: {
-      canonical: locale === "ko" ? "/" : `/${locale}`,
+      canonical: `/${locale}/`,
       languages,
     },
   };

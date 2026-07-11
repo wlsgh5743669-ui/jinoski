@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { getLocale } from "next-intl/server";
 import { getContent, defaultLocale } from "@/config/site";
 import "./globals.css";
 
@@ -25,15 +24,13 @@ export const viewport: Viewport = {
   themeColor: "#0A0B0D",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
-
   return (
-    <html lang={locale}>
+    <html lang={defaultLocale}>
       <body>{children}</body>
     </html>
   );

@@ -4,8 +4,7 @@ import { useState } from "react";
 import { Clock, Users, Ticket, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useContent } from "@/lib/use-content";
-import { getProgramLabel, type ProgramValue } from "@/lib/booking-options";
-import type { SiteContent } from "@/config/content/types";
+import type { ProgramCode, SiteContent } from "@/config/content/types";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { RevealGroup, revealItem, Reveal } from "@/components/shared/reveal";
@@ -255,7 +254,7 @@ export function Pricing() {
             <InfoCard
               key={group.program}
               icon={Users}
-              title={getProgramLabel(group.program as ProgramValue, content)}
+              title={content.programLabels[group.program as ProgramCode]}
               subtitle={ui.pricing.perPersonPricingSubtitle}
               rows={group.rows.map((r) => ({
                 label: r.people,

@@ -66,12 +66,14 @@ export function Header() {
 
           <div className="hidden items-center gap-4 lg:flex">
             <LanguageSwitcher dark={!scrolled} />
-            <Link
-              href="/reserve"
+            <a
+              href={contact.kakaoChannel}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex h-11 items-center rounded-full bg-brand-500 px-6 text-[14px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(45,168,255,0.65)] transition-all hover:bg-brand-600 active:scale-[0.98]"
             >
               {ui.header.bookNowButton}
-            </Link>
+            </a>
           </div>
 
           <button
@@ -152,13 +154,15 @@ export function Header() {
                 }}
                 className="mt-6 flex flex-col gap-3"
               >
-                <Link
-                  href="/reserve"
+                <a
+                  href={contact.kakaoChannel}
+                  target="_blank"
+                  rel="noreferrer"
                   onClick={() => setOpen(false)}
                   className="inline-flex h-14 items-center justify-center rounded-full bg-brand-500 text-[16px] font-semibold text-white"
                 >
                   {ui.header.bookNowButton}
-                </Link>
+                </a>
                 <a
                   href={contact.phoneHref}
                   className="inline-flex h-14 items-center justify-center rounded-full border border-white/20 text-[16px] font-semibold text-white"

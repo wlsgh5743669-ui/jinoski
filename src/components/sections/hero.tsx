@@ -8,7 +8,7 @@ import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 
 export function Hero() {
-  const { heroContent } = useContent();
+  const { heroContent, contact } = useContent();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -87,12 +87,14 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="mt-10 flex flex-wrap items-center gap-3"
           >
-            <Link
-              href={heroContent.primaryCta.href}
+            <a
+              href={contact.kakaoChannel}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex h-14 items-center justify-center rounded-full bg-brand-500 px-8 text-[15px] font-semibold text-white shadow-[0_8px_30px_-8px_rgba(45,168,255,0.6)] transition-all hover:bg-brand-600 hover:shadow-[0_12px_36px_-8px_rgba(45,168,255,0.75)] active:scale-[0.98]"
             >
               {heroContent.primaryCta.label}
-            </Link>
+            </a>
             <Link
               href={heroContent.secondaryCta.href}
               className="inline-flex h-14 items-center justify-center rounded-full border border-white/30 bg-white/5 px-8 text-[15px] font-medium text-white backdrop-blur-md transition-all hover:border-white/50 hover:bg-white/15 active:scale-[0.98]"
