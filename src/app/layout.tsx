@@ -39,6 +39,7 @@ export const metadata: Metadata = {
     images: [fallback.siteConfig.ogImage],
   },
   verification: {
+    google: "EJeBYm2X5PiDyOEt0wFgUa56i_qsnTjaW79IyeVx8BQ",
     other: {
       "naver-site-verification": "5723a2c062edf5ff0ca702bcf2ca4512493a00e3",
     },
