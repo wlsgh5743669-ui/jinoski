@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
-import { SectionHeading } from "@/components/shared/section-heading";
 import { Reveal } from "@/components/shared/reveal";
 
 export function Reviews() {
@@ -16,19 +15,9 @@ export function Reviews() {
   };
 
   return (
-    <section id="reviews" className="bg-white py-24 sm:py-32">
+    <section className="bg-white pb-24 pt-16 sm:pb-32 sm:pt-20">
       <Container>
-        <div className="flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-end">
-          <SectionHeading
-            eyebrow={ui.reviews.eyebrow}
-            title={
-              <>
-                {ui.reviews.title[0]}
-                <br />
-                {ui.reviews.title[1]}
-              </>
-            }
-          />
+        <div className="flex items-center justify-end gap-8">
           <div className="hidden shrink-0 items-center gap-3 sm:flex">
             <button
               aria-label={ui.reviews.prevAriaLabel}

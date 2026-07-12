@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useContent } from "@/lib/use-content";
 import type { ProgramCode, SiteContent } from "@/config/content/types";
 import { Container } from "@/components/shared/container";
-import { SectionHeading } from "@/components/shared/section-heading";
 import { RevealGroup, revealItem, Reveal } from "@/components/shared/reveal";
 import { cn } from "@/lib/utils";
 
@@ -202,23 +201,11 @@ export function Pricing() {
     content;
 
   return (
-    <section id="pricing" className="bg-ice-gradient py-24 sm:py-32">
+    <section className="bg-ice-gradient pb-24 pt-16 sm:pb-32 sm:pt-20">
       <Container>
-        <SectionHeading
-          eyebrow={ui.pricing.eyebrow}
-          title={
-            <>
-              {ui.pricing.title[0]}
-              <br />
-              {ui.pricing.title[1]}
-            </>
-          }
-          description={ui.pricing.description}
-        />
-
         <RevealGroup
           stagger={0.08}
-          className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           <InfoCard
             icon={Clock}

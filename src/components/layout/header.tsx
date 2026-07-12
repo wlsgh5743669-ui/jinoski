@@ -29,14 +29,15 @@ export function Header() {
   }, [open]);
 
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-500",
-        scrolled
-          ? "bg-white/80 shadow-[0_1px_0_0_rgba(10,11,13,0.06)] backdrop-blur-xl"
-          : "bg-transparent"
-      )}
-    >
+    <>
+      <header
+        className={cn(
+          "fixed inset-x-0 top-0 z-50 transition-all duration-500",
+          scrolled
+            ? "bg-white/80 shadow-[0_1px_0_0_rgba(10,11,13,0.06)] backdrop-blur-xl"
+            : "bg-transparent"
+        )}
+      >
       <Container>
         <div className="flex h-[72px] items-center justify-between">
           <Link
@@ -86,6 +87,7 @@ export function Header() {
           </button>
         </div>
       </Container>
+    </header>
 
       <AnimatePresence>
         {open && (
@@ -170,6 +172,6 @@ export function Header() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }

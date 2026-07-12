@@ -37,12 +37,12 @@ const mapLinks = {
 };
 
 const navLinks = [
-  { label: "Lesson Programs", href: "#lessons" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Instructor", href: "#instructor" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Reviews", href: "#reviews" },
-  { label: "Booking", href: "#reservation" },
+  { label: "Lesson Programs", href: "/lessons" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Instructor", href: "/instructor" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Reviews", href: "/reviews" },
+  { label: "Booking", href: "/reserve" },
 ];
 
 const heroContent = {
@@ -50,7 +50,7 @@ const heroContent = {
   headline: ["Winter gets better,", "the moment", "you start learning."],
   description: "JinoSki offers premium ski and snowboard lessons at Vivaldi Park.",
   primaryCta: { label: "Book Now", href: "/reserve" },
-  secondaryCta: { label: "View Lessons", href: "#lessons" },
+  secondaryCta: { label: "View Lessons", href: "/lessons" },
   videoSrc: "/videos/hero-carving.mp4",
   videoSrcMobile: "/videos/hero-carving-mobile.mp4",
   posterSrc: "/images/hero-poster.jpg",
@@ -775,6 +775,32 @@ const reservePage = {
     "Book your premium ski or snowboard lesson at Vivaldi Park with JinoSki online.",
 };
 
+const pageMeta = {
+  lessons: {
+    title: "Lesson Programs",
+    description:
+      "From beginner to advanced, one-day and kids lessons — choose the course that fits your goal.",
+  },
+  pricing: {
+    title: "Pricing",
+    description:
+      "Check schedules and Vivaldi Park lift pass costs before you book.",
+  },
+  instructor: {
+    title: "Instructor",
+    description: "Meet Jinho Park, the instructor behind JinoSki.",
+  },
+  gallery: {
+    title: "Gallery",
+    description:
+      "From skiing and snowboarding to under the sea — moments captured through the JinoSki lens.",
+  },
+  reviews: {
+    title: "Reviews",
+    description: "Read real reviews from JinoSki students.",
+  },
+};
+
 export const en: SiteContent = {
   siteConfig,
   contact,
@@ -802,5 +828,6 @@ export const en: SiteContent = {
   bookingWizard,
   datePicker,
   reservePage,
+  pageMeta,
   ui,
 };

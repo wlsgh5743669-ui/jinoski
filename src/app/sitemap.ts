@@ -10,7 +10,15 @@ function localizedPath(locale: string, path: string): string {
 export default function sitemap(): MetadataRoute.Sitemap {
   const { siteConfig } = getContent(defaultLocale);
   const lastModified = new Date();
-  const paths = ["/", "/reserve/"];
+  const paths = [
+    "/",
+    "/lessons/",
+    "/pricing/",
+    "/instructor/",
+    "/gallery/",
+    "/reviews/",
+    "/reserve/",
+  ];
 
   return paths.map((path) => ({
     url: `${siteConfig.url}${localizedPath(defaultLocale, path)}`,

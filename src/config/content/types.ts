@@ -181,6 +181,13 @@ export type SiteContent = {
     title: string;
     description: string;
   };
+  pageMeta: {
+    lessons: { title: string; description: string };
+    pricing: { title: string; description: string };
+    instructor: { title: string; description: string };
+    gallery: { title: string; description: string };
+    reviews: { title: string; description: string };
+  };
   ui: {
     whyJinoSki: { eyebrow: string; title: string[]; description: string };
     lessonProgram: { eyebrow: string; title: string[]; description: string };

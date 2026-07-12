@@ -9,7 +9,7 @@ import { Reveal } from "@/components/shared/reveal";
 export function Instructor() {
   const { instructor, ui } = useContent();
   return (
-    <section id="instructor" className="bg-ink-900 py-24 sm:py-32">
+    <section className="bg-ink-900 pb-24 pt-40 sm:pb-32 sm:pt-44">
       <Container>
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-14">
           <Reveal>

@@ -37,12 +37,12 @@ const mapLinks = {
 };
 
 const navLinks = [
-  { label: "课程项目", href: "#lessons" },
-  { label: "价格说明", href: "#pricing" },
-  { label: "教练介绍", href: "#instructor" },
-  { label: "作品集", href: "#gallery" },
-  { label: "客户评价", href: "#reviews" },
-  { label: "预约咨询", href: "#reservation" },
+  { label: "课程项目", href: "/lessons" },
+  { label: "价格说明", href: "/pricing" },
+  { label: "教练介绍", href: "/instructor" },
+  { label: "作品集", href: "/gallery" },
+  { label: "客户评价", href: "/reviews" },
+  { label: "预约咨询", href: "/reserve" },
 ];
 
 const heroContent = {
@@ -50,7 +50,7 @@ const heroContent = {
   headline: ["从学习的那一刻起,", "冬天", "变得更加快乐。"],
   description: "JinoSki 提供大明滑雪场高端滑雪·单板滑雪课程。",
   primaryCta: { label: "立即预约", href: "/reserve" },
-  secondaryCta: { label: "查看课程", href: "#lessons" },
+  secondaryCta: { label: "查看课程", href: "/lessons" },
   videoSrc: "/videos/hero-carving.mp4",
   videoSrcMobile: "/videos/hero-carving-mobile.mp4",
   posterSrc: "/images/hero-poster.jpg",
@@ -715,6 +715,29 @@ const reservePage = {
   description: "在线申请 JinoSki 大明滑雪场高端滑雪·单板滑雪课程。",
 };
 
+const pageMeta = {
+  lessons: {
+    title: "课程项目",
+    description: "从入门到高级,单日课程和儿童课程 — 选择适合您目标的课程。",
+  },
+  pricing: {
+    title: "价格说明",
+    description: "预约前请提前确认时间表及大明滑雪场缆车通行证费用。",
+  },
+  instructor: {
+    title: "教练介绍",
+    description: "认识带领 JinoSki 的朴珍浩教练。",
+  },
+  gallery: {
+    title: "作品集",
+    description: "从滑雪、单板滑雪到海底世界 — 镜头记录下的 JinoSki 瞬间。",
+  },
+  reviews: {
+    title: "客户评价",
+    description: "查看 JinoSki 学员留下的真实评价。",
+  },
+};
+
 export const zh: SiteContent = {
   siteConfig,
   contact,
@@ -742,5 +765,6 @@ export const zh: SiteContent = {
   bookingWizard,
   datePicker,
   reservePage,
+  pageMeta,
   ui,
 };

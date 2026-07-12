@@ -37,12 +37,12 @@ const mapLinks = {
 };
 
 const navLinks = [
-  { label: "레슨 프로그램", href: "#lessons" },
-  { label: "요금 안내", href: "#pricing" },
-  { label: "강사 소개", href: "#instructor" },
-  { label: "갤러리", href: "#gallery" },
-  { label: "후기", href: "#reviews" },
-  { label: "예약 안내", href: "#reservation" },
+  { label: "레슨 프로그램", href: "/lessons" },
+  { label: "요금 안내", href: "/pricing" },
+  { label: "강사 소개", href: "/instructor" },
+  { label: "갤러리", href: "/gallery" },
+  { label: "후기", href: "/reviews" },
+  { label: "예약 안내", href: "/reserve" },
 ];
 
 const heroContent = {
@@ -50,7 +50,7 @@ const heroContent = {
   headline: ["겨울은,", "배우는 순간부터", "더 즐거워집니다."],
   description: "JinoSki는 비발디파크 프리미엄 스키·스노보드 레슨을 제공합니다.",
   primaryCta: { label: "예약하기", href: "/reserve" },
-  secondaryCta: { label: "레슨 보기", href: "#lessons" },
+  secondaryCta: { label: "레슨 보기", href: "/lessons" },
   videoSrc: "/videos/hero-carving.mp4",
   videoSrcMobile: "/videos/hero-carving-mobile.mp4",
   posterSrc: "/images/hero-poster.jpg",
@@ -749,6 +749,29 @@ const reservePage = {
   description: "JinoSki 비발디파크 프리미엄 스키·스노보드 레슨을 온라인으로 신청하세요.",
 };
 
+const pageMeta = {
+  lessons: {
+    title: "레슨 프로그램",
+    description: "입문부터 상급, 원데이와 유아 레슨까지 — 목표에 맞는 코스를 선택하세요.",
+  },
+  pricing: {
+    title: "요금 안내",
+    description: "시간표부터 비발디파크 패찰 비용까지, 예약 전에 미리 확인하세요.",
+  },
+  instructor: {
+    title: "강사 소개",
+    description: "JinoSki를 이끄는 박진호 강사를 소개합니다.",
+  },
+  gallery: {
+    title: "갤러리",
+    description: "스키, 스노보드 그리고 바닷속까지 — 렌즈에 담긴 JinoSki의 장면들.",
+  },
+  reviews: {
+    title: "후기",
+    description: "학생들이 남긴 진짜 후기를 확인해보세요.",
+  },
+};
+
 export const ko: SiteContent = {
   siteConfig,
   contact,
@@ -776,5 +799,6 @@ export const ko: SiteContent = {
   bookingWizard,
   datePicker,
   reservePage,
+  pageMeta,
   ui,
 };

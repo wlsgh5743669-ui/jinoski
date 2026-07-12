@@ -6,31 +6,16 @@ import { motion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
-import { SectionHeading } from "@/components/shared/section-heading";
 import { RevealGroup, revealItem } from "@/components/shared/reveal";
 
 export function LessonProgram() {
-  const { lessonPrograms, ui } = useContent();
+  const { lessonPrograms } = useContent();
   return (
-    <section id="lessons" className="bg-white py-24 sm:py-32">
+    <section className="bg-white pb-24 pt-16 sm:pb-32 sm:pt-20">
       <Container>
-        <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-end">
-          <SectionHeading
-            eyebrow={ui.lessonProgram.eyebrow}
-            title={
-              <>
-                {ui.lessonProgram.title[0]}
-                <br />
-                {ui.lessonProgram.title[1]}
-              </>
-            }
-            description={ui.lessonProgram.description}
-          />
-        </div>
-
         <RevealGroup
           stagger={0.08}
-          className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           {lessonPrograms.map((program) => (
             <motion.div
