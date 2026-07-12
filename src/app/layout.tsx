@@ -15,6 +15,11 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
+  verification: {
+    other: {
+      "naver-site-verification": "5723a2c062edf5ff0ca702bcf2ca4512493a00e3",
+    },
+  },
 };
 
 export const viewport: Viewport = {
