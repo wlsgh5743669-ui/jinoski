@@ -643,17 +643,33 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   buttons: {
     back: "Back",
     next: "Next",
-    submitting: "Submitting...",
-    submit: "Submit Booking Request",
+    submit: "Create Booking Summary",
   },
-  completion: {
-    title: "Your booking request has been received",
-    body: (name: string) =>
-      `Thank you, ${name}! Our team will review your request and confirm your booking by KakaoTalk or phone.`,
-    kakaoButton: "Chat with us on KakaoTalk",
+  summary: {
+    heading: "Copy the message below and send it on KakaoTalk",
+    description:
+      "Tap \"Copy\", then paste it into the JinoSki KakaoTalk channel chat to complete your booking request.",
+    copyButton: "Copy",
+    copiedLabel: "Copied!",
+    kakaoButton: "Open KakaoTalk Channel",
     backHome: "Back to home",
+    messageLabels: {
+      greeting: (name: string) =>
+        `Hi! This is ${name}. I'd like to request the following booking.`,
+      date: "Date",
+      program: "Program",
+      timeSlot: "Time slot",
+      groupSize: "Group size",
+      equipment: "Equipment",
+      level: "Level",
+      liftPass: "Lift pass payment",
+      price: "Estimated price",
+      priceOnRequest: "Quote on request",
+      kakaoId: "KakaoTalk ID",
+      note: "Request note",
+      closing: "Thank you!",
+    },
   },
-  errorGeneric: "Please check your input and try again.",
 };
 
 const ui: SiteContent["ui"] = {

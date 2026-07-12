@@ -621,17 +621,33 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   buttons: {
     back: "이전",
     next: "다음",
-    submitting: "처리 중...",
-    submit: "예약 신청하기",
+    submit: "예약 내용 만들기",
   },
-  completion: {
-    title: "예약 신청이 접수되었습니다",
-    body: (name: string) =>
-      `${name}님, 신청해주셔서 감사합니다. 담당자가 확인 후 카카오톡이나 전화로 예약 확정 안내를 드립니다.`,
-    kakaoButton: "카카오톡으로 바로 상담하기",
+  summary: {
+    heading: "아래 내용을 복사해서 카카오톡으로 보내주세요",
+    description:
+      "\"복사하기\" 버튼을 누른 뒤, 카카오톡 채널 채팅방에 붙여넣기(길게 눌러 붙여넣기)만 하시면 예약 신청이 완료됩니다.",
+    copyButton: "복사하기",
+    copiedLabel: "복사 완료!",
+    kakaoButton: "카카오톡 채널 열기",
     backHome: "홈으로 돌아가기",
+    messageLabels: {
+      greeting: (name: string) =>
+        `안녕하세요! ${name}입니다. 아래와 같이 예약 신청 드립니다.`,
+      date: "날짜",
+      program: "프로그램",
+      timeSlot: "시간대",
+      groupSize: "인원",
+      equipment: "장비",
+      level: "레벨",
+      liftPass: "패찰 결제",
+      price: "예상 금액",
+      priceOnRequest: "별도 문의",
+      kakaoId: "카카오톡 ID",
+      note: "요청사항",
+      closing: "확인 부탁드립니다 :)",
+    },
   },
-  errorGeneric: "입력값을 다시 확인해주세요.",
 };
 
 const ui: SiteContent["ui"] = {

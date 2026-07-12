@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MessageCircle, Phone, ShoppingBag } from "lucide-react";
+import { ArrowRight, MessageCircle, Phone, ShoppingBag } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
@@ -46,20 +47,27 @@ export function Reservation() {
 
         <Reveal delay={0.2}>
           <div className="mx-auto mt-16 flex max-w-lg flex-col items-center gap-5 text-center">
-            <a
-              href={contact.kakaoChannel}
-              target="_blank"
-              rel="noreferrer"
+            <Link
+              href="/reserve"
               className="inline-flex h-16 w-full max-w-sm items-center justify-center gap-2 rounded-full bg-brand-500 px-8 text-[16px] font-semibold text-white shadow-[0_8px_30px_-8px_rgba(45,168,255,0.6)] transition-all hover:bg-brand-600 active:scale-[0.98]"
             >
-              <MessageCircle size={18} />
               {ui.reservation.bookOnlineButton}
-            </a>
+              <ArrowRight size={18} />
+            </Link>
 
             <p className="text-[15px] text-white/60">
               {ui.reservation.orContactText}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
+              <a
+                href={contact.kakaoChannel}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-8 text-[15px] font-medium text-white backdrop-blur-md transition-all hover:bg-white/15 active:scale-[0.98]"
+              >
+                <MessageCircle size={18} />
+                {ui.reservation.kakaoButton}
+              </a>
               <a
                 href={contact.phoneHref}
                 className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-8 text-[15px] font-medium text-white backdrop-blur-md transition-all hover:bg-white/15 active:scale-[0.98]"

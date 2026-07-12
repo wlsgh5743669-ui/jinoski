@@ -143,16 +143,31 @@ export type SiteContent = {
     buttons: {
       back: string;
       next: string;
-      submitting: string;
       submit: string;
     };
-    completion: {
-      title: string;
-      body: (name: string) => string;
+    summary: {
+      heading: string;
+      description: string;
+      copyButton: string;
+      copiedLabel: string;
       kakaoButton: string;
       backHome: string;
+      messageLabels: {
+        greeting: (name: string) => string;
+        date: string;
+        program: string;
+        timeSlot: string;
+        groupSize: string;
+        equipment: string;
+        level: string;
+        liftPass: string;
+        price: string;
+        priceOnRequest: string;
+        kakaoId: string;
+        note: string;
+        closing: string;
+      };
     };
-    errorGeneric: string;
   };
   datePicker: {
     weekdays: string[];

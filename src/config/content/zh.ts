@@ -590,17 +590,32 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   buttons: {
     back: "上一步",
     next: "下一步",
-    submitting: "处理中...",
-    submit: "提交预约申请",
+    submit: "生成预约内容",
   },
-  completion: {
-    title: "预约申请已收到",
-    body: (name: string) =>
-      `${name}，感谢您的预约申请！我们的团队确认后会通过 KakaoTalk 或电话为您确认预约。`,
-    kakaoButton: "通过 KakaoTalk 立即咨询",
+  summary: {
+    heading: "请复制下方内容并通过 KakaoTalk 发送",
+    description:
+      "点击\"复制\"后，粘贴到 JinoSki KakaoTalk 频道聊天窗口即可完成预约申请。",
+    copyButton: "复制",
+    copiedLabel: "已复制！",
+    kakaoButton: "打开 KakaoTalk 频道",
     backHome: "返回首页",
+    messageLabels: {
+      greeting: (name: string) => `您好！我是${name}，想申请以下预约。`,
+      date: "日期",
+      program: "课程",
+      timeSlot: "时间段",
+      groupSize: "人数",
+      equipment: "装备",
+      level: "水平",
+      liftPass: "缆车通行证付款",
+      price: "预估金额",
+      priceOnRequest: "另行咨询",
+      kakaoId: "KakaoTalk ID",
+      note: "备注",
+      closing: "谢谢！",
+    },
   },
-  errorGeneric: "请重新确认您填写的信息。",
 };
 
 const ui: SiteContent["ui"] = {

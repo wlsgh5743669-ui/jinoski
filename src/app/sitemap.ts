@@ -10,13 +10,13 @@ function localizedPath(locale: string, path: string): string {
 export default function sitemap(): MetadataRoute.Sitemap {
   const { siteConfig } = getContent(defaultLocale);
   const lastModified = new Date();
-  const paths = ["/"];
+  const paths = ["/", "/reserve/"];
 
   return paths.map((path) => ({
     url: `${siteConfig.url}${localizedPath(defaultLocale, path)}`,
     lastModified,
     changeFrequency: "weekly" as const,
-    priority: 1,
+    priority: path === "/" ? 1 : 0.8,
     alternates: {
       languages: Object.fromEntries(
         locales.map((locale) => [

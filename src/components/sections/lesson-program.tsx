@@ -3,13 +3,14 @@
 import Image from "next/image";
 import { ArrowUpRight, Clock } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { RevealGroup, revealItem } from "@/components/shared/reveal";
 
 export function LessonProgram() {
-  const { lessonPrograms, contact, ui } = useContent();
+  const { lessonPrograms, ui } = useContent();
   return (
     <section id="lessons" className="bg-white py-24 sm:py-32">
       <Container>
@@ -37,10 +38,8 @@ export function LessonProgram() {
               variants={revealItem}
               whileHover="hover"
             >
-              <a
-                href={contact.kakaoChannel}
-                target="_blank"
-                rel="noreferrer"
+              <Link
+                href="/reserve"
                 className="group relative flex flex-col overflow-hidden rounded-3xl bg-ink-900"
               >
               <div className="relative aspect-[4/5] w-full overflow-hidden">
@@ -85,7 +84,7 @@ export function LessonProgram() {
                   </div>
                 </div>
               </div>
-              </a>
+              </Link>
             </motion.div>
           ))}
         </RevealGroup>
