@@ -11,9 +11,32 @@ export const metadata: Metadata = {
     template: `%s | ${fallback.siteConfig.name}`,
   },
   description: fallback.siteConfig.description,
+  keywords: fallback.siteConfig.keywords,
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    type: "website",
+    locale: fallback.siteConfig.locale,
+    url: "/",
+    title: fallback.siteConfig.title,
+    description: fallback.siteConfig.description,
+    siteName: fallback.siteConfig.name,
+    images: [
+      {
+        url: fallback.siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: fallback.siteConfig.title,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: fallback.siteConfig.title,
+    description: fallback.siteConfig.description,
+    images: [fallback.siteConfig.ogImage],
   },
   verification: {
     other: {

@@ -4,7 +4,7 @@ const siteConfig = {
   name: "JinoSki",
   title: "JinoSki | 비발디파크 프리미엄 스키·스노보드 스쿨",
   description:
-    "JinoSki는 비발디파크에서 진행되는 프리미엄 1:1 스키·스노보드 레슨 브랜드입니다. 안전하고 체계적인 레슨으로 당신의 첫 겨울을 가장 특별한 추억으로 만듭니다.",
+    "비발디파크 스키강습 전문 JinoSki, 프리미엄 1:1 스키·스노보드 레슨으로 완벽한 겨울을 만듭니다.",
   url: "https://jinoski.com",
   ogImage: "/images/og-image.jpg",
   locale: "ko_KR",
