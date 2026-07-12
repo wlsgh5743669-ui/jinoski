@@ -52,6 +52,7 @@ const heroContent = {
   primaryCta: { label: "예약하기", href: "/reserve" },
   secondaryCta: { label: "레슨 보기", href: "#lessons" },
   videoSrc: "/videos/hero-carving.mp4",
+  videoSrcMobile: "/videos/hero-carving-mobile.mp4",
   posterSrc: "/images/hero-poster.jpg",
 };
 

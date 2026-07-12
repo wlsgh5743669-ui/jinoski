@@ -1,11 +1,27 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
+
+const MOBILE_QUERY = "(max-width: 767px)";
+
+function subscribeToMobileQuery(callback: () => void) {
+  const mql = window.matchMedia(MOBILE_QUERY);
+  mql.addEventListener("change", callback);
+  return () => mql.removeEventListener("change", callback);
+}
+
+function getIsMobileSnapshot() {
+  return window.matchMedia(MOBILE_QUERY).matches;
+}
+
+function getIsMobileServerSnapshot() {
+  return false;
+}
 
 export function Hero() {
   const { heroContent, contact } = useContent();
@@ -14,6 +30,12 @@ export function Hero() {
     target: ref,
     offset: ["start start", "end start"],
   });
+
+  const isMobile = useSyncExternalStore(
+    subscribeToMobileQuery,
+    getIsMobileSnapshot,
+    getIsMobileServerSnapshot
+  );
 
   // 스크롤 시 배경이 자연스럽게 확대 + 페이드되는 패럴랙스 효과
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
@@ -31,8 +53,9 @@ export function Hero() {
         className="absolute inset-0 h-full w-full"
       >
         <video
+          key={isMobile ? "mobile" : "desktop"}
           className="h-full w-full object-cover"
-          src={heroContent.videoSrc}
+          src={isMobile ? heroContent.videoSrcMobile : heroContent.videoSrc}
           poster={heroContent.posterSrc}
           autoPlay
           muted

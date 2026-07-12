@@ -33,6 +33,7 @@ export type SiteContent = {
     primaryCta: { label: string; href: string };
     secondaryCta: { label: string; href: string };
     videoSrc: string;
+    videoSrcMobile: string;
     posterSrc: string;
   };
   statsEyebrow: string;

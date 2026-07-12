@@ -52,6 +52,7 @@ const heroContent = {
   primaryCta: { label: "立即预约", href: "/reserve" },
   secondaryCta: { label: "查看课程", href: "#lessons" },
   videoSrc: "/videos/hero-carving.mp4",
+  videoSrcMobile: "/videos/hero-carving-mobile.mp4",
   posterSrc: "/images/hero-poster.jpg",
 };
 

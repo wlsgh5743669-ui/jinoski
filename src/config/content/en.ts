@@ -52,6 +52,7 @@ const heroContent = {
   primaryCta: { label: "Book Now", href: "/reserve" },
   secondaryCta: { label: "View Lessons", href: "#lessons" },
   videoSrc: "/videos/hero-carving.mp4",
+  videoSrcMobile: "/videos/hero-carving-mobile.mp4",
   posterSrc: "/images/hero-poster.jpg",
 };
 
