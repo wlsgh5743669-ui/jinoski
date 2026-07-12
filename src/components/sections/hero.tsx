@@ -56,7 +56,6 @@ export function Hero() {
           key={isMobile ? "mobile" : "desktop"}
           className="h-full w-full object-cover"
           src={isMobile ? heroContent.videoSrcMobile : heroContent.videoSrc}
-          poster={heroContent.posterSrc}
           autoPlay
           muted
           loop
@@ -99,7 +98,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-7 max-w-md text-[16px] leading-relaxed text-white/75 sm:text-[18px]"
+            className="mt-7 max-w-md text-balance text-[16px] leading-relaxed text-white/75 sm:text-[18px]"
           >
             {heroContent.description}
           </motion.p>
