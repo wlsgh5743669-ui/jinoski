@@ -76,8 +76,8 @@ const stats = [
   {
     target: 8,
     decimals: 0,
-    suffix: "+ YEARS",
-    label: "EXPERIENCE",
+    suffix: "+",
+    label: "YEARS EXPERIENCE",
     description: "Years teaching at Vivaldi Park",
   },
   {

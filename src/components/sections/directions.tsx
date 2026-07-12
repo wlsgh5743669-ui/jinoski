@@ -30,7 +30,7 @@ export function Directions() {
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
               <MapPin size={22} strokeWidth={1.75} />
             </div>
-            <p className="mt-2 text-[18px] font-bold text-ink-900 sm:text-[20px]">
+            <p className="mt-2 text-balance text-[18px] font-bold text-ink-900 sm:text-[20px]">
               {contact.location}
             </p>
           </div>

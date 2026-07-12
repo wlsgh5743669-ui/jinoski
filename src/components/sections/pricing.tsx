@@ -71,7 +71,7 @@ function FullCareCard({
   return (
     <motion.div
       variants={revealItem}
-      className="flex h-full flex-col gap-6 rounded-3xl bg-ink-900 p-8 text-white sm:p-10"
+      className="flex h-full flex-col gap-6 rounded-3xl bg-ink-900 p-6 text-white sm:p-10"
     >
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-500/20 text-[20px]">
@@ -98,16 +98,16 @@ function FullCareCard({
       )}
 
       {"rows" in program && program.rows && (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
           {program.rows.map((row) => (
             <div
               key={row.people}
-              className="flex flex-col items-center gap-1 rounded-2xl bg-white/[0.06] py-5"
+              className="flex flex-col items-center gap-1 rounded-2xl bg-white/[0.06] px-1 py-5"
             >
               <span className="text-[13px] font-medium text-white/60">
                 {row.people}
               </span>
-              <span className="text-[16px] font-bold tabular-nums sm:text-[18px]">
+              <span className="whitespace-nowrap text-[13px] font-bold tabular-nums sm:text-[18px]">
                 {row.price}
               </span>
             </div>

@@ -76,8 +76,8 @@ const stats = [
   {
     target: 8,
     decimals: 0,
-    suffix: "+ YEARS",
-    label: "EXPERIENCE",
+    suffix: "+",
+    label: "YEARS EXPERIENCE",
     description: "비발디파크 강습 경력",
   },
   {
