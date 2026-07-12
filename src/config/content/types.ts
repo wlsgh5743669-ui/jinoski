@@ -3,6 +3,7 @@ export type EquipmentCode = "ski" | "snowboard" | "inline-ski";
 export type LevelCode = "beginner" | "basic" | "intermediate" | "advanced";
 export type FullCareGroupSizeCode = "1p" | "2p" | "3p";
 export type LiftPassPaymentCode = "pay-onsite" | "pay-together";
+export type AgeGroupCode = "kids" | "elementary" | "teen" | "adult" | "family";
 
 export type SiteContent = {
   siteConfig: {
@@ -121,6 +122,7 @@ export type SiteContent = {
   levelLabels: Record<LevelCode, { label: string; description: string }>;
   groupSizeFullCareLabels: Record<FullCareGroupSizeCode, string>;
   liftPassPaymentLabels: Record<LiftPassPaymentCode, string>;
+  ageGroupLabels: Record<AgeGroupCode, string>;
   bookingWizard: {
     stepTitles: string[];
     fixedTimeNote: { oneDay: string; night: string };
@@ -130,8 +132,8 @@ export type SiteContent = {
     form: {
       namePlaceholder: string;
       phonePlaceholder: string;
-      kakaoPlaceholder: string;
       notePlaceholder: string;
+      ageGroupLabel: string;
     };
     priceSummary: {
       lessonFee: string;
@@ -160,10 +162,10 @@ export type SiteContent = {
         groupSize: string;
         equipment: string;
         level: string;
+        ageGroup: string;
         liftPass: string;
         price: string;
         priceOnRequest: string;
-        kakaoId: string;
         note: string;
         closing: string;
       };

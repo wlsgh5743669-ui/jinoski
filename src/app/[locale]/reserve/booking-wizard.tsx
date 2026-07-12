@@ -12,6 +12,7 @@ import {
   EQUIPMENT_VALUES,
   LEVEL_VALUES,
   LIFT_PASS_PAYMENT_VALUES,
+  AGE_GROUP_VALUES,
   getTimeSlotValues,
   getTimeSlotLabel,
   getGroupSizeOptions,
@@ -20,11 +21,13 @@ import {
   getLevelInfo,
   getGroupSizeLabel,
   getLiftPassPaymentLabel,
+  getAgeGroupLabel,
   isHourlyProgram,
   type ProgramValue,
   type EquipmentValue,
   type LevelValue,
   type GroupSizeValue,
+  type AgeGroupValue,
 } from "@/lib/booking-options";
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
@@ -36,10 +39,10 @@ type WizardState = {
   groupSize: string;
   equipment: EquipmentValue | null;
   level: LevelValue | null;
+  ageGroup: AgeGroupValue | null;
   liftPassPayment: string;
   name: string;
   phone: string;
-  kakaoId: string;
   requestNote: string;
 };
 
@@ -50,10 +53,10 @@ const INITIAL_STATE: WizardState = {
   groupSize: "",
   equipment: null,
   level: null,
+  ageGroup: null,
   liftPassPayment: "",
   name: "",
   phone: "",
-  kakaoId: "",
   requestNote: "",
 };
 
@@ -63,7 +66,7 @@ function formatPrice(value: number): string {
 
 function buildSummaryMessage(state: WizardState, content: SiteContent): string {
   const { program, groupSize, liftPassPayment } = state;
-  if (!program || !groupSize || !state.equipment || !state.level) return "";
+  if (!program || !groupSize || !state.equipment || !state.level || !state.ageGroup) return "";
 
   const labels = content.bookingWizard.summary.messageLabels;
   const price = calculateBookingPrice({ program, groupSize, liftPassPayment, content });
@@ -78,6 +81,7 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
     `${labels.groupSize}: ${getGroupSizeLabel(groupSize as GroupSizeValue, content)}`,
     `${labels.equipment}: ${getEquipmentLabel(state.equipment, content)}`,
     `${labels.level}: ${getLevelInfo(state.level, content).label}`,
+    `${labels.ageGroup}: ${getAgeGroupLabel(state.ageGroup, content)}`,
   ];
 
   if (!isFullCare) {
@@ -88,7 +92,6 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
     `${labels.price}: ${price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.totalPrice)}`
   );
 
-  if (state.kakaoId.trim()) lines.push(`${labels.kakaoId}: ${state.kakaoId.trim()}`);
   if (state.requestNote.trim()) lines.push(`${labels.note}: ${state.requestNote.trim()}`);
 
   lines.push("", labels.closing);
@@ -150,7 +153,11 @@ export function BookingWizard() {
       case 7:
         return state.liftPassPayment.length > 0;
       case 8:
-        return state.name.trim().length > 0 && state.phone.trim().length >= 9;
+        return (
+          state.name.trim().length > 0 &&
+          state.phone.trim().length >= 9 &&
+          state.ageGroup !== null
+        );
       default:
         return false;
     }
@@ -349,13 +356,28 @@ export function BookingWizard() {
                     onChange={(e) => update("phone", e.target.value)}
                     className="h-14 rounded-2xl border border-snow-300/60 px-5 text-[15px] outline-none transition-colors focus:border-brand-500"
                   />
-                  <input
-                    type="text"
-                    placeholder={content.bookingWizard.form.kakaoPlaceholder}
-                    value={state.kakaoId}
-                    onChange={(e) => update("kakaoId", e.target.value)}
-                    className="h-14 rounded-2xl border border-snow-300/60 px-5 text-[15px] outline-none transition-colors focus:border-brand-500"
-                  />
+                  <div>
+                    <p className="mb-2.5 text-[13.5px] font-semibold text-ink-900">
+                      {content.bookingWizard.form.ageGroupLabel}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {AGE_GROUP_VALUES.map((value) => (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => update("ageGroup", value)}
+                          className={cn(
+                            "rounded-full border px-4 py-2.5 text-[13.5px] font-semibold transition-colors",
+                            state.ageGroup === value
+                              ? "border-brand-500 bg-brand-50 text-brand-600"
+                              : "border-snow-300/60 bg-white text-ink-800 hover:border-brand-300"
+                          )}
+                        >
+                          {getAgeGroupLabel(value, content)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <textarea
                     placeholder={content.bookingWizard.form.notePlaceholder}
                     value={state.requestNote}

@@ -607,6 +607,14 @@ const liftPassPaymentLabels: SiteContent["liftPassPaymentLabels"] = {
   "pay-together": "Pay with lesson fee",
 };
 
+const ageGroupLabels: SiteContent["ageGroupLabels"] = {
+  kids: "Toddler (age 5)",
+  elementary: "Elementary school",
+  teen: "Middle/high school",
+  adult: "Adult",
+  family: "Family",
+};
+
 const bookingWizard: SiteContent["bookingWizard"] = {
   stepTitles: [
     "Pick a date",
@@ -630,8 +638,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   form: {
     namePlaceholder: "Name",
     phonePlaceholder: "Phone number",
-    kakaoPlaceholder: "KakaoTalk ID (optional)",
     notePlaceholder: "Special requests (optional)",
+    ageGroupLabel: "Student age group",
   },
   priceSummary: {
     lessonFee: "Lesson fee",
@@ -662,10 +670,10 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       groupSize: "Group size",
       equipment: "Equipment",
       level: "Level",
+      ageGroup: "Student age group",
       liftPass: "Lift pass payment",
       price: "Estimated price",
       priceOnRequest: "Quote on request",
-      kakaoId: "KakaoTalk ID",
       note: "Request note",
       closing: "Thank you!",
     },
@@ -790,6 +798,7 @@ export const en: SiteContent = {
   levelLabels,
   groupSizeFullCareLabels,
   liftPassPaymentLabels,
+  ageGroupLabels,
   bookingWizard,
   datePicker,
   reservePage,

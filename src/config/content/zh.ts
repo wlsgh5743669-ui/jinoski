@@ -555,6 +555,14 @@ const liftPassPaymentLabels: SiteContent["liftPassPaymentLabels"] = {
   "pay-together": "一并支付",
 };
 
+const ageGroupLabels: SiteContent["ageGroupLabels"] = {
+  kids: "幼儿（满5岁）",
+  elementary: "小学生",
+  teen: "初中~高中生",
+  adult: "成人",
+  family: "家庭",
+};
+
 const bookingWizard: SiteContent["bookingWizard"] = {
   stepTitles: [
     "请选择日期",
@@ -577,8 +585,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   form: {
     namePlaceholder: "姓名",
     phonePlaceholder: "联系电话",
-    kakaoPlaceholder: "KakaoTalk ID（选填）",
     notePlaceholder: "其他要求（选填）",
+    ageGroupLabel: "学员年龄段",
   },
   priceSummary: {
     lessonFee: "课程费用",
@@ -608,10 +616,10 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       groupSize: "人数",
       equipment: "装备",
       level: "水平",
+      ageGroup: "学员年龄段",
       liftPass: "缆车通行证付款",
       price: "预估金额",
       priceOnRequest: "另行咨询",
-      kakaoId: "KakaoTalk ID",
       note: "备注",
       closing: "谢谢！",
     },
@@ -730,6 +738,7 @@ export const zh: SiteContent = {
   levelLabels,
   groupSizeFullCareLabels,
   liftPassPaymentLabels,
+  ageGroupLabels,
   bookingWizard,
   datePicker,
   reservePage,

@@ -585,6 +585,14 @@ const liftPassPaymentLabels: SiteContent["liftPassPaymentLabels"] = {
   "pay-together": "함께 결제",
 };
 
+const ageGroupLabels: SiteContent["ageGroupLabels"] = {
+  kids: "유아 (만 5세)",
+  elementary: "초등학생",
+  teen: "중~고교생",
+  adult: "성인",
+  family: "가족",
+};
+
 const bookingWizard: SiteContent["bookingWizard"] = {
   stepTitles: [
     "날짜를 선택해주세요",
@@ -608,8 +616,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   form: {
     namePlaceholder: "이름",
     phonePlaceholder: "연락처 (010-0000-0000)",
-    kakaoPlaceholder: "카카오톡 ID (선택)",
     notePlaceholder: "요청사항 (선택)",
+    ageGroupLabel: "교육생 연령대",
   },
   priceSummary: {
     lessonFee: "레슨료",
@@ -640,10 +648,10 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       groupSize: "인원",
       equipment: "장비",
       level: "레벨",
+      ageGroup: "교육생 연령대",
       liftPass: "패찰 결제",
       price: "예상 금액",
       priceOnRequest: "별도 문의",
-      kakaoId: "카카오톡 ID",
       note: "요청사항",
       closing: "확인 부탁드립니다 :)",
     },
@@ -764,6 +772,7 @@ export const ko: SiteContent = {
   levelLabels,
   groupSizeFullCareLabels,
   liftPassPaymentLabels,
+  ageGroupLabels,
   bookingWizard,
   datePicker,
   reservePage,

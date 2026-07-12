@@ -26,6 +26,15 @@ export const LIFT_PASS_PAYMENT_VALUES = [
 ] as const;
 export type LiftPassPaymentValue = (typeof LIFT_PASS_PAYMENT_VALUES)[number];
 
+export const AGE_GROUP_VALUES = [
+  "kids",
+  "elementary",
+  "teen",
+  "adult",
+  "family",
+] as const;
+export type AgeGroupValue = (typeof AGE_GROUP_VALUES)[number];
+
 export function isHourlyProgram(
   program: ProgramValue
 ): program is "2h" | "3h" | "4h" {
@@ -117,4 +126,11 @@ export function getLiftPassPaymentLabel(
   content: SiteContent
 ): string {
   return content.liftPassPaymentLabels[value];
+}
+
+export function getAgeGroupLabel(
+  value: AgeGroupValue,
+  content: SiteContent
+): string {
+  return content.ageGroupLabels[value];
 }
