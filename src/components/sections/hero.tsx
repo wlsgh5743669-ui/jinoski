@@ -107,17 +107,17 @@ export function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-10 flex flex-wrap items-center gap-3"
+            className="mt-6 flex flex-wrap items-center gap-2.5 sm:mt-10 sm:gap-3"
           >
             <Link
               href={heroContent.primaryCta.href}
-              className="inline-flex h-14 items-center justify-center rounded-full bg-brand-500 px-8 text-[15px] font-semibold text-white shadow-[0_8px_30px_-8px_rgba(45,168,255,0.6)] transition-all hover:bg-brand-600 hover:shadow-[0_12px_36px_-8px_rgba(45,168,255,0.75)] active:scale-[0.98]"
+              className="inline-flex h-11 items-center justify-center rounded-full bg-brand-500 px-6 text-[14px] font-semibold text-white shadow-[0_8px_30px_-8px_rgba(45,168,255,0.6)] transition-all hover:bg-brand-600 hover:shadow-[0_12px_36px_-8px_rgba(45,168,255,0.75)] active:scale-[0.98] sm:h-14 sm:px-8 sm:text-[15px]"
             >
               {heroContent.primaryCta.label}
             </Link>
             <Link
               href={heroContent.secondaryCta.href}
-              className="inline-flex h-14 items-center justify-center rounded-full border border-white/30 bg-white/5 px-8 text-[15px] font-medium text-white backdrop-blur-md transition-all hover:border-white/50 hover:bg-white/15 active:scale-[0.98]"
+              className="inline-flex h-11 items-center justify-center rounded-full border border-white/30 bg-white/5 px-6 text-[14px] font-medium text-white backdrop-blur-md transition-all hover:border-white/50 hover:bg-white/15 active:scale-[0.98] sm:h-14 sm:px-8 sm:text-[15px]"
             >
               {heroContent.secondaryCta.label}
             </Link>
