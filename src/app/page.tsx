@@ -8,12 +8,15 @@ export default function RootRedirectPage() {
   }, []);
 
   return (
-    <p style={{ padding: 40, textAlign: "center" }}>
-      Redirecting to{" "}
-      <a href="/ko/" style={{ textDecoration: "underline" }}>
-        jinoski.com/ko/
-      </a>
-      ...
-    </p>
+    <>
+      <meta httpEquiv="refresh" content="0;url=/ko/" />
+      <p style={{ padding: 40, textAlign: "center" }}>
+        Redirecting to{" "}
+        <a href="/ko/" style={{ textDecoration: "underline" }}>
+          jinoski.com/ko/
+        </a>
+        ...
+      </p>
+    </>
   );
 }
