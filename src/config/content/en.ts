@@ -164,7 +164,7 @@ const lessonPrograms = [
     slug: "kids",
     level: "Kids",
     title: "Kids Lesson",
-    duration: "1.5 hours",
+    duration: "2 hours",
     description: "A playful, kid-only program for getting comfortable in the snow.",
     image: "/images/lesson-kids.jpg",
   },

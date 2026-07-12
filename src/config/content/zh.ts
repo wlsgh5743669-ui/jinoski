@@ -160,7 +160,7 @@ const lessonPrograms = [
     slug: "kids",
     level: "幼儿",
     title: "幼儿课程",
-    duration: "1.5小时",
+    duration: "2小时",
     description: "以游戏方式让儿童轻松适应雪地的专属课程。",
     image: "/images/lesson-kids.jpg",
   },

@@ -162,7 +162,7 @@ const lessonPrograms = [
     slug: "kids",
     level: "유아",
     title: "유아 레슨",
-    duration: "1시간 30분",
+    duration: "2시간",
     description: "놀이처럼 즐겁게 배우는 어린이 전용 눈 적응 프로그램.",
     image: "/images/lesson-kids.jpg",
   },
