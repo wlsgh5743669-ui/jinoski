@@ -24,6 +24,9 @@ export type SiteContent = {
     instagram: string;
     youtube: string;
     location: string;
+    representativeName: string;
+    businessRegistrationNumber: string;
+    mailOrderSalesNumber: string;
   };
   mapLinks: { naver: string; kakao: string; google: string };
   navLinks: { label: string; href: string }[];
@@ -249,6 +252,9 @@ export type SiteContent = {
       youtubeAriaLabel: string;
       kakaoAriaLabel: string;
       smartStoreAriaLabel: string;
+      representativeLabel: string;
+      businessNumberLabel: string;
+      mailOrderLabel: string;
     };
   };
 };

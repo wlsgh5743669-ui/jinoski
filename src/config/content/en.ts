@@ -28,6 +28,9 @@ const contact = {
   instagram: "https://www.instagram.com/jino_ski/",
   youtube: "https://www.youtube.com/@jino_adventure",
   location: "262 Hanchigol-gil, Seo-myeon, Hongcheon-gun, Gangwon-do, Vivaldi Park",
+  representativeName: "Jinho Park",
+  businessRegistrationNumber: "336-14-02452",
+  mailOrderSalesNumber: "No. 2024-Incheon Bupyeong-2645",
 };
 
 const mapLinks = {
@@ -758,6 +761,9 @@ const ui: SiteContent["ui"] = {
     youtubeAriaLabel: "YouTube",
     kakaoAriaLabel: "KakaoTalk Channel",
     smartStoreAriaLabel: "Naver Smart Store",
+    representativeLabel: "CEO",
+    businessNumberLabel: "Business Registration No.",
+    mailOrderLabel: "Mail-order Sales No.",
   },
 };
 

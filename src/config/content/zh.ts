@@ -28,6 +28,9 @@ const contact = {
   instagram: "https://www.instagram.com/jino_ski/",
   youtube: "https://www.youtube.com/@jino_adventure",
   location: "江原道洪川郡西面汉致谷路262号 大明滑雪场（Vivaldi Park）",
+  representativeName: "朴珍浩",
+  businessRegistrationNumber: "336-14-02452",
+  mailOrderSalesNumber: "第2024-仁川富平-2645号",
 };
 
 const mapLinks = {
@@ -700,6 +703,9 @@ const ui: SiteContent["ui"] = {
     youtubeAriaLabel: "YouTube",
     kakaoAriaLabel: "KakaoTalk 频道",
     smartStoreAriaLabel: "Naver Smart Store",
+    representativeLabel: "代表",
+    businessNumberLabel: "营业执照号",
+    mailOrderLabel: "邮购销售申报号",
   },
 };
 

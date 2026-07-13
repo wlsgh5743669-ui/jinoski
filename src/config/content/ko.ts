@@ -28,6 +28,9 @@ const contact = {
   instagram: "https://www.instagram.com/jino_ski/",
   youtube: "https://www.youtube.com/@jino_adventure",
   location: "강원 홍천군 서면 한치골길 262 비발디파크",
+  representativeName: "박진호",
+  businessRegistrationNumber: "336-14-02452",
+  mailOrderSalesNumber: "제2024-인천부평-2645호",
 };
 
 const mapLinks = {
@@ -734,6 +737,9 @@ const ui: SiteContent["ui"] = {
     youtubeAriaLabel: "YouTube",
     kakaoAriaLabel: "카카오톡 채널",
     smartStoreAriaLabel: "네이버 스마트스토어",
+    representativeLabel: "대표",
+    businessNumberLabel: "사업자등록번호",
+    mailOrderLabel: "통신판매업신고번호",
   },
 };
 

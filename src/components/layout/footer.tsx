@@ -111,11 +111,18 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-white/10 py-8 text-[13px] text-white/40 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 border-t border-white/10 py-8 text-[12.5px] text-white/40">
           <p>
-            &copy; {year} {ui.footer.copyrightSuffix}
+            {ui.footer.representativeLabel} {contact.representativeName} ·{" "}
+            {ui.footer.businessNumberLabel} {contact.businessRegistrationNumber} ·{" "}
+            {ui.footer.mailOrderLabel} {contact.mailOrderSalesNumber}
           </p>
-          <p>{ui.footer.photoCredits}</p>
+          <div className="flex flex-col gap-1 text-[13px] sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              &copy; {year} {ui.footer.copyrightSuffix}
+            </p>
+            <p>{ui.footer.photoCredits}</p>
+          </div>
         </div>
       </Container>
     </footer>
