@@ -33,7 +33,7 @@ export function WhyJinoSki() {
 
         <RevealGroup
           stagger={0.1}
-          className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-10 grid grid-cols-2 gap-3 sm:mt-16 sm:gap-5 lg:grid-cols-4"
         >
           {whyJinoSki.map((item) => {
             const Icon = icons[item.icon];
@@ -43,19 +43,20 @@ export function WhyJinoSki() {
                 variants={revealItem}
                 whileHover={{ y: -8 }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="group relative flex flex-col gap-6 rounded-3xl border border-snow-300/60 bg-white/70 p-8 backdrop-blur-sm transition-shadow duration-300 hover:shadow-[0_24px_60px_-24px_rgba(10,11,13,0.15)]"
+                className="group relative flex flex-col gap-3 rounded-2xl border border-snow-300/60 bg-white/70 p-4 backdrop-blur-sm transition-shadow duration-300 hover:shadow-[0_24px_60px_-24px_rgba(10,11,13,0.15)] sm:gap-6 sm:rounded-3xl sm:p-8"
               >
-                <span className="text-[13px] font-semibold tracking-[0.15em] text-snow-500">
+                <span className="text-[11px] font-semibold tracking-[0.15em] text-snow-500 sm:text-[13px]">
                   {item.number}
                 </span>
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 transition-colors duration-300 group-hover:bg-brand-500 group-hover:text-white">
-                  {Icon && <Icon size={26} strokeWidth={1.75} />}
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition-colors duration-300 group-hover:bg-brand-500 group-hover:text-white sm:h-14 sm:w-14 sm:rounded-2xl">
+                  {Icon && <Icon size={20} strokeWidth={1.75} className="sm:hidden" />}
+                  {Icon && <Icon size={26} strokeWidth={1.75} className="hidden sm:block" />}
                 </div>
                 <div>
-                  <h3 className="text-[19px] font-bold tracking-tight text-ink-900">
+                  <h3 className="text-[14.5px] font-bold tracking-tight text-ink-900 sm:text-[19px]">
                     {item.title}
                   </h3>
-                  <p className="mt-2.5 text-[14.5px] leading-relaxed text-snow-700">
+                  <p className="mt-1.5 text-[12px] leading-relaxed text-snow-700 sm:mt-2.5 sm:text-[14.5px]">
                     {item.description}
                   </p>
                 </div>
