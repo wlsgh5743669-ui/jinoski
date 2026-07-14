@@ -58,21 +58,23 @@ function InfoCard({
 }
 
 function FullCareCard({
-  program,
+  programs,
   viewScheduleLabel,
   recommendedForLabel,
 }: {
-  program: SiteContent["fullCarePrograms"][number];
+  programs: SiteContent["fullCarePrograms"];
   viewScheduleLabel: string;
   recommendedForLabel: string;
 }) {
-  const { groupSizeFullCareLabels, ui } = useContent();
+  const { groupSizeFullCareLabels, ui, programLabels, bookingWizard } = useContent();
+  const [activeTab, setActiveTab] = useState<"one-day" | "night">("one-day");
   const [open, setOpen] = useState(false);
+  const program = programs.find((p) => p.slug === activeTab) ?? programs[0];
 
   return (
     <motion.div
       variants={revealItem}
-      className="flex h-full flex-col gap-6 rounded-3xl bg-ink-900 p-6 text-white sm:p-10"
+      className="mx-auto flex w-full max-w-2xl flex-col gap-6 rounded-3xl bg-ink-900 p-6 text-white sm:p-10"
     >
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-500/20 text-[20px]">
@@ -80,12 +82,33 @@ function FullCareCard({
         </div>
         <div>
           <h3 className="text-[19px] font-bold tracking-tight">
-            {program.name}
+            {bookingWizard.fullCareGroupLabel}
           </h3>
           <p className="text-[13px] font-medium text-white/50">
             {program.duration}
           </p>
         </div>
+      </div>
+
+      <div className="flex gap-1.5 rounded-full bg-white/[0.06] p-1.5">
+        {programs.map((p) => (
+          <button
+            key={p.slug}
+            type="button"
+            onClick={() => {
+              setActiveTab(p.slug);
+              setOpen(false);
+            }}
+            className={cn(
+              "flex-1 rounded-full px-4 py-2.5 text-[13.5px] font-semibold transition-colors",
+              activeTab === p.slug
+                ? "bg-brand-500 text-white"
+                : "text-white/50 hover:text-white"
+            )}
+          >
+            {programLabels[p.slug]}
+          </button>
+        ))}
       </div>
 
       <p className="text-[14.5px] leading-relaxed text-brand-300">
@@ -261,19 +284,15 @@ export function Pricing() {
           ))}
         </RevealGroup>
 
-        <RevealGroup
-          stagger={0.1}
-          className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-2"
-        >
-          {fullCarePrograms.map((program) => (
+        <Reveal delay={0.1}>
+          <div className="mt-10">
             <FullCareCard
-              key={program.slug}
-              program={program}
+              programs={fullCarePrograms}
               viewScheduleLabel={ui.pricing.viewScheduleButton}
               recommendedForLabel={ui.pricing.recommendedForLabel}
             />
-          ))}
-        </RevealGroup>
+          </div>
+        </Reveal>
 
         <Reveal delay={0.1}>
           <div className="mx-auto mt-6 max-w-md">
