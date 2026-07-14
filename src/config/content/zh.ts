@@ -653,6 +653,7 @@ const ui: SiteContent["ui"] = {
     threeHourScheduleTitle: "3小时时间表",
     fourHourScheduleTitle: "4小时时间表",
     perPersonPricingSubtitle: "按人数计算的课程费用",
+    perPersonPriceLabel: "每人",
     liftPassCardTitle: "大明滑雪场雪票费用",
     liftPassCardSubtitle: "教学许可证（与课程费用分开）",
     footerNote:

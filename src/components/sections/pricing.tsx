@@ -66,7 +66,7 @@ function FullCareCard({
   viewScheduleLabel: string;
   recommendedForLabel: string;
 }) {
-  const { groupSizeFullCareLabels } = useContent();
+  const { groupSizeFullCareLabels, ui } = useContent();
   const [open, setOpen] = useState(false);
 
   return (
@@ -100,19 +100,28 @@ function FullCareCard({
 
       {"rows" in program && program.rows && (
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
-          {program.rows.map((row) => (
-            <div
-              key={row.people}
-              className="flex flex-col items-center gap-1 rounded-2xl bg-white/[0.06] px-1 py-5"
-            >
-              <span className="text-[13px] font-medium text-white/60">
-                {groupSizeFullCareLabels[row.people as FullCareGroupSizeCode]}
-              </span>
-              <span className="whitespace-nowrap text-[13px] font-bold tabular-nums sm:text-[18px]">
-                {row.price}
-              </span>
-            </div>
-          ))}
+          {program.rows.map((row) => {
+            const peopleCount = parseInt(row.people, 10) || 1;
+            const perPersonPrice = Number(row.price.replace(/[^0-9]/g, "")) / peopleCount;
+            return (
+              <div
+                key={row.people}
+                className="flex flex-col items-center gap-1 rounded-2xl bg-white/[0.06] px-1 py-5"
+              >
+                <span className="text-[13px] font-medium text-white/60">
+                  {groupSizeFullCareLabels[row.people as FullCareGroupSizeCode]}
+                </span>
+                <span className="whitespace-nowrap text-[13px] font-bold tabular-nums sm:text-[18px]">
+                  {row.price}
+                </span>
+                {peopleCount > 1 && (
+                  <span className="whitespace-nowrap text-[11px] text-white/40">
+                    {ui.pricing.perPersonPriceLabel} {perPersonPrice.toLocaleString("ko-KR")}원
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 

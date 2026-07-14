@@ -203,6 +203,7 @@ export type SiteContent = {
       threeHourScheduleTitle: string;
       fourHourScheduleTitle: string;
       perPersonPricingSubtitle: string;
+      perPersonPriceLabel: string;
       liftPassCardTitle: string;
       liftPassCardSubtitle: string;
       footerNote: string;

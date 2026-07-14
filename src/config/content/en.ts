@@ -709,6 +709,7 @@ const ui: SiteContent["ui"] = {
     threeHourScheduleTitle: "3-Hour Schedule",
     fourHourScheduleTitle: "4-Hour Schedule",
     perPersonPricingSubtitle: "Pricing by group size",
+    perPersonPriceLabel: "Per person",
     liftPassCardTitle: "Vivaldi Park Lift Pass Fee",
     liftPassCardSubtitle: "Teaching permit (separate from lesson fee)",
     footerNote:

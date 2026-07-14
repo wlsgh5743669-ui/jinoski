@@ -685,6 +685,7 @@ const ui: SiteContent["ui"] = {
     threeHourScheduleTitle: "3시간 시간표",
     fourHourScheduleTitle: "4시간 시간표",
     perPersonPricingSubtitle: "인원별 강습료",
+    perPersonPriceLabel: "1인",
     liftPassCardTitle: "비발디파크 패찰비용",
     liftPassCardSubtitle: "강습 허가권 (강습료 별도)",
     footerNote:
