@@ -41,7 +41,7 @@ export function Header() {
       <Container>
         <div className="flex h-[72px] items-center justify-between">
           <Link
-            href="#top"
+            href="/"
             className={cn(
               "text-[20px] font-bold tracking-tightest transition-colors",
               scrolled ? "text-ink-900" : "text-white"
