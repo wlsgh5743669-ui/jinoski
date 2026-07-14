@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Clock, Users, Ticket, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useContent } from "@/lib/use-content";
-import type { ProgramCode, SiteContent } from "@/config/content/types";
+import type { ProgramCode, FullCareGroupSizeCode, SiteContent } from "@/config/content/types";
 import { Container } from "@/components/shared/container";
 import { RevealGroup, revealItem, Reveal } from "@/components/shared/reveal";
 import { cn } from "@/lib/utils";
@@ -66,6 +66,7 @@ function FullCareCard({
   viewScheduleLabel: string;
   recommendedForLabel: string;
 }) {
+  const { groupSizeFullCareLabels } = useContent();
   const [open, setOpen] = useState(false);
 
   return (
@@ -105,7 +106,7 @@ function FullCareCard({
               className="flex flex-col items-center gap-1 rounded-2xl bg-white/[0.06] px-1 py-5"
             >
               <span className="text-[13px] font-medium text-white/60">
-                {row.people}
+                {groupSizeFullCareLabels[row.people as FullCareGroupSizeCode]}
               </span>
               <span className="whitespace-nowrap text-[13px] font-bold tabular-nums sm:text-[18px]">
                 {row.price}
