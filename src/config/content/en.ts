@@ -290,7 +290,12 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     description:
       "JinoSki's Night Full Care is a premium ~8-hour program running from afternoon into night. Build fundamentals in the afternoon, then experience an even more refined lesson on freshly groomed snow at night.",
     duration: "~8 hours",
-    priceNote: "Please contact us for pricing.",
+    rows: [
+      { people: "1p", price: "550,000원" },
+      { people: "2p", price: "700,000원" },
+      { people: "3p", price: "900,000원" },
+    ],
+    priceNote: "Includes the Vivaldi Park lift/teaching pass fee.",
     schedule: [
       {
         time: "14:00",

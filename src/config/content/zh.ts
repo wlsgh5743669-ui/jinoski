@@ -266,7 +266,12 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     description:
       "JinoSki 的 Night Full Care 是从下午延续到夜晚的约8小时高端项目。下午打好基础与姿势，压雪之后在最佳雪质中体验更加精进的课程。",
     duration: "约8小时",
-    priceNote: "价格请另行咨询。",
+    rows: [
+      { people: "1p", price: "550,000원" },
+      { people: "2p", price: "700,000원" },
+      { people: "3p", price: "900,000원" },
+    ],
+    priceNote: "已包含大明滑雪场教学许可证（雪票）费用。",
     schedule: [
       {
         time: "14:00",

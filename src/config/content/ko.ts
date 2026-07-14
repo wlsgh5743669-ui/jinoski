@@ -273,7 +273,12 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     description:
       "JinoSki의 Night Full Care는 오후부터 밤까지 이어지는 약 8시간 프리미엄 프로그램입니다. 오후에는 기본기와 자세를 다지고, 정설 이후에는 최고의 설질에서 더욱 완성도 높은 레슨을 경험할 수 있습니다.",
     duration: "약 8시간",
-    priceNote: "가격은 별도로 문의해주세요.",
+    rows: [
+      { people: "1p", price: "550,000원" },
+      { people: "2p", price: "700,000원" },
+      { people: "3p", price: "900,000원" },
+    ],
+    priceNote: "비발디파크 강습 허가권(패찰) 비용이 포함된 금액입니다.",
     schedule: [
       {
         time: "14:00",

@@ -89,6 +89,7 @@ export type SiteContent = {
         tagline: string;
         description: string;
         duration: string;
+        rows: { people: string; price: string }[];
         priceNote: string;
         schedule: { time: string; title: string; items: string[] }[];
         included: string[];

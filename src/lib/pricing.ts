@@ -23,15 +23,9 @@ export function calculateBookingPrice({
   liftPassPayment: string;
   content: SiteContent;
 }): BookingPriceResult {
-  if (program === "night") {
-    return { basePrice: 0, liftPassFee: 0, totalPrice: 0, priceOnRequest: true };
-  }
-
-  if (program === "one-day") {
-    const oneDay = content.fullCarePrograms.find(
-      (p): p is Extract<typeof p, { slug: "one-day" }> => p.slug === "one-day"
-    );
-    const row = oneDay?.rows.find((r) => r.people === groupSize);
+  if (program === "one-day" || program === "night") {
+    const fullCare = content.fullCarePrograms.find((p) => p.slug === program);
+    const row = fullCare?.rows.find((r) => r.people === groupSize);
     const basePrice = row ? parseWon(row.price) : 0;
     return { basePrice, liftPassFee: 0, totalPrice: basePrice, priceOnRequest: false };
   }
