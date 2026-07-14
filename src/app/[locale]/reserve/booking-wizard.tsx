@@ -110,6 +110,8 @@ export function BookingWizard() {
 
   const isFullCare = state.program === "one-day" || state.program === "night";
 
+  const [showFullCareChoice, setShowFullCareChoice] = useState(isFullCare);
+
   const price = useMemo(() => {
     if (!state.program || !state.groupSize) return null;
     return calculateBookingPrice({
@@ -224,9 +226,55 @@ export function BookingWizard() {
                 />
               )}
 
-              {step === 2 && (
+              {step === 2 && !showFullCareChoice && (
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  {PROGRAM_VALUES.map((value) => (
+                  {PROGRAM_VALUES.filter(
+                    (value) => value !== "one-day" && value !== "night"
+                  ).map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => selectProgram(value)}
+                      className={cn(
+                        "rounded-2xl border p-5 text-left transition-colors",
+                        state.program === value
+                          ? "border-brand-500 bg-brand-50"
+                          : "border-snow-300/60 bg-white hover:border-brand-300"
+                      )}
+                    >
+                      <span className="text-[15px] font-bold text-ink-900">
+                        {getProgramLabel(value, content)}
+                      </span>
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setShowFullCareChoice(true)}
+                    className={cn(
+                      "rounded-2xl border p-5 text-left transition-colors",
+                      isFullCare
+                        ? "border-brand-500 bg-brand-50"
+                        : "border-snow-300/60 bg-white hover:border-brand-300"
+                    )}
+                  >
+                    <span className="text-[15px] font-bold text-ink-900">
+                      {content.bookingWizard.fullCareGroupLabel}
+                    </span>
+                  </button>
+                </div>
+              )}
+
+              {step === 2 && showFullCareChoice && (
+                <div className="flex flex-col gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowFullCareChoice(false)}
+                    className="flex items-center gap-1.5 self-start text-[13.5px] font-semibold text-snow-500 transition-colors hover:text-ink-900"
+                  >
+                    <ArrowLeft size={14} />
+                    {content.bookingWizard.buttons.back}
+                  </button>
+                  {(["one-day", "night"] as const).map((value) => (
                     <button
                       key={value}
                       type="button"

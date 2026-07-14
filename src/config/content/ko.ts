@@ -612,6 +612,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "패찰 비용은 언제 결제하시겠어요?",
     "예약자 정보를 입력해주세요",
   ],
+  fullCareGroupLabel: "풀케어",
   fixedTimeNote: {
     oneDay: "08:40 미팅 시작 (약 8시간 진행)",
     night: "14:00 미팅 시작 (약 8시간 진행)",

@@ -634,6 +634,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "When would you like to pay the lift pass fee?",
     "Enter your booking details",
   ],
+  fullCareGroupLabel: "Full Care",
   fixedTimeNote: {
     oneDay: "Starts at 08:40 (runs about 8 hours)",
     night: "Starts at 14:00 (runs about 8 hours)",

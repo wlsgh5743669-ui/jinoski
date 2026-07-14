@@ -582,6 +582,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "雪票费用希望何时支付？",
     "请填写预约人信息",
   ],
+  fullCareGroupLabel: "Full Care",
   fixedTimeNote: {
     oneDay: "08:40 开始见面（约进行8小时）",
     night: "14:00 开始见面（约进行8小时）",

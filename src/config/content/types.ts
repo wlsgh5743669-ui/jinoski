@@ -129,6 +129,7 @@ export type SiteContent = {
   ageGroupLabels: Record<AgeGroupCode, string>;
   bookingWizard: {
     stepTitles: string[];
+    fullCareGroupLabel: string;
     fixedTimeNote: { oneDay: string; night: string };
     fixedTimeDisabledNote: string;
     liftPassExplainer: string;
