@@ -81,6 +81,7 @@ export type SiteContent = {
         rows: { people: string; price: string }[];
         priceNote: string;
         schedule: { time: string; title: string; items: string[] }[];
+        included: string[];
       }
     | {
         slug: "night";

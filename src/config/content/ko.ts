@@ -264,6 +264,14 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         items: ["사진 및 영상 전달", "개인별 피드백", "향후 연습 방향 안내", "기념 촬영"],
       },
     ],
+    included: [
+      "약 8시간 프리미엄 레슨",
+      "오전 + 오후 집중 코칭",
+      "개인 맞춤형 커리큘럼",
+      "사진 및 영상 촬영",
+      "영상 리뷰 및 피드백",
+      "점심 식사 포함",
+    ],
   },
   {
     slug: "night",

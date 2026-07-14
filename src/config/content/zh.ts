@@ -257,6 +257,14 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         items: ["传送照片及视频", "个人反馈", "后续练习方向指导", "纪念合影"],
       },
     ],
+    included: [
+      "约8小时高端课程",
+      "上午+下午集中指导",
+      "个性化课程安排",
+      "拍摄照片与视频",
+      "视频回顾与反馈",
+      "含午餐",
+    ],
   },
   {
     slug: "night",

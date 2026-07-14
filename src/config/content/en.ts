@@ -281,6 +281,14 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         ],
       },
     ],
+    included: [
+      "~8 hours of premium lessons",
+      "Intensive morning + afternoon coaching",
+      "Personalized curriculum",
+      "Photo & video shoot",
+      "Video review and feedback",
+      "Lunch included",
+    ],
   },
   {
     slug: "night",
