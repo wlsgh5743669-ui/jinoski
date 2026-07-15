@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Instagram, Youtube } from "lucide-react";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
@@ -12,10 +13,18 @@ export function Instructor() {
     <section className="bg-ink-900 pb-24 pt-40 sm:pb-32 sm:pt-44">
       <Container>
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-14">
-          <Reveal>
+          <Reveal className="w-full max-w-md">
             <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[2rem]">
+              <Image
+                src={instructor.photo}
+                alt={instructor.name}
+                fill
+                sizes="(max-width: 639px) 100vw, 448px"
+                className="object-cover sm:hidden"
+                priority
+              />
               <video
-                className="h-full w-full object-cover"
+                className="hidden h-full w-full object-cover sm:block"
                 src={instructor.video}
                 poster={instructor.photo}
                 autoPlay

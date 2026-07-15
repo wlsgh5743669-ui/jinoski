@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Clock, Users, Ticket, ChevronDown, Check, Repeat, Phone, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useContent } from "@/lib/use-content";
-import type { ProgramCode, FullCareGroupSizeCode, SiteContent } from "@/config/content/types";
+import type { FullCareGroupSizeCode, SiteContent } from "@/config/content/types";
 import { Container } from "@/components/shared/container";
 import { RevealGroup, revealItem, Reveal } from "@/components/shared/reveal";
 import { cn } from "@/lib/utils";
@@ -292,56 +292,68 @@ export function Pricing() {
   const content = useContent();
   const { scheduleTimes, lessonPricing, fullCarePrograms, liftPassPricing, ui } =
     content;
+  const [activeDuration, setActiveDuration] = useState<"2h" | "3h" | "4h">("2h");
+
+  const scheduleByDuration: Record<"2h" | "3h" | "4h", { label: string; time: string }[]> = {
+    "2h": scheduleTimes.twoHour,
+    "3h": scheduleTimes.threeHour,
+    "4h": scheduleTimes.fourHour,
+  };
+  const scheduleTitleByDuration: Record<"2h" | "3h" | "4h", string> = {
+    "2h": ui.pricing.twoHourScheduleTitle,
+    "3h": ui.pricing.threeHourScheduleTitle,
+    "4h": ui.pricing.fourHourScheduleTitle,
+  };
+  const activeLessonPricing = lessonPricing.find(
+    (g) => g.program === activeDuration
+  );
 
   return (
     <section className="bg-ice-gradient pb-24 pt-16 sm:pb-32 sm:pt-20">
       <Container>
-        <RevealGroup
-          stagger={0.08}
-          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          <InfoCard
-            icon={Clock}
-            title={ui.pricing.twoHourScheduleTitle}
-            rows={scheduleTimes.twoHour.map((t) => ({
-              label: t.label,
-              value: t.time,
-            }))}
-          />
-          <InfoCard
-            icon={Clock}
-            title={ui.pricing.threeHourScheduleTitle}
-            rows={scheduleTimes.threeHour.map((t) => ({
-              label: t.label,
-              value: t.time,
-            }))}
-          />
-          <InfoCard
-            icon={Clock}
-            title={ui.pricing.fourHourScheduleTitle}
-            rows={scheduleTimes.fourHour.map((t) => ({
-              label: t.label,
-              value: t.time,
-            }))}
-          />
-        </RevealGroup>
+        <Reveal>
+          <div className="mx-auto flex max-w-md gap-1.5 rounded-full bg-white p-1.5 shadow-[0_1px_0_0_rgba(10,11,13,0.04)]">
+            {(["2h", "3h", "4h"] as const).map((d) => (
+              <button
+                key={d}
+                type="button"
+                onClick={() => setActiveDuration(d)}
+                className={cn(
+                  "flex-1 rounded-full px-4 py-2.5 text-[14px] font-semibold transition-colors",
+                  activeDuration === d
+                    ? "bg-brand-500 text-white"
+                    : "text-snow-700 hover:text-ink-900"
+                )}
+              >
+                {content.programLabels[d]}
+              </button>
+            ))}
+          </div>
+        </Reveal>
 
         <RevealGroup
           stagger={0.08}
-          className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2"
         >
-          {lessonPricing.map((group) => (
+          <InfoCard
+            icon={Clock}
+            title={scheduleTitleByDuration[activeDuration]}
+            rows={scheduleByDuration[activeDuration].map((t) => ({
+              label: t.label,
+              value: t.time,
+            }))}
+          />
+          {activeLessonPricing && (
             <InfoCard
-              key={group.program}
               icon={Users}
-              title={content.programLabels[group.program as ProgramCode]}
+              title={content.programLabels[activeDuration]}
               subtitle={ui.pricing.perPersonPricingSubtitle}
-              rows={group.rows.map((r) => ({
+              rows={activeLessonPricing.rows.map((r) => ({
                 label: r.people,
                 value: r.price,
               }))}
             />
-          ))}
+          )}
         </RevealGroup>
 
         <Reveal delay={0.1}>
