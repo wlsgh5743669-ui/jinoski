@@ -371,6 +371,18 @@ export function BookingWizard() {
                   <p className="mb-5 text-[13.5px] leading-relaxed text-snow-500">
                     {content.bookingWizard.liftPassExplainer}
                   </p>
+                  {!isFullCare && (() => {
+                    const passInfo = content.liftPassPricing.find(
+                      (p) => p.program === state.program
+                    );
+                    if (!passInfo) return null;
+                    return (
+                      <p className="mb-5 -mt-2 text-[14px] font-semibold text-brand-600">
+                        {content.ui.pricing.liftPassCardTitle} ({passInfo.durationLabel}):{" "}
+                        {passInfo.price}
+                      </p>
+                    );
+                  })()}
                   {isFullCare ? (
                     <p className="rounded-2xl border border-snow-300/60 bg-white p-6 text-[14.5px] leading-relaxed text-snow-700">
                       {content.bookingWizard.liftPassIncludedNote}

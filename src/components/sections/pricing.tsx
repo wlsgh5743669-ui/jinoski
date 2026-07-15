@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, Users, Ticket, ChevronDown, Check, Repeat, Phone, MessageCircle } from "lucide-react";
+import { Clock, Users, ChevronDown, Check, Repeat, Phone, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useContent } from "@/lib/use-content";
 import type { FullCareGroupSizeCode, SiteContent } from "@/config/content/types";
@@ -290,8 +290,7 @@ function SeasonProgramCard() {
 
 export function Pricing() {
   const content = useContent();
-  const { scheduleTimes, lessonPricing, fullCarePrograms, liftPassPricing, ui } =
-    content;
+  const { scheduleTimes, lessonPricing, fullCarePrograms, ui } = content;
   const [activeDuration, setActiveDuration] = useState<"2h" | "3h" | "4h">("2h");
 
   const scheduleByDuration: Record<"2h" | "3h" | "4h", { label: string; time: string }[]> = {
@@ -369,23 +368,6 @@ export function Pricing() {
         <Reveal delay={0.1}>
           <div className="mx-auto mt-6 max-w-md">
             <SeasonProgramCard />
-          </div>
-        </Reveal>
-
-        <Reveal delay={0.1}>
-          <div className="mx-auto mt-6 max-w-md">
-            <InfoCard
-              icon={Ticket}
-              title={ui.pricing.liftPassCardTitle}
-              subtitle={ui.pricing.liftPassCardSubtitle}
-              rows={liftPassPricing.map((p) => ({
-                label: p.durationLabel,
-                value: p.price,
-              }))}
-            />
-            <p className="mt-4 text-center text-[13px] leading-relaxed text-snow-500">
-              ※ {content.bookingWizard.liftPassExplainer}
-            </p>
           </div>
         </Reveal>
 
