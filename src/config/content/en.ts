@@ -764,6 +764,7 @@ const ui: SiteContent["ui"] = {
     menuOpenAriaLabel: "Open menu",
     menuCloseAriaLabel: "Close menu",
     bookNowButton: "Book Now",
+    smartStoreButton: "Smart Store",
   },
   footer: {
     tagline:

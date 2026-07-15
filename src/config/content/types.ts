@@ -245,6 +245,7 @@ export type SiteContent = {
       menuOpenAriaLabel: string;
       menuCloseAriaLabel: string;
       bookNowButton: string;
+      smartStoreButton: string;
     };
     footer: {
       tagline: string;

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingBag } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
@@ -65,8 +65,22 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-4 lg:flex">
+          <div className="hidden items-center gap-3 lg:flex">
             <LanguageSwitcher dark={!scrolled} />
+            <a
+              href={contact.smartStore}
+              target="_blank"
+              rel="noreferrer"
+              className={cn(
+                "inline-flex h-11 items-center gap-1.5 rounded-full border px-5 text-[14px] font-semibold transition-all active:scale-[0.98]",
+                scrolled
+                  ? "border-snow-300 text-ink-900 hover:border-brand-500"
+                  : "border-white/30 text-white hover:border-white/60"
+              )}
+            >
+              <ShoppingBag size={15} />
+              {ui.header.smartStoreButton}
+            </a>
             <Link
               href="/reserve"
               className="inline-flex h-11 items-center rounded-full bg-brand-500 px-6 text-[14px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(45,168,255,0.65)] transition-all hover:bg-brand-600 active:scale-[0.98]"
@@ -161,6 +175,15 @@ export function Header() {
                 >
                   {ui.header.bookNowButton}
                 </Link>
+                <a
+                  href={contact.smartStore}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-white/20 text-[16px] font-semibold text-white"
+                >
+                  <ShoppingBag size={17} />
+                  {ui.header.smartStoreButton}
+                </a>
                 <a
                   href={contact.phoneHref}
                   className="inline-flex h-14 items-center justify-center rounded-full border border-white/20 text-[16px] font-semibold text-white"

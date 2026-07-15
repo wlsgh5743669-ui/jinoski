@@ -707,6 +707,7 @@ const ui: SiteContent["ui"] = {
     menuOpenAriaLabel: "打开菜单",
     menuCloseAriaLabel: "关闭菜单",
     bookNowButton: "立即预约",
+    smartStoreButton: "Smart Store",
   },
   footer: {
     tagline: "大明滑雪场高端滑雪·单板滑雪课程。JinoSki，让冬天成为最特别回忆的品牌。",

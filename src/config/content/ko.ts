@@ -740,6 +740,7 @@ const ui: SiteContent["ui"] = {
     menuOpenAriaLabel: "메뉴 열기",
     menuCloseAriaLabel: "메뉴 닫기",
     bookNowButton: "예약하기",
+    smartStoreButton: "스마트스토어",
   },
   footer: {
     tagline:
