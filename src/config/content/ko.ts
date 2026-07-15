@@ -356,9 +356,41 @@ const liftPassPricing: SiteContent["liftPassPricing"] = [
 ];
 
 const seasonProgram: SiteContent["seasonProgram"] = {
-  title: "시즌강습 (횟수권)",
+  title: "26/27시즌강습",
   subtitle: "장기적으로 꾸준히 배우고 싶은 분들을 위한 횟수권",
   passes: ["2시간 10회권", "3시간 8회권"],
+  benefits: [
+    {
+      icon: "📈",
+      title: "체계적인 실력 향상",
+      description:
+        "매회 이어지는 맞춤형 커리큘럼으로 자세를 꾸준히 교정하며, 기초부터 카빙·숏턴 등 원하는 목표까지 단계적으로 성장할 수 있습니다.",
+    },
+    {
+      icon: "👨‍🏫",
+      title: "전담 강사의 1:1 맞춤 피드백",
+      description:
+        "매 수업마다 강사가 고객의 장점과 보완할 점을 기록하고 피드백하여, 더욱 효율적으로 실력을 향상시킬 수 있습니다.",
+    },
+    {
+      icon: "🎥",
+      title: "사진·영상 촬영 제공",
+      description:
+        "레슨 중 멋진 라이딩과 스킹 장면을 사진과 영상으로 기록해 드립니다. 실력 향상은 물론, 겨울의 소중한 추억까지 오래 간직할 수 있습니다.",
+    },
+    {
+      icon: "⏰",
+      title: "원하는 일정으로 자유로운 예약",
+      description:
+        "시즌 동안 개인 일정에 맞춰 예약을 조율할 수 있어, 직장인·학생·가족 모두 부담 없이 꾸준히 레슨을 받을 수 있습니다.",
+    },
+    {
+      icon: "🏆",
+      title: "시즌 종료 후 달라진 실력",
+      description:
+        "한두 번의 체험이 아닌 꾸준한 반복 학습을 통해 자신감 있는 라이딩과 안정적인 스킹을 완성할 수 있습니다. 시즌이 끝날 때쯤에는 이전과 확연히 달라진 자신의 모습을 느낄 수 있습니다.",
+    },
+  ],
   priceNote: "인원(1:1 / 1:2 / 1:3)에 따라 가격이 달라져 정확한 안내는 유선 상담이 필요합니다.",
   phoneButton: "전화 문의",
   kakaoButton: "카카오톡 문의",
@@ -710,6 +742,7 @@ const ui: SiteContent["ui"] = {
       "시간제 강습은 패찰 비용이 강습료와 별도이며, One Day / Night Full Care는 패찰 비용이 포함되어 있습니다.",
     viewScheduleButton: "상세 일정 보기",
     recommendedForLabel: "추천 대상",
+    fullCareTabLabel: "원데이 풀케어",
   },
   instructor: {
     eyebrow: "Instructor",

@@ -102,6 +102,7 @@ export type SiteContent = {
     title: string;
     subtitle: string;
     passes: string[];
+    benefits: { icon: string; title: string; description: string }[];
     priceNote: string;
     phoneButton: string;
     kakaoButton: string;
@@ -219,6 +220,7 @@ export type SiteContent = {
       footerNote: string;
       viewScheduleButton: string;
       recommendedForLabel: string;
+      fullCareTabLabel: string;
     };
     instructor: {
       eyebrow: string;

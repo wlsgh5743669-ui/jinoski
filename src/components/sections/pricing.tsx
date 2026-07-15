@@ -230,6 +230,7 @@ function FullCareCard({
 
 function SeasonProgramCard() {
   const { seasonProgram, contact } = useContent();
+  const [openBenefit, setOpenBenefit] = useState<number | null>(null);
 
   return (
     <motion.div
@@ -261,6 +262,51 @@ function SeasonProgramCard() {
           </li>
         ))}
       </ul>
+
+      <div className="flex flex-col gap-2">
+        {seasonProgram.benefits.map((benefit, i) => {
+          const open = openBenefit === i;
+          return (
+            <div
+              key={benefit.title}
+              className="overflow-hidden rounded-2xl border border-snow-200"
+            >
+              <button
+                type="button"
+                onClick={() => setOpenBenefit(open ? null : i)}
+                className="flex w-full items-center justify-between gap-3 p-4 text-left"
+              >
+                <span className="flex items-center gap-2.5 text-[14px] font-semibold text-ink-900">
+                  <span className="text-[17px] leading-none">{benefit.icon}</span>
+                  {benefit.title}
+                </span>
+                <ChevronDown
+                  size={16}
+                  className={cn(
+                    "shrink-0 text-snow-500 transition-transform",
+                    open && "rotate-180"
+                  )}
+                />
+              </button>
+              <AnimatePresence initial={false}>
+                {open && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden"
+                  >
+                    <p className="px-4 pb-4 text-[13.5px] leading-relaxed text-snow-700">
+                      {benefit.description}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
+      </div>
 
       <p className="text-[13px] leading-relaxed text-snow-500">
         ※ {seasonProgram.priceNote}
@@ -327,7 +373,7 @@ export function Pricing() {
                 )}
               >
                 {d === "fullcare"
-                  ? content.bookingWizard.fullCareGroupLabel
+                  ? ui.pricing.fullCareTabLabel
                   : content.programLabels[d]}
               </button>
             ))}

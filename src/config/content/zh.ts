@@ -344,9 +344,41 @@ const liftPassPricing: SiteContent["liftPassPricing"] = [
 ];
 
 const seasonProgram: SiteContent["seasonProgram"] = {
-  title: "季节课程（次卡）",
+  title: "26/27 季节课程",
   subtitle: "适合希望长期持续学习的学员",
   passes: ["2小时 10次卡", "3小时 8次卡"],
+  benefits: [
+    {
+      icon: "📈",
+      title: "系统性的实力提升",
+      description:
+        "通过每次课程延续的个性化课程安排，持续纠正姿势，从基础到卡宾、短转弯等目标循序渐进地成长。",
+    },
+    {
+      icon: "👨‍🏫",
+      title: "专属教练的1:1定制反馈",
+      description:
+        "每堂课教练都会记录学员的优点和需要改进的地方并给予反馈，帮助更高效地提升实力。",
+    },
+    {
+      icon: "🎥",
+      title: "提供照片・视频拍摄",
+      description:
+        "课程中精彩的滑行与滑雪瞬间将以照片和视频记录下来。不仅有助于提升实力，也能长久保存冬季的珍贵回忆。",
+    },
+    {
+      icon: "⏰",
+      title: "自由预约喜欢的时间",
+      description:
+        "季节期间可根据个人日程调整预约，上班族、学生、家庭都能没有负担地持续上课。",
+    },
+    {
+      icon: "🏆",
+      title: "季末实力大不同",
+      description:
+        "并非一两次体验，而是通过持续反复的练习，完成自信的滑行与稳定的滑雪。季节结束时，您会明显感受到与之前不同的自己。",
+    },
+  ],
   priceNote: "价格根据人数（1:1 / 1:2 / 1:3）有所不同，具体价格请电话咨询。",
   phoneButton: "电话咨询",
   kakaoButton: "KakaoTalk咨询",
@@ -678,6 +710,7 @@ const ui: SiteContent["ui"] = {
       "时段制课程的雪票费用与课程费用分开计算，One Day / Night Full Care 已包含雪票费用。",
     viewScheduleButton: "查看详细日程",
     recommendedForLabel: "推荐对象",
+    fullCareTabLabel: "One Day Full Care",
   },
   instructor: {
     eyebrow: "Instructor",

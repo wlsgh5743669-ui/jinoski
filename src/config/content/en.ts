@@ -378,9 +378,41 @@ const liftPassPricing: SiteContent["liftPassPricing"] = [
 ];
 
 const seasonProgram: SiteContent["seasonProgram"] = {
-  title: "Season Pass (Multi-Visit)",
+  title: "26/27 Season Pass",
   subtitle: "For students who want to keep learning consistently over time",
   passes: ["2-Hour × 10 Sessions", "3-Hour × 8 Sessions"],
+  benefits: [
+    {
+      icon: "📈",
+      title: "Systematic skill progress",
+      description:
+        "A personalized curriculum that carries over from session to session, steadily correcting form and building step by step from the basics toward goals like carving or short turns.",
+    },
+    {
+      icon: "👨‍🏫",
+      title: "1:1 feedback from a dedicated instructor",
+      description:
+        "Your instructor notes your strengths and areas to improve after every lesson, giving feedback that makes each session more effective.",
+    },
+    {
+      icon: "🎥",
+      title: "Photo & video coverage included",
+      description:
+        "Your best riding and skiing moments are captured on photo and video during lessons — great for tracking progress and keeping the memories of your winter.",
+    },
+    {
+      icon: "⏰",
+      title: "Book on your own schedule",
+      description:
+        "Coordinate bookings around your own schedule throughout the season, so working professionals, students, and families alike can keep up lessons without pressure.",
+    },
+    {
+      icon: "🏆",
+      title: "Real improvement by season's end",
+      description:
+        "Consistent, repeated practice — not just one or two tries — builds confident riding and stable skiing. By the end of the season you'll notice a clear difference in yourself.",
+    },
+  ],
   priceNote:
     "Pricing varies by group size (1:1 / 1:2 / 1:3), so please call us for exact rates.",
   phoneButton: "Call Us",
@@ -735,6 +767,7 @@ const ui: SiteContent["ui"] = {
       "Hourly lessons charge the lift pass fee separately; One Day / Night Full Care already include it.",
     viewScheduleButton: "View Detailed Schedule",
     recommendedForLabel: "Recommended For",
+    fullCareTabLabel: "One Day Full Care",
   },
   instructor: {
     eyebrow: "Instructor",
