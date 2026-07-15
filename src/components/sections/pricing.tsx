@@ -291,7 +291,9 @@ function SeasonProgramCard() {
 export function Pricing() {
   const content = useContent();
   const { scheduleTimes, lessonPricing, fullCarePrograms, ui } = content;
-  const [activeDuration, setActiveDuration] = useState<"2h" | "3h" | "4h">("2h");
+  const [activeDuration, setActiveDuration] = useState<
+    "2h" | "3h" | "4h" | "fullcare"
+  >("2h");
 
   const scheduleByDuration: Record<"2h" | "3h" | "4h", { label: string; time: string }[]> = {
     "2h": scheduleTimes.twoHour,
@@ -311,8 +313,8 @@ export function Pricing() {
     <section className="bg-ice-gradient pb-24 pt-16 sm:pb-32 sm:pt-20">
       <Container>
         <Reveal>
-          <div className="mx-auto flex max-w-md gap-1.5 rounded-full bg-white p-1.5 shadow-[0_1px_0_0_rgba(10,11,13,0.04)]">
-            {(["2h", "3h", "4h"] as const).map((d) => (
+          <div className="mx-auto flex max-w-xl gap-1.5 rounded-full bg-white p-1.5 shadow-[0_1px_0_0_rgba(10,11,13,0.04)]">
+            {(["2h", "3h", "4h", "fullcare"] as const).map((d) => (
               <button
                 key={d}
                 type="button"
@@ -324,46 +326,50 @@ export function Pricing() {
                     : "text-snow-700 hover:text-ink-900"
                 )}
               >
-                {content.programLabels[d]}
+                {d === "fullcare"
+                  ? content.bookingWizard.fullCareGroupLabel
+                  : content.programLabels[d]}
               </button>
             ))}
           </div>
         </Reveal>
 
-        <RevealGroup
-          stagger={0.08}
-          className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2"
-        >
-          <InfoCard
-            icon={Clock}
-            title={scheduleTitleByDuration[activeDuration]}
-            rows={scheduleByDuration[activeDuration].map((t) => ({
-              label: t.label,
-              value: t.time,
-            }))}
-          />
-          {activeLessonPricing && (
+        {activeDuration === "fullcare" ? (
+          <Reveal delay={0.1}>
+            <div className="mt-6">
+              <FullCareCard
+                programs={fullCarePrograms}
+                viewScheduleLabel={ui.pricing.viewScheduleButton}
+                recommendedForLabel={ui.pricing.recommendedForLabel}
+              />
+            </div>
+          </Reveal>
+        ) : (
+          <RevealGroup
+            stagger={0.08}
+            className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2"
+          >
             <InfoCard
-              icon={Users}
-              title={content.programLabels[activeDuration]}
-              subtitle={ui.pricing.perPersonPricingSubtitle}
-              rows={activeLessonPricing.rows.map((r) => ({
-                label: r.people,
-                value: r.price,
+              icon={Clock}
+              title={scheduleTitleByDuration[activeDuration]}
+              rows={scheduleByDuration[activeDuration].map((t) => ({
+                label: t.label,
+                value: t.time,
               }))}
             />
-          )}
-        </RevealGroup>
-
-        <Reveal delay={0.1}>
-          <div className="mt-10">
-            <FullCareCard
-              programs={fullCarePrograms}
-              viewScheduleLabel={ui.pricing.viewScheduleButton}
-              recommendedForLabel={ui.pricing.recommendedForLabel}
-            />
-          </div>
-        </Reveal>
+            {activeLessonPricing && (
+              <InfoCard
+                icon={Users}
+                title={content.programLabels[activeDuration]}
+                subtitle={ui.pricing.perPersonPricingSubtitle}
+                rows={activeLessonPricing.rows.map((r) => ({
+                  label: r.people,
+                  value: r.price,
+                }))}
+              />
+            )}
+          </RevealGroup>
+        )}
 
         <Reveal delay={0.1}>
           <div className="mx-auto mt-6 max-w-md">
