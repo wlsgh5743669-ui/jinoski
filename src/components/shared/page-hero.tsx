@@ -5,10 +5,12 @@ export function PageHero({
   eyebrow,
   title,
   description,
+  children,
 }: {
   eyebrow: string;
   title: string[];
   description?: string;
+  children?: React.ReactNode;
 }) {
   return (
     <section className="relative overflow-hidden bg-ink-900 pb-16 pt-40 sm:pb-20 sm:pt-44">
@@ -30,6 +32,7 @@ export function PageHero({
           }
           description={description}
         />
+        {children && <div className="mt-8">{children}</div>}
       </Container>
     </section>
   );
