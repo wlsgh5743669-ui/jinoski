@@ -98,6 +98,14 @@ export type SiteContent = {
       }
   )[];
   liftPassPricing: { program: "2h" | "3h" | "4h"; durationLabel: string; price: string }[];
+  seasonProgram: {
+    title: string;
+    subtitle: string;
+    passes: string[];
+    priceNote: string;
+    phoneButton: string;
+    kakaoButton: string;
+  };
   instructor: {
     name: string;
     role: string;

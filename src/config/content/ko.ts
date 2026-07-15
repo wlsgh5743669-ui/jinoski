@@ -355,6 +355,15 @@ const liftPassPricing: SiteContent["liftPassPricing"] = [
   { program: "4h", durationLabel: "4시간", price: "50,000원" },
 ];
 
+const seasonProgram: SiteContent["seasonProgram"] = {
+  title: "시즌강습 (횟수권)",
+  subtitle: "장기적으로 꾸준히 배우고 싶은 분들을 위한 횟수권",
+  passes: ["2시간 10회권", "3시간 8회권"],
+  priceNote: "인원(1:1 / 1:2 / 1:3)에 따라 가격이 달라져 정확한 안내는 유선 상담이 필요합니다.",
+  phoneButton: "전화 문의",
+  kakaoButton: "카카오톡 문의",
+};
+
 const instructor = {
   name: "박진호",
   role: "Lead Instructor · Founder of JinoSki",
@@ -808,6 +817,7 @@ export const ko: SiteContent = {
   lessonPricing,
   fullCarePrograms,
   liftPassPricing,
+  seasonProgram,
   instructor,
   galleryItems,
   reviews,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, Users, Ticket, ChevronDown, Check } from "lucide-react";
+import { Clock, Users, Ticket, ChevronDown, Check, Repeat, Phone, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useContent } from "@/lib/use-content";
 import type { ProgramCode, FullCareGroupSizeCode, SiteContent } from "@/config/content/types";
@@ -228,6 +228,66 @@ function FullCareCard({
   );
 }
 
+function SeasonProgramCard() {
+  const { seasonProgram, contact } = useContent();
+
+  return (
+    <motion.div
+      variants={revealItem}
+      className="flex flex-col gap-6 rounded-3xl border border-snow-300/60 bg-white p-8"
+    >
+      <div className="flex items-center gap-3">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
+          <Repeat size={20} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h3 className="text-[18px] font-bold tracking-tight text-ink-900">
+            {seasonProgram.title}
+          </h3>
+          <p className="text-[13px] font-medium text-snow-500">
+            {seasonProgram.subtitle}
+          </p>
+        </div>
+      </div>
+
+      <ul className="flex flex-col gap-2">
+        {seasonProgram.passes.map((pass) => (
+          <li
+            key={pass}
+            className="flex items-center gap-2 text-[15px] font-semibold text-ink-900"
+          >
+            <Check size={16} className="shrink-0 text-brand-500" />
+            {pass}
+          </li>
+        ))}
+      </ul>
+
+      <p className="text-[13px] leading-relaxed text-snow-500">
+        ※ {seasonProgram.priceNote}
+      </p>
+
+      <div className="mt-auto flex flex-col gap-3 sm:flex-row">
+        <a
+          href={contact.phoneHref}
+          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-brand-500 text-[14px] font-semibold text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
+        >
+          <Phone size={16} />
+          {seasonProgram.phoneButton}
+        </a>
+        <a
+          href={contact.kakaoChannel}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full border border-snow-300 text-[14px] font-semibold text-ink-900 transition-colors hover:border-brand-500"
+        >
+          <MessageCircle size={16} />
+          {seasonProgram.kakaoButton}
+        </a>
+      </div>
+    </motion.div>
+  );
+}
+
 export function Pricing() {
   const content = useContent();
   const { scheduleTimes, lessonPricing, fullCarePrograms, liftPassPricing, ui } =
@@ -291,6 +351,12 @@ export function Pricing() {
               viewScheduleLabel={ui.pricing.viewScheduleButton}
               recommendedForLabel={ui.pricing.recommendedForLabel}
             />
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.1}>
+          <div className="mx-auto mt-6 max-w-md">
+            <SeasonProgramCard />
           </div>
         </Reveal>
 

@@ -343,6 +343,15 @@ const liftPassPricing: SiteContent["liftPassPricing"] = [
   { program: "4h", durationLabel: "4小时", price: "50,000원" },
 ];
 
+const seasonProgram: SiteContent["seasonProgram"] = {
+  title: "季节课程（次卡）",
+  subtitle: "适合希望长期持续学习的学员",
+  passes: ["2小时 10次卡", "3小时 8次卡"],
+  priceNote: "价格根据人数（1:1 / 1:2 / 1:3）有所不同，具体价格请电话咨询。",
+  phoneButton: "电话咨询",
+  kakaoButton: "KakaoTalk咨询",
+};
+
 const instructor = {
   name: "朴镇浩",
   role: "Lead Instructor · Founder of JinoSki",
@@ -774,6 +783,7 @@ export const zh: SiteContent = {
   lessonPricing,
   fullCarePrograms,
   liftPassPricing,
+  seasonProgram,
   instructor,
   galleryItems,
   reviews,
