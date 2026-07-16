@@ -110,7 +110,7 @@ export function Header() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-50 bg-ink-900/95 backdrop-blur-xl lg:hidden"
+            className="fixed inset-0 z-50 overflow-y-auto bg-ink-900/95 backdrop-blur-xl lg:hidden"
           >
             <Container>
               <div className="flex h-[72px] items-center justify-between">
@@ -128,7 +128,7 @@ export function Header() {
             </Container>
 
             <motion.nav
-              className="mt-10 flex flex-col gap-2 px-5"
+              className="mt-10 flex flex-col gap-2 px-5 pb-10"
               initial="hidden"
               animate="visible"
               variants={{
