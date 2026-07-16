@@ -43,6 +43,9 @@ export default async function PricingPage({
             ))}
           </div>
         </div>
+        <p className="mt-3 max-w-xl text-[13px] leading-relaxed text-white/50">
+          ※ {content.bookingWizard.liftPassExplainer}
+        </p>
       </PageHero>
       <Pricing />
     </>
