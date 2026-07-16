@@ -98,6 +98,14 @@ export type SiteContent = {
       }
   )[];
   liftPassPricing: { program: "2h" | "3h" | "4h"; durationLabel: string; price: string }[];
+  faq: { question: string; answer: string }[];
+  faqCta: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    bookButton: string;
+    kakaoButton: string;
+  };
   seasonProgram: {
     title: string;
     subtitle: string;
@@ -202,6 +210,7 @@ export type SiteContent = {
     instructor: { title: string; description: string };
     gallery: { title: string; description: string };
     reviews: { title: string; description: string };
+    faq: { title: string; description: string };
   };
   ui: {
     whyJinoSki: { eyebrow: string; title: string[]; description: string };
@@ -234,6 +243,7 @@ export type SiteContent = {
       prevAriaLabel: string;
       nextAriaLabel: string;
     };
+    faq: { eyebrow: string; title: string[]; description: string };
     reservation: {
       eyebrow: string;
       title: string;
