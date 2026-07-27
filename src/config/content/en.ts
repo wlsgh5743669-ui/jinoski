@@ -853,6 +853,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "The lift pass is a special permit issued by the resort so instructors and students can use the designated teaching zones and lifts at Vivaldi Park. It's a separate cost from a regular lift ticket.",
   liftPassIncludedNote:
     "This program already includes the lift pass fee, so there's nothing extra to pay for it.",
+  liftPassPayTogetherNote:
+    "The lift pass fee is paid together with the lesson fee in one payment. There's nothing to pay on-site, so your lesson can start right away without waiting.",
   form: {
     namePlaceholder: "Name",
     phonePlaceholder: "Phone number",

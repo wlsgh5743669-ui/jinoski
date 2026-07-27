@@ -828,6 +828,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "패찰이란 비발디파크에서 강습을 진행할 때 지정된 강습 구역·리프트를 이용하기 위해 리조트에서 발급하는 강습 전용 허가증이에요. 일반 리프트권과는 별도의 비용입니다.",
   liftPassIncludedNote:
     "이 프로그램은 패찰(강습 허가권) 비용이 이미 포함되어 있어 별도로 결제하실 필요가 없습니다.",
+  liftPassPayTogetherNote:
+    "패찰 비용은 레슨료와 함께 한 번에 결제됩니다. 현장에서 별도로 결제하실 필요가 없어 대기 없이 바로 강습을 시작하실 수 있어요.",
   form: {
     namePlaceholder: "이름",
     phonePlaceholder: "연락처 (010-0000-0000)",

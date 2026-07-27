@@ -797,6 +797,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   liftPassExplainer:
     "雪票是指在大明滑雪场进行课程教学时，为了使用指定教学区域及缆车而由度假村发放的教学专用许可证。此费用与普通缆车票分开计算。",
   liftPassIncludedNote: "该项目已包含雪票（教学许可证）费用，无需另行支付。",
+  liftPassPayTogetherNote:
+    "雪票费用将与课程费用一起一次性支付。现场无需另行付款，可免去等待，直接开始课程。",
   form: {
     namePlaceholder: "姓名",
     phonePlaceholder: "联系电话",

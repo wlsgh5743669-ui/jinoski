@@ -173,6 +173,7 @@ export type SiteContent = {
     fixedTimeDisabledNote: string;
     liftPassExplainer: string;
     liftPassIncludedNote: string;
+    liftPassPayTogetherNote: string;
     form: {
       namePlaceholder: string;
       phonePlaceholder: string;

@@ -12,7 +12,6 @@ import {
   PROGRAM_VALUES,
   EQUIPMENT_VALUES,
   LEVEL_VALUES,
-  LIFT_PASS_PAYMENT_VALUES,
   AGE_GROUP_VALUES,
   getTimeSlotValues,
   getTimeSlotLabel,
@@ -137,7 +136,7 @@ export function BookingWizard() {
       program,
       groupSize: "",
       timeSlot: isFull ? timeValues[0] : "",
-      liftPassPayment: isFull ? "included" : "",
+      liftPassPayment: isFull ? "included" : "pay-together",
     }));
   }
 
@@ -168,7 +167,7 @@ export function BookingWizard() {
         const timeValues = getTimeSlotValues(program, content);
         next.program = program;
         next.timeSlot = isFull ? timeValues[0] : "";
-        next.liftPassPayment = isFull ? "included" : "";
+        next.liftPassPayment = isFull ? "included" : "pay-together";
         if (isFull) setShowFullCareChoice(true);
       }
 
@@ -473,20 +472,11 @@ export function BookingWizard() {
                       </p>
                     );
                   })()}
-                  {isFullCare ? (
-                    <p className="rounded-2xl border border-snow-300/60 bg-white p-6 text-[14.5px] leading-relaxed text-snow-700">
-                      {content.bookingWizard.liftPassIncludedNote}
-                    </p>
-                  ) : (
-                    <OptionList
-                      options={LIFT_PASS_PAYMENT_VALUES.map((value) => ({
-                        value,
-                        label: getLiftPassPaymentLabel(value, content),
-                      }))}
-                      selected={state.liftPassPayment}
-                      onSelect={(v) => update("liftPassPayment", v)}
-                    />
-                  )}
+                  <p className="rounded-2xl border border-snow-300/60 bg-white p-6 text-[14.5px] leading-relaxed text-snow-700">
+                    {isFullCare
+                      ? content.bookingWizard.liftPassIncludedNote
+                      : content.bookingWizard.liftPassPayTogetherNote}
+                  </p>
                 </div>
               )}
 
