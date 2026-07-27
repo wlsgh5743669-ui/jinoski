@@ -20,18 +20,8 @@ export function Instructor() {
                 alt={instructor.name}
                 fill
                 sizes="(max-width: 639px) 100vw, 448px"
-                className="object-cover sm:hidden"
+                className="object-cover"
                 priority
-              />
-              <video
-                className="hidden h-full w-full object-cover sm:block"
-                src={instructor.video}
-                poster={instructor.photo}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="auto"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-900/50 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 rounded-2xl bg-white/10 p-4 backdrop-blur-md">
