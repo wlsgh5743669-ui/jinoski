@@ -56,6 +56,7 @@ export function Hero() {
           key={isMobile ? "mobile" : "desktop"}
           className="h-full w-full object-cover"
           src={isMobile ? heroContent.videoSrcMobile : heroContent.videoSrc}
+          poster={heroContent.posterSrc}
           autoPlay
           muted
           loop
