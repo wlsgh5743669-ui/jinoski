@@ -5,9 +5,10 @@ import { motion } from "framer-motion";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { RevealGroup, revealItem } from "@/components/shared/reveal";
+import { ReserveCta } from "@/components/shared/reserve-cta";
 
 export function Gallery() {
-  const { galleryItems } = useContent();
+  const { galleryItems, galleryCta } = useContent();
   return (
     <section className="bg-ice-gradient pb-24 pt-16 sm:pb-32 sm:pt-20">
       <Container>
@@ -36,6 +37,14 @@ export function Gallery() {
             </motion.div>
           ))}
         </RevealGroup>
+
+        <ReserveCta
+          eyebrow={galleryCta.eyebrow}
+          title={galleryCta.title}
+          description={galleryCta.description}
+          bookButton={galleryCta.bookButton}
+          kakaoButton={galleryCta.kakaoButton}
+        />
       </Container>
     </section>
   );

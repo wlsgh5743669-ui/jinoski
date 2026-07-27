@@ -488,6 +488,30 @@ const faqCta: SiteContent["faqCta"] = {
   kakaoButton: "카카오톡으로 문의하기",
 };
 
+const pricingCta: SiteContent["pricingCta"] = {
+  eyebrow: "예약 문의",
+  title: "마음에 드는 시간표를 찾으셨나요?",
+  description: "지금 바로 예약하고 원하는 날짜에 슬로프에서 만나요.",
+  bookButton: "지금 예약하기",
+  kakaoButton: "카카오톡 문의",
+};
+
+const reviewsCta: SiteContent["reviewsCta"] = {
+  eyebrow: "예약 문의",
+  title: "다음 후기의 주인공이 되어보세요",
+  description: "학생들이 남긴 후기처럼, 만족스러운 겨울을 JinoSki와 함께 시작해 보세요.",
+  bookButton: "지금 예약하기",
+  kakaoButton: "카카오톡 문의",
+};
+
+const galleryCta: SiteContent["galleryCta"] = {
+  eyebrow: "예약 문의",
+  title: "이런 순간, 당신도 남길 수 있어요",
+  description: "사진과 영상으로 기록되는 프리미엄 레슨을 지금 예약해 보세요.",
+  bookButton: "지금 예약하기",
+  kakaoButton: "카카오톡 문의",
+};
+
 const seasonProgram: SiteContent["seasonProgram"] = {
   title: "26/27시즌강습",
   subtitle: "장기적으로 꾸준히 배우고 싶은 분들을 위한 횟수권",
@@ -994,6 +1018,9 @@ export const ko: SiteContent = {
   liftPassPricing,
   faq,
   faqCta,
+  pricingCta,
+  reviewsCta,
+  galleryCta,
   seasonProgram,
   instructor,
   galleryItems,

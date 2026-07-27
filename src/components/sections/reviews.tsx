@@ -5,9 +5,10 @@ import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { Reveal } from "@/components/shared/reveal";
+import { ReserveCta } from "@/components/shared/reserve-cta";
 
 export function Reviews() {
-  const { reviews, ui } = useContent();
+  const { reviews, ui, reviewsCta } = useContent();
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (dir: 1 | -1) => {
@@ -67,6 +68,14 @@ export function Reviews() {
             ))}
           </div>
         </Reveal>
+
+        <ReserveCta
+          eyebrow={reviewsCta.eyebrow}
+          title={reviewsCta.title}
+          description={reviewsCta.description}
+          bookButton={reviewsCta.bookButton}
+          kakaoButton={reviewsCta.kakaoButton}
+        />
       </Container>
     </section>
   );

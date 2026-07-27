@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocale } from "next-intl";
 import { ArrowLeft, ArrowRight, Check, Copy, MessageCircle } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -101,12 +102,14 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
 
 export function BookingWizard() {
   const content = useContent();
+  const locale = useLocale();
   const stepTitles = content.bookingWizard.stepTitles;
   const totalSteps = stepTitles.length;
 
   const [step, setStep] = useState(1);
   const [state, setState] = useState<WizardState>(INITIAL_STATE);
   const [showSummary, setShowSummary] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const isFullCare = state.program === "one-day" || state.program === "night";
 
@@ -137,6 +140,58 @@ export function BookingWizard() {
       liftPassPayment: isFull ? "included" : "",
     }));
   }
+
+  // Pre-fill from a program card's link (e.g. /reserve?program=one-day&level=beginner)
+  // so a customer who already picked a program on /lessons doesn't have to repeat
+  // that choice in step 2/5/6.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const programParam = params.get("program");
+    const levelParam = params.get("level");
+    const ageGroupParam = params.get("ageGroup");
+
+    // Deliberately deferred to after mount: the static export has no access to
+    // the URL at build time, so applying this during render would make the
+    // client's first paint diverge from the pre-rendered HTML (hydration
+    // mismatch). Reading it here keeps the initial paint stable and updates
+    // right after, same as the localStorage read in season-popup.tsx.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setState((prev) => {
+      const next = { ...prev };
+
+      if (
+        programParam &&
+        (PROGRAM_VALUES as readonly string[]).includes(programParam)
+      ) {
+        const program = programParam as ProgramValue;
+        const isFull = program === "one-day" || program === "night";
+        const timeValues = getTimeSlotValues(program, content);
+        next.program = program;
+        next.timeSlot = isFull ? timeValues[0] : "";
+        next.liftPassPayment = isFull ? "included" : "";
+        if (isFull) setShowFullCareChoice(true);
+      }
+
+      if (
+        levelParam &&
+        (LEVEL_VALUES as readonly string[]).includes(levelParam)
+      ) {
+        next.level = levelParam as LevelValue;
+      }
+
+      if (
+        ageGroupParam &&
+        (AGE_GROUP_VALUES as readonly string[]).includes(ageGroupParam)
+      ) {
+        next.ageGroup = ageGroupParam as AgeGroupValue;
+      }
+
+      return next;
+    });
+    // Runs once on mount only — this reflects the link the customer clicked to
+    // get here, not something that should re-apply as they fill out the form.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function canProceed(): boolean {
     switch (step) {
@@ -174,8 +229,43 @@ export function BookingWizard() {
     setStep((s) => Math.max(s - 1, 1));
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!canProceed()) return;
+
+    if (price && state.program && state.groupSize && state.equipment && state.level && state.ageGroup) {
+      setSubmitting(true);
+      try {
+        await fetch("/api/bookings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            date: state.date,
+            program: state.program,
+            timeSlot: state.timeSlot,
+            groupSize: state.groupSize,
+            equipment: state.equipment,
+            level: state.level,
+            ageGroup: state.ageGroup,
+            liftPassPayment: state.liftPassPayment || "included",
+            requestNote: state.requestNote,
+            locale,
+            name: state.name,
+            phone: state.phone,
+            basePrice: price.basePrice,
+            liftPassFee: price.liftPassFee,
+            totalPrice: price.totalPrice,
+            priceOnRequest: price.priceOnRequest,
+            message: buildSummaryMessage(state, content),
+          }),
+        });
+      } catch {
+        // Booking save failed (e.g. no backend on the current static deploy) —
+        // the customer can still copy the summary and reach out via KakaoTalk.
+      } finally {
+        setSubmitting(false);
+      }
+    }
+
     setShowSummary(true);
   }
 
@@ -517,7 +607,7 @@ export function BookingWizard() {
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={!canProceed()}
+            disabled={!canProceed() || submitting}
             className="flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-brand-500 text-[15px] font-semibold text-white transition-all hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {content.bookingWizard.buttons.submit}

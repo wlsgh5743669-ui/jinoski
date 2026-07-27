@@ -476,6 +476,30 @@ const faqCta: SiteContent["faqCta"] = {
   kakaoButton: "通过KakaoTalk咨询",
 };
 
+const pricingCta: SiteContent["pricingCta"] = {
+  eyebrow: "预约咨询",
+  title: "找到心仪的时间表了吗？",
+  description: "现在就预约，在您想要的日期与我们在雪场相见。",
+  bookButton: "立即预约",
+  kakaoButton: "通过KakaoTalk咨询",
+};
+
+const reviewsCta: SiteContent["reviewsCta"] = {
+  eyebrow: "预约咨询",
+  title: "成为下一篇后记的主人公",
+  description: "像上面的学员一样，与JinoSki一起开启满意的冬天。",
+  bookButton: "立即预约",
+  kakaoButton: "通过KakaoTalk咨询",
+};
+
+const galleryCta: SiteContent["galleryCta"] = {
+  eyebrow: "预约咨询",
+  title: "这样的瞬间，您也可以拥有",
+  description: "立即预约以照片和视频记录的高端课程。",
+  bookButton: "立即预约",
+  kakaoButton: "通过KakaoTalk咨询",
+};
+
 const seasonProgram: SiteContent["seasonProgram"] = {
   title: "26/27 季节课程",
   subtitle: "适合希望长期持续学习的学员",
@@ -960,6 +984,9 @@ export const zh: SiteContent = {
   liftPassPricing,
   faq,
   faqCta,
+  pricingCta,
+  reviewsCta,
+  galleryCta,
   seasonProgram,
   instructor,
   galleryItems,

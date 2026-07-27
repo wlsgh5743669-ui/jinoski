@@ -8,6 +8,15 @@ import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { RevealGroup, revealItem } from "@/components/shared/reveal";
 
+const RESERVE_QUERY: Record<string, string> = {
+  "beginner-intro": "?program=2h&level=beginner",
+  basic: "?program=2h&level=basic",
+  intermediate: "?program=2h&level=intermediate",
+  advanced: "?program=2h&level=advanced",
+  "one-day": "?program=one-day",
+  kids: "?program=2h&level=beginner&ageGroup=kids",
+};
+
 export function LessonProgram() {
   const { lessonPrograms } = useContent();
   return (
@@ -25,7 +34,7 @@ export function LessonProgram() {
               className="w-[78%] shrink-0 snap-start sm:w-auto sm:shrink"
             >
               <Link
-                href="/reserve"
+                href={`/reserve${RESERVE_QUERY[program.slug] ?? ""}`}
                 className="group relative flex flex-col overflow-hidden rounded-3xl bg-ink-900"
               >
               <div className="relative aspect-[4/5] w-full overflow-hidden">

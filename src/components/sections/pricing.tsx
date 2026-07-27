@@ -7,6 +7,7 @@ import { useContent } from "@/lib/use-content";
 import type { FullCareGroupSizeCode, SiteContent } from "@/config/content/types";
 import { Container } from "@/components/shared/container";
 import { RevealGroup, revealItem, Reveal } from "@/components/shared/reveal";
+import { ReserveCta } from "@/components/shared/reserve-cta";
 import { cn } from "@/lib/utils";
 
 function InfoCard({
@@ -428,6 +429,15 @@ export function Pricing() {
             ※ {ui.pricing.footerNote}
           </p>
         </Reveal>
+
+        <ReserveCta
+          eyebrow={content.pricingCta.eyebrow}
+          title={content.pricingCta.title}
+          description={content.pricingCta.description}
+          bookButton={content.pricingCta.bookButton}
+          kakaoButton={content.pricingCta.kakaoButton}
+          href={`/reserve?program=${activeDuration === "fullcare" ? "one-day" : activeDuration}`}
+        />
       </Container>
     </section>
   );

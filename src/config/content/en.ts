@@ -511,6 +511,31 @@ const faqCta: SiteContent["faqCta"] = {
   kakaoButton: "Ask via KakaoTalk",
 };
 
+const pricingCta: SiteContent["pricingCta"] = {
+  eyebrow: "Booking Inquiry",
+  title: "Found a schedule you like?",
+  description: "Book now and meet us on the slopes on your preferred date.",
+  bookButton: "Book Now",
+  kakaoButton: "Ask via KakaoTalk",
+};
+
+const reviewsCta: SiteContent["reviewsCta"] = {
+  eyebrow: "Booking Inquiry",
+  title: "Be the star of the next review",
+  description:
+    "Start your own great winter with JinoSki, just like the students above.",
+  bookButton: "Book Now",
+  kakaoButton: "Ask via KakaoTalk",
+};
+
+const galleryCta: SiteContent["galleryCta"] = {
+  eyebrow: "Booking Inquiry",
+  title: "Moments like these could be yours",
+  description: "Book a premium lesson, captured in photo and video.",
+  bookButton: "Book Now",
+  kakaoButton: "Ask via KakaoTalk",
+};
+
 const seasonProgram: SiteContent["seasonProgram"] = {
   title: "26/27 Season Pass",
   subtitle: "For students who want to keep learning consistently over time",
@@ -1025,6 +1050,9 @@ export const en: SiteContent = {
   liftPassPricing,
   faq,
   faqCta,
+  pricingCta,
+  reviewsCta,
+  galleryCta,
   seasonProgram,
   instructor,
   galleryItems,

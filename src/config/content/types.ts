@@ -106,6 +106,27 @@ export type SiteContent = {
     bookButton: string;
     kakaoButton: string;
   };
+  pricingCta: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    bookButton: string;
+    kakaoButton: string;
+  };
+  reviewsCta: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    bookButton: string;
+    kakaoButton: string;
+  };
+  galleryCta: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    bookButton: string;
+    kakaoButton: string;
+  };
   seasonProgram: {
     title: string;
     subtitle: string;
