@@ -4,6 +4,28 @@ import "./globals.css";
 
 const fallback = getContent(defaultLocale);
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "SportsActivityLocation",
+  name: fallback.siteConfig.name,
+  description: fallback.siteConfig.description,
+  url: fallback.siteConfig.url,
+  image: `${fallback.siteConfig.url}${fallback.siteConfig.ogImage}`,
+  telephone: fallback.contact.phone,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "한치골길 262 비발디파크",
+    addressLocality: "홍천군 서면",
+    addressRegion: "강원도",
+    addressCountry: "KR",
+  },
+  areaServed: "비발디파크",
+  founder: {
+    "@type": "Person",
+    name: fallback.contact.representativeName,
+  },
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(fallback.siteConfig.url),
   title: {
@@ -60,7 +82,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang={defaultLocale}>
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

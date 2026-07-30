@@ -2,16 +2,20 @@ import type { SiteContent } from "./types";
 
 const siteConfig = {
   name: "JinoSki",
-  title: "JinoSki | 비발디파크 프리미엄 스키·스노보드 스쿨",
+  title: "비발디파크 스키강습 | JinoSki 프리미엄 1:1 레슨",
   description:
-    "비발디파크 스키강습 전문 JinoSki, 프리미엄 1:1 스키·스노보드 레슨으로 완벽한 겨울을 만듭니다.",
+    "비발디파크 스키강습 전문 JinoSki. 비발디파크스키강습, 비발디스키강습, 어린이 스키강습, 유아 스키강습까지 프리미엄 1:1 스키·스노보드 레슨으로 완벽한 겨울을 만듭니다.",
   url: "https://jinoski.com",
   ogImage: "/images/og-image.jpg",
   locale: "ko_KR",
   keywords: [
     "비발디파크 스키강습",
+    "비발디파크스키강습",
+    "비발디스키강습",
     "비발디파크 스키 레슨",
     "비발디파크 스노보드 강습",
+    "어린이 스키강습",
+    "유아 스키강습",
     "프리미엄 스키레슨",
     "1:1 스키 강습",
     "박진호 스키강사",
