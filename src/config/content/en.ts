@@ -655,12 +655,13 @@ const galleryItems = [
   { type: "image", src: "/images/gallery-8.jpg", alt: "Snowboard riding", tall: true },
 ];
 
-// 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기 기준)
+// 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기: 24/25·25/26 시즌)
 const reviews: SiteContent["reviews"] = [
   {
     name: "srlo****",
     rating: 5,
     lesson: "One Day Full Care (7h)",
+    category: "full",
     date: "2026.02.01",
     photo: "/images/reviews/review-fullcare-srlo.jpg",
     content:
@@ -670,6 +671,7 @@ const reviews: SiteContent["reviews"] = [
     name: "o_oa****",
     rating: 5,
     lesson: "One Day Full Care (7h)",
+    category: "full",
     date: "2026.01.17",
     photo: "/images/reviews/review-fullcare-o_oa.jpg",
     content:
@@ -679,6 +681,7 @@ const reviews: SiteContent["reviews"] = [
     name: "n430***",
     rating: 5,
     lesson: "One Day Full Care (7h)",
+    category: "full",
     date: "2025.12.09",
     photo: "/images/reviews/review-fullcare-n430.jpg",
     content:
@@ -688,6 +691,7 @@ const reviews: SiteContent["reviews"] = [
     name: "man1****",
     rating: 5,
     lesson: "One Day Full Care (7h)",
+    category: "full",
     date: "2025.11.30",
     photo: "/images/reviews/review-fullcare-man1.jpg",
     content:
@@ -696,7 +700,8 @@ const reviews: SiteContent["reviews"] = [
   {
     name: "pm****",
     rating: 5,
-    lesson: "Basic lesson (2–3h)",
+    lesson: "Basic lesson",
+    category: "basic",
     date: "2026.02.10",
     photo: undefined,
     content:
@@ -705,7 +710,8 @@ const reviews: SiteContent["reviews"] = [
   {
     name: "ming***",
     rating: 5,
-    lesson: "Basic lesson (2–3h)",
+    lesson: "Basic lesson",
+    category: "basic",
     date: "2025.12.14",
     photo: "/images/reviews/review-basic-ming.jpg",
     content:
@@ -714,7 +720,8 @@ const reviews: SiteContent["reviews"] = [
   {
     name: "lava***",
     rating: 5,
-    lesson: "Basic lesson (2–3h)",
+    lesson: "Basic lesson",
+    category: "basic",
     date: "2025.12.04",
     photo: "/images/reviews/review-basic-lava.jpg",
     content:
@@ -723,7 +730,8 @@ const reviews: SiteContent["reviews"] = [
   {
     name: "dkra****",
     rating: 5,
-    lesson: "Basic lesson (2–3h)",
+    lesson: "Basic lesson",
+    category: "basic",
     date: "2025.11.29",
     photo: "/images/reviews/review-basic-dkra.jpg",
     content:
@@ -733,10 +741,191 @@ const reviews: SiteContent["reviews"] = [
     name: "man1****",
     rating: 5,
     lesson: "Season lessons",
+    category: "season",
     date: "2025.11.16",
     photo: undefined,
     content:
       "Taking the season lessons at Jino Ski & Board School last season\nis still the first thing that comes to mind whenever winter arrives.\n\nI couldn't even brake properly at first,\nbut thanks to precise feedback and repeated practice over the season,\nI now comfortably enjoy intermediate slopes.\n\nWhat I liked most\nwas how he explained where I was getting stuck and which habits were the problem\nin a way tailored to my body.\nThat gave me solid fundamentals that hold up even when I ride alone.\n\nWhat I learned last season went beyond skills —\nit's what made me fall in love with winter.\nI'm going back again this year.\nHighly recommended for anyone who wants to truly improve.",
+  },
+  {
+    name: "grac********",
+    rating: 5,
+    lesson: "Kids 1:1 lesson",
+    category: "kids",
+    date: "2025.03.01",
+    photo: "/images/reviews/r-grac-20250301.jpg",
+    content:
+      "My 5-year-old came down all by herself!\nShe says it was so much fun.",
+  },
+  {
+    name: "east*****",
+    rating: 5,
+    lesson: "Junior lesson",
+    category: "kids",
+    date: "2025.03.01",
+    photo: "/images/reviews/r-east-20250301.jpg",
+    content:
+      "Great that the lift pass and related costs are all included.\nThey had all the rentals ready in advance, got the kids prepped quickly and started the lesson — they used every minute so the kids could ride one more time.",
+  },
+  {
+    name: "east*****",
+    rating: 5,
+    lesson: "Kids 1:1 lesson",
+    category: "kids",
+    date: "2025.02.27",
+    photo: "/images/reviews/r-east-20250227a.jpg",
+    content:
+      "My 5-year-old was taught kindly with such a sweet tone — turning on the very first day!",
+  },
+  {
+    name: "east*****",
+    rating: 5,
+    lesson: "Junior lesson",
+    category: "kids",
+    date: "2025.02.27",
+    photo: "/images/reviews/r-east-20250227b.jpg",
+    content:
+      "Junior level-based lesson.\nTechnique is taught well, and they helped with lift and rental discounts.",
+  },
+  {
+    name: "me****",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2025.02.24",
+    photo: "/images/reviews/r-me-20250224.jpg",
+    content:
+      "We did a 2:1 class. It was our first time having a lesson through a radio headset, and the kids said they could concentrate much better.",
+  },
+  {
+    name: "milk****",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2025.01.17",
+    photo: "/images/reviews/r-milk-20250117.jpg",
+    content:
+      "We made such great memories at Vivaldi Park in Hongcheon.\nFirst of all, very kind in every way — by phone or text, with quick replies. They waited at the meeting spot and had our rental gear ready in advance, so we could prepare without rushing.\nWe also rented clothes; they showed us photos beforehand, so we got them on the day without visiting a rental shop.\nAn instructor who had worked as a Vivaldi ski patrol for years joined too, which was reassuring.\nThey did warm-ups before starting, brought warm snacks midway, and took great photos and videos — amazing shots as a bonus! (They even print photos for everyone.)\nThey clearly explained our questions and progress, which built trust ^^\nSee you next time — wishing you success!",
+  },
+  {
+    name: "smap***",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2025.01.10",
+    photo: undefined,
+    content:
+      "Teaches kindly and well.\nThe child wears a radio headset so they can communicate during the lesson.\nMy child has had many lessons, but says Jino was the best teacher.\nWe plan to take lessons with Jino every season.",
+  },
+  {
+    name: "smap***",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2025.01.09",
+    photo: undefined,
+    content:
+      "My son is in 4th grade, and he says this was the best teacher he's had in 3 years of lessons.\nKind and fun.\nGreat photos, and they even printed them.",
+  },
+  {
+    name: "wone***",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2024.12.29",
+    photo: "/images/reviews/r-wone-20241229.jpg",
+    content:
+      "⭐️Take your snowboard or ski lessons here⭐️\n\nThe instructor teaches so kindly and well.\nHe starts with basic posture and how to fall safely, and riding the way he taught, I fell less and was less scared!\n\nHe always watched from behind on the way down and gave instant feedback on what went wrong when I fell.\n\nMy goal this year was an S-turn, and I made it thanks to Jino!\nI'll practice hard — see you again~",
+  },
+  {
+    name: "jung****",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2024.12.21",
+    photo: undefined,
+    content:
+      "First of all, very satisfied ^^\nIt was their first time, and I worried whether my elementary-school girls could learn well, but they said the 3 hours were so much fun.\nHe took videos and pretty photos and even carefully printed them.\nMaybe because he taught so well, the kids rode quite well for their first time.\nA place I'd like to use again.\nI rarely write reviews, but I'm leaving a strong recommendation.",
+  },
+  {
+    name: "dlgu*******",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2024.12.21",
+    photo: "/images/reviews/r-dlgu-20241221.jpg",
+    content:
+      "I took my first-ever ski lesson on a weekday night — an amazing experience! Thanks to a professional instructor and a structured curriculum, even a beginner like me improved quickly.\n\n[What's great]\n- Expert instructors: experienced, kind and safe\n- Tailored teaching: 1:1 private lesson matched to my level\n- Good equipment: comfortable and safe to learn with\n\n[Results]\nJust a 2-hour lesson gave me solid basics. Detailed feedback fixed my posture fast, and by the end I came down the beginner slope with confidence.\n\n[Recommended for]\n- First-time skiers\n- Anyone wanting to improve\n- Those who want safe, structured lessons\n- Those who want to learn efficiently in a short time\n\nI fell in love with skiing through this lesson. Highly recommended! Next time I'm 100% taking a higher-level lesson.\n\nSelf-taught vs. lessons is a huge difference — it costs a bit more, but you really learn properly!",
+  },
+  {
+    name: "55****",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2024.12.12",
+    photo: "/images/reviews/r-55-20241212.jpg",
+    content:
+      "He explained things from a layperson's point of view, which was great!\n\nAs a ski beginner there were many hard terms, but he explained them plainly and helped me apply them, which really helped when riding.\nWe had lessons for 2 days and I was so satisfied I wanted many more!",
+  },
+  {
+    name: "am****",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2024.12.11",
+    photo: "/images/reviews/r-am-20241211.jpg",
+    content:
+      "My friend was new to skiing, so we asked about lessons — he was so kind that we booked right away and headed to Vivaldi Park excited.\n\nWe took the shuttle from Sadang, arrived around 8:30 for a 1:2 lesson at 09:00–11:00. Since we were clumsy with ski boots, time could have been tight, but instructor Jinho came to the rental house in advance and patiently taught us how to put them on.\n\nWe worried about crowds and not hearing the instructions, but he brought radio headsets — crystal clear, and the real-time feedback was impressive. He also said we're insured if injured during the lesson, which was reassuring.\n\nHe covered warm-ups, gear, falling and getting up, moving on flat ground and more — meticulous, with theory too, so everything stuck. Thanks to his detailed tips on skills and posture, we could ski down the Jazz course on our very first day! I regretted not learning sooner and had so much fun.\n\nAnd the photos and videos — wow! High quality, perfect angles and light. That made the trip even more exciting. Look at the photos — who skis like that on day one? All thanks to Jinho.\n\n2 hours felt too short, so next time we'll book a longer lesson! Sincerely, thank you!\n\nHe also does scuba diving in summer, so maybe see you then too :)\n\n[Paid with our own money — honest review]",
+  },
+  {
+    name: "csw7***",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2024.12.11",
+    photo: "/images/reviews/r-csw7-20241211.jpg",
+    content:
+      "It was my first time snowboarding. Right after booking, the instructor contacted me and sorted out what to bring and rentals, so it was easy!! I heard you fall constantly on your first ride and was scared, but he kept watching over me and by the end I came down an intermediate slope.\nHe sent the photos at the end — today was so great!!!",
+  },
+  {
+    name: "pwk9*****",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2024.12.11",
+    photo: "/images/reviews/r-pwk9-20241211.jpg",
+    content:
+      "Following last year, my son and I went right when Vivaldi Park opened this season.\n\nJino taught so kindly that we came back again.\nI'll recommend him to friends' kids too.\n\nThe photos make great memories.\nIf you're hesitating like I was,\ngive it a try👌👌☃️🎄",
+  },
+  {
+    name: "man1****",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2024.12.11",
+    photo: "/images/reviews/r-man1-20241211.jpg",
+    content:
+      "We went as a group, and three friends were first-timers so they took a lesson. The instructor was so kind. They say you ride on your bottom on your first snowboarding day, but my friends' bottoms were fine — he explains the know-how in an easy way.\nHe rides with a camera, takes photos and helps you make memories.\n\nGreat photos too! Recommended for first-timers~!!\nOur instructor was Park Jinho~~",
+  },
+  {
+    name: "gaoh*****",
+    rating: 5,
+    lesson: "Basic lesson",
+    category: "basic",
+    date: "2024.12.09",
+    photo: "/images/reviews/r-gaoh-20241209.jpg",
+    content:
+      "I had a lesson at Jino Ski School!!\n\nWhat I liked most:\n\n1. The guidance after booking is very kind — what to prepare and what to watch out for, all written in detail.\n2. We drove and it was busier than expected, but the pre-booking manual had parking tips, so parking was easy.\n3. The instructor was very patient (kept catching me and helping me up when I fell — so sorry!), and taught everything from A to Z.\n\nHad so much fun!!!",
+  },
+  {
+    name: "dnjs*******",
+    rating: 5,
+    lesson: "Kids 1:1 lesson",
+    category: "kids",
+    date: "2024.12.09",
+    photo: "/images/reviews/r-dnjs-20241209.jpg",
+    content:
+      "My nephew wanted to go skiing this winter, so we booked — instructor Park Jinho teaches so kindly☃️☃️🤍\n\nMy nephew had fun and wants to go again.\nWe'll book a good time and go once more.\nMade fun memories in a short time👌👌",
   },
 ];
 
@@ -1012,6 +1201,10 @@ const ui: SiteContent["ui"] = {
     sourceBadge: "Verified Naver Smart Store purchase review",
     readMore: "Read more",
     readLess: "Show less",
+    tapHint: "Tap the photo to read the review",
+    loadMore: "Show more reviews",
+    summary: (count: number) => `${count} verified Naver Smart Store reviews · avg ★5.0`,
+    filters: { all: "All", full: "One Day Full Care", basic: "Basic", kids: "Kids & Junior", season: "Season" },
   },
   faq: {
     eyebrow: "FAQ",

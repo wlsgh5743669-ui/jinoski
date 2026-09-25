@@ -615,12 +615,13 @@ const galleryItems = [
   { type: "image", src: "/images/gallery-8.jpg", alt: "单板滑雪", tall: true },
 ];
 
-// 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기 기준)
+// 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기: 24/25·25/26 시즌)
 const reviews: SiteContent["reviews"] = [
   {
     name: "srlo****",
     rating: 5,
     lesson: "One Day Full Care（7小时）",
+    category: "full",
     date: "2026.02.01",
     photo: "/images/reviews/review-fullcare-srlo.jpg",
     content:
@@ -630,6 +631,7 @@ const reviews: SiteContent["reviews"] = [
     name: "o_oa****",
     rating: 5,
     lesson: "One Day Full Care（7小时）",
+    category: "full",
     date: "2026.01.17",
     photo: "/images/reviews/review-fullcare-o_oa.jpg",
     content:
@@ -639,6 +641,7 @@ const reviews: SiteContent["reviews"] = [
     name: "n430***",
     rating: 5,
     lesson: "One Day Full Care（7小时）",
+    category: "full",
     date: "2025.12.09",
     photo: "/images/reviews/review-fullcare-n430.jpg",
     content:
@@ -648,6 +651,7 @@ const reviews: SiteContent["reviews"] = [
     name: "man1****",
     rating: 5,
     lesson: "One Day Full Care（7小时）",
+    category: "full",
     date: "2025.11.30",
     photo: "/images/reviews/review-fullcare-man1.jpg",
     content:
@@ -656,7 +660,8 @@ const reviews: SiteContent["reviews"] = [
   {
     name: "pm****",
     rating: 5,
-    lesson: "基础课程（2·3小时）",
+    lesson: "基础课程",
+    category: "basic",
     date: "2026.02.10",
     photo: undefined,
     content:
@@ -665,7 +670,8 @@ const reviews: SiteContent["reviews"] = [
   {
     name: "ming***",
     rating: 5,
-    lesson: "基础课程（2·3小时）",
+    lesson: "基础课程",
+    category: "basic",
     date: "2025.12.14",
     photo: "/images/reviews/review-basic-ming.jpg",
     content:
@@ -674,7 +680,8 @@ const reviews: SiteContent["reviews"] = [
   {
     name: "lava***",
     rating: 5,
-    lesson: "基础课程（2·3小时）",
+    lesson: "基础课程",
+    category: "basic",
     date: "2025.12.04",
     photo: "/images/reviews/review-basic-lava.jpg",
     content:
@@ -683,7 +690,8 @@ const reviews: SiteContent["reviews"] = [
   {
     name: "dkra****",
     rating: 5,
-    lesson: "基础课程（2·3小时）",
+    lesson: "基础课程",
+    category: "basic",
     date: "2025.11.29",
     photo: "/images/reviews/review-basic-dkra.jpg",
     content:
@@ -693,10 +701,191 @@ const reviews: SiteContent["reviews"] = [
     name: "man1****",
     rating: 5,
     lesson: "雪季课程",
+    category: "season",
     date: "2025.11.16",
     photo: undefined,
     content:
       "去年雪季在Jino Ski & Board School上季卡课程的经历，\n至今每到冬天都会最先想起。\n\n一开始连刹车都刹不好的我，\n在一个雪季里靠着精准的反馈和反复练习，\n现在可以轻松享受中级雪道了。\n\n最好的是，\n他会用“适合我身体的方式”\n讲解我卡在哪里、哪个习惯有问题。\n因此打下了即使一个人滑也不会走样的扎实基本功。\n\n去年学到的不只是技术，\n更让我爱上了冬天。\n今年也打算再去。\n强烈推荐给真心想进步的人。",
+  },
+  {
+    name: "grac********",
+    rating: 5,
+    lesson: "幼儿1:1课程",
+    category: "kids",
+    date: "2025.03.01",
+    photo: "/images/reviews/r-grac-20250301.jpg",
+    content:
+      "满5岁的孩子竟然能自己滑下来了。\n她说太好玩了。",
+  },
+  {
+    name: "east*****",
+    rating: 5,
+    lesson: "青少年课程",
+    category: "kids",
+    date: "2025.03.01",
+    photo: "/images/reviews/r-east-20250301.jpg",
+    content:
+      "教学许可证和相关附加费用全部包含，很好。\n提前准备好所有租赁装备，快速帮孩子们准备好就开始上课，时间用得满满的，让孩子们能多滑一次。",
+  },
+  {
+    name: "east*****",
+    rating: 5,
+    lesson: "幼儿1:1课程",
+    category: "kids",
+    date: "2025.02.27",
+    photo: "/images/reviews/r-east-20250227a.jpg",
+    content:
+      "对满5岁的孩子用亲切温柔的语气教学，第一天就会转弯了！",
+  },
+  {
+    name: "east*****",
+    rating: 5,
+    lesson: "青少年课程",
+    category: "kids",
+    date: "2025.02.27",
+    photo: "/images/reviews/r-east-20250227b.jpg",
+    content:
+      "青少年分级课程。\n技术方面教得很好，缆车和租赁也帮忙争取了优惠。",
+  },
+  {
+    name: "me****",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2025.02.24",
+    photo: "/images/reviews/r-me-20250224.jpg",
+    content:
+      "我们上的是2:1课程。第一次通过对讲耳机上课，孩子们说能更专注地学习，很好。",
+  },
+  {
+    name: "milk****",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2025.01.17",
+    photo: "/images/reviews/r-milk-20250117.jpg",
+    content:
+      "在洪川维瓦尔第公园留下了非常美好的回忆。\n首先各方面都非常亲切，无论电话还是短信，回复都很快。在集合地点提前等候，还提前租好了装备，准备得很从容。\n也租了衣服，事先发照片给我们看，不用去租赁店，当天直接拿到。\n还有在维瓦尔第当过多年巡逻员的教练一起，更加安心。\n开始前做热身，中途还准备了热乎的零食，照片视频拍得很好，人生照是赠品～（还按人数冲印照片）\n对疑问和进度也讲解得很清楚，信任度提升^^\n下次再见，生意兴隆～",
+  },
+  {
+    name: "smap***",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2025.01.10",
+    photo: undefined,
+    content:
+      "教得很亲切。\n孩子戴着对讲耳机，上课时可以互相沟通。\n孩子上过很多次课，说Jino老师教得最好。\n每个雪季都打算找Jino老师上课。",
+  },
+  {
+    name: "smap***",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2025.01.09",
+    photo: undefined,
+    content:
+      "四年级男孩，说是3年来上过课的老师里教得最好的。\n亲切又有趣。\n照片拍得好，还给冲印了。",
+  },
+  {
+    name: "wone***",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2024.12.29",
+    photo: "/images/reviews/r-wone-20241229.jpg",
+    content:
+      "⭐️单板或双板课程一定要在这里上⭐️\n\n教练真的教得又亲切又好。\n一开始先教基本姿势和怎样摔倒才不会受伤，照着教练说的滑，摔得少也不那么害怕了！\n\n下坡时总是在后面看着，摔倒了马上反馈问题出在哪里，很好。\n\n今年的目标是S弯，多亏Jino教练成功了！\n会努力练习，下次再见～",
+  },
+  {
+    name: "jung****",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2024.12.21",
+    photo: undefined,
+    content:
+      "首先非常满意^^\n第一次学，又是小学女孩子，担心能不能学好，孩子们说3个小时非常开心。\n拍了视频和漂亮的照片，还用心冲印了照片。\n可能因为教得好，孩子们第一次滑也滑得不错。\n下次还想再来。\n我很少写评价，这次强烈推荐。",
+  },
+  {
+    name: "dlgu*******",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2024.12.21",
+    photo: "/images/reviews/r-dlgu-20241221.jpg",
+    content:
+      "平日夜间人生第一次上滑雪课，真是惊人的体验！多亏专业教练和系统的课程，连我这样的初学者也感觉进步很快。\n\n【课程优点】\n- 专业教练：经验丰富又亲切，教学安全\n- 定制教学：1:1私教，按我的水平细致指导\n- 优质装备：安全舒适地学习\n\n【课程效果】\n仅2小时就扎实掌握了基础。细致的反馈让姿势很快得到纠正，课程后半段就能自信地滑下初级雪道。\n\n【推荐人群】\n- 第一次学滑雪的初学者\n- 想提升水平的人\n- 想要安全系统课程的人\n- 想在短时间内高效学习的人\n\n通过这次课程深深爱上了滑雪，强烈推荐！下次100%要上更高级的课程。\n\n自学和上课差别真的很大，虽然花费多一点，但学得扎实！",
+  },
+  {
+    name: "55****",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2024.12.12",
+    photo: "/images/reviews/r-55-20241212.jpg",
+    content:
+      "从普通人的角度讲解，很好懂！\n\n作为滑雪入门者，有很多难懂的术语，教练用通俗的话解释并教我在实战中运用，滑的时候帮助很大。\n上了2天课，非常满意，还想多上几次！",
+  },
+  {
+    name: "am****",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2024.12.11",
+    photo: "/images/reviews/r-am-20241211.jpg",
+    content:
+      "朋友第一次去滑雪场，想上课就咨询了，教练非常亲切，我们马上就决定了，满怀期待地去了维瓦尔第公园。\n\n从舍堂坐班车8:30左右到达，9:00-11:00的1:2课程。我们第一次穿滑雪靴很笨拙，时间可能很紧，但Jinho教练提前来到租赁店，耐心教我们怎么穿。\n\n担心人多会撞到、听不清讲解，教练带来了对讲耳机，声音非常清楚，实时反馈令人印象深刻。还说上课受伤有保险，很安心。\n\n从热身、装备说明、摔倒后起身、平地移动等基础开始，讲得很细致，还讲理论，全都记住了。技巧和需要改的姿势都细心指点，第一次滑雪就能滑下爵士（Jazz）雪道，后悔没早点学，一天就爱上了滑雪！\n\n照片和视频拍得太好了，吓了一跳！高清，角度和光线都完美⭐️ 看照片就知道……谁第一次滑能这样？全靠Jinho教练。\n\n2小时太短了，下次要上更长时间的课！真心感谢！\n\n听说夏天还做潜水……夏天也见吧 :)\n\n【自费真实评价】",
+  },
+  {
+    name: "csw7***",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2024.12.11",
+    photo: "/images/reviews/r-csw7-20241211.jpg",
+    content:
+      "第一次滑单板，预约后教练马上联系我，帮忙了解准备物品和租赁，去得很轻松！！听说第一次滑会一直摔，很害怕，教练一直看着我，最后连中级道都滑下来了\n最后还发了照片，今天太开心了！！！",
+  },
+  {
+    name: "pwk9*****",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2024.12.11",
+    photo: "/images/reviews/r-pwk9-20241211.jpg",
+    content:
+      "继去年之后，今年维瓦尔第一开业就和儿子去了。\n\nJino教练教得很亲切，所以又来了一次。\n也要推荐给朋友家的孩子们。\n\n给拍照片，留下回忆也很好。\n和我一样犹豫的人，\n去一次吧👌👌☃️🎄",
+  },
+  {
+    name: "man1****",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2024.12.11",
+    photo: "/images/reviews/r-man1-20241211.jpg",
+    content:
+      "和朋友们一起去的，3个朋友第一次滑就报了课，教练非常亲切。都说单板第一天是用屁股滑的，我朋友们的屁股都没事，看来教练把技巧讲得很好懂。\n教练还带着相机滑，给拍照片，留下了回忆。\n\n照片拍得很好！推荐给第一次上课的人～！！\n我们的教练是朴镇浩（Park Jinho）教练～～",
+  },
+  {
+    name: "gaoh*****",
+    rating: 5,
+    lesson: "基础课程",
+    category: "basic",
+    date: "2024.12.09",
+    photo: "/images/reviews/r-gaoh-20241209.jpg",
+    content:
+      "在Jino滑雪学校上了课！！\n\n最好的几点：\n\n1. 预约后的说明非常亲切，要准备什么、注意什么都写得很详细。\n2. 开车去的，人比想象的多，但预约说明里有停车小贴士，停车很方便。\n3. 教练非常有耐心（摔倒了一直扶我起来，太不好意思了），从A到Z一步步教。\n\n玩得很开心！！！",
+  },
+  {
+    name: "dnjs*******",
+    rating: 5,
+    lesson: "幼儿1:1课程",
+    category: "kids",
+    date: "2024.12.09",
+    photo: "/images/reviews/r-dnjs-20241209.jpg",
+    content:
+      "侄子说今年冬天想去滑雪场，预约后去了，朴镇浩教练教得很亲切☃️☃️🤍\n\n侄子说很好玩还想再去。\n会约好时间再去一次。\n短时间留下了有趣的回忆👌👌",
   },
 ];
 
@@ -967,6 +1156,10 @@ const ui: SiteContent["ui"] = {
     sourceBadge: "Naver Smart Store 真实购买评价",
     readMore: "展开",
     readLess: "收起",
+    tapHint: "点击照片查看评价",
+    loadMore: "查看更多评价",
+    summary: (count: number) => `Naver Smart Store 真实购买评价 ${count}条 · 平均 ★5.0`,
+    filters: { all: "全部", full: "One Day Full Care", basic: "基础", kids: "幼儿·青少年", season: "雪季课程" },
   },
   faq: {
     eyebrow: "FAQ",

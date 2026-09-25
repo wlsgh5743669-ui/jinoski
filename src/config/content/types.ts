@@ -169,6 +169,7 @@ export type SiteContent = {
     name: string;
     rating: number;
     lesson: string;
+    category: "full" | "basic" | "kids" | "season";
     content: string;
     /** YYYY.MM.DD */
     date?: string;
@@ -315,6 +316,10 @@ export type SiteContent = {
       sourceBadge: string;
       readMore: string;
       readLess: string;
+      tapHint: string;
+      loadMore: string;
+      summary: (count: number) => string;
+      filters: { all: string; full: string; basic: string; kids: string; season: string };
     };
     faq: { eyebrow: string; title: string[]; description: string };
     reservation: {
