@@ -32,11 +32,7 @@ export function Reviews() {
   return (
     <section className="bg-white pb-24 pt-12 sm:pb-32 sm:pt-16">
       <Container>
-        <p className="text-center text-[13.5px] font-semibold text-brand-600">
-          {ui.reviews.summary(reviews.length)}
-        </p>
-
-        <div className="mt-5 flex flex-wrap justify-center gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           {filters.map((f) => (
             <button
               key={f}
