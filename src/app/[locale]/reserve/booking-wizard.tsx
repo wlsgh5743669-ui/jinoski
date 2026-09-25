@@ -111,7 +111,8 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
   };
 }
 
-const KAKAO_NOTIFY_URL = process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL;
+const KAKAO_NOTIFY_URL =
+  process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-notify.wlsgh5743669.workers.dev";
 
 /**
  * Pings the owner's own KakaoTalk ("나에게 보내기") through the notify worker
