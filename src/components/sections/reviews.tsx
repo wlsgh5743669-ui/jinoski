@@ -23,10 +23,11 @@ export function Reviews() {
   const filters = (["all", "full", "basic", "kids", "season"] as const).filter(
     (f) => f === "all" || reviews.some((r) => r.category === f)
   );
-  const list = useMemo(
-    () => (filter === "all" ? reviews : reviews.filter((r) => r.category === filter)),
-    [reviews, filter]
-  );
+  const list = useMemo(() => {
+    const filtered = filter === "all" ? reviews : reviews.filter((r) => r.category === filter);
+    // Reviews with photos first, text-only reviews after (order otherwise unchanged).
+    return [...filtered.filter((r) => r.photo), ...filtered.filter((r) => !r.photo)];
+  }, [reviews, filter]);
 
   return (
     <section className="bg-white pb-24 pt-12 sm:pb-32 sm:pt-16">
