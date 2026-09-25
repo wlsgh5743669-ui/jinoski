@@ -403,9 +403,9 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
     },
     {
       icon: "📞",
-      title: "Cancellation & refund policy",
+      title: "Cancellation, refund & rescheduling",
       description:
-        "Refund policy: 100% refund if cancelled 3+ days before the lesson, 50% refund 1–2 days before, and no refund for same-day cancellations or no-shows. If you need to reschedule, please contact us as early as possible.",
+        "Refund policy: 100% refund if cancelled 3+ days before the lesson, 50% refund 1–2 days before, and no refund for same-day cancellations or no-shows. One free reschedule is available up to 2 days before the lesson (to a date the instructor is free, within the season); after that, the refund policy applies. If slopes close due to bad weather, you get a free reschedule or a full refund.",
     },
     {
       icon: "🌨️",
@@ -945,6 +945,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       "② We check the instructor's schedule and contact you to confirm.",
       "③ After confirmation, please transfer payment to:\nKB Kookmin Bank 010-4047-7711 · Account holder: 박진호 (Jino Company)",
       "④ Refund policy: 100% refund up to 3 days before · 50% refund 1–2 days before · no refund for same-day cancellations or no-shows",
+      "⑤ Rescheduling: one free change up to 2 days before (to a date the instructor is free, within the season) · after that, the refund policy applies",
+      "⑥ If slopes close due to bad weather, you get a free reschedule or a full refund.",
     ],
     missingFields: (fields: string) => `Please enter: ${fields}.`,
     fieldNames: { name: "name", phone: "phone", ageGroup: "student age group" },
