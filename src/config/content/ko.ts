@@ -135,7 +135,7 @@ const whyJinoSki = [
     number: "06",
     title: "안전 최우선",
     description:
-      "응급처치(EFR) 강사 자격을 갖춘 강사가 준비운동부터 안전 수칙까지 꼼꼼히 챙깁니다.",
+      "영업배상책임보험에 가입되어 레슨 중 사고에 대비하고, 응급처치(EFR) 강사 자격을 갖춘 강사가 준비운동부터 안전 수칙까지 꼼꼼히 챙깁니다.",
     icon: "ShieldCheck",
   },
 ];
@@ -374,7 +374,7 @@ const liftPassPricing: SiteContent["liftPassPricing"] = [
   { program: "4h", durationLabel: "4시간", price: "50,000원" },
 ];
 
-// TODO(진호): 도착 시간 권장값은 초안입니다. (환불 규정은 2026-09-25 확정)
+// 환불 규정·집합 장소 2026-09-25 확정
 const preLessonGuidance: SiteContent["preLessonGuidance"] = {
   title: "레슨 전 꼭 확인해주세요",
   description: "즐겁고 안전한 레슨을 위해 아래 내용을 미리 확인해주세요.",
@@ -389,7 +389,7 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
       icon: "⏰",
       title: "도착 시간",
       description:
-        "원활한 레슨 진행을 위해 강습 시작 20~30분 전까지 약속 장소에 도착해주세요.",
+        "집합 장소는 비발디파크 스키월드 광장(스키하우스 입구)이에요. 원활한 레슨 진행을 위해 강습 시작 20~30분 전까지 도착해주세요.",
     },
     {
       icon: "🎫",
@@ -1087,6 +1087,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     bookingNoticeTitle: "예약은 이렇게 진행돼요",
     bookingNoticeLines: [
       "① 지금 보내주시는 내용은 '예약 신청'이에요. 아직 확정 전이에요.",
+      "📍 집합 장소: 비발디파크 스키월드 광장(스키하우스 입구)",
       "② 강사 일정을 확인한 뒤 연락드려 예약을 확정해드려요.",
       "③ 확정 안내를 받으신 후 아래 계좌로 입금해주세요.\n국민은행 010-4047-7711 · 예금주 박진호(지노컴퍼니)",
       "④ 환불 규정: 레슨 3일 전까지 100% 환불 · 1~2일 전 50% 환불 · 당일 취소·노쇼는 환불 불가",
@@ -1235,7 +1236,7 @@ const ui: SiteContent["ui"] = {
   directions: {
     eyebrow: "Directions",
     title: "오시는 길",
-    description: "비발디파크에서 만나요. 편한 지도 앱으로 바로 길 찾기를 열어보세요.",
+    description: "집합 장소는 비발디파크 스키월드 광장(스키하우스 입구)이에요. 편한 지도 앱으로 바로 길 찾기를 열어보세요.",
     naverMapLabel: "네이버 지도",
     kakaoMapLabel: "카카오맵",
     googleMapLabel: "구글 지도",

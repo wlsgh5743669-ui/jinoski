@@ -129,7 +129,7 @@ const whyJinoSki = [
     number: "06",
     title: "安全第一",
     description:
-      "拥有急救（EFR）教练资格的教练，从热身到安全守则都细心把关。",
+      "已投保营业赔偿责任保险以应对课程中的意外，拥有急救（EFR）教练资格的教练从热身到安全守则都细心把关。",
     icon: "ShieldCheck",
   },
 ];
@@ -371,7 +371,7 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
     {
       icon: "⏰",
       title: "到达时间",
-      description: "为了顺利开始课程，请提前20~30分钟到达约定地点。",
+      description: "集合地点为大明维瓦尔第公园 Ski World 广场（Ski House 入口）。请提前20~30分钟到达。",
     },
     {
       icon: "🎫",
@@ -1068,6 +1068,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     bookingNoticeTitle: "预约流程",
     bookingNoticeLines: [
       "① 现在发送的是“预约申请”，尚未确认。",
+      "📍 集合地点：维瓦尔第公园 Ski World 广场（Ski House 入口）",
       "② 确认教练日程后我们会联系您确认预约。",
       "③ 收到确认通知后，请汇款至以下账户：\n国民银行（KB Kookmin）010-4047-7711 · 户名 박진호（Jino Company）",
       "④ 退款规定：课程3天前取消全额退款 · 1~2天前退款50% · 当天取消或未到场不予退款",
@@ -1213,7 +1214,7 @@ const ui: SiteContent["ui"] = {
   directions: {
     eyebrow: "Directions",
     title: "交通指南",
-    description: "大明滑雪场与您相约。使用您习惯的地图应用立即查看路线。",
+    description: "集合地点为维瓦尔第公园 Ski World 广场（Ski House 入口）。使用您习惯的地图应用立即查看路线。",
     naverMapLabel: "Naver地图",
     kakaoMapLabel: "Kakao地图",
     googleMapLabel: "谷歌地图",

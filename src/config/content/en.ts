@@ -133,7 +133,7 @@ const whyJinoSki = [
     number: "06",
     title: "Safety first",
     description:
-      "Your instructor is a certified Emergency First Response (EFR) instructor and takes care of everything from warm-ups to safety rules.",
+      "We carry business liability insurance for lessons, and your instructor is a certified Emergency First Response (EFR) instructor who takes care of everything from warm-ups to safety rules.",
     icon: "ShieldCheck",
   },
 ];
@@ -407,7 +407,7 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
       icon: "⏰",
       title: "Arrival time",
       description:
-        "Please arrive 20–30 minutes before your lesson starts so we can begin on time.",
+        "The meeting point is the Ski World plaza at Vivaldi Park (Ski House entrance). Please arrive 20–30 minutes before your lesson starts.",
     },
     {
       icon: "🎫",
@@ -1108,6 +1108,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     bookingNoticeTitle: "How booking works",
     bookingNoticeLines: [
       "① What you send now is a booking request — it is not confirmed yet.",
+      "📍 Meeting point: Ski World plaza at Vivaldi Park (Ski House entrance)",
       "② We check the instructor's schedule and contact you to confirm.",
       "③ After confirmation, please transfer payment to:\nKB Kookmin Bank 010-4047-7711 · Account holder: 박진호 (Jino Company)",
       "④ Refund policy: 100% refund up to 3 days before · 50% refund 1–2 days before · no refund for same-day cancellations or no-shows",
@@ -1258,7 +1259,7 @@ const ui: SiteContent["ui"] = {
   directions: {
     eyebrow: "Directions",
     title: "Getting Here",
-    description: "See you at Vivaldi Park. Open your favorite map app for directions.",
+    description: "The meeting point is the Ski World plaza at Vivaldi Park (Ski House entrance). Open your favorite map app for directions.",
     naverMapLabel: "Naver Map",
     kakaoMapLabel: "Kakao Map",
     googleMapLabel: "Google Maps",
