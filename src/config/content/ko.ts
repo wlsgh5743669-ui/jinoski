@@ -924,7 +924,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       "② 강사 일정을 확인한 뒤 연락드려 예약을 확정하고, 예약금 결제 방법을 안내해드려요.",
       "③ 일정 변경·취소는 레슨 전날까지 연락 주시면 조정해드려요.",
     ],
-    missingFields: (fields: string) => `${fields}을(를) 입력해주세요.`,
+    missingFields: (fields: string) => `아직 입력하지 않은 항목: ${fields}`,
     fieldNames: { name: "이름", phone: "연락처", ageGroup: "교육생 연령대" },
     familyHint: "가족 예약이면 요청사항에 구성(예: 성인 1, 초등 1)을 적어주세요.",
     selfCheckPrefix: "이런 분",
