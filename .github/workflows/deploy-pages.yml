@@ -30,8 +30,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Remove server-only routes (not supported on GitHub Pages)
+        run: rm -rf src/app/api src/app/admin src/middleware.ts
+
       - name: Build static site
         run: npm run build
+        env:
+          STATIC_EXPORT: "1"
+          # Optional: owner KakaoTalk notify worker URL (Settings → Variables → Actions)
+          NEXT_PUBLIC_KAKAO_NOTIFY_URL: ${{ vars.KAKAO_NOTIFY_URL }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

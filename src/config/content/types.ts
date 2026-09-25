@@ -208,6 +208,7 @@ export type SiteContent = {
       heading: string;
       description: string;
       copyButton: string;
+      smsButton: string;
       copiedLabel: string;
       kakaoButton: string;
       backHome: string;

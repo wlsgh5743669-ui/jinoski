@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocale } from "next-intl";
-import { ArrowLeft, ArrowRight, Check, Copy, MessageCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Copy, MessageCircle, MessageSquare } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { useContent } from "@/lib/use-content";
@@ -109,6 +109,43 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
     lines,
     total: price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.totalPrice),
   };
+}
+
+const KAKAO_NOTIFY_URL = process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL;
+
+/**
+ * Pings the owner's own KakaoTalk ("나에게 보내기") through the notify worker
+ * (see notify-worker/) the moment a customer submits, so the customer's phone
+ * number arrives even if they never paste the message into the channel chat.
+ * Disabled (no-op) until NEXT_PUBLIC_KAKAO_NOTIFY_URL is configured.
+ */
+async function notifyOwnerKakao(state: WizardState, content: SiteContent) {
+  if (!KAKAO_NOTIFY_URL || !state.program || !state.groupSize) return;
+  const breakdown = buildPriceBreakdown(state, content);
+  await fetch(KAKAO_NOTIFY_URL, {
+    method: "POST",
+    // text/plain avoids a CORS preflight; the worker parses it as JSON.
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({
+      name: state.name.trim(),
+      phone: state.phone.trim(),
+      date: state.date,
+      program: getProgramLabel(state.program, content),
+      timeSlot: getTimeSlotLabel(state.program, state.timeSlot, content),
+      groupSize: getGroupSizeLabel(state.groupSize as GroupSizeValue, content),
+      equipment: state.equipment ? getEquipmentLabel(state.equipment, content) : "",
+      level: state.level ? getLevelInfo(state.level, content).label : "",
+      total: breakdown?.total ?? "",
+      note: state.requestNote.trim(),
+    }),
+  });
+}
+
+function buildSmsHref(phone: string, body: string): string {
+  const number = phone.replace(/[^0-9]/g, "");
+  const isIOS =
+    typeof navigator !== "undefined" && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent);
+  return `sms:${number}${isIOS ? "&" : "?"}body=${encodeURIComponent(body)}`;
 }
 
 function buildSummaryMessage(state: WizardState, content: SiteContent): string {
@@ -315,8 +352,13 @@ export function BookingWizard() {
           }),
         });
       } catch {
-        // Booking save failed (e.g. no backend on the current static deploy) —
-        // the customer can still copy the summary and reach out via KakaoTalk.
+        // Booking save failed (e.g. no backend on the static GitHub Pages
+        // deploy) — the customer can still send the summary via SMS/KakaoTalk.
+      }
+      try {
+        await notifyOwnerKakao(state, content);
+      } catch {
+        // Notification is best-effort.
       } finally {
         setSubmitting(false);
       }
@@ -785,6 +827,17 @@ function SummaryView({
       >
         <Copy size={18} />
         {copied ? summary.copiedLabel : summary.copyButton}
+      </button>
+
+      <button
+        type="button"
+        onClick={() => {
+          window.location.href = buildSmsHref(content.contact.phone, message);
+        }}
+        className="mt-3 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full border border-snow-300 text-[15px] font-semibold text-ink-900 transition-colors hover:border-brand-500"
+      >
+        <MessageSquare size={18} />
+        {summary.smsButton}
       </button>
 
       <a

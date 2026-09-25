@@ -1,0 +1,13 @@
+name = "jinoski-notify"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://jinoski.com,https://www.jinoski.com,http://localhost:3000"
+
+[[kv_namespaces]]
+binding = "TOKENS"
+id = "여기에_KV_ID_입력"   # npx wrangler kv namespace create TOKENS 결과의 id
+
+[triggers]
+crons = ["0 3 * * 1"]   # 매주 월요일 토큰 갱신

@@ -919,6 +919,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     description:
       "Tap \"Copy\", then paste it into the JinoSki KakaoTalk channel chat to complete your booking request.",
     copyButton: "Copy",
+    smsButton: "Send booking by text message",
     copiedLabel: "Copied!",
     kakaoButton: "Copy & send via KakaoTalk",
     backHome: "Back to home",

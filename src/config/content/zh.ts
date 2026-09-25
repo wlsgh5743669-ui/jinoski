@@ -860,6 +860,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     description:
       "点击\"复制\"后，粘贴到 JinoSki KakaoTalk 频道聊天窗口即可完成预约申请。",
     copyButton: "复制",
+    smsButton: "通过短信发送预约",
     copiedLabel: "已复制！",
     kakaoButton: "复制并通过 KakaoTalk 发送",
     backHome: "返回首页",

@@ -898,13 +898,14 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     description:
       "아래 버튼을 누르면 예약 내용(이름·연락처 포함)이 자동으로 복사되고 카카오톡 채널이 열립니다. 채팅방에 붙여넣기(길게 눌러 붙여넣기)만 하시면 예약 신청이 완료됩니다.",
     copyButton: "복사하기",
+    smsButton: "문자로 예약 보내기 (고객번호 자동 전달)",
     copiedLabel: "복사 완료!",
     kakaoButton: "내용 복사하고 카카오톡으로 보내기",
     backHome: "홈으로 돌아가기",
     messageLabels: {
       greeting: (name: string) =>
         `안녕하세요! ${name}입니다. 아래와 같이 예약 신청 드립니다.`,
-      phone: "연락처",
+      phone: "고객번호",
       date: "날짜",
       program: "프로그램",
       timeSlot: "시간대",
