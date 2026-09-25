@@ -124,6 +124,20 @@ const whyJinoSki = [
       "레슨의 소중한 순간을 사진과 영상으로 기록하여 겨울의 추억을 오래 간직할 수 있도록 도와드립니다.",
     icon: "Camera",
   },
+  {
+    number: "05",
+    title: "무전기 실시간 코칭",
+    description:
+      "무선 헤드셋(무전기)으로 슬로프 위에서도 설명과 피드백을 실시간으로 전달해 더 빠르고 정확하게 배웁니다.",
+    icon: "Radio",
+  },
+  {
+    number: "06",
+    title: "안전 최우선",
+    description:
+      "응급처치(EFR) 강사 자격을 갖춘 강사가 준비운동부터 안전 수칙까지 꼼꼼히 챙깁니다.",
+    icon: "ShieldCheck",
+  },
 ];
 
 const lessonPrograms = [

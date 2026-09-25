@@ -122,6 +122,20 @@ const whyJinoSki = [
       "We capture the precious moments of your lesson in photo and video, so your winter memories last.",
     icon: "Camera",
   },
+  {
+    number: "05",
+    title: "Real-time radio coaching",
+    description:
+      "Wireless headsets let us give instructions and feedback in real time right on the slope, so you learn faster and more precisely.",
+    icon: "Radio",
+  },
+  {
+    number: "06",
+    title: "Safety first",
+    description:
+      "Your instructor is a certified Emergency First Response (EFR) instructor and takes care of everything from warm-ups to safety rules.",
+    icon: "ShieldCheck",
+  },
 ];
 
 const lessonPrograms = [

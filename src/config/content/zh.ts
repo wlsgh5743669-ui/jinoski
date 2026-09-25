@@ -118,6 +118,20 @@ const whyJinoSki = [
     description: "以照片和视频记录课程中珍贵的瞬间，让您长久珍藏冬日回忆。",
     icon: "Camera",
   },
+  {
+    number: "05",
+    title: "对讲机实时指导",
+    description:
+      "通过无线耳机（对讲机）在雪道上也能实时传达讲解和反馈，学得更快更准确。",
+    icon: "Radio",
+  },
+  {
+    number: "06",
+    title: "安全第一",
+    description:
+      "拥有急救（EFR）教练资格的教练，从热身到安全守则都细心把关。",
+    icon: "ShieldCheck",
+  },
 ];
 
 const lessonPrograms = [

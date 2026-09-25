@@ -1,6 +1,6 @@
 "use client";
 
-import { Award, UserCheck, Mountain, Camera, type LucideIcon } from "lucide-react";
+import { Award, UserCheck, Mountain, Camera, Radio, ShieldCheck, type LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
@@ -9,6 +9,8 @@ import { RevealGroup, revealItem } from "@/components/shared/reveal";
 
 const icons: Record<string, LucideIcon> = {
   Award,
+  Radio,
+  ShieldCheck,
   UserCheck,
   Mountain,
   Camera,
@@ -33,7 +35,7 @@ export function WhyJinoSki() {
 
         <RevealGroup
           stagger={0.1}
-          className="mt-10 grid grid-cols-2 gap-3 sm:mt-16 sm:gap-5 lg:grid-cols-4"
+          className="mt-10 grid grid-cols-2 gap-3 sm:mt-16 sm:gap-5 lg:grid-cols-3"
         >
           {whyJinoSki.map((item) => {
             const Icon = icons[item.icon];
