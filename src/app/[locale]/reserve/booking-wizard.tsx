@@ -142,6 +142,27 @@ async function notifyOwnerKakao(state: WizardState, content: SiteContent) {
   });
 }
 
+function getPriceRows(program: ProgramValue, content: SiteContent) {
+  if (program === "one-day" || program === "night") {
+    return content.fullCarePrograms.find((p) => p.slug === program)?.rows ?? [];
+  }
+  return content.lessonPricing.find((g) => g.program === program)?.rows ?? [];
+}
+
+function getLiftPassPrice(program: ProgramValue, content: SiteContent) {
+  return content.liftPassPricing.find((p) => p.program === program)?.price;
+}
+
+/** "1명 기준 210,000원부터 · + 패찰 1인 35,000원" shown under each program card. */
+function programPriceHint(program: ProgramValue, content: SiteContent) {
+  const g = content.bookingWizard.guide;
+  const first = getPriceRows(program, content)[0]?.price;
+  if (!first) return "";
+  if (program === "one-day" || program === "night") return `${g.priceFrom(first)} · ${g.liftPassIncluded}`;
+  const pass = getLiftPassPrice(program, content);
+  return pass ? `${g.priceFrom(first)} · ${g.liftPassPlus(pass)}` : g.priceFrom(first);
+}
+
 function buildSmsHref(phone: string, body: string): string {
   const number = phone.replace(/[^0-9]/g, "");
   const isIOS =
@@ -395,7 +416,7 @@ export function BookingWizard() {
       </div>
 
       <div className="mt-10 flex-1">
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           <motion.div
             key={step}
             initial={{ opacity: 0, x: 16 }}
@@ -434,6 +455,9 @@ export function BookingWizard() {
                       <span className="text-[15px] font-bold text-ink-900">
                         {getProgramLabel(value, content)}
                       </span>
+                      <p className="mt-1.5 text-[13px] font-medium text-brand-600">
+                        {programPriceHint(value, content)}
+                      </p>
                     </button>
                   ))}
                   <button
@@ -451,6 +475,9 @@ export function BookingWizard() {
                     </span>
                     <p className="mt-1.5 text-[13px] leading-relaxed text-snow-500">
                       {content.bookingWizard.fullCareInfo.groupDescription}
+                    </p>
+                    <p className="mt-1 text-[13px] font-medium text-brand-600">
+                      {programPriceHint("one-day", content)}
                     </p>
                   </button>
                 </div>
@@ -486,6 +513,9 @@ export function BookingWizard() {
                           ? content.bookingWizard.fullCareInfo.oneDay
                           : content.bookingWizard.fullCareInfo.night}
                       </p>
+                      <p className="mt-1 text-[13px] font-medium text-brand-600">
+                        {programPriceHint(value, content)}
+                      </p>
                     </button>
                   ))}
                 </div>
@@ -510,10 +540,23 @@ export function BookingWizard() {
 
               {step === 4 && state.program && (
                 <OptionList
-                  options={getGroupSizeOptions(state.program).map((code) => ({
-                    value: code,
-                    label: getGroupSizeLabel(code, content),
-                  }))}
+                  options={getGroupSizeOptions(state.program).map((code) => {
+                    const g = content.bookingWizard.guide;
+                    const program = state.program as ProgramValue;
+                    const rowPrice = getPriceRows(program, content).find((r) => r.people === code)?.price;
+                    const pass = getLiftPassPrice(program, content);
+                    const full = program === "one-day" || program === "night";
+                    const description = rowPrice
+                      ? full
+                        ? `${g.lessonFee(rowPrice)} · ${g.liftPassIncluded}`
+                        : `${g.lessonFee(rowPrice)}${pass ? ` · ${g.liftPassPlus(pass)}` : ""}`
+                      : undefined;
+                    return {
+                      value: code,
+                      label: g.groupSizeOption(getGroupStudentCount(code)),
+                      description,
+                    };
+                  })}
                   selected={state.groupSize}
                   onSelect={(v) => update("groupSize", v)}
                 />
@@ -528,6 +571,11 @@ export function BookingWizard() {
                   selected={state.equipment ?? ""}
                   onSelect={(v) => update("equipment", v as EquipmentValue)}
                 />
+              )}
+              {step === 5 && (
+                <p className="mt-4 text-[13px] leading-relaxed text-snow-500">
+                  {content.bookingWizard.guide.extrasNotice}
+                </p>
               )}
 
               {step === 6 && (
@@ -554,7 +602,13 @@ export function BookingWizard() {
                             <Check size={18} className="text-brand-500" />
                           )}
                         </div>
-                        <p className="mt-1.5 text-[13px] leading-relaxed text-snow-500">
+                        {state.equipment && (
+                          <p className="mt-1.5 text-[13.5px] font-semibold text-brand-600">
+                            {content.bookingWizard.guide.selfCheckPrefix}:{" "}
+                            {content.levelSelfCheckByEquipment[state.equipment][value]}
+                          </p>
+                        )}
+                        <p className="mt-1 text-[13px] leading-relaxed text-snow-500">
                           {info.description}
                         </p>
                       </button>
@@ -599,6 +653,22 @@ export function BookingWizard() {
 
               {step === 8 && (
                 <div className="flex flex-col gap-4">
+                  {state.program && (
+                    <div className="rounded-2xl border border-snow-300/60 bg-snow-100/70 p-5 text-[13.5px] leading-relaxed text-snow-700">
+                      <p className="mb-1.5 text-[12.5px] font-semibold text-snow-500">
+                        {content.bookingWizard.guide.reviewTitle}
+                      </p>
+                      <p>
+                        {state.date} · {getProgramLabel(state.program, content)}
+                      </p>
+                      <p>{getTimeSlotLabel(state.program, state.timeSlot, content)}</p>
+                      <p>
+                        {content.bookingWizard.guide.groupSizeOption(getGroupStudentCount(state.groupSize))}
+                        {state.equipment && ` · ${getEquipmentLabel(state.equipment, content)}`}
+                        {state.level && ` · ${getLevelInfo(state.level, content).label}`}
+                      </p>
+                    </div>
+                  )}
                   <input
                     type="text"
                     placeholder={content.bookingWizard.form.namePlaceholder}
@@ -635,6 +705,11 @@ export function BookingWizard() {
                       ))}
                     </div>
                   </div>
+                  {state.ageGroup === "family" && (
+                    <p className="-mt-1 text-[13px] font-medium text-brand-600">
+                      {content.bookingWizard.guide.familyHint}
+                    </p>
+                  )}
                   <textarea
                     placeholder={content.bookingWizard.form.notePlaceholder}
                     value={state.requestNote}
@@ -670,9 +745,13 @@ export function BookingWizard() {
                           </span>
                           <span className="tabular-nums text-brand-300">{breakdown.total}</span>
                         </div>
+                        <p className="mt-1 text-[12px] leading-relaxed text-white/45">
+                          {content.bookingWizard.guide.extrasNotice}
+                        </p>
                       </div>
                     );
                   })()}
+                  <BookingNotice content={content} />
                 </div>
               )}
             </div>
@@ -680,7 +759,21 @@ export function BookingWizard() {
         </AnimatePresence>
       </div>
 
-      <div className="mt-10 flex items-center gap-3">
+      {step === 8 && !canProceed() && (() => {
+        const g = content.bookingWizard.guide;
+        const missing = [
+          !state.name.trim() && g.fieldNames.name,
+          state.phone.trim().length < 9 && g.fieldNames.phone,
+          !state.ageGroup && g.fieldNames.ageGroup,
+        ].filter(Boolean) as string[];
+        return missing.length ? (
+          <p className="mt-6 text-center text-[13px] font-medium text-rose-500">
+            {g.missingFields(missing.join(", "))}
+          </p>
+        ) : null;
+      })()}
+
+      <div className={cn("flex items-center gap-3", step === 8 && !canProceed() ? "mt-3" : "mt-10")}>
         {step > 1 && (
           <button
             type="button"
@@ -723,7 +816,7 @@ function OptionList({
   disabled,
   disabledNote,
 }: {
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; description?: string }[];
   selected: string;
   onSelect: (value: string) => void;
   disabled?: boolean;
@@ -756,14 +849,37 @@ function OptionList({
               : "border-snow-300/60 bg-white hover:border-brand-300"
           )}
         >
-          <span className="text-[15px] font-bold text-ink-900">
-            {option.label}
+          <span>
+            <span className="block text-[15px] font-bold text-ink-900">
+              {option.label}
+            </span>
+            {option.description && (
+              <span className="mt-1 block text-[13px] leading-relaxed text-snow-500">
+                {option.description}
+              </span>
+            )}
           </span>
           {selected === option.value && (
             <Check size={18} className="text-brand-500" />
           )}
         </button>
       ))}
+    </div>
+  );
+}
+
+function BookingNotice({ content }: { content: SiteContent }) {
+  const g = content.bookingWizard.guide;
+  return (
+    <div className="rounded-2xl border border-brand-500/20 bg-brand-50/50 p-5">
+      <p className="text-[14px] font-bold text-ink-900">{g.bookingNoticeTitle}</p>
+      <ul className="mt-2 flex flex-col gap-1.5">
+        {g.bookingNoticeLines.map((line) => (
+          <li key={line} className="text-[13px] leading-relaxed text-snow-700">
+            {line}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -804,6 +920,10 @@ function SummaryView({
       <pre className="mt-6 whitespace-pre-wrap rounded-2xl border border-snow-300/60 bg-white p-6 text-[14px] leading-relaxed text-ink-800">
         {message}
       </pre>
+
+      <div className="mt-4">
+        <BookingNotice content={content} />
+      </div>
 
       <div className="mt-4 rounded-2xl border border-brand-500/20 bg-brand-50/50 p-6">
         <p className="text-[15px] font-bold text-ink-900">

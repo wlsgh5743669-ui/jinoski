@@ -177,6 +177,8 @@ export type SiteContent = {
   levelLabels: Record<LevelCode, { label: string; description: string }>;
   /** Level curriculum descriptions per equipment (ski / snowboard / inline ski). */
   levelDescriptionsByEquipment: Record<EquipmentCode, Record<LevelCode, string>>;
+  /** "What can you do now?" self-check line per equipment/level, to help customers pick a level. */
+  levelSelfCheckByEquipment: Record<EquipmentCode, Record<LevelCode, string>>;
   groupSizeFullCareLabels: Record<FullCareGroupSizeCode, string>;
   liftPassPaymentLabels: Record<LiftPassPaymentCode, string>;
   ageGroupLabels: Record<AgeGroupCode, string>;
@@ -185,6 +187,21 @@ export type SiteContent = {
     fullCareGroupLabel: string;
     /** Short explanations so customers understand what "Full Care" includes. */
     fullCareInfo: { groupDescription: string; oneDay: string; night: string };
+    guide: {
+      groupSizeOption: (count: number) => string;
+      priceFrom: (price: string) => string;
+      lessonFee: (price: string) => string;
+      liftPassPlus: (price: string) => string;
+      liftPassIncluded: string;
+      extrasNotice: string;
+      bookingNoticeTitle: string;
+      bookingNoticeLines: string[];
+      missingFields: (fields: string) => string;
+      fieldNames: { name: string; phone: string; ageGroup: string };
+      familyHint: string;
+      selfCheckPrefix: string;
+      reviewTitle: string;
+    };
     fixedTimeNote: { oneDay: string; night: string };
     fixedTimeDisabledNote: string;
     liftPassExplainer: string;

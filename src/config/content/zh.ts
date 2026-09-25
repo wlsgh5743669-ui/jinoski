@@ -817,6 +817,27 @@ const levelDescriptionsByEquipment: SiteContent["levelDescriptionsByEquipment"] 
   },
 };
 
+const levelSelfCheckByEquipment: SiteContent["levelSelfCheckByEquipment"] = {
+  ski: {
+    beginner: "从未或几乎没有滑过双板",
+    basic: "能用犁式滑下初级雪道",
+    intermediate: "能用平行式滑下中级雪道",
+    advanced: "能自由滑行中高级雪道",
+  },
+  snowboard: {
+    beginner: "从未或几乎没有滑过单板",
+    basic: "能用落叶飘滑下初级雪道",
+    intermediate: "能在初级雪道连续转弯",
+    advanced: "能在中高级雪道自由转弯",
+  },
+  "inline-ski": {
+    beginner: "第一次尝试轮滑滑雪",
+    basic: "能在平地保持平衡并停下",
+    intermediate: "能在缓坡转弯滑下",
+    advanced: "能在坡道自由平行转弯",
+  },
+};
+
 const groupSizeFullCareLabels: SiteContent["groupSizeFullCareLabels"] = {
   "1p": "1人",
   "2p": "2人",
@@ -829,7 +850,7 @@ const liftPassPaymentLabels: SiteContent["liftPassPaymentLabels"] = {
 };
 
 const ageGroupLabels: SiteContent["ageGroupLabels"] = {
-  kids: "幼儿（满5岁）",
+  kids: "幼儿（满5岁以上）",
   elementary: "小学生",
   teen: "初中~高中生",
   adult: "成人",
@@ -842,9 +863,9 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "请选择课程项目",
     "请选择时间段",
     "请选择人数",
-    "请选择滑雪板或单板",
+    "请选择项目",
     "请告诉我们您当前的水平",
-    "雪票费用希望何时支付？",
+    "教学许可证费用说明",
     "请填写预约人信息",
   ],
   fullCareGroupLabel: "Full Care（7小时全天课程）",
@@ -852,6 +873,25 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     groupDescription: "教练全天专属的7小时高端课程 · 含餐食、照片/视频拍摄及教学许可证",
     oneDay: "08:40 见面 · 上午3小时30分 + 下午3小时10分课程 · 含午餐、照片/视频拍摄及教学许可证",
     night: "14:00 见面 · 下午3小时30分 + 压雪后夜间3小时30分课程 · 含晚餐、照片/视频拍摄及教学许可证",
+  },
+  guide: {
+    groupSizeOption: (count: number) => `${count}人（教练1 : 学员${count}）`,
+    priceFrom: (price: string) => `1人 ${price} 起`,
+    lessonFee: (price: string) => `课程费 ${price}`,
+    liftPassPlus: (price: string) => `+ 教学许可证 每人 ${price}`,
+    liftPassIncluded: "含教学许可证",
+    extrasNotice: "缆车票、装备租赁及雪服租赁需另付，确认预约时会一并为您说明。",
+    bookingNoticeTitle: "预约流程",
+    bookingNoticeLines: [
+      "① 现在发送的是“预约申请”，尚未确认。",
+      "② 确认教练日程后我们会联系您确认预约，并告知订金支付方式。",
+      "③ 如需变更或取消，请于课程前一天联系我们。",
+    ],
+    missingFields: (fields: string) => `请填写：${fields}。`,
+    fieldNames: { name: "姓名", phone: "联系方式", ageGroup: "学员年龄段" },
+    familyHint: "家庭预约请在备注中写明成员构成（例：成人1，小学生1）。",
+    selfCheckPrefix: "适合",
+    reviewTitle: "您的选择",
   },
   fixedTimeNote: {
     oneDay: "08:40 开始见面（课程约7小时）",
@@ -866,7 +906,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   form: {
     namePlaceholder: "姓名",
     phonePlaceholder: "联系电话",
-    notePlaceholder: "其他要求（选填）",
+    notePlaceholder: "其他要求（选填）· 家庭预约请写明成员构成",
     ageGroupLabel: "学员年龄段",
   },
   priceSummary: {
@@ -1074,6 +1114,7 @@ export const zh: SiteContent = {
   equipmentLabels,
   levelLabels,
   levelDescriptionsByEquipment,
+  levelSelfCheckByEquipment,
   groupSizeFullCareLabels,
   liftPassPaymentLabels,
   ageGroupLabels,

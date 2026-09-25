@@ -854,6 +854,27 @@ const levelDescriptionsByEquipment: SiteContent["levelDescriptionsByEquipment"] 
   },
 };
 
+const levelSelfCheckByEquipment: SiteContent["levelSelfCheckByEquipment"] = {
+  ski: {
+    beginner: "스키를 처음 타보거나 거의 타본 적 없어요",
+    basic: "A자(보겐)로 초보 슬로프를 내려올 수 있어요",
+    intermediate: "11자(패러렐)로 중급 슬로프를 내려올 수 있어요",
+    advanced: "중·상급 슬로프를 자유롭게 타요",
+  },
+  snowboard: {
+    beginner: "보드를 처음 타보거나 거의 타본 적 없어요",
+    basic: "낙엽(펜듈럼)으로 초보 슬로프를 내려올 수 있어요",
+    intermediate: "초보 슬로프에서 연속 턴을 할 수 있어요",
+    advanced: "중·상급 슬로프에서 턴이 자유로워요",
+  },
+  "inline-ski": {
+    beginner: "인라인 스키를 처음 타봐요",
+    basic: "평지에서 균형을 잡고 멈출 수 있어요",
+    intermediate: "완만한 경사에서 턴하며 내려올 수 있어요",
+    advanced: "경사에서 패러렐 턴을 자유롭게 해요",
+  },
+};
+
 const groupSizeFullCareLabels: SiteContent["groupSizeFullCareLabels"] = {
   "1p": "1인",
   "2p": "2인",
@@ -866,7 +887,7 @@ const liftPassPaymentLabels: SiteContent["liftPassPaymentLabels"] = {
 };
 
 const ageGroupLabels: SiteContent["ageGroupLabels"] = {
-  kids: "유아 (만 5세)",
+  kids: "유아 (만 5세 이상)",
   elementary: "초등학생",
   teen: "중~고교생",
   adult: "성인",
@@ -879,9 +900,9 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "레슨 프로그램을 선택해주세요",
     "시간대를 선택해주세요",
     "인원을 선택해주세요",
-    "스키 또는 스노보드를 선택해주세요",
+    "종목을 선택해주세요",
     "현재 실력을 알려주세요",
-    "패찰 비용은 언제 결제하시겠어요?",
+    "패찰(강습 허가증) 비용 안내",
     "예약자 정보를 입력해주세요",
   ],
   fullCareGroupLabel: "풀케어 (7시간 종일 레슨)",
@@ -889,6 +910,25 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     groupDescription: "강사가 하루를 전담하는 7시간 프리미엄 레슨 · 식사, 사진·영상 촬영, 패찰 포함",
     oneDay: "08:40 미팅 · 오전 3시간 30분 + 오후 3시간 10분 레슨 · 점심 식사, 사진·영상 촬영, 패찰 포함",
     night: "14:00 미팅 · 오후 3시간 30분 + 정설 직후 야간 3시간 30분 레슨 · 저녁 식사, 사진·영상 촬영, 패찰 포함",
+  },
+  guide: {
+    groupSizeOption: (count: number) => `${count}명 (강사 1 : 교육생 ${count})`,
+    priceFrom: (price: string) => `1명 기준 ${price}부터`,
+    lessonFee: (price: string) => `레슨료 ${price}`,
+    liftPassPlus: (price: string) => `+ 패찰 1인 ${price}`,
+    liftPassIncluded: "패찰 포함",
+    extrasNotice: "리프트권 · 장비 렌탈 · 의류 렌탈은 별도예요. 필요하시면 예약 확정 때 함께 안내해드려요.",
+    bookingNoticeTitle: "예약은 이렇게 진행돼요",
+    bookingNoticeLines: [
+      "① 지금 보내주시는 내용은 '예약 신청'이에요. 아직 확정 전이에요.",
+      "② 강사 일정을 확인한 뒤 연락드려 예약을 확정하고, 예약금 결제 방법을 안내해드려요.",
+      "③ 일정 변경·취소는 레슨 전날까지 연락 주시면 조정해드려요.",
+    ],
+    missingFields: (fields: string) => `${fields}을(를) 입력해주세요.`,
+    fieldNames: { name: "이름", phone: "연락처", ageGroup: "교육생 연령대" },
+    familyHint: "가족 예약이면 요청사항에 구성(예: 성인 1, 초등 1)을 적어주세요.",
+    selfCheckPrefix: "이런 분",
+    reviewTitle: "선택하신 내용",
   },
   fixedTimeNote: {
     oneDay: "08:40 미팅 시작 (레슨 약 7시간)",
@@ -904,7 +944,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   form: {
     namePlaceholder: "이름",
     phonePlaceholder: "연락처 (010-0000-0000)",
-    notePlaceholder: "요청사항 (선택)",
+    notePlaceholder: "요청사항 (선택) · 가족이면 구성(예: 성인 1, 초등 1)을 적어주세요",
     ageGroupLabel: "교육생 연령대",
   },
   priceSummary: {
@@ -1115,6 +1155,7 @@ export const ko: SiteContent = {
   equipmentLabels,
   levelLabels,
   levelDescriptionsByEquipment,
+  levelSelfCheckByEquipment,
   groupSizeFullCareLabels,
   liftPassPaymentLabels,
   ageGroupLabels,

@@ -875,6 +875,27 @@ const levelDescriptionsByEquipment: SiteContent["levelDescriptionsByEquipment"] 
   },
 };
 
+const levelSelfCheckByEquipment: SiteContent["levelSelfCheckByEquipment"] = {
+  ski: {
+    beginner: "You've never or barely skied before",
+    basic: "You can get down a beginner slope in a snowplow",
+    intermediate: "You can ski intermediate slopes with parallel skis",
+    advanced: "You ski intermediate-advanced slopes freely",
+  },
+  snowboard: {
+    beginner: "You've never or barely snowboarded before",
+    basic: "You can get down a beginner slope with the falling-leaf",
+    intermediate: "You can link turns on a beginner slope",
+    advanced: "You turn freely on intermediate-advanced slopes",
+  },
+  "inline-ski": {
+    beginner: "It's your first time on inline skis",
+    basic: "You can balance and stop on flat ground",
+    intermediate: "You can turn your way down a gentle slope",
+    advanced: "You make parallel turns freely on slopes",
+  },
+};
+
 const groupSizeFullCareLabels: SiteContent["groupSizeFullCareLabels"] = {
   "1p": "1 Person",
   "2p": "2 People",
@@ -887,7 +908,7 @@ const liftPassPaymentLabels: SiteContent["liftPassPaymentLabels"] = {
 };
 
 const ageGroupLabels: SiteContent["ageGroupLabels"] = {
-  kids: "Toddler (age 5)",
+  kids: "Child (age 5+, pre-school)",
   elementary: "Elementary school",
   teen: "Middle/high school",
   adult: "Adult",
@@ -900,9 +921,9 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "Choose your lesson program",
     "Choose a time slot",
     "Choose group size",
-    "Choose ski or snowboard",
+    "Choose your sport",
     "Tell us your current level",
-    "When would you like to pay the lift pass fee?",
+    "Lift pass (lesson permit) fee",
     "Enter your booking details",
   ],
   fullCareGroupLabel: "Full Care (7-hour full-day lesson)",
@@ -910,6 +931,25 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     groupDescription: "A 7-hour premium lesson with your instructor all day · meal, photo/video and lift pass included",
     oneDay: "Meet at 08:40 · 3h30 morning + 3h10 afternoon lesson · lunch, photo/video and lift pass included",
     night: "Meet at 14:00 · 3h30 afternoon + 3h30 night lesson on fresh groomed snow · dinner, photo/video and lift pass included",
+  },
+  guide: {
+    groupSizeOption: (count: number) => `${count} ${count > 1 ? "students" : "student"} (1 instructor : ${count})`,
+    priceFrom: (price: string) => `From ${price} for 1 person`,
+    lessonFee: (price: string) => `Lesson ${price}`,
+    liftPassPlus: (price: string) => `+ lift pass ${price} per person`,
+    liftPassIncluded: "Lift pass included",
+    extrasNotice: "Lift tickets and equipment/clothing rental are not included. We'll guide you when confirming your booking.",
+    bookingNoticeTitle: "How booking works",
+    bookingNoticeLines: [
+      "① What you send now is a booking request — it is not confirmed yet.",
+      "② We check the instructor's schedule, contact you to confirm, and explain how to pay the deposit.",
+      "③ Changes or cancellations are adjusted if you contact us by the day before the lesson.",
+    ],
+    missingFields: (fields: string) => `Please enter: ${fields}.`,
+    fieldNames: { name: "name", phone: "phone", ageGroup: "student age group" },
+    familyHint: "For family bookings, please note who is joining (e.g. 1 adult, 1 child) in the request field.",
+    selfCheckPrefix: "Good if",
+    reviewTitle: "Your selection",
   },
   fixedTimeNote: {
     oneDay: "Starts at 08:40 (about 7 hours of lessons)",
@@ -925,7 +965,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   form: {
     namePlaceholder: "Name",
     phonePlaceholder: "Phone number",
-    notePlaceholder: "Special requests (optional)",
+    notePlaceholder: "Special requests (optional) · for families, note who is joining",
     ageGroupLabel: "Student age group",
   },
   priceSummary: {
@@ -1143,6 +1183,7 @@ export const en: SiteContent = {
   equipmentLabels,
   levelLabels,
   levelDescriptionsByEquipment,
+  levelSelfCheckByEquipment,
   groupSizeFullCareLabels,
   liftPassPaymentLabels,
   ageGroupLabels,
