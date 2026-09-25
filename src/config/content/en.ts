@@ -228,7 +228,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     icon: "🎿",
     name: "One Day Full Care",
     tagline: "From morning meeting to final photos — a full premium day, start to finish.",
-    duration: "~8 hours",
+    duration: "7h of lessons",
     rows: [
       { people: "1p", price: "550,000원" },
       { people: "2p", price: "700,000원" },
@@ -283,7 +283,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       },
     ],
     included: [
-      "~8 hours of premium lessons",
+      "7 hours of premium lessons (plus meal break)",
       "Intensive morning + afternoon coaching",
       "Personalized curriculum",
       "Photo & video shoot",
@@ -297,8 +297,8 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     name: "Night Full Care",
     tagline: "A premium night lesson on the best snow, right after grooming.",
     description:
-      "JinoSki's Night Full Care is a premium ~8-hour program running from afternoon into night. Build fundamentals in the afternoon, then experience an even more refined lesson on freshly groomed snow at night.",
-    duration: "~8 hours",
+      "JinoSki's Night Full Care is a premium program with 7 hours of lessons running from afternoon into night. Build fundamentals in the afternoon, then experience an even more refined lesson on freshly groomed snow at night.",
+    duration: "7h of lessons",
     rows: [
       { people: "1p", price: "550,000원" },
       { people: "2p", price: "700,000원" },
@@ -356,7 +356,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       },
     ],
     included: [
-      "~8 hours of premium lessons",
+      "7 hours of premium lessons (plus meal break)",
       "Intensive afternoon + night coaching",
       "Personalized curriculum",
       "Photo & video shoot",

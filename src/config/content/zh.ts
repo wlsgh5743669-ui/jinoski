@@ -224,7 +224,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     icon: "🎿",
     name: "One Day Full Care",
     tagline: "从见面到拍摄，满满当当的一整天高端单日课程",
-    duration: "约8小时",
+    duration: "课程7小时",
     rows: [
       { people: "1p", price: "550,000원" },
       { people: "2p", price: "700,000원" },
@@ -259,7 +259,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       },
     ],
     included: [
-      "约8小时高端课程",
+      "7小时高端课程（不含用餐时间）",
       "上午+下午集中指导",
       "个性化课程安排",
       "拍摄照片与视频",
@@ -273,8 +273,8 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     name: "Night Full Care",
     tagline: "在压雪后最佳雪质中体验的高端夜间课程",
     description:
-      "JinoSki 的 Night Full Care 是从下午延续到夜晚的约8小时高端项目。下午打好基础与姿势，压雪之后在最佳雪质中体验更加精进的课程。",
-    duration: "约8小时",
+      "JinoSki 的 Night Full Care 是从下午延续到夜晚的7小时课程高端项目。下午打好基础与姿势，压雪之后在最佳雪质中体验更加精进的课程。",
+    duration: "课程7小时",
     rows: [
       { people: "1p", price: "550,000원" },
       { people: "2p", price: "700,000원" },
@@ -322,7 +322,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       },
     ],
     included: [
-      "约8小时高端课程",
+      "7小时高端课程（不含用餐时间）",
       "下午+压雪后夜间集中指导",
       "个性化课程安排",
       "拍摄照片与视频",

@@ -230,7 +230,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     icon: "🎿",
     name: "One Day Full Care",
     tagline: "미팅부터 촬영까지, 하루를 온전히 채우는 프리미엄 원데이 레슨",
-    duration: "약 8시간",
+    duration: "레슨 7시간",
     rows: [
       { people: "1p", price: "550,000원" },
       { people: "2p", price: "700,000원" },
@@ -270,7 +270,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       },
     ],
     included: [
-      "약 8시간 프리미엄 레슨",
+      "7시간 프리미엄 레슨 (식사 시간 별도)",
       "오전 + 오후 집중 코칭",
       "개인 맞춤형 커리큘럼",
       "사진 및 영상 촬영",
@@ -284,8 +284,8 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     name: "Night Full Care",
     tagline: "정설 직후 최고의 설질을 경험하는 프리미엄 야간 레슨",
     description:
-      "JinoSki의 Night Full Care는 오후부터 밤까지 이어지는 약 8시간 프리미엄 프로그램입니다. 오후에는 기본기와 자세를 다지고, 정설 이후에는 최고의 설질에서 더욱 완성도 높은 레슨을 경험할 수 있습니다.",
-    duration: "약 8시간",
+      "JinoSki의 Night Full Care는 오후부터 밤까지 이어지는 레슨 7시간의 프리미엄 프로그램입니다. 오후에는 기본기와 자세를 다지고, 정설 이후에는 최고의 설질에서 더욱 완성도 높은 레슨을 경험할 수 있습니다.",
+    duration: "레슨 7시간",
     rows: [
       { people: "1p", price: "550,000원" },
       { people: "2p", price: "700,000원" },
@@ -338,7 +338,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       },
     ],
     included: [
-      "약 8시간 프리미엄 레슨",
+      "7시간 프리미엄 레슨 (식사 시간 별도)",
       "오후 + 정설 야간 집중 코칭",
       "개인 맞춤형 커리큘럼",
       "사진 및 영상 촬영",
