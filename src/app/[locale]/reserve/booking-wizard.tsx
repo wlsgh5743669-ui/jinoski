@@ -525,7 +525,7 @@ export function BookingWizard() {
               {step === 6 && (
                 <div className="flex flex-col gap-3">
                   {LEVEL_VALUES.map((value) => {
-                    const info = getLevelInfo(value, content);
+                    const info = getLevelInfo(value, content, state.equipment);
                     return (
                       <button
                         key={value}

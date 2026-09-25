@@ -854,6 +854,27 @@ const levelLabels: SiteContent["levelLabels"] = {
   },
 };
 
+const levelDescriptionsByEquipment: SiteContent["levelDescriptionsByEquipment"] = {
+  ski: {
+    beginner: "A curriculum focused on basic stance and braking (snowplow stop) for first-time skiers.",
+    basic: "Build steady snowplow turns and easy-slope cruising skills.",
+    intermediate: "A hands-on curriculum for parallel turns and handling varied slopes.",
+    advanced: "Master carving, short turns, moguls, and other advanced techniques.",
+  },
+  snowboard: {
+    beginner: "For first-time snowboarders: stance, bindings, one-foot skating and the falling-leaf drill.",
+    basic: "Heel- and toe-edge control, J-turns and linked beginner turns on gentle slopes.",
+    intermediate: "Refine skidded turns, speed control and confidence on intermediate slopes.",
+    advanced: "Master carved turns, ground tricks and steep-terrain riding.",
+  },
+  "inline-ski": {
+    beginner: "For first-time inline skiers: basic stance, balance and safe stopping.",
+    basic: "Snowplow turns and direction changes for steady rolling on gentle slopes.",
+    intermediate: "Parallel turns, rhythmic linked turns and adapting to changing gradients.",
+    advanced: "Carving and short turns that carry over to snow — sharpen your feel before the season.",
+  },
+};
+
 const groupSizeFullCareLabels: SiteContent["groupSizeFullCareLabels"] = {
   "1p": "1 Person",
   "2p": "2 People",
@@ -1116,6 +1137,7 @@ export const en: SiteContent = {
   programLabels,
   equipmentLabels,
   levelLabels,
+  levelDescriptionsByEquipment,
   groupSizeFullCareLabels,
   liftPassPaymentLabels,
   ageGroupLabels,

@@ -175,6 +175,8 @@ export type SiteContent = {
   programLabels: Record<ProgramCode, string>;
   equipmentLabels: Record<EquipmentCode, string>;
   levelLabels: Record<LevelCode, { label: string; description: string }>;
+  /** Level curriculum descriptions per equipment (ski / snowboard / inline ski). */
+  levelDescriptionsByEquipment: Record<EquipmentCode, Record<LevelCode, string>>;
   groupSizeFullCareLabels: Record<FullCareGroupSizeCode, string>;
   liftPassPaymentLabels: Record<LiftPassPaymentCode, string>;
   ageGroupLabels: Record<AgeGroupCode, string>;

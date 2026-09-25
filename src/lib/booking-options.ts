@@ -104,9 +104,16 @@ export function getEquipmentLabel(
 
 export function getLevelInfo(
   level: LevelValue,
-  content: SiteContent
+  content: SiteContent,
+  equipment?: EquipmentValue | null
 ): { label: string; description: string } {
-  return content.levelLabels[level];
+  const base = content.levelLabels[level];
+  // Curriculum differs by discipline — show the ski / snowboard / inline-ski
+  // specific description once the customer has picked their equipment.
+  const byEquipment = equipment
+    ? content.levelDescriptionsByEquipment?.[equipment]?.[level]
+    : undefined;
+  return byEquipment ? { ...base, description: byEquipment } : base;
 }
 
 export function getGroupSizeLabel(

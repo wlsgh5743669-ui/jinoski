@@ -796,6 +796,27 @@ const levelLabels: SiteContent["levelLabels"] = {
   },
 };
 
+const levelDescriptionsByEquipment: SiteContent["levelDescriptionsByEquipment"] = {
+  ski: {
+    beginner: "专为初次滑雪者设计的基础姿势与刹车（犁式制动）训练课程。",
+    basic: "通过犁式转弯稳定掌握转向与平缓雪道滑行的课程。",
+    intermediate: "训练平行转弯与应对多样雪道能力的实战课程。",
+    advanced: "掌握刻滑（Carving）、短转与蘑菇道等高级技术的课程。",
+  },
+  snowboard: {
+    beginner: "专为初次单板者设计：站姿与固定器穿戴、单脚滑行、落叶飘训练。",
+    basic: "前后刃控制、J型转弯与连续初级转弯，在平缓雪道稳定滑行。",
+    intermediate: "完善搓雪转弯与速度控制，提升中级雪道应对能力的实战课程。",
+    advanced: "掌握刻滑转弯、平地花式与陡坡滑行等高级技术的课程。",
+  },
+  "inline-ski": {
+    beginner: "专为初次轮滑滑雪者设计：基础姿势、平衡与安全停止。",
+    basic: "犁式转弯与转向练习，在平缓坡道稳定滑行。",
+    intermediate: "平行转弯、有节奏的连续转弯及应对坡度变化的实战课程。",
+    advanced: "衔接雪上滑雪的刻滑与短转等高级技术，雪季前找回状态。",
+  },
+};
+
 const groupSizeFullCareLabels: SiteContent["groupSizeFullCareLabels"] = {
   "1p": "1人",
   "2p": "2人",
@@ -1047,6 +1068,7 @@ export const zh: SiteContent = {
   programLabels,
   equipmentLabels,
   levelLabels,
+  levelDescriptionsByEquipment,
   groupSizeFullCareLabels,
   liftPassPaymentLabels,
   ageGroupLabels,

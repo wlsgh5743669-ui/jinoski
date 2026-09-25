@@ -833,6 +833,27 @@ const levelLabels: SiteContent["levelLabels"] = {
   },
 };
 
+const levelDescriptionsByEquipment: SiteContent["levelDescriptionsByEquipment"] = {
+  ski: {
+    beginner: "스키가 처음이신 분들을 위한 기초 자세와 제동(A자 정지) 중심 커리큘럼.",
+    basic: "플루그 보겐으로 방향 전환과 완만한 슬로프 활강을 안정적으로 익히는 과정.",
+    intermediate: "패러렐 턴과 다양한 슬로프 대응력을 기르는 실전 커리큘럼.",
+    advanced: "카빙과 숏턴, 모글 등 고급 기술을 완성하는 클래스.",
+  },
+  snowboard: {
+    beginner: "스노보드가 처음이신 분들을 위한 스탠스·바인딩 착용, 한 발 이동, 낙엽(펜듈럼) 중심 커리큘럼.",
+    basic: "앞·뒷날 엣지 컨트롤과 J턴, 연속 비기너 턴으로 완만한 슬로프를 안정적으로 내려오는 과정.",
+    intermediate: "슬라이딩 턴 완성과 속도 조절, 중급 슬로프 대응력을 기르는 실전 커리큘럼.",
+    advanced: "카빙 턴과 그라운드 트릭, 급경사 대응 등 고급 기술을 완성하는 클래스.",
+  },
+  "inline-ski": {
+    beginner: "인라인 스키가 처음이신 분들을 위한 기본 자세, 균형 잡기, 안전한 정지 중심 커리큘럼.",
+    basic: "플루그 보겐과 방향 전환으로 완만한 경사에서 안정적으로 활주하는 과정.",
+    intermediate: "패러렐 턴과 리듬감 있는 연속 턴, 경사 변화 대응력을 기르는 실전 커리큘럼.",
+    advanced: "카빙·숏턴 등 설상 스키로 이어지는 고급 기술로 시즌 전 감각을 완성하는 클래스.",
+  },
+};
+
 const groupSizeFullCareLabels: SiteContent["groupSizeFullCareLabels"] = {
   "1p": "1인",
   "2p": "2인",
@@ -1088,6 +1109,7 @@ export const ko: SiteContent = {
   programLabels,
   equipmentLabels,
   levelLabels,
+  levelDescriptionsByEquipment,
   groupSizeFullCareLabels,
   liftPassPaymentLabels,
   ageGroupLabels,
