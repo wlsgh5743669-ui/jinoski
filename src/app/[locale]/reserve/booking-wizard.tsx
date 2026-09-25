@@ -416,7 +416,7 @@ export function BookingWizard() {
       </div>
 
       <div className="mt-10 flex-1">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={step}
             initial={{ opacity: 0, x: 16 }}
