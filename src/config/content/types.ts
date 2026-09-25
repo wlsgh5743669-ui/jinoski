@@ -98,6 +98,18 @@ export type SiteContent = {
       }
   )[];
   liftPassPricing: { program: "2h" | "3h" | "4h"; durationLabel: string; price: string }[];
+  preLessonGuidance: {
+    title: string;
+    description: string;
+    items: { icon: string; title: string; description: string }[];
+    reminderGreeting: (
+      name: string,
+      date: string,
+      program: string,
+      timeSlot: string
+    ) => string;
+    reminderClosing: string;
+  };
   faq: { question: string; answer: string }[];
   faqCta: {
     eyebrow: string;
@@ -201,6 +213,7 @@ export type SiteContent = {
       backHome: string;
       messageLabels: {
         greeting: (name: string) => string;
+        phone: string;
         date: string;
         program: string;
         timeSlot: string;
@@ -209,10 +222,12 @@ export type SiteContent = {
         level: string;
         ageGroup: string;
         liftPass: string;
+        liftPassAmount: string;
         price: string;
         priceOnRequest: string;
         note: string;
         closing: string;
+        businessPhone: string;
       };
     };
   };
@@ -252,6 +267,7 @@ export type SiteContent = {
       viewScheduleButton: string;
       recommendedForLabel: string;
       fullCareTabLabel: string;
+      liftPassGroupTotal: (count: number, total: string) => string;
     };
     instructor: {
       eyebrow: string;

@@ -19,8 +19,14 @@ export function SeasonPopup() {
   const [dontShowToday, setDontShowToday] = useState(false);
 
   useEffect(() => {
+    // Deliberately deferred to after mount: the static export has no access to
+    // localStorage at build time, so applying this during render would make the
+    // client's first paint diverge from the pre-rendered HTML (hydration
+    // mismatch). Reading it here keeps the initial paint stable and updates
+    // right after, same as the URL-param read in booking-wizard.tsx.
     if (locale !== "ko") return;
     if (localStorage.getItem(DISMISS_KEY) !== todayString()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpen(true);
     }
   }, [locale]);

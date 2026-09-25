@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { useContent } from "@/lib/use-content";
 import { calculateBookingPrice } from "@/lib/pricing";
+import { buildGuidanceLines } from "@/lib/guidance-message";
 import {
   PROGRAM_VALUES,
   EQUIPMENT_VALUES,
@@ -75,6 +76,7 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
   const lines = [
     labels.greeting(state.name.trim()),
     "",
+    `${labels.phone}: ${state.phone.trim()}`,
     `${labels.date}: ${state.date}`,
     `${labels.program}: ${getProgramLabel(program, content)}`,
     `${labels.timeSlot}: ${getTimeSlotLabel(program, state.timeSlot, content)}`,
@@ -88,13 +90,32 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
     lines.push(`${labels.liftPass}: ${getLiftPassPaymentLabel(liftPassPayment as "pay-onsite" | "pay-together", content)}`);
   }
 
+  // Price breakdown — show what's being charged, not just the final number.
+  if (!price.priceOnRequest) {
+    const programDetail = isFullCare
+      ? content.fullCarePrograms.find((p) => p.slug === program)?.duration
+      : getGroupSizeLabel(groupSize as GroupSizeValue, content);
+    lines.push(
+      `${content.bookingWizard.priceSummary.lessonFee} (${getProgramLabel(program, content)}${
+        programDetail ? ` · ${programDetail}` : ""
+      }): ${formatPrice(price.basePrice)}`
+    );
+    if (!isFullCare && price.liftPassPersonCount > 0) {
+      lines.push(
+        `${labels.liftPassAmount}: ${formatPrice(price.liftPassFeePerPerson)} × ${price.liftPassPersonCount} = ${formatPrice(price.liftPassFee)}`
+      );
+    }
+  }
+
   lines.push(
     `${labels.price}: ${price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.totalPrice)}`
   );
 
   if (state.requestNote.trim()) lines.push(`${labels.note}: ${state.requestNote.trim()}`);
 
+  lines.push("", ...buildGuidanceLines(content));
   lines.push("", labels.closing);
+  lines.push(`${labels.businessPhone}: ${content.contact.phone}`);
 
   return lines.join("\n");
 }
@@ -460,16 +481,27 @@ export function BookingWizard() {
                   <p className="mb-5 text-[13.5px] leading-relaxed text-snow-500">
                     {content.bookingWizard.liftPassExplainer}
                   </p>
-                  {!isFullCare && (() => {
+                  {!isFullCare && price && (() => {
                     const passInfo = content.liftPassPricing.find(
                       (p) => p.program === state.program
                     );
                     if (!passInfo) return null;
                     return (
-                      <p className="mb-5 -mt-2 text-[14px] font-semibold text-brand-600">
-                        {content.ui.pricing.liftPassCardTitle} ({passInfo.durationLabel}):{" "}
-                        {passInfo.price}
-                      </p>
+                      <div className="mb-5 -mt-2 flex flex-col gap-1">
+                        <p className="text-[14px] font-semibold text-brand-600">
+                          {content.ui.pricing.liftPassCardTitle} ({passInfo.durationLabel} ·{" "}
+                          {content.ui.pricing.perPersonPriceLabel}):{" "}
+                          {formatPrice(price.liftPassFeePerPerson)}
+                        </p>
+                        {price.liftPassPersonCount > 1 && (
+                          <p className="text-[13px] text-snow-500">
+                            {content.ui.pricing.liftPassGroupTotal(
+                              price.liftPassPersonCount,
+                              formatPrice(price.liftPassFee)
+                            )}
+                          </p>
+                        )}
+                      </div>
                     );
                   })()}
                   <p className="rounded-2xl border border-snow-300/60 bg-white p-6 text-[14.5px] leading-relaxed text-snow-700">
@@ -531,6 +563,17 @@ export function BookingWizard() {
                       <div className="flex items-center justify-between text-[14px]">
                         <span className="text-white/60">
                           {content.bookingWizard.priceSummary.lessonFee}
+                          <span className="ml-1.5 text-[12px] text-white/35">
+                            (
+                            {getProgramLabel(state.program as ProgramValue, content)}
+                            {" · "}
+                            {isFullCare
+                              ? content.fullCarePrograms.find(
+                                  (p) => p.slug === state.program
+                                )?.duration
+                              : getGroupSizeLabel(state.groupSize as GroupSizeValue, content)}
+                            )
+                          </span>
                         </span>
                         <span className="font-semibold tabular-nums">
                           {price.priceOnRequest
@@ -547,6 +590,9 @@ export function BookingWizard() {
                             )}
                             {state.liftPassPayment === "pay-onsite" &&
                               ` ${content.bookingWizard.priceSummary.liftPassSeparateSuffix}`}
+                            <span className="ml-1.5 text-[12px] text-white/35">
+                              ({formatPrice(price.liftPassFeePerPerson)} × {price.liftPassPersonCount})
+                            </span>
                           </span>
                           <span>{formatPrice(price.liftPassFee)}</span>
                         </div>
@@ -696,6 +742,30 @@ function SummaryView({
       <pre className="mt-6 whitespace-pre-wrap rounded-2xl border border-snow-300/60 bg-white p-6 text-[14px] leading-relaxed text-ink-800">
         {message}
       </pre>
+
+      <div className="mt-4 rounded-2xl border border-brand-500/20 bg-brand-50/50 p-6">
+        <p className="text-[15px] font-bold text-ink-900">
+          {content.preLessonGuidance.title}
+        </p>
+        <p className="mt-1 text-[13px] text-snow-600">
+          {content.preLessonGuidance.description}
+        </p>
+        <ul className="mt-4 flex flex-col gap-3">
+          {content.preLessonGuidance.items.map((item) => (
+            <li key={item.title} className="flex items-start gap-2.5">
+              <span className="text-[16px] leading-none">{item.icon}</span>
+              <div>
+                <p className="text-[13.5px] font-semibold text-ink-900">
+                  {item.title}
+                </p>
+                <p className="mt-0.5 text-[13px] leading-relaxed text-snow-700">
+                  {item.description}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <button
         type="button"

@@ -378,6 +378,47 @@ const liftPassPricing: SiteContent["liftPassPricing"] = [
   { program: "4h", durationLabel: "4 Hours", price: "50,000원" },
 ];
 
+const preLessonGuidance: SiteContent["preLessonGuidance"] = {
+  title: "Please review before your lesson",
+  description:
+    "For a safe and enjoyable lesson, please check the following in advance.",
+  items: [
+    {
+      icon: "🎒",
+      title: "What to bring",
+      description:
+        "Please bring waterproof ski wear, gloves, goggles, and a spare pair of socks. Equipment and clothing rental is also available — just let us know when you book.",
+    },
+    {
+      icon: "⏰",
+      title: "Arrival time",
+      description:
+        "Please arrive 20–30 minutes before your lesson starts so we can begin on time.",
+    },
+    {
+      icon: "🎫",
+      title: "Lift pass & instructor permit",
+      description:
+        "The lift pass isn't included in the lesson fee and must be purchased separately. We'll guide you to the most cost-effective option once your booking is confirmed.",
+    },
+    {
+      icon: "📞",
+      title: "Rescheduling & cancellation",
+      description:
+        "You're free to reschedule or cancel up until the day before your lesson — just give us a call. Same-day cancellations or no-shows may affect future scheduling, so please let us know as early as possible.",
+    },
+    {
+      icon: "🌨️",
+      title: "In case of bad weather",
+      description:
+        "If slopes are closed due to heavy snow or high winds, we'll coordinate a new schedule with you.",
+    },
+  ],
+  reminderGreeting: (name, date, program, timeSlot) =>
+    `Hi ${name}! This is JinoSki — just a reminder about your ${program} ${timeSlot} lesson tomorrow (${date}) :)\nPlease take a moment to review the guidance below before your lesson.`,
+  reminderClosing: "See you tomorrow!",
+};
+
 // TODO: translate — Korean content shown to EN visitors until translated.
 const faq: SiteContent["faq"] = [
   {
@@ -850,7 +891,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   },
   fixedTimeDisabledNote: "This program starts at a fixed time.",
   liftPassExplainer:
-    "The lift pass is a special permit issued by the resort so instructors and students can use the designated teaching zones and lifts at Vivaldi Park. It's a separate cost from a regular lift ticket.",
+    "The lift pass is a special permit issued by the resort so instructors and students can use the designated teaching zones and lifts at Vivaldi Park. It's a separate cost from a regular lift ticket, charged per student — so the total scales with your group size.",
   liftPassIncludedNote:
     "This program already includes the lift pass fee, so there's nothing extra to pay for it.",
   liftPassPayTogetherNote:
@@ -884,6 +925,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     messageLabels: {
       greeting: (name: string) =>
         `Hi! This is ${name}. I'd like to request the following booking.`,
+      phone: "Phone",
       date: "Date",
       program: "Program",
       timeSlot: "Time slot",
@@ -892,10 +934,12 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       level: "Level",
       ageGroup: "Student age group",
       liftPass: "Lift pass payment",
+      liftPassAmount: "Lift pass fee",
       price: "Estimated price",
       priceOnRequest: "Quote on request",
       note: "Request note",
       closing: "Thank you!",
+      businessPhone: "Contact",
     },
   },
 };
@@ -929,6 +973,7 @@ const ui: SiteContent["ui"] = {
     viewScheduleButton: "View Detailed Schedule",
     recommendedForLabel: "Recommended For",
     fullCareTabLabel: "One Day Full Care",
+    liftPassGroupTotal: (count, total) => `Total for your group of ${count}: ${total}`,
   },
   instructor: {
     eyebrow: "Instructor",
@@ -1050,6 +1095,7 @@ export const en: SiteContent = {
   lessonPricing,
   fullCarePrograms,
   liftPassPricing,
+  preLessonGuidance,
   faq,
   faqCta,
   pricingCta,

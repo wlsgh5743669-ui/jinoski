@@ -62,13 +62,16 @@ function FullCareCard({
   programs,
   viewScheduleLabel,
   recommendedForLabel,
+  activeTab,
+  onTabChange,
 }: {
   programs: SiteContent["fullCarePrograms"];
   viewScheduleLabel: string;
   recommendedForLabel: string;
+  activeTab: "one-day" | "night";
+  onTabChange: (tab: "one-day" | "night") => void;
 }) {
   const { groupSizeFullCareLabels, ui, programLabels, bookingWizard } = useContent();
-  const [activeTab, setActiveTab] = useState<"one-day" | "night">("one-day");
   const [open, setOpen] = useState(false);
   const program = programs.find((p) => p.slug === activeTab) ?? programs[0];
 
@@ -97,7 +100,7 @@ function FullCareCard({
             key={p.slug}
             type="button"
             onClick={() => {
-              setActiveTab(p.slug);
+              onTabChange(p.slug);
               setOpen(false);
             }}
             className={cn(
@@ -341,6 +344,7 @@ export function Pricing() {
   const [activeDuration, setActiveDuration] = useState<
     "2h" | "3h" | "4h" | "fullcare"
   >("2h");
+  const [fullCareTab, setFullCareTab] = useState<"one-day" | "night">("one-day");
 
   const scheduleByDuration: Record<"2h" | "3h" | "4h", { label: string; time: string }[]> = {
     "2h": scheduleTimes.twoHour,
@@ -388,6 +392,8 @@ export function Pricing() {
                 programs={fullCarePrograms}
                 viewScheduleLabel={ui.pricing.viewScheduleButton}
                 recommendedForLabel={ui.pricing.recommendedForLabel}
+                activeTab={fullCareTab}
+                onTabChange={setFullCareTab}
               />
             </div>
           </Reveal>
@@ -436,7 +442,7 @@ export function Pricing() {
           description={content.pricingCta.description}
           bookButton={content.pricingCta.bookButton}
           kakaoButton={content.pricingCta.kakaoButton}
-          href={`/reserve?program=${activeDuration === "fullcare" ? "one-day" : activeDuration}`}
+          href={`/reserve?program=${activeDuration === "fullcare" ? fullCareTab : activeDuration}`}
         />
       </Container>
     </section>

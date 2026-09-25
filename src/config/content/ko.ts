@@ -360,6 +360,47 @@ const liftPassPricing: SiteContent["liftPassPricing"] = [
   { program: "4h", durationLabel: "4시간", price: "50,000원" },
 ];
 
+// TODO(진호): 도착 시간 권장값과 취소/변경 정책은 초안입니다. 실제 운영 기준으로 확인 후 수정해주세요.
+const preLessonGuidance: SiteContent["preLessonGuidance"] = {
+  title: "레슨 전 꼭 확인해주세요",
+  description: "즐겁고 안전한 레슨을 위해 아래 내용을 미리 확인해주세요.",
+  items: [
+    {
+      icon: "🎒",
+      title: "준비물",
+      description:
+        "방수 스키복, 장갑, 고글, 여벌 양말을 준비해주세요. 장비·의류 렌탈도 가능하니 예약 시 말씀해주시면 안내해드립니다.",
+    },
+    {
+      icon: "⏰",
+      title: "도착 시간",
+      description:
+        "원활한 레슨 진행을 위해 강습 시작 20~30분 전까지 약속 장소에 도착해주세요.",
+    },
+    {
+      icon: "🎫",
+      title: "리프트권 · 패찰",
+      description:
+        "리프트권은 강습료에 포함되어 있지 않아 별도 구매가 필요합니다. 가장 합리적인 구매 방법은 예약 확정 후 함께 안내해드립니다.",
+    },
+    {
+      icon: "📞",
+      title: "일정 변경 · 취소",
+      description:
+        "일정 변경이나 취소는 레슨 전날까지 연락 주시면 자유롭게 조정해드립니다. 당일 취소·노쇼는 다음 예약 일정에 영향을 드릴 수 있어 미리 알려주시면 감사하겠습니다.",
+    },
+    {
+      icon: "🌨️",
+      title: "기상 악화 시",
+      description:
+        "폭설·강풍 등으로 슬로프가 통제되는 경우 강사와 상의 후 일정을 조정해드립니다.",
+    },
+  ],
+  reminderGreeting: (name, date, program, timeSlot) =>
+    `안녕하세요 ${name}님! 내일(${date}) ${program} ${timeSlot} 레슨 예정인 JinoSki입니다 :)\n레슨 전 안내사항을 다시 한 번 확인해주세요.`,
+  reminderClosing: "내일 뵙겠습니다!",
+};
+
 const faq: SiteContent["faq"] = [
   {
     question: "스키를 한 번도 안 타봤는데 가능할까요?",
@@ -829,7 +870,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   },
   fixedTimeDisabledNote: "이 프로그램은 정해진 시간에 시작합니다.",
   liftPassExplainer:
-    "패찰이란 비발디파크에서 강습을 진행할 때 지정된 강습 구역·리프트를 이용하기 위해 리조트에서 발급하는 강습 전용 허가증이에요. 일반 리프트권과는 별도의 비용입니다.",
+    "패찰이란 비발디파크에서 강습을 진행할 때 지정된 강습 구역·리프트를 이용하기 위해 리조트에서 발급하는 강습 전용 허가증이에요. 일반 리프트권과는 별도의 비용이며, 교육생 1인당 발급되는 비용이라 인원 수만큼 계산됩니다.",
   liftPassIncludedNote:
     "이 프로그램은 패찰(강습 허가권) 비용이 이미 포함되어 있어 별도로 결제하실 필요가 없습니다.",
   liftPassPayTogetherNote:
@@ -863,6 +904,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     messageLabels: {
       greeting: (name: string) =>
         `안녕하세요! ${name}입니다. 아래와 같이 예약 신청 드립니다.`,
+      phone: "연락처",
       date: "날짜",
       program: "프로그램",
       timeSlot: "시간대",
@@ -871,10 +913,12 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       level: "레벨",
       ageGroup: "교육생 연령대",
       liftPass: "패찰 결제",
+      liftPassAmount: "패찰비용",
       price: "예상 금액",
       priceOnRequest: "별도 문의",
       note: "요청사항",
       closing: "확인 부탁드립니다 :)",
+      businessPhone: "문의처",
     },
   },
 };
@@ -906,6 +950,7 @@ const ui: SiteContent["ui"] = {
     viewScheduleButton: "상세 일정 보기",
     recommendedForLabel: "추천 대상",
     fullCareTabLabel: "원데이 풀케어",
+    liftPassGroupTotal: (count, total) => `선택하신 인원 ${count}명 기준 총 ${total}`,
   },
   instructor: {
     eyebrow: "Instructor",
@@ -1022,6 +1067,7 @@ export const ko: SiteContent = {
   lessonPricing,
   fullCarePrograms,
   liftPassPricing,
+  preLessonGuidance,
   faq,
   faqCta,
   pricingCta,

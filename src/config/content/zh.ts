@@ -344,6 +344,44 @@ const liftPassPricing: SiteContent["liftPassPricing"] = [
   { program: "4h", durationLabel: "4小时", price: "50,000원" },
 ];
 
+const preLessonGuidance: SiteContent["preLessonGuidance"] = {
+  title: "上课前请务必确认",
+  description: "为了安全愉快地完成课程，请提前确认以下事项。",
+  items: [
+    {
+      icon: "🎒",
+      title: "准备物品",
+      description:
+        "请准备防水滑雪服、手套、护目镜和备用袜子。也可以租借装备和服装，预约时告知我们即可。",
+    },
+    {
+      icon: "⏰",
+      title: "到达时间",
+      description: "为了顺利开始课程，请提前20~30分钟到达约定地点。",
+    },
+    {
+      icon: "🎫",
+      title: "缆车票 · 教学许可证",
+      description:
+        "缆车票费用不包含在课程费中，需另行购买。确认预约后我们会为您推荐最划算的购买方式。",
+    },
+    {
+      icon: "📞",
+      title: "改期 · 取消",
+      description:
+        "如需改期或取消，请在课程前一天联系我们，我们会尽量为您调整。当天取消或未到场可能会影响后续预约安排，请尽早告知我们。",
+    },
+    {
+      icon: "🌨️",
+      title: "恶劣天气时",
+      description: "如因大雪、大风等导致滑雪道管制，我们会与您协商调整日程。",
+    },
+  ],
+  reminderGreeting: (name, date, program, timeSlot) =>
+    `您好${name}！我是JinoSki，提醒您明天(${date})有${program} ${timeSlot}课程 :)\n请提前确认以下上课须知。`,
+  reminderClosing: "明天见！",
+};
+
 // TODO: translate — Korean content shown to ZH visitors until translated.
 const faq: SiteContent["faq"] = [
   {
@@ -795,7 +833,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   },
   fixedTimeDisabledNote: "该项目将于固定时间开始。",
   liftPassExplainer:
-    "雪票是指在大明滑雪场进行课程教学时，为了使用指定教学区域及缆车而由度假村发放的教学专用许可证。此费用与普通缆车票分开计算。",
+    "雪票是指在大明滑雪场进行课程教学时，为了使用指定教学区域及缆车而由度假村发放的教学专用许可证。此费用与普通缆车票分开计算，并按学员人数计费，因此总额会随人数增加。",
   liftPassIncludedNote: "该项目已包含雪票（教学许可证）费用，无需另行支付。",
   liftPassPayTogetherNote:
     "雪票费用将与课程费用一起一次性支付。现场无需另行付款，可免去等待，直接开始课程。",
@@ -827,6 +865,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     backHome: "返回首页",
     messageLabels: {
       greeting: (name: string) => `您好！我是${name}，想申请以下预约。`,
+      phone: "联系方式",
       date: "日期",
       program: "课程",
       timeSlot: "时间段",
@@ -835,10 +874,12 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       level: "水平",
       ageGroup: "学员年龄段",
       liftPass: "缆车通行证付款",
+      liftPassAmount: "雪票费用",
       price: "预估金额",
       priceOnRequest: "另行咨询",
       note: "备注",
       closing: "谢谢！",
+      businessPhone: "联系电话",
     },
   },
 };
@@ -870,6 +911,7 @@ const ui: SiteContent["ui"] = {
     viewScheduleButton: "查看详细日程",
     recommendedForLabel: "推荐对象",
     fullCareTabLabel: "One Day Full Care",
+    liftPassGroupTotal: (count, total) => `您选择的${count}人合计：${total}`,
   },
   instructor: {
     eyebrow: "Instructor",
@@ -984,6 +1026,7 @@ export const zh: SiteContent = {
   lessonPricing,
   fullCarePrograms,
   liftPassPricing,
+  preLessonGuidance,
   faq,
   faqCta,
   pricingCta,
