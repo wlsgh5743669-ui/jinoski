@@ -896,10 +896,10 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   summary: {
     heading: "아래 내용을 복사해서 카카오톡으로 보내주세요",
     description:
-      "\"복사하기\" 버튼을 누른 뒤, 카카오톡 채널 채팅방에 붙여넣기(길게 눌러 붙여넣기)만 하시면 예약 신청이 완료됩니다.",
+      "아래 버튼을 누르면 예약 내용(이름·연락처 포함)이 자동으로 복사되고 카카오톡 채널이 열립니다. 채팅방에 붙여넣기(길게 눌러 붙여넣기)만 하시면 예약 신청이 완료됩니다.",
     copyButton: "복사하기",
     copiedLabel: "복사 완료!",
-    kakaoButton: "카카오톡 채널 열기",
+    kakaoButton: "내용 복사하고 카카오톡으로 보내기",
     backHome: "홈으로 돌아가기",
     messageLabels: {
       greeting: (name: string) =>
@@ -919,6 +919,12 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       note: "요청사항",
       closing: "확인 부탁드립니다 :)",
       businessPhone: "문의처",
+      booker: "예약자",
+      priceBreakdown: "[결제 금액 계산]",
+      liftPassIncluded: "패찰(강습 허가권): 레슨료에 포함 · 별도 결제 없음",
+      liftPassOnsite: "현장 별도 결제",
+      perPerson: "1인",
+      people: (count: number) => `${count}명`,
     },
   },
 };

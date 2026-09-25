@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, Check, Copy, MessageCircle } from "lucide-react"
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { useContent } from "@/lib/use-content";
-import { calculateBookingPrice } from "@/lib/pricing";
+import { calculateBookingPrice, getGroupStudentCount } from "@/lib/pricing";
 import { buildGuidanceLines } from "@/lib/guidance-message";
 import {
   PROGRAM_VALUES,
@@ -23,7 +23,6 @@ import {
   getGroupSizeLabel,
   getLiftPassPaymentLabel,
   getAgeGroupLabel,
-  isHourlyProgram,
   type ProgramValue,
   type EquipmentValue,
   type LevelValue,
@@ -65,17 +64,65 @@ function formatPrice(value: number): string {
   return `${value.toLocaleString("ko-KR")}원`;
 }
 
+type BreakdownLine = { label: string; detail: string; amount: string };
+
+/**
+ * Human-readable "how the total is calculated" lines, e.g.
+ *   레슨료 · One Day Full Care (약 8시간) · 2명 = 700,000원
+ *   패찰비용 · 1인 25,000원 × 2명 = 50,000원
+ * Used both on the booking screen and in the KakaoTalk message so the customer
+ * (and the owner) see exactly what the number is made of.
+ */
+function buildPriceBreakdown(state: WizardState, content: SiteContent) {
+  const { program, groupSize, liftPassPayment } = state;
+  if (!program || !groupSize) return null;
+  const labels = content.bookingWizard.summary.messageLabels;
+  const price = calculateBookingPrice({ program, groupSize, liftPassPayment, content });
+  const isFullCare = program === "one-day" || program === "night";
+  const people = getGroupStudentCount(groupSize);
+  const lines: BreakdownLine[] = [];
+
+  const programName = getProgramLabel(program, content);
+  const lessonDetail = isFullCare
+    ? `${programName} (${content.fullCarePrograms.find((p) => p.slug === program)?.duration ?? ""}) · ${labels.people(people)}`
+    : `${programName} · ${groupSize} (${labels.people(people)})`;
+  lines.push({
+    label: content.bookingWizard.priceSummary.lessonFee,
+    detail: lessonDetail,
+    amount: price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.basePrice),
+  });
+
+  if (isFullCare) {
+    lines.push({ label: "", detail: labels.liftPassIncluded, amount: "" });
+  } else if (!price.priceOnRequest && price.liftPassPersonCount > 0) {
+    lines.push({
+      label: labels.liftPassAmount,
+      detail: `${labels.perPerson} ${formatPrice(price.liftPassFeePerPerson)} × ${labels.people(price.liftPassPersonCount)}${
+        liftPassPayment === "pay-onsite" ? ` (${labels.liftPassOnsite})` : ""
+      }`,
+      amount: formatPrice(price.liftPassFee),
+    });
+  }
+
+  return {
+    price,
+    lines,
+    total: price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.totalPrice),
+  };
+}
+
 function buildSummaryMessage(state: WizardState, content: SiteContent): string {
   const { program, groupSize, liftPassPayment } = state;
   if (!program || !groupSize || !state.equipment || !state.level || !state.ageGroup) return "";
 
   const labels = content.bookingWizard.summary.messageLabels;
-  const price = calculateBookingPrice({ program, groupSize, liftPassPayment, content });
   const isFullCare = program === "one-day" || program === "night";
+  const breakdown = buildPriceBreakdown(state, content)!;
 
   const lines = [
     labels.greeting(state.name.trim()),
     "",
+    `${labels.booker}: ${state.name.trim()}`,
     `${labels.phone}: ${state.phone.trim()}`,
     `${labels.date}: ${state.date}`,
     `${labels.program}: ${getProgramLabel(program, content)}`,
@@ -90,28 +137,17 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
     lines.push(`${labels.liftPass}: ${getLiftPassPaymentLabel(liftPassPayment as "pay-onsite" | "pay-together", content)}`);
   }
 
-  // Price breakdown — show what's being charged, not just the final number.
-  if (!price.priceOnRequest) {
-    const programDetail = isFullCare
-      ? content.fullCarePrograms.find((p) => p.slug === program)?.duration
-      : getGroupSizeLabel(groupSize as GroupSizeValue, content);
+  lines.push("", labels.priceBreakdown);
+  for (const line of breakdown.lines) {
     lines.push(
-      `${content.bookingWizard.priceSummary.lessonFee} (${getProgramLabel(program, content)}${
-        programDetail ? ` · ${programDetail}` : ""
-      }): ${formatPrice(price.basePrice)}`
+      line.label
+        ? `· ${line.label}: ${line.detail}${line.amount ? ` = ${line.amount}` : ""}`
+        : `· ${line.detail}`
     );
-    if (!isFullCare && price.liftPassPersonCount > 0) {
-      lines.push(
-        `${labels.liftPassAmount}: ${formatPrice(price.liftPassFeePerPerson)} × ${price.liftPassPersonCount} = ${formatPrice(price.liftPassFee)}`
-      );
-    }
   }
+  lines.push(`→ ${labels.price}: ${breakdown.total}`);
 
-  lines.push(
-    `${labels.price}: ${price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.totalPrice)}`
-  );
-
-  if (state.requestNote.trim()) lines.push(`${labels.note}: ${state.requestNote.trim()}`);
+  if (state.requestNote.trim()) lines.push("", `${labels.note}: ${state.requestNote.trim()}`);
 
   lines.push("", ...buildGuidanceLines(content));
   lines.push("", labels.closing);
@@ -486,21 +522,19 @@ export function BookingWizard() {
                       (p) => p.program === state.program
                     );
                     if (!passInfo) return null;
+                    const labels = content.bookingWizard.summary.messageLabels;
                     return (
-                      <div className="mb-5 -mt-2 flex flex-col gap-1">
-                        <p className="text-[14px] font-semibold text-brand-600">
-                          {content.ui.pricing.liftPassCardTitle} ({passInfo.durationLabel} ·{" "}
-                          {content.ui.pricing.perPersonPriceLabel}):{" "}
-                          {formatPrice(price.liftPassFeePerPerson)}
+                      <div className="mb-5 rounded-2xl border border-brand-500/30 bg-brand-50/60 p-5">
+                        <p className="text-[13px] font-semibold text-snow-600">
+                          {content.ui.pricing.liftPassCardTitle} ({passInfo.durationLabel})
                         </p>
-                        {price.liftPassPersonCount > 1 && (
-                          <p className="text-[13px] text-snow-500">
-                            {content.ui.pricing.liftPassGroupTotal(
-                              price.liftPassPersonCount,
-                              formatPrice(price.liftPassFee)
-                            )}
-                          </p>
-                        )}
+                        <p className="mt-1 text-[18px] font-bold text-brand-600">
+                          {labels.perPerson} {formatPrice(price.liftPassFeePerPerson)}
+                        </p>
+                        <p className="mt-2 text-[14px] font-semibold tabular-nums text-ink-900">
+                          {formatPrice(price.liftPassFeePerPerson)} × {labels.people(price.liftPassPersonCount)} ={" "}
+                          {formatPrice(price.liftPassFee)}
+                        </p>
                       </div>
                     );
                   })()}
@@ -558,59 +592,36 @@ export function BookingWizard() {
                     className="rounded-2xl border border-snow-300/60 px-5 py-4 text-[15px] outline-none transition-colors focus:border-brand-500"
                   />
 
-                  {price && (
-                    <div className="mt-2 flex flex-col gap-2 rounded-2xl bg-ink-900 p-6 text-white">
-                      <div className="flex items-center justify-between text-[14px]">
-                        <span className="text-white/60">
-                          {content.bookingWizard.priceSummary.lessonFee}
-                          <span className="ml-1.5 text-[12px] text-white/35">
-                            (
-                            {getProgramLabel(state.program as ProgramValue, content)}
-                            {" · "}
-                            {isFullCare
-                              ? content.fullCarePrograms.find(
-                                  (p) => p.slug === state.program
-                                )?.duration
-                              : getGroupSizeLabel(state.groupSize as GroupSizeValue, content)}
-                            )
-                          </span>
-                        </span>
-                        <span className="font-semibold tabular-nums">
-                          {price.priceOnRequest
-                            ? content.bookingWizard.priceSummary.priceOnRequest
-                            : formatPrice(price.basePrice)}
-                        </span>
-                      </div>
-                      {isHourlyProgram(state.program as ProgramValue) && (
-                        <div className="flex items-center justify-between text-[13px] text-white/50">
-                          <span>
-                            {getLiftPassPaymentLabel(
-                              state.liftPassPayment as "pay-onsite" | "pay-together",
-                              content
-                            )}
-                            {state.liftPassPayment === "pay-onsite" &&
-                              ` ${content.bookingWizard.priceSummary.liftPassSeparateSuffix}`}
-                            <span className="ml-1.5 text-[12px] text-white/35">
-                              ({formatPrice(price.liftPassFeePerPerson)} × {price.liftPassPersonCount})
+                  {price && (() => {
+                    const breakdown = buildPriceBreakdown(state, content);
+                    if (!breakdown) return null;
+                    return (
+                      <div className="mt-2 flex flex-col gap-2.5 rounded-2xl bg-ink-900 p-6 text-white">
+                        <p className="text-[12.5px] font-semibold text-white/45">
+                          {content.bookingWizard.summary.messageLabels.priceBreakdown}
+                        </p>
+                        {breakdown.lines.map((line, i) => (
+                          <div key={i} className="flex items-start justify-between gap-3 text-[14px]">
+                            <span className="text-white/70">
+                              {line.label && <span className="font-semibold text-white/90">{line.label} </span>}
+                              <span className="text-[13px] text-white/55">{line.detail}</span>
                             </span>
-                          </span>
-                          <span>{formatPrice(price.liftPassFee)}</span>
-                        </div>
-                      )}
-                      {!price.priceOnRequest && (
-                        <div className="mt-1 flex items-center justify-between border-t border-white/10 pt-2 text-[15px] font-bold">
+                            {line.amount && (
+                              <span className="shrink-0 font-semibold tabular-nums">{line.amount}</span>
+                            )}
+                          </div>
+                        ))}
+                        <div className="mt-1 flex items-center justify-between border-t border-white/10 pt-2.5 text-[15px] font-bold">
                           <span>
                             {state.liftPassPayment === "pay-onsite"
                               ? content.bookingWizard.priceSummary.payOnsite
                               : content.bookingWizard.priceSummary.payTogether}
                           </span>
-                          <span className="tabular-nums text-brand-300">
-                            {formatPrice(price.totalPrice)}
-                          </span>
+                          <span className="tabular-nums text-brand-300">{breakdown.total}</span>
                         </div>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </div>
@@ -780,6 +791,11 @@ function SummaryView({
         href={content.contact.kakaoChannel}
         target="_blank"
         rel="noreferrer"
+        onClick={() => {
+          // Copy the full booking message (incl. name + phone) before opening the
+          // channel, so the customer can't send a message without their contact.
+          void handleCopy();
+        }}
         className="mt-3 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full border border-snow-300 text-[15px] font-semibold text-ink-900 transition-colors hover:border-brand-500"
       >
         <MessageCircle size={18} />

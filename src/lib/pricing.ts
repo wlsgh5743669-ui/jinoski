@@ -13,8 +13,10 @@ function parseWon(price: string): number {
  * instead of just the final total.
  */
 export function getGroupStudentCount(groupSize: string): number {
-  const match = groupSize.match(/^1:(\d+)$/);
-  return match ? Number(match[1]) : 1;
+  const ratio = groupSize.match(/^1:(\d+)$/);
+  if (ratio) return Number(ratio[1]);
+  const fullCare = groupSize.match(/^(\d+)p$/);
+  return fullCare ? Number(fullCare[1]) : 1;
 }
 
 export type BookingPriceResult = {

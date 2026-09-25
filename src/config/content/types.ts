@@ -228,6 +228,12 @@ export type SiteContent = {
         note: string;
         closing: string;
         businessPhone: string;
+        booker: string;
+        priceBreakdown: string;
+        liftPassIncluded: string;
+        liftPassOnsite: string;
+        perPerson: string;
+        people: (count: number) => string;
       };
     };
   };

@@ -920,7 +920,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       "Tap \"Copy\", then paste it into the JinoSki KakaoTalk channel chat to complete your booking request.",
     copyButton: "Copy",
     copiedLabel: "Copied!",
-    kakaoButton: "Open KakaoTalk Channel",
+    kakaoButton: "Copy & send via KakaoTalk",
     backHome: "Back to home",
     messageLabels: {
       greeting: (name: string) =>
@@ -940,6 +940,12 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       note: "Request note",
       closing: "Thank you!",
       businessPhone: "Contact",
+      booker: "Booked by",
+      priceBreakdown: "[Price breakdown]",
+      liftPassIncluded: "Lift pass: included in the lesson fee · no extra payment",
+      liftPassOnsite: "paid separately on site",
+      perPerson: "per person",
+      people: (count: number) => `${count} ${count > 1 ? "people" : "person"}`,
     },
   },
 };

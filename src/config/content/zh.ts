@@ -861,7 +861,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       "点击\"复制\"后，粘贴到 JinoSki KakaoTalk 频道聊天窗口即可完成预约申请。",
     copyButton: "复制",
     copiedLabel: "已复制！",
-    kakaoButton: "打开 KakaoTalk 频道",
+    kakaoButton: "复制并通过 KakaoTalk 发送",
     backHome: "返回首页",
     messageLabels: {
       greeting: (name: string) => `您好！我是${name}，想申请以下预约。`,
@@ -880,6 +880,12 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       note: "备注",
       closing: "谢谢！",
       businessPhone: "联系电话",
+      booker: "预约人",
+      priceBreakdown: "[费用明细]",
+      liftPassIncluded: "教学许可证（雪票）：已包含在课程费中 · 无需另付",
+      liftPassOnsite: "现场另付",
+      perPerson: "每人",
+      people: (count: number) => `${count}人`,
     },
   },
 };
