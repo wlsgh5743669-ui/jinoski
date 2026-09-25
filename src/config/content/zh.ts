@@ -367,9 +367,9 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
     },
     {
       icon: "📞",
-      title: "改期 · 取消",
+      title: "取消 · 退款规定",
       description:
-        "如需改期或取消，请在课程前一天联系我们，我们会尽量为您调整。当天取消或未到场可能会影响后续预约安排，请尽早告知我们。",
+        "退款规定：课程3天前取消全额退款，1~2天前取消退款50%，当天取消或未到场不予退款。如需改期，请尽早联系我们。",
     },
     {
       icon: "🌨️",
@@ -886,7 +886,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       "① 现在发送的是“预约申请”，尚未确认。",
       "② 确认教练日程后我们会联系您确认预约。",
       "③ 收到确认通知后，请汇款至以下账户：\n国民银行（KB Kookmin）010-4047-7711 · 户名 박진호（Jino Company）",
-      "④ 如需变更或取消，请于课程前一天联系我们。",
+      "④ 退款规定：课程3天前取消全额退款 · 1~2天前退款50% · 当天取消或未到场不予退款",
     ],
     missingFields: (fields: string) => `请填写：${fields}。`,
     fieldNames: { name: "姓名", phone: "联系方式", ageGroup: "学员年龄段" },

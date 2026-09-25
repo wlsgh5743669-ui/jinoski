@@ -360,7 +360,7 @@ const liftPassPricing: SiteContent["liftPassPricing"] = [
   { program: "4h", durationLabel: "4시간", price: "50,000원" },
 ];
 
-// TODO(진호): 도착 시간 권장값과 취소/변경 정책은 초안입니다. 실제 운영 기준으로 확인 후 수정해주세요.
+// TODO(진호): 도착 시간 권장값은 초안입니다. (환불 규정은 2026-09-25 확정)
 const preLessonGuidance: SiteContent["preLessonGuidance"] = {
   title: "레슨 전 꼭 확인해주세요",
   description: "즐겁고 안전한 레슨을 위해 아래 내용을 미리 확인해주세요.",
@@ -385,9 +385,9 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
     },
     {
       icon: "📞",
-      title: "일정 변경 · 취소",
+      title: "취소 · 환불 규정",
       description:
-        "일정 변경이나 취소는 레슨 전날까지 연락 주시면 자유롭게 조정해드립니다. 당일 취소·노쇼는 다음 예약 일정에 영향을 드릴 수 있어 미리 알려주시면 감사하겠습니다.",
+        "환불 규정: 레슨 3일 전까지 100% 환불, 1~2일 전 50% 환불, 당일 취소·노쇼는 환불이 불가합니다. 일정 변경이 필요하시면 최대한 빨리 연락 주세요.",
     },
     {
       icon: "🌨️",
@@ -480,7 +480,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "취소 및 환불은 어떻게 진행되나요?",
     answer:
-      "운영 규정에 따라 진행됩니다.\n기상 악화나 슬로프 운영 중단 등 불가항력적인 상황은 별도로 안내해드리며, 자세한 환불 규정은 예약 시 확인하실 수 있습니다.",
+      "아래 환불 규정에 따라 진행됩니다.\n· 레슨 3일 전까지 취소: 100% 환불\n· 레슨 1~2일 전 취소: 50% 환불\n· 당일 취소 및 노쇼: 환불 불가\n기상 악화나 슬로프 운영 중단 등 불가항력적인 상황은 별도로 안내해드립니다.",
   },
   {
     question: "JINO SKI & BOARD SCHOOL만의 차별점은 무엇인가요?",
@@ -923,7 +923,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       "① 지금 보내주시는 내용은 '예약 신청'이에요. 아직 확정 전이에요.",
       "② 강사 일정을 확인한 뒤 연락드려 예약을 확정해드려요.",
       "③ 확정 안내를 받으신 후 아래 계좌로 입금해주세요.\n국민은행 010-4047-7711 · 예금주 박진호(지노컴퍼니)",
-      "④ 일정 변경·취소는 레슨 전날까지 연락 주시면 조정해드려요.",
+      "④ 환불 규정: 레슨 3일 전까지 100% 환불 · 1~2일 전 50% 환불 · 당일 취소·노쇼는 환불 불가",
     ],
     missingFields: (fields: string) => `아직 입력하지 않은 항목: ${fields}`,
     fieldNames: { name: "이름", phone: "연락처", ageGroup: "교육생 연령대" },
