@@ -655,146 +655,88 @@ const galleryItems = [
   { type: "image", src: "/images/gallery-8.jpg", alt: "Snowboard riding", tall: true },
 ];
 
-const reviews = [
+// 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기 기준)
+const reviews: SiteContent["reviews"] = [
   {
-    name: "Ms. K",
+    name: "srlo****",
     rating: 5,
-    lesson: "Intro Class",
+    lesson: "One Day Full Care (7h)",
+    date: "2026.02.01",
+    photo: "/images/reviews/review-fullcare-srlo.jpg",
     content:
-      "I was terrified since it was my first time skiing, but thanks to Instructor Jinho I was able to ride down the slope in just one day. The instructions were thorough and safety always came first, so I trusted the process completely.",
+      "We've tried full-care lessons elsewhere, but this is the place my kids and I were truly happy with!\nWhen my child asked to go skiing again, they said they'd only go if it's with Jino and Ari — they'd even skip a musical if that was the only time slot.\nThe feedback was thorough, covering what to work on and how far they'd come, and the photos — need I say more? So beautiful and sharp!\nI thanked you on site, but wanted to say it again here!\nThank you so much for all your hard work.\nMy kids were so happy, and that makes me happy too ^-^",
   },
   {
-    name: "Mr. L",
+    name: "o_oa****",
     rating: 5,
-    lesson: "Intermediate Class",
+    lesson: "One Day Full Care (7h)",
+    date: "2026.01.17",
+    photo: "/images/reviews/review-fullcare-o_oa.jpg",
     content:
-      "I was stuck on parallel turns, but he pinpointed exactly what to fix in my posture and I got the hang of it in three hours. I'll be back for the advanced class next season.",
+      "We've taken ski lessons every winter for 5 years, and this was the most satisfying lesson for both my child and me.\nMy child said, unprompted, that this was by far the number-one instructor they've ever had,\nand my nephew, who skied for the first time, loved it so much that skiing became his favorite sport and he wanted the instructor's contact.\nWhile the kids enjoyed the attentive full-care lesson, the adults could relax and visit local restaurants,\nso it was a meaningful and comfortable time for everyone.\nThank you sincerely.",
   },
   {
-    name: "Ms. C",
+    name: "n430***",
     rating: 5,
-    lesson: "One Day Class",
+    lesson: "One Day Full Care (7h)",
+    date: "2025.12.09",
+    photo: "/images/reviews/review-fullcare-n430.jpg",
     content:
-      "I only had one day, but he made the absolute most of it. He even took beautiful photos for me — I got shots I'll treasure forever.",
+      "Snowboarding felt so hard at first, but with the One Day Full Care, the whole day just clicked!\nFrom gear setup to basic sliding and speed control, everything was taught step by step, so my friend and I could relax and have fun learning together.\n\nBest of all, we nailed beginner turns by the end ✨\nComing down together we kept shouting \"We can actually do this!\"\nThe photos were lovely too, so the day became a great memory.\n\nA step-by-step lesson perfect for first-timers — truly 'full care'!\nI think we'll be back to learn beginner turns next time ❄️🏂💙",
   },
   {
-    name: "Mr. P",
+    name: "man1****",
     rating: 5,
-    lesson: "Kids Lesson",
+    lesson: "One Day Full Care (7h)",
+    date: "2025.11.30",
+    photo: "/images/reviews/review-fullcare-man1.jpg",
     content:
-      "My 6-year-old was scared of the snow, but the playful approach won her over — now skiing is her favorite thing. He's genuinely great with kids.",
+      "We took the couple One Day Full Care class!\nI worried whether we could even ride,\nbut we got comfortable quickly because the basics were taught step by step.\n\nThere were breaks along the way and lunch was provided,\nso pacing our energy through the day was easy.\nThe instructor stayed beside us controlling our speed\nand explained balance in detail,\nso we improved much faster than riding alone!\n\nWe even got amazing photos 📸\nFalling, laughing, learning and succeeding together —\nthe whole process became a precious date.\n\nHighly recommended for couples looking for a winter date.",
   },
   {
-    name: "Ms. J",
+    name: "pm****",
     rating: 5,
-    lesson: "Basic Class",
+    lesson: "Basic lesson (2–3h)",
+    date: "2026.02.10",
+    photo: undefined,
     content:
-      "I kept falling because I couldn't turn, but one fix to my center of balance made it click instantly. The explanations were clear and to the point.",
+      "My child had so much fun — thank you so much.\nThey say they want to learn again next time ~^^",
   },
   {
-    name: "Mr. O",
+    name: "ming***",
     rating: 5,
-    lesson: "Advanced Class",
+    lesson: "Basic lesson (2–3h)",
+    date: "2025.12.14",
+    photo: "/images/reviews/review-basic-ming.jpg",
     content:
-      "I wanted a sharper carving angle, so he filmed me and showed my posture right away, which made the problem obvious. I even tried some moguls.",
+      "Kind and passionate with the kids ~^^\nWe missed picking up our photos,\nbut the instructor brought them to our accommodation.\nThank you once again ~^^",
   },
   {
-    name: "Ms. K",
+    name: "lava***",
     rating: 5,
-    lesson: "Kids Lesson",
+    lesson: "Basic lesson (2–3h)",
+    date: "2025.12.04",
+    photo: "/images/reviews/review-basic-lava.jpg",
     content:
-      "She started the first session in tears, but by the end she was begging to ride more. The way he praised her at her own level really stood out.",
+      "Just as we were about to give up because my child had lost interest in skiing, we gave Jino Ski & Board School one last try. Instructor Jinho brought back the fun and taught skiing perfectly — the whole way home my child kept begging to go again 😅 Thank you!",
   },
   {
-    name: "Mr. Y",
+    name: "dkra****",
     rating: 5,
-    lesson: "One Day Full Care",
+    lesson: "Basic lesson (2–3h)",
+    date: "2025.11.29",
+    photo: "/images/reviews/review-basic-dkra.jpg",
     content:
-      "From the morning meeting to the final photoshoot, the day was so well planned there was zero wasted time. I loved applying what I learned in the morning right away in the afternoon.",
+      "After the year before last and last year, I booked instructor Jinho again this year! You can always count on him. The kids loved the lesson so much they kept talking about it at home.\nHe explains step by step and keeps it fun so they're never scared — we're more satisfied every year. Looking forward to this season too, instructor Jinho! You're the best",
   },
   {
-    name: "Ms. H",
+    name: "man1****",
     rating: 5,
-    lesson: "Night Full Care",
+    lesson: "Season lessons",
+    date: "2025.11.16",
+    photo: undefined,
     content:
-      "I had no idea the slope felt this different right after grooming. Reinforcing what I learned during the day on the best snow at night really cemented my skills.",
-  },
-  {
-    name: "Mr. I",
-    rating: 5,
-    lesson: "3-Hour Lesson",
-    content:
-      "Three friends booked a 1:3 session with very different skill levels, and he still gave each of us individual attention. The three hours flew by.",
-  },
-  {
-    name: "Ms. S",
-    rating: 5,
-    lesson: "Intro Class",
-    content:
-      "I was a total beginner who'd never even worn ski gear, but he walked me through falling safely before anything else, so I never felt scared. Leading with the safety briefing really built my trust.",
-  },
-  {
-    name: "Mr. M",
-    rating: 5,
-    lesson: "4-Hour Lesson",
-    content:
-      "A full 4 hours split between morning and afternoon really let it sink into muscle memory. He even explained the lift pass cost upfront, so booking was completely hassle-free.",
-  },
-  {
-    name: "Mr. B",
-    rating: 5,
-    lesson: "Intermediate Class",
-    content:
-      "I could parallel turn on flat ground but fell apart on anything steep — he pinpointed exactly why, and now steeper slopes don't scare me anymore.",
-  },
-  {
-    name: "Ms. N",
-    rating: 5,
-    lesson: "One Day Class",
-    content:
-      "I booked last-minute for a single day and was surprised by how well-structured the curriculum still was. Having the photos and video to keep afterward was the best part.",
-  },
-  {
-    name: "Mr. S",
-    rating: 5,
-    lesson: "One Day Full Care",
-    content:
-      "Getting feedback over lunch and planning the afternoon together made the whole day feel like one continuous lesson. He even mapped out what to practice next — I'm already excited for next season.",
-  },
-  {
-    name: "Ms. J",
-    rating: 5,
-    lesson: "Basic Class",
-    content:
-      "Snowboarding was brand new to me and edge control was really tough, but he framed falling as part of the skill itself, which took all the pressure off.",
-  },
-  {
-    name: "Mr. H",
-    rating: 5,
-    lesson: "Advanced Class",
-    content:
-      "I wanted to learn how to find my line through moguls, and he built me up step by step at my own pace. He clearly rides at a high level himself, so his instruction felt completely trustworthy.",
-  },
-  {
-    name: "Ms. B",
-    rating: 5,
-    lesson: "Kids Lesson",
-    content:
-      "My kid is usually shy with new people, but she warmed up right away. It felt more like playtime than a lesson.",
-  },
-  {
-    name: "Mr. N",
-    rating: 5,
-    lesson: "Night Full Care",
-    content:
-      "The evening slot was perfect since I could come straight from work. Dinner was included, and diving into advanced carving at night made for a genuinely full day.",
-  },
-  {
-    name: "Ms. Y",
-    rating: 5,
-    lesson: "Intro Class",
-    content:
-      "I wanted to get a feel for it starting with an inline ski, and he understood the equipment well enough to tailor the lesson to it, which made adapting easy. Planning to move on to regular skis next.",
+      "Taking the season lessons at Jino Ski & Board School last season\nis still the first thing that comes to mind whenever winter arrives.\n\nI couldn't even brake properly at first,\nbut thanks to precise feedback and repeated practice over the season,\nI now comfortably enjoy intermediate slopes.\n\nWhat I liked most\nwas how he explained where I was getting stuck and which habits were the problem\nin a way tailored to my body.\nThat gave me solid fundamentals that hold up even when I ride alone.\n\nWhat I learned last season went beyond skills —\nit's what made me fall in love with winter.\nI'm going back again this year.\nHighly recommended for anyone who wants to truly improve.",
   },
 ];
 
@@ -1067,6 +1009,9 @@ const ui: SiteContent["ui"] = {
     title: ["Real reviews from", "our students"],
     prevAriaLabel: "Previous review",
     nextAriaLabel: "Next review",
+    sourceBadge: "Verified Naver Smart Store purchase review",
+    readMore: "Read more",
+    readLess: "Show less",
   },
   faq: {
     eyebrow: "FAQ",

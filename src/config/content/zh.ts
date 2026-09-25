@@ -615,128 +615,88 @@ const galleryItems = [
   { type: "image", src: "/images/gallery-8.jpg", alt: "单板滑雪", tall: true },
 ];
 
-const reviews = [
+// 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기 기준)
+const reviews: SiteContent["reviews"] = [
   {
-    name: "金OO",
+    name: "srlo****",
     rating: 5,
-    lesson: "入门课程",
+    lesson: "One Day Full Care（7小时）",
+    date: "2026.02.01",
+    photo: "/images/reviews/review-fullcare-srlo.jpg",
     content:
-      "第一次滑雪特别害怕，多亏镇浩教练，一天之内就能自己滑下雪道了。讲解非常细致，始终把安全放在第一位，让我很放心地学习。",
+      "我们在别处也上过全程陪护课，但这里是我和孩子们都真正满意的地方！\n孩子说还想去滑雪，还说一定要Jino老师和Ari老师才去，甚至说如果只有音乐剧那个时间，宁愿不看音乐剧。\n反馈也很细致，把不足之处和进度都讲得很清楚，照片就更不用说了～拍得又美又清晰！\n在现场已经道过谢，但还是想在这里再说一次！\n非常感谢，辛苦了。\n孩子们特别开心，我也很开心^-^",
   },
   {
-    name: "李OO",
+    name: "o_oa****",
     rating: 5,
-    lesson: "中级课程",
+    lesson: "One Day Full Care（7小时）",
+    date: "2026.01.17",
+    photo: "/images/reviews/review-fullcare-o_oa.jpg",
     content:
-      "一直做不好平行转弯很郁闷，教练精准地纠正了我的姿势，三个小时就找到感觉了。下个雪季我要来上高级班。",
+      "5年来每个冬天都会上滑雪课，这次是我和孩子都最满意的一次。\n孩子主动说这是遇到过的老师里绝对的第一名，\n第一次滑雪的侄子说滑雪成了他最喜欢的运动，还一定要老师的联系方式。\n孩子们上着细心的全程陪护课，大人们则可以去周边美食店悠闲放松，\n对大家来说都是有意义又舒适的时光。\n衷心感谢。",
   },
   {
-    name: "崔OO",
+    name: "n430***",
     rating: 5,
-    lesson: "单日课程",
-    content: "虽然只有一天时间，但教练在这段时间里把效果发挥到了极致。照片也拍得很漂亮，留下了人生美照。",
+    lesson: "One Day Full Care（7小时）",
+    date: "2025.12.09",
+    photo: "/images/reviews/review-fullcare-n430.jpg",
+    content:
+      "一开始觉得单板太难了，但上了One Day Full Care后，一天下来节奏一下子就找到了！\n从装备调整到基础滑行、速度控制都一步步教，和朋友两个人也能放松、开心地学。\n\n最棒的是最后连初级转弯都成功了✨\n两个人一起滑下来时不停地喊“我们真的做到了！”，超级兴奋。\n照片也拍得很美，这一天成了美好的回忆。\n\n非常适合初学者的分阶段课程，名副其实的“全程陪护”！\n下次还会来学初级转弯❄️🏂💙",
   },
   {
-    name: "朴OO",
+    name: "man1****",
     rating: 5,
-    lesson: "幼儿课程",
-    content: "6岁的孩子本来很怕雪，教练用游戏的方式引导，现在孩子说最喜欢滑雪了。哄孩子真的很有一套。",
+    lesson: "One Day Full Care（7小时）",
+    date: "2025.11.30",
+    photo: "/images/reviews/review-fullcare-man1.jpg",
+    content:
+      "我们上了情侣One Day Full Care课程！\n一开始还担心能不能滑，\n但从基础姿势开始一步步教，很快就熟悉了。\n\n中间有休息，还准备了午餐，\n一整天体力分配都很轻松。\n教练一直在旁边帮我们控制速度，\n连保持平衡的方法都讲得很细，\n比自己滑进步快多了！\n\n还拍了照片，拍到了人生照📸\n一起摔倒、欢笑、学习、成功，\n这个过程本身就成了珍贵的约会。\n\n真心推荐给在考虑冬季约会的情侣们。",
   },
   {
-    name: "郑OO",
+    name: "pm****",
     rating: 5,
-    lesson: "初级课程",
-    content: "一直因为转不了弯不停摔倒，教练只纠正了一个重心问题就立刻顺畅了。讲解简洁明了，非常好懂。",
+    lesson: "基础课程（2·3小时）",
+    date: "2026.02.10",
+    photo: undefined,
+    content:
+      "孩子玩得特别开心，非常感谢\n说下次还想再来学～^^",
   },
   {
-    name: "吴OO",
+    name: "ming***",
     rating: 5,
-    lesson: "高级课程",
-    content: "想把转弯角度压得更低所以报了名，教练拍视频即时展示我的姿势，问题一目了然。还尝试了一点蘑菇道。",
+    lesson: "基础课程（2·3小时）",
+    date: "2025.12.14",
+    photo: "/images/reviews/review-basic-ming.jpg",
+    content:
+      "对孩子们亲切又热情地教学～^^\n我们没来得及领照片，\n老师还送到了住处，\n再次感谢～^^",
   },
   {
-    name: "姜OO",
+    name: "lava***",
     rating: 5,
-    lesson: "幼儿课程",
-    content: "第一场哭着开始，结束时却闹着还要再滑。教练配合孩子的视角给予鼓励，让人印象深刻。",
+    lesson: "基础课程（2·3小时）",
+    date: "2025.12.04",
+    photo: "/images/reviews/review-basic-lava.jpg",
+    content:
+      "孩子对滑雪失去兴趣，正准备放弃的时候，最后抱着试试看的心情选了Jino Ski & Board School。Jinho教练让孩子重新找回兴趣，还把滑雪教得非常到位，回家路上孩子一直吵着还要去😅 谢谢！",
   },
   {
-    name: "尹OO",
+    name: "dkra****",
     rating: 5,
-    lesson: "One Day Full Care",
-    content: "从见面到最后拍摄，一整天安排得非常充实，完全没有浪费时间。上午学的内容下午立刻应用，这种节奏很棒。",
+    lesson: "基础课程（2·3小时）",
+    date: "2025.11.29",
+    photo: "/images/reviews/review-basic-dkra.jpg",
+    content:
+      "前年、去年之后，今年也还是预约了Jinho教练～果然Jinho教练值得信赖！孩子们太喜欢这个课程了，回到家还一直在说。\n讲解循序渐进，教得有趣不让孩子害怕，每年来满意度都在提升～这个雪季也拜托了Jinho教练！最棒",
   },
   {
-    name: "韩OO",
+    name: "man1****",
     rating: 5,
-    lesson: "Night Full Care",
-    content: "没想到压雪之后雪道差别这么大。白天学的内容晚上在最佳雪质中再巩固一遍，实力提升感非常明显。",
-  },
-  {
-    name: "林OO",
-    rating: 5,
-    lesson: "3小时课程",
-    content: "三个朋友以1:3预约，虽然各自水平不同，教练依然逐一指导，大家都很满意。三个小时一晃就过去了。",
-  },
-  {
-    name: "徐OO",
-    rating: 5,
-    lesson: "入门课程",
-    content: "我是连滑雪服都第一次穿的完全新手，教练从摔倒的方法开始一步步教，一点都不害怕。最先讲解安全事项让我很信任。",
-  },
-  {
-    name: "文OO",
-    rating: 5,
-    lesson: "4小时课程",
-    content: "上午下午各半，满满4小时训练，确实练出了肌肉记忆。雪票费用也一次性说明清楚，预约很顺畅。",
-  },
-  {
-    name: "白OO",
-    rating: 5,
-    lesson: "中级课程",
-    content: "平地能做平行转弯，一到陡坡就乱了阵脚，教练精准指出了原因，现在高级雪道也不再害怕了。",
-  },
-  {
-    name: "卢OO",
-    rating: 5,
-    lesson: "单日课程",
-    content: "临时决定当天预约，没想到课程安排依然很充实，很惊喜。还帮忙拍了照片和视频留作纪念，非常满意。",
-  },
-  {
-    name: "申OO",
-    rating: 5,
-    lesson: "One Day Full Care",
-    content: "边吃午饭边听上午的反馈，一起规划下午的安排，整整一天都像是一堂课。结束时还告知了今后的练习方向，很期待下个雪季。",
-  },
-  {
-    name: "赵OO",
-    rating: 5,
-    lesson: "初级课程",
-    content: "单板滑雪对我来说是第一次，压刃控制特别难，教练说摔倒也是一种技术，让我没有压力地轻松学习。",
-  },
-  {
-    name: "黄OO",
-    rating: 5,
-    lesson: "高级课程",
-    content: "本想学习蘑菇道走线的方法，教练根据我的水平循序渐进地提升。教练自己实力过硬，讲解也让人很信服。",
-  },
-  {
-    name: "裴OO",
-    rating: 5,
-    lesson: "幼儿课程",
-    content: "孩子比较怕生，但很快就敞开心扉。整个过程更像是在玩耍，而不是上课。",
-  },
-  {
-    name: "南OO",
-    rating: 5,
-    lesson: "Night Full Care",
-    content: "下班后可以直接过去的时间段对上班族的我来说太合适了。晚餐也包含在内，晚上还学习了转弯进阶技术，一天过得很充实。",
-  },
-  {
-    name: "柳OO",
-    rating: 5,
-    lesson: "入门课程",
-    content: "想从旱地滑雪板开始找找感觉，教练充分理解器材特性并针对性指导，适应起来很顺利。打算接下来转学正式滑雪。",
+    lesson: "雪季课程",
+    date: "2025.11.16",
+    photo: undefined,
+    content:
+      "去年雪季在Jino Ski & Board School上季卡课程的经历，\n至今每到冬天都会最先想起。\n\n一开始连刹车都刹不好的我，\n在一个雪季里靠着精准的反馈和反复练习，\n现在可以轻松享受中级雪道了。\n\n最好的是，\n他会用“适合我身体的方式”\n讲解我卡在哪里、哪个习惯有问题。\n因此打下了即使一个人滑也不会走样的扎实基本功。\n\n去年学到的不只是技术，\n更让我爱上了冬天。\n今年也打算再去。\n强烈推荐给真心想进步的人。",
   },
 ];
 
@@ -1004,6 +964,9 @@ const ui: SiteContent["ui"] = {
     title: ["学员们留下的", "真实评价"],
     prevAriaLabel: "上一条评价",
     nextAriaLabel: "下一条评价",
+    sourceBadge: "Naver Smart Store 真实购买评价",
+    readMore: "展开",
+    readLess: "收起",
   },
   faq: {
     eyebrow: "FAQ",

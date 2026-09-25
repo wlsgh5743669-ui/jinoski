@@ -170,6 +170,10 @@ export type SiteContent = {
     rating: number;
     lesson: string;
     content: string;
+    /** YYYY.MM.DD */
+    date?: string;
+    /** Path under /public, e.g. /images/reviews/xxx.jpg */
+    photo?: string;
   }[];
   reservationSteps: { step: string; title: string; description: string }[];
   programLabels: Record<ProgramCode, string>;
@@ -308,6 +312,9 @@ export type SiteContent = {
       title: string[];
       prevAriaLabel: string;
       nextAriaLabel: string;
+      sourceBadge: string;
+      readMore: string;
+      readLess: string;
     };
     faq: { eyebrow: string; title: string[]; description: string };
     reservation: {
