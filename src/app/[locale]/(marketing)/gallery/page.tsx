@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getContent, isLocale, defaultLocale } from "@/config/site";
 import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
+import { ShootSamples } from "@/components/sections/shoot-samples";
 import { Gallery } from "@/components/sections/gallery";
 
 export async function generateMetadata({
@@ -33,6 +34,7 @@ export default async function GalleryPage({
   return (
     <>
       <PageHero eyebrow={eyebrow} title={title} description={description} />
+      <ShootSamples />
       <Gallery />
     </>
   );

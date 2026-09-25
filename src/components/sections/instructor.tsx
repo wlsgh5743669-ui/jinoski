@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { Lightbox } from "@/components/shared/lightbox";
+
 import Image from "next/image";
 import { Instagram, Youtube } from "lucide-react";
 import { useContent } from "@/lib/use-content";
@@ -8,7 +11,8 @@ import { SectionHeading } from "@/components/shared/section-heading";
 import { Reveal } from "@/components/shared/reveal";
 
 export function Instructor() {
-  const { instructor, ui } = useContent();
+  const { instructor, ui, shootSamples } = useContent();
+  const [certImage, setCertImage] = useState<string | null>(null);
   return (
     <section className="bg-ink-900 pb-24 pt-40 sm:pb-32 sm:pt-44">
       <Container>
@@ -73,6 +77,15 @@ export function Instructor() {
                   >
                     <span className="text-[17px] leading-none">{cert.icon}</span>
                     {cert.label}
+                    {cert.image && (
+                      <button
+                        type="button"
+                        onClick={() => setCertImage(cert.image ?? null)}
+                        className="ml-auto shrink-0 rounded-full border border-white/20 px-3 py-1 text-[12px] font-semibold text-white/80 transition-colors hover:border-brand-400 hover:text-brand-300"
+                      >
+                        {shootSamples.viewCertLabel}
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -101,6 +114,7 @@ export function Instructor() {
           </Reveal>
         </div>
       </Container>
+      <Lightbox src={certImage} onClose={() => setCertImage(null)} />
     </section>
   );
 }

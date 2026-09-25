@@ -27,6 +27,8 @@ export type SiteContent = {
     representativeName: string;
     businessRegistrationNumber: string;
     mailOrderSalesNumber: string;
+    /** Meeting point shown in "Directions"; photo is optional (/images/meeting-point.jpg) */
+    meetingPoint: { label: string; photo?: string };
   };
   mapLinks: { naver: string; kakao: string; google: string };
   navLinks: { label: string; href: string }[];
@@ -155,9 +157,20 @@ export type SiteContent = {
     photo: string;
     video: string;
     bio: string[];
-    certifications: { icon: string; label: string }[];
+    /** image: path under /public (e.g. /images/certs/ski-level2.jpg) — shows a "view" button when set */
+    certifications: { icon: string; label: string; image?: string }[];
     experienceYears: number;
     sns: { instagram: string; youtube: string };
+  };
+  /** Photo/video deliverable samples. Section is hidden until video or images are set. */
+  shootSamples: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    video?: string;
+    poster?: string;
+    images: string[];
+    viewCertLabel: string;
   };
   galleryItems: {
     type: string;

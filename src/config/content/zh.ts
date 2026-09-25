@@ -31,6 +31,11 @@ const contact = {
   representativeName: "朴珍浩",
   businessRegistrationNumber: "336-14-02452",
   mailOrderSalesNumber: "第2024-仁川富平-2645号",
+  meetingPoint: {
+    label: "维瓦尔第公园 Ski World 广场（Ski House 入口）",
+    // TODO: 집합 장소 사진을 public/images/meeting-point.jpg 로 넣고 아래 주석 해제
+    // photo: "/images/meeting-point.jpg",
+  },
 };
 
 const mapLinks = {
@@ -616,6 +621,17 @@ const instructor = {
     instagram: contact.instagram,
     youtube: contact.youtube,
   },
+};
+
+// TODO: 샘플 영상(public/videos/sample.mp4)·사진(public/images/samples/*.jpg)을 넣고 아래를 채우면 섹션이 자동으로 나타나요.
+const shootSamples: SiteContent["shootSamples"] = {
+  eyebrow: "Photo & Film",
+  title: "拍摄成果示例",
+  description: "课程中为您拍摄并发送的真实照片·视频示例。",
+  // video: "/videos/sample.mp4",
+  // poster: "/images/samples/poster.jpg",
+  images: [],
+  viewCertLabel: "查看证书",
 };
 
 const galleryItems = [
@@ -1302,6 +1318,7 @@ export const zh: SiteContent = {
   galleryCta,
   seasonProgram,
   instructor,
+  shootSamples,
   galleryItems,
   reviews,
   reservationSteps,

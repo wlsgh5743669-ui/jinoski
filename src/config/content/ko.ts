@@ -35,6 +35,11 @@ const contact = {
   representativeName: "박진호",
   businessRegistrationNumber: "336-14-02452",
   mailOrderSalesNumber: "제2024-인천부평-2645호",
+  meetingPoint: {
+    label: "비발디파크 스키월드 광장 (스키하우스 입구)",
+    // TODO: 집합 장소 사진을 public/images/meeting-point.jpg 로 넣고 아래 주석 해제
+    // photo: "/images/meeting-point.jpg",
+  },
 };
 
 const mapLinks = {
@@ -623,6 +628,7 @@ const instructor = {
     "8년 이상의 현장 강습 경험을 바탕으로 비발디파크에서 스키와 스노보드 레슨을 진행하고 있습니다. 처음 스키를 배우는 입문자부터 실력 향상을 목표로 하는 상급자까지, 개인의 수준과 목표에 맞춘 체계적인 맞춤형 레슨을 제공합니다.",
     "포토그래퍼로도 활동하며 레슨의 소중한 순간을 사진과 영상으로 기록합니다.",
   ],
+  // TODO: 자격증 사진을 public/images/certs/ 에 넣고 각 항목에 image: "/images/certs/파일명.jpg" 추가
   certifications: [
     { icon: "🎿", label: "대한스키지도자연맹 스키 Level 2" },
     { icon: "🏂", label: "대한스키지도자연맹 스노보드 Level 1" },
@@ -635,6 +641,17 @@ const instructor = {
     instagram: contact.instagram,
     youtube: contact.youtube,
   },
+};
+
+// TODO: 샘플 영상(public/videos/sample.mp4)·사진(public/images/samples/*.jpg)을 넣고 아래를 채우면 섹션이 자동으로 나타나요.
+const shootSamples: SiteContent["shootSamples"] = {
+  eyebrow: "Photo & Film",
+  title: "이렇게 찍어드려요",
+  description: "레슨 중 촬영해서 보내드리는 실제 사진·영상 샘플이에요.",
+  // video: "/videos/sample.mp4",
+  // poster: "/images/samples/poster.jpg",
+  images: [],
+  viewCertLabel: "자격증 보기",
 };
 
 const galleryItems = [
@@ -1325,6 +1342,7 @@ export const ko: SiteContent = {
   galleryCta,
   seasonProgram,
   instructor,
+  shootSamples,
   galleryItems,
   reviews,
   reservationSteps,

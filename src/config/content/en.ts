@@ -31,6 +31,11 @@ const contact = {
   representativeName: "Jinho Park",
   businessRegistrationNumber: "336-14-02452",
   mailOrderSalesNumber: "No. 2024-Incheon Bupyeong-2645",
+  meetingPoint: {
+    label: "Ski World plaza, Vivaldi Park (Ski House entrance)",
+    // TODO: 집합 장소 사진을 public/images/meeting-point.jpg 로 넣고 아래 주석 해제
+    // photo: "/images/meeting-point.jpg",
+  },
 };
 
 const mapLinks = {
@@ -656,6 +661,17 @@ const instructor = {
     instagram: contact.instagram,
     youtube: contact.youtube,
   },
+};
+
+// TODO: 샘플 영상(public/videos/sample.mp4)·사진(public/images/samples/*.jpg)을 넣고 아래를 채우면 섹션이 자동으로 나타나요.
+const shootSamples: SiteContent["shootSamples"] = {
+  eyebrow: "Photo & Film",
+  title: "What you get",
+  description: "Real samples of the photos and videos we shoot and send you during the lesson.",
+  // video: "/videos/sample.mp4",
+  // poster: "/images/samples/poster.jpg",
+  images: [],
+  viewCertLabel: "View certificate",
 };
 
 const galleryItems = [
@@ -1353,6 +1369,7 @@ export const en: SiteContent = {
   galleryCta,
   seasonProgram,
   instructor,
+  shootSamples,
   galleryItems,
   reviews,
   reservationSteps,

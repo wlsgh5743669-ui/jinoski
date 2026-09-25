@@ -33,6 +33,18 @@ export function Directions() {
             <p className="mt-2 text-balance text-[18px] font-bold text-ink-900 sm:text-[20px]">
               {contact.location}
             </p>
+            <p className="text-[14.5px] font-semibold text-brand-600">
+              📍 {contact.meetingPoint.label}
+            </p>
+            {contact.meetingPoint.photo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={contact.meetingPoint.photo}
+                alt={contact.meetingPoint.label}
+                loading="lazy"
+                className="mt-3 w-full rounded-2xl object-cover"
+              />
+            )}
           </div>
         </Reveal>
 
