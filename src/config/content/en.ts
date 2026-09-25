@@ -942,8 +942,9 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     bookingNoticeTitle: "How booking works",
     bookingNoticeLines: [
       "① What you send now is a booking request — it is not confirmed yet.",
-      "② We check the instructor's schedule, contact you to confirm, and explain how to pay the deposit.",
-      "③ Changes or cancellations are adjusted if you contact us by the day before the lesson.",
+      "② We check the instructor's schedule and contact you to confirm.",
+      "③ After confirmation, please transfer payment to:\nKB Kookmin Bank 010-4047-7711 · Account holder: 박진호 (Jino Company)",
+      "④ Changes or cancellations are adjusted if you contact us by the day before the lesson.",
     ],
     missingFields: (fields: string) => `Please enter: ${fields}.`,
     fieldNames: { name: "name", phone: "phone", ageGroup: "student age group" },

@@ -875,7 +875,7 @@ function BookingNotice({ content }: { content: SiteContent }) {
       <p className="text-[14px] font-bold text-ink-900">{g.bookingNoticeTitle}</p>
       <ul className="mt-2 flex flex-col gap-1.5">
         {g.bookingNoticeLines.map((line) => (
-          <li key={line} className="text-[13px] leading-relaxed text-snow-700">
+          <li key={line} className="whitespace-pre-line text-[13px] leading-relaxed text-snow-700">
             {line}
           </li>
         ))}

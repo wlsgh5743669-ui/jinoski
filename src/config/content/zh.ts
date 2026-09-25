@@ -884,8 +884,9 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     bookingNoticeTitle: "预约流程",
     bookingNoticeLines: [
       "① 现在发送的是“预约申请”，尚未确认。",
-      "② 确认教练日程后我们会联系您确认预约，并告知订金支付方式。",
-      "③ 如需变更或取消，请于课程前一天联系我们。",
+      "② 确认教练日程后我们会联系您确认预约。",
+      "③ 收到确认通知后，请汇款至以下账户：\n国民银行（KB Kookmin）010-4047-7711 · 户名 박진호（Jino Company）",
+      "④ 如需变更或取消，请于课程前一天联系我们。",
     ],
     missingFields: (fields: string) => `请填写：${fields}。`,
     fieldNames: { name: "姓名", phone: "联系方式", ageGroup: "学员年龄段" },

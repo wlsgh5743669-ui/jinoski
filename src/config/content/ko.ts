@@ -921,8 +921,9 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     bookingNoticeTitle: "예약은 이렇게 진행돼요",
     bookingNoticeLines: [
       "① 지금 보내주시는 내용은 '예약 신청'이에요. 아직 확정 전이에요.",
-      "② 강사 일정을 확인한 뒤 연락드려 예약을 확정하고, 예약금 결제 방법을 안내해드려요.",
-      "③ 일정 변경·취소는 레슨 전날까지 연락 주시면 조정해드려요.",
+      "② 강사 일정을 확인한 뒤 연락드려 예약을 확정해드려요.",
+      "③ 확정 안내를 받으신 후 아래 계좌로 입금해주세요.\n국민은행 010-4047-7711 · 예금주 박진호(지노컴퍼니)",
+      "④ 일정 변경·취소는 레슨 전날까지 연락 주시면 조정해드려요.",
     ],
     missingFields: (fields: string) => `아직 입력하지 않은 항목: ${fields}`,
     fieldNames: { name: "이름", phone: "연락처", ageGroup: "교육생 연령대" },
