@@ -804,8 +804,8 @@ const programLabels: SiteContent["programLabels"] = {
   "2h": "2시간 레슨",
   "3h": "3시간 레슨",
   "4h": "4시간 레슨",
-  "one-day": "One Day Full Care",
-  night: "Night Full Care",
+  "one-day": "원데이 풀케어 (7시간)",
+  night: "나이트 풀케어 (7시간)",
 };
 
 const equipmentLabels: SiteContent["equipmentLabels"] = {
@@ -884,10 +884,15 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "패찰 비용은 언제 결제하시겠어요?",
     "예약자 정보를 입력해주세요",
   ],
-  fullCareGroupLabel: "풀케어",
+  fullCareGroupLabel: "풀케어 (7시간 종일 레슨)",
+  fullCareInfo: {
+    groupDescription: "강사가 하루를 전담하는 7시간 프리미엄 레슨 · 식사, 사진·영상 촬영, 패찰 포함",
+    oneDay: "08:40 미팅 · 오전 3시간 30분 + 오후 3시간 10분 레슨 · 점심 식사, 사진·영상 촬영, 패찰 포함",
+    night: "14:00 미팅 · 오후 3시간 30분 + 정설 직후 야간 3시간 30분 레슨 · 저녁 식사, 사진·영상 촬영, 패찰 포함",
+  },
   fixedTimeNote: {
-    oneDay: "08:40 미팅 시작 (약 8시간 진행)",
-    night: "14:00 미팅 시작 (약 8시간 진행)",
+    oneDay: "08:40 미팅 시작 (레슨 약 7시간)",
+    night: "14:00 미팅 시작 (레슨 약 7시간)",
   },
   fixedTimeDisabledNote: "이 프로그램은 정해진 시간에 시작합니다.",
   liftPassExplainer:

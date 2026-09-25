@@ -825,8 +825,8 @@ const programLabels: SiteContent["programLabels"] = {
   "2h": "2-Hour Lesson",
   "3h": "3-Hour Lesson",
   "4h": "4-Hour Lesson",
-  "one-day": "One Day Full Care",
-  night: "Night Full Care",
+  "one-day": "One Day Full Care (7h)",
+  night: "Night Full Care (7h)",
 };
 
 const equipmentLabels: SiteContent["equipmentLabels"] = {
@@ -905,10 +905,15 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "When would you like to pay the lift pass fee?",
     "Enter your booking details",
   ],
-  fullCareGroupLabel: "Full Care",
+  fullCareGroupLabel: "Full Care (7-hour full-day lesson)",
+  fullCareInfo: {
+    groupDescription: "A 7-hour premium lesson with your instructor all day · meal, photo/video and lift pass included",
+    oneDay: "Meet at 08:40 · 3h30 morning + 3h10 afternoon lesson · lunch, photo/video and lift pass included",
+    night: "Meet at 14:00 · 3h30 afternoon + 3h30 night lesson on fresh groomed snow · dinner, photo/video and lift pass included",
+  },
   fixedTimeNote: {
-    oneDay: "Starts at 08:40 (runs about 8 hours)",
-    night: "Starts at 14:00 (runs about 8 hours)",
+    oneDay: "Starts at 08:40 (about 7 hours of lessons)",
+    night: "Starts at 14:00 (about 7 hours of lessons)",
   },
   fixedTimeDisabledNote: "This program starts at a fixed time.",
   liftPassExplainer:

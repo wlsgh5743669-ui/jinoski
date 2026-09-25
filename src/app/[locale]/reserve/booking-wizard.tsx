@@ -68,7 +68,7 @@ type BreakdownLine = { label: string; detail: string; amount: string };
 
 /**
  * Human-readable "how the total is calculated" lines, e.g.
- *   레슨료 · One Day Full Care (약 8시간) · 2명 = 700,000원
+ *   레슨료 · 원데이 풀케어 (7시간) · 2명 = 700,000원
  *   패찰비용 · 1인 25,000원 × 2명 = 50,000원
  * Used both on the booking screen and in the KakaoTalk message so the customer
  * (and the owner) see exactly what the number is made of.
@@ -84,7 +84,7 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
 
   const programName = getProgramLabel(program, content);
   const lessonDetail = isFullCare
-    ? `${programName} (${content.fullCarePrograms.find((p) => p.slug === program)?.duration ?? ""}) · ${labels.people(people)}`
+    ? `${programName} · ${labels.people(people)}`
     : `${programName} · ${groupSize} (${labels.people(people)})`;
   lines.push({
     label: content.bookingWizard.priceSummary.lessonFee,
@@ -449,6 +449,9 @@ export function BookingWizard() {
                     <span className="text-[15px] font-bold text-ink-900">
                       {content.bookingWizard.fullCareGroupLabel}
                     </span>
+                    <p className="mt-1.5 text-[13px] leading-relaxed text-snow-500">
+                      {content.bookingWizard.fullCareInfo.groupDescription}
+                    </p>
                   </button>
                 </div>
               )}
@@ -478,6 +481,11 @@ export function BookingWizard() {
                       <span className="text-[15px] font-bold text-ink-900">
                         {getProgramLabel(value, content)}
                       </span>
+                      <p className="mt-1.5 text-[13px] leading-relaxed text-snow-500">
+                        {value === "one-day"
+                          ? content.bookingWizard.fullCareInfo.oneDay
+                          : content.bookingWizard.fullCareInfo.night}
+                      </p>
                     </button>
                   ))}
                 </div>

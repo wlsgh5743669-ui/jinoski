@@ -767,8 +767,8 @@ const programLabels: SiteContent["programLabels"] = {
   "2h": "2小时课程",
   "3h": "3小时课程",
   "4h": "4小时课程",
-  "one-day": "One Day Full Care",
-  night: "Night Full Care",
+  "one-day": "One Day Full Care（7小时）",
+  night: "Night Full Care（7小时）",
 };
 
 const equipmentLabels: SiteContent["equipmentLabels"] = {
@@ -847,10 +847,15 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "雪票费用希望何时支付？",
     "请填写预约人信息",
   ],
-  fullCareGroupLabel: "Full Care",
+  fullCareGroupLabel: "Full Care（7小时全天课程）",
+  fullCareInfo: {
+    groupDescription: "教练全天专属的7小时高端课程 · 含餐食、照片/视频拍摄及教学许可证",
+    oneDay: "08:40 见面 · 上午3小时30分 + 下午3小时10分课程 · 含午餐、照片/视频拍摄及教学许可证",
+    night: "14:00 见面 · 下午3小时30分 + 压雪后夜间3小时30分课程 · 含晚餐、照片/视频拍摄及教学许可证",
+  },
   fixedTimeNote: {
-    oneDay: "08:40 开始见面（约进行8小时）",
-    night: "14:00 开始见面（约进行8小时）",
+    oneDay: "08:40 开始见面（课程约7小时）",
+    night: "14:00 开始见面（课程约7小时）",
   },
   fixedTimeDisabledNote: "该项目将于固定时间开始。",
   liftPassExplainer:

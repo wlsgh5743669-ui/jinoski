@@ -183,6 +183,8 @@ export type SiteContent = {
   bookingWizard: {
     stepTitles: string[];
     fullCareGroupLabel: string;
+    /** Short explanations so customers understand what "Full Care" includes. */
+    fullCareInfo: { groupDescription: string; oneDay: string; night: string };
     fixedTimeNote: { oneDay: string; night: string };
     fixedTimeDisabledNote: string;
     liftPassExplainer: string;
