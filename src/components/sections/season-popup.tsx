@@ -7,7 +7,7 @@ import { useLocale } from "next-intl";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 
-const DISMISS_KEY = "jinoski-season-popup-dismissed-date";
+const DISMISS_KEY = "jinoski-earlybird-popup-dismissed-date";
 
 function todayString() {
   return new Date().toDateString();
@@ -61,7 +61,8 @@ export function SeasonPopup() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ duration: 0.25 }}
-            className="relative w-full max-w-lg"
+            className="relative w-full"
+            style={{ maxWidth: "min(28rem, 54vh)" }}
             onClick={(event) => event.stopPropagation()}
           >
             <button
@@ -79,10 +80,10 @@ export function SeasonPopup() {
               className="block overflow-hidden rounded-2xl shadow-2xl"
             >
               <Image
-                src="/images/season-banner-2627.jpg"
-                alt="26/27 시즌 강습 대모집"
-                width={1536}
-                height={1024}
+                src="/images/early-bird-2627.jpg"
+                alt="26/27 시즌 얼리버드 강습 예약 오픈 - 2시간·3시간 강습, 원데이 풀케어 10% 할인"
+                width={1024}
+                height={1536}
                 className="h-auto w-full"
                 priority
               />
