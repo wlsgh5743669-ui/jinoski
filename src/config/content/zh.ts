@@ -599,7 +599,7 @@ const seasonProgram: SiteContent["seasonProgram"] = {
         "并非一两次体验，而是通过持续反复的练习，完成自信的滑行与稳定的滑雪。季节结束时，您会明显感受到与之前不同的自己。",
     },
   ],
-  priceNote: "早鸟10%优惠价。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
+  priceNote: "早鸟10%优惠价（11月10日前预约）。教学许可证（雪票）费用另计。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
   phoneButton: "电话咨询",
   kakaoButton: "KakaoTalk咨询",
 };
@@ -1144,6 +1144,10 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     ageGroupLabel: "学员年龄段",
   },
   priceSummary: {
+    earlyBird: "早鸟优惠",
+    earlyBirdDetail: "课程费9折 · 11月10日前预约",
+    earlyBirdButton: "领取早鸟9折优惠",
+    earlyBirdApplied: "已享早鸟9折优惠",
     lessonFee: "课程费用",
     priceOnRequest: "另行咨询",
     liftPassSeparateSuffix: "（另计）",

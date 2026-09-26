@@ -638,7 +638,7 @@ const seasonProgram: SiteContent["seasonProgram"] = {
         "Consistent, repeated practice — not just one or two tries — builds confident riding and stable skiing. By the end of the season you'll notice a clear difference in yourself.",
     },
   ],
-  priceNote: "Early-bird price (10% off). Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
+  priceNote: "Early-bird price (10% off, book by Nov 10). Lift/teaching pass fee is separate. Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
   phoneButton: "Call Us",
   kakaoButton: "KakaoTalk",
 };
@@ -1184,6 +1184,10 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     ageGroupLabel: "Student age group",
   },
   priceSummary: {
+    earlyBird: "Early-bird discount",
+    earlyBirdDetail: "10% off the lesson fee · book by Nov 10",
+    earlyBirdButton: "Get the early-bird 10% discount",
+    earlyBirdApplied: "Early-bird 10% discount applied",
     lessonFee: "Lesson fee",
     priceOnRequest: "Contact us",
     liftPassSeparateSuffix: "(separate)",

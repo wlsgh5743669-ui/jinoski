@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useLocale } from "next-intl";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { isEarlyBirdActive } from "@/lib/pricing";
 
 const DISMISS_KEY = "jinoski-earlybird-popup-dismissed-date";
 
@@ -15,7 +16,7 @@ const POSTERS = [
     alt: "26/27 시즌 얼리버드 시즌 강습 8회 패키지 10% 할인 - 1:1 1,008,000원, 1:2 1,440,000원, 1:3 1,728,000원",
   },
   {
-    src: "/images/early-bird-2627.jpg",
+    src: "/images/early-bird-2627-v2.jpg",
     alt: "26/27 시즌 얼리버드 강습 예약 오픈 - 2시간·3시간 강습, 원데이 풀케어 10% 할인",
   },
 ];
@@ -38,6 +39,7 @@ export function SeasonPopup() {
     // mismatch). Reading it here keeps the initial paint stable and updates
     // right after, same as the URL-param read in booking-wizard.tsx.
     if (locale !== "ko") return;
+    if (!isEarlyBirdActive()) return;
     if (localStorage.getItem(DISMISS_KEY) !== todayString()) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpen(true);

@@ -618,7 +618,7 @@ const seasonProgram: SiteContent["seasonProgram"] = {
         "한두 번의 체험이 아닌 꾸준한 반복 학습을 통해 자신감 있는 라이딩과 안정적인 스킹을 완성할 수 있습니다. 시즌이 끝날 때쯤에는 이전과 확연히 달라진 자신의 모습을 느낄 수 있습니다.",
     },
   ],
-  priceNote: "얼리버드 10% 할인가예요. 1:1 / 1:2 / 1:3 인원에 따라 금액이 달라지며, 일정 조율은 전화나 카카오톡으로 편하게 문의해주세요.",
+  priceNote: "얼리버드 10% 할인가(11월 10일 예약분까지)예요. 패찰(강습 허가증) 비용은 별도예요. 1:1 / 1:2 / 1:3 인원에 따라 금액이 달라지며, 일정 조율은 전화나 카카오톡으로 편하게 문의해주세요.",
   phoneButton: "전화 문의",
   kakaoButton: "카카오톡 문의",
 };
@@ -1165,6 +1165,10 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     ageGroupLabel: "교육생 연령대",
   },
   priceSummary: {
+    earlyBird: "얼리버드 할인",
+    earlyBirdDetail: "레슨료 10% · 11월 10일 예약분까지",
+    earlyBirdButton: "얼리버드 10% 할인 받기",
+    earlyBirdApplied: "얼리버드 10% 할인 적용됨",
     lessonFee: "레슨료",
     priceOnRequest: "별도 문의",
     liftPassSeparateSuffix: "(별도)",

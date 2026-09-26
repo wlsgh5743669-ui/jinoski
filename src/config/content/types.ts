@@ -243,6 +243,10 @@ export type SiteContent = {
     };
     priceSummary: {
       lessonFee: string;
+      earlyBird: string;
+      earlyBirdDetail: string;
+      earlyBirdButton: string;
+      earlyBirdApplied: string;
       priceOnRequest: string;
       liftPassSeparateSuffix: string;
       payTogether: string;
