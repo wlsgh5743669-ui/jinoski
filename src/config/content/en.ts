@@ -1135,6 +1135,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     groupDescription: "A 7-hour premium lesson with your instructor all day · meal, photo/video and lift pass included",
     oneDay: "Meet at 08:40 · 3h30 morning + 3h10 afternoon lesson · lunch, photo/video and lift pass included",
     night: "Meet at 14:00 · 3h30 afternoon + 3h30 night lesson on fresh groomed snow · dinner, photo/video and lift pass included",
+    scheduleTitle: "How your day goes",
+    scheduleNote: "Times may shift slightly depending on weather, slope conditions and how you feel.",
   },
   guide: {
     groupSizeOption: (count: number) => `${count} ${count > 1 ? "students" : "student"} (1 instructor : ${count})`,

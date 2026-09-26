@@ -1115,6 +1115,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     groupDescription: "강사가 하루를 전담하는 7시간 프리미엄 레슨 · 식사, 사진·영상 촬영, 패찰 포함",
     oneDay: "08:40 미팅 · 오전 3시간 30분 + 오후 3시간 10분 레슨 · 점심 식사, 사진·영상 촬영, 패찰 포함",
     night: "14:00 미팅 · 오후 3시간 30분 + 정설 직후 야간 3시간 30분 레슨 · 저녁 식사, 사진·영상 촬영, 패찰 포함",
+    scheduleTitle: "하루 진행 순서",
+    scheduleNote: "실제 시간은 날씨·슬로프 상황과 교육생 컨디션에 맞춰 조금씩 조정될 수 있어요.",
   },
   guide: {
     groupSizeOption: (count: number) => `${count}명 (강사 1 : 교육생 ${count})`,

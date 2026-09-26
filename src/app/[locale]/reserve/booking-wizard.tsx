@@ -538,6 +538,10 @@ export function BookingWizard() {
                 />
               )}
 
+              {step === 3 && isFullCare && (
+                <FullCareSchedule program={state.program!} content={content} />
+              )}
+
               {step === 4 && state.program && (
                 <OptionList
                   options={getGroupSizeOptions(state.program).map((code) => {
@@ -990,6 +994,51 @@ function SummaryView({
       >
         {summary.backHome}
       </Link>
+    </div>
+  );
+}
+
+
+function FullCareSchedule({
+  program,
+  content,
+}: {
+  program: string;
+  content: SiteContent;
+}) {
+  const fc = content.fullCarePrograms.find((p) => p.slug === program);
+  if (!fc) return null;
+  const info = content.bookingWizard.fullCareInfo;
+  return (
+    <div className="mt-5 rounded-2xl border border-snow-100 bg-white p-4 sm:p-5">
+      <p className="text-sm font-bold text-snow-700">{info.scheduleTitle}</p>
+      <ol className="mt-4 space-y-0">
+        {fc.schedule.map((s, i) => (
+          <li key={i} className="relative flex gap-3 pb-4 last:pb-0">
+            {i < fc.schedule.length - 1 && (
+              <span className="absolute left-[5px] top-4 h-full w-px bg-snow-100" />
+            )}
+            <span className="relative mt-1.5 h-[11px] w-[11px] shrink-0 rounded-full border-2 border-brand-600 bg-white" />
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-semibold text-brand-600">{s.time}</p>
+              <p className="text-sm font-semibold text-snow-700">{s.title}</p>
+              {s.items.length > 0 && (
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {s.items.map((it) => (
+                    <span
+                      key={it}
+                      className="rounded-full bg-snow-100 px-2 py-0.5 text-[12px] text-snow-500"
+                    >
+                      {it}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-3 text-[12px] leading-relaxed text-snow-500">{info.scheduleNote}</p>
     </div>
   );
 }

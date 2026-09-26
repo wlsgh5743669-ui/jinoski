@@ -1095,6 +1095,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     groupDescription: "教练全天专属的7小时高端课程 · 含餐食、照片/视频拍摄及教学许可证",
     oneDay: "08:40 见面 · 上午3小时30分 + 下午3小时10分课程 · 含午餐、照片/视频拍摄及教学许可证",
     night: "14:00 见面 · 下午3小时30分 + 压雪后夜间3小时30分课程 · 含晚餐、照片/视频拍摄及教学许可证",
+    scheduleTitle: "当天流程",
+    scheduleNote: "具体时间可能根据天气、雪道状况及学员状态略有调整。",
   },
   guide: {
     groupSizeOption: (count: number) => `${count}人（教练1 : 学员${count}）`,

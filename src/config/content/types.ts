@@ -212,7 +212,7 @@ export type SiteContent = {
     stepTitles: string[];
     fullCareGroupLabel: string;
     /** Short explanations so customers understand what "Full Care" includes. */
-    fullCareInfo: { groupDescription: string; oneDay: string; night: string };
+    fullCareInfo: { groupDescription: string; oneDay: string; night: string; scheduleTitle: string; scheduleNote: string };
     guide: {
       groupSizeOption: (count: number) => string;
       priceFrom: (price: string) => string;
