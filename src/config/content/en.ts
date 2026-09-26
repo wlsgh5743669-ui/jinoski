@@ -281,8 +281,8 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         items: ["Lunch", "Morning session feedback", "Afternoon plan briefing"],
       },
       {
-        time: "13:30 – 16:40",
-        title: "Afternoon Lesson (3h 10m)",
+        time: "13:30 – 16:30",
+        title: "Afternoon Lesson (3h)",
         items: [
           "Real-slope riding practice",
           "Individual skill development",
@@ -291,7 +291,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         ],
       },
       {
-        time: "16:40 – 16:50",
+        time: "16:30 – 16:40",
         title: "Wrap-Up",
         items: [
           "Photos and video delivered",
@@ -353,7 +353,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         items: ["Dinner", "Rest and session feedback", "Wait for grooming to finish"],
       },
       {
-        time: "19:00 – 22:30",
+        time: "19:00 – 22:00",
         title: "Night Lesson on Groomed Snow",
         items: [
           "Lesson on freshly groomed, ideal snow",
@@ -364,8 +364,8 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         ],
       },
       {
-        time: "22:30",
-        title: "Lesson Ends",
+        time: "22:00 – 22:20",
+        title: "Wrap-Up & Finish",
         items: [
           "Photos and video delivered",
           "Individual feedback",
@@ -1133,8 +1133,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   fullCareGroupLabel: "Full Care (7-hour full-day lesson)",
   fullCareInfo: {
     groupDescription: "A 7-hour premium lesson with your instructor all day · meal, photo/video and lift pass included",
-    oneDay: "Meet at 08:40 · 3h30 morning + 3h10 afternoon lesson · lunch, photo/video and lift pass included",
-    night: "Meet at 14:00 · 3h30 afternoon + 3h30 night lesson on fresh groomed snow · dinner, photo/video and lift pass included",
+    oneDay: "Meet at 08:40 · 3h30 morning + 3h afternoon lesson (ends 16:30) · lunch, photo/video and lift pass included",
+    night: "Meet at 14:00 · 3h30 afternoon + 3h night lesson on fresh groomed snow (ends 22:10–22:20) · dinner, photo/video and lift pass included",
     scheduleTitle: "How your day goes",
     scheduleNote: "Times may shift slightly depending on weather, slope conditions and how you feel.",
   },

@@ -267,12 +267,12 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         items: ["享用午餐", "上午课程反馈", "下午课程计划说明"],
       },
       {
-        time: "13:30 ~ 16:40",
-        title: "下午课程（3小时10分）",
+        time: "13:30 ~ 16:30",
+        title: "下午课程（3小时）",
         items: ["雪道实战滑行", "个人技术提升", "体验多种雪道", "拍摄照片与视频"],
       },
       {
-        time: "16:40 ~ 16:50",
+        time: "16:30 ~ 16:40",
         title: "课程收尾",
         items: ["传送照片及视频", "个人反馈", "后续练习方向指导", "纪念合影"],
       },
@@ -324,7 +324,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         items: ["享用晚餐", "休息及课程反馈", "等待压雪完成"],
       },
       {
-        time: "19:00 ~ 22:30",
+        time: "19:00 ~ 22:00",
         title: "压雪后夜间课程",
         items: [
           "在压雪后最佳雪质中授课",
@@ -335,8 +335,8 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         ],
       },
       {
-        time: "22:30",
-        title: "课程结束",
+        time: "22:00 ~ 22:20",
+        title: "课程收尾 · 结束",
         items: ["传送照片及视频", "个人反馈", "后续练习方向指导", "纪念合影"],
       },
     ],
@@ -1093,8 +1093,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   fullCareGroupLabel: "Full Care（7小时全天课程）",
   fullCareInfo: {
     groupDescription: "教练全天专属的7小时高端课程 · 含餐食、照片/视频拍摄及教学许可证",
-    oneDay: "08:40 见面 · 上午3小时30分 + 下午3小时10分课程 · 含午餐、照片/视频拍摄及教学许可证",
-    night: "14:00 见面 · 下午3小时30分 + 压雪后夜间3小时30分课程 · 含晚餐、照片/视频拍摄及教学许可证",
+    oneDay: "08:40 见面 · 上午3小时30分 + 下午3小时课程 · 16:30结束 · 含午餐、照片/视频拍摄及教学许可证",
+    night: "14:00 见面 · 下午3小时30分 + 压雪后夜间3小时课程 · 22:10~22:20结束 · 含晚餐、照片/视频拍摄及教学许可证",
     scheduleTitle: "当天流程",
     scheduleNote: "具体时间可能根据天气、雪道状况及学员状态略有调整。",
   },

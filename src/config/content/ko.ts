@@ -278,12 +278,12 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         items: ["점심 식사", "오전 레슨 피드백", "오후 레슨 계획 안내"],
       },
       {
-        time: "13:30 ~ 16:40",
-        title: "오후 레슨 (3시간 10분)",
+        time: "13:30 ~ 16:30",
+        title: "오후 레슨 (3시간)",
         items: ["슬로프 실전 주행", "개인별 기술 향상", "다양한 코스 체험", "사진·영상 촬영"],
       },
       {
-        time: "16:40 ~ 16:50",
+        time: "16:30 ~ 16:40",
         title: "레슨 마무리",
         items: ["사진 및 영상 전달", "개인별 피드백", "향후 연습 방향 안내", "기념 촬영"],
       },
@@ -340,7 +340,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         items: ["저녁 식사", "휴식 및 레슨 피드백", "정설 완료 대기"],
       },
       {
-        time: "19:00 ~ 22:30",
+        time: "19:00 ~ 22:00",
         title: "정설 야간 레슨",
         items: [
           "정설 직후 최상의 설질에서 레슨",
@@ -351,8 +351,8 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         ],
       },
       {
-        time: "22:30",
-        title: "레슨 종료",
+        time: "22:00 ~ 22:20",
+        title: "레슨 마무리 · 종료",
         items: ["사진 및 영상 전달", "개인별 피드백", "향후 연습 방향 안내", "기념 촬영"],
       },
     ],
@@ -1113,8 +1113,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   fullCareGroupLabel: "풀케어 (7시간 종일 레슨)",
   fullCareInfo: {
     groupDescription: "강사가 하루를 전담하는 7시간 프리미엄 레슨 · 식사, 사진·영상 촬영, 패찰 포함",
-    oneDay: "08:40 미팅 · 오전 3시간 30분 + 오후 3시간 10분 레슨 · 점심 식사, 사진·영상 촬영, 패찰 포함",
-    night: "14:00 미팅 · 오후 3시간 30분 + 정설 직후 야간 3시간 30분 레슨 · 저녁 식사, 사진·영상 촬영, 패찰 포함",
+    oneDay: "08:40 미팅 · 오전 3시간 30분 + 오후 3시간 레슨 · 16:30 레슨 종료 · 점심 식사, 사진·영상 촬영, 패찰 포함",
+    night: "14:00 미팅 · 오후 3시간 30분 + 정설 직후 야간 3시간 레슨 · 22:10~22:20 종료 · 저녁 식사, 사진·영상 촬영, 패찰 포함",
     scheduleTitle: "하루 진행 순서",
     scheduleNote: "실제 시간은 날씨·슬로프 상황과 교육생 컨디션에 맞춰 조금씩 조정될 수 있어요.",
   },
