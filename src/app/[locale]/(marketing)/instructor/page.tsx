@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getContent, isLocale, defaultLocale } from "@/config/site";
 import { pageMetadata } from "@/lib/page-metadata";
+import { TeamCertificates } from "@/components/sections/team-certificates";
 import { Instructor } from "@/components/sections/instructor";
 
 export async function generateMetadata({
@@ -21,5 +22,10 @@ export async function generateMetadata({
 }
 
 export default function InstructorPage() {
-  return <Instructor />;
+  return (
+    <>
+      <Instructor />
+      <TeamCertificates />
+    </>
+  );
 }

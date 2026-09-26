@@ -630,8 +630,8 @@ const instructor = {
   ],
   // TODO: 자격증 사진을 public/images/certs/ 에 넣고 각 항목에 image: "/images/certs/파일명.jpg" 추가
   certifications: [
-    { icon: "🎿", label: "대한스키지도자연맹 스키 Level 2" },
-    { icon: "🏂", label: "대한스키지도자연맹 스노보드 Level 1" },
+    { icon: "🎿", label: "대한스키지도자연맹 스키 Level 2", image: "/images/certs/cert-ski-l2-jinho.jpg" },
+    { icon: "🏂", label: "대한스키지도자연맹 스노보드 Level 1", image: "/images/certs/cert-sb-l1-jinho.jpg" },
     { icon: "🤿", label: "PADI Open Water Scuba Instructor (OWSI)" },
     { icon: "❤️", label: "Emergency First Response (EFR) Instructor" },
     { icon: "📷", label: "국가기술자격 사진기능사" },
@@ -641,6 +641,28 @@ const instructor = {
     instagram: contact.instagram,
     youtube: contact.youtube,
   },
+};
+
+const teamCertificates: SiteContent["teamCertificates"] = {
+  eyebrow: "Certified Instructors",
+  title: "공인 자격을 갖춘 강사진",
+  description: "JinoSki 강사진은 모두 대한스키지도자연맹 공인 지도자 자격을 보유하고 있어요. 자격확인서를 눌러 크게 확인해 보세요. (개인정보 보호를 위해 이름·생년월일은 가렸어요)",
+  items: [
+    { image: "/images/certs/cert-ski-l2-jinho.jpg", level: "ski2" },
+    { image: "/images/certs/cert-sb-l1-jinho.jpg", level: "sb1" },
+    { image: "/images/certs/cert-ski-l1-01.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-02.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-03.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-04.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-05.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-06.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-07.jpg", level: "ski1" },
+    { image: "/images/certs/cert-sb-l1-01.jpg", level: "sb1" },
+    { image: "/images/certs/cert-sb-l1-02.jpg", level: "sb1" },
+    { image: "/images/certs/cert-sb-l1-03.jpg", level: "sb1" },
+    { image: "/images/certs/cert-sb-l1-04.jpg", level: "sb1" },
+  ],
+  levelLabels: { ski2: "스키 레벨2", ski1: "스키 레벨1", sb1: "스노보드 레벨1" },
 };
 
 // TODO: 샘플 영상(public/videos/sample.mp4)·사진(public/images/samples/*.jpg)을 넣고 아래를 채우면 섹션이 자동으로 나타나요.
@@ -1342,6 +1364,7 @@ export const ko: SiteContent = {
   galleryCta,
   seasonProgram,
   instructor,
+  teamCertificates,
   shootSamples,
   galleryItems,
   reviews,

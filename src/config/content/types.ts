@@ -162,6 +162,14 @@ export type SiteContent = {
     experienceYears: number;
     sns: { instagram: string; youtube: string };
   };
+  /** Team instructors' KSIA qualification certificates (birthdates pixelated). */
+  teamCertificates: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    items: { image: string; level: "ski2" | "ski1" | "sb1" }[];
+    levelLabels: { ski2: string; ski1: string; sb1: string };
+  };
   /** Photo/video deliverable samples. Section is hidden until video or images are set. */
   shootSamples: {
     eyebrow: string;

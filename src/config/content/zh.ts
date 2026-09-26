@@ -610,8 +610,8 @@ const instructor = {
     "同时也是一名摄影师，用照片和视频记录课程中珍贵的瞬间。",
   ],
   certifications: [
-    { icon: "🎿", label: "大韩滑雪指导者联盟 滑雪 Level 2" },
-    { icon: "🏂", label: "大韩滑雪指导者联盟 单板滑雪 Level 1" },
+    { icon: "🎿", label: "大韩滑雪指导者联盟 滑雪 Level 2", image: "/images/certs/cert-ski-l2-jinho.jpg" },
+    { icon: "🏂", label: "大韩滑雪指导者联盟 单板滑雪 Level 1", image: "/images/certs/cert-sb-l1-jinho.jpg" },
     { icon: "🤿", label: "PADI 开放水域潜水教练（OWSI）" },
     { icon: "❤️", label: "紧急救护员（EFR）教练资格" },
     { icon: "📷", label: "国家技术资格 摄影技能士" },
@@ -621,6 +621,28 @@ const instructor = {
     instagram: contact.instagram,
     youtube: contact.youtube,
   },
+};
+
+const teamCertificates: SiteContent["teamCertificates"] = {
+  eyebrow: "Certified Instructors",
+  title: "持有官方资格的教练团队",
+  description: "JinoSki 所有教练均持有大韩滑雪指导者联盟（KSIA）官方指导者资格。点击证书可放大查看。（为保护个人信息，姓名及出生日期已遮挡）",
+  items: [
+    { image: "/images/certs/cert-ski-l2-jinho.jpg", level: "ski2" },
+    { image: "/images/certs/cert-sb-l1-jinho.jpg", level: "sb1" },
+    { image: "/images/certs/cert-ski-l1-01.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-02.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-03.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-04.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-05.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-06.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-07.jpg", level: "ski1" },
+    { image: "/images/certs/cert-sb-l1-01.jpg", level: "sb1" },
+    { image: "/images/certs/cert-sb-l1-02.jpg", level: "sb1" },
+    { image: "/images/certs/cert-sb-l1-03.jpg", level: "sb1" },
+    { image: "/images/certs/cert-sb-l1-04.jpg", level: "sb1" },
+  ],
+  levelLabels: { ski2: "双板 Level 2", ski1: "双板 Level 1", sb1: "单板 Level 1" },
 };
 
 // TODO: 샘플 영상(public/videos/sample.mp4)·사진(public/images/samples/*.jpg)을 넣고 아래를 채우면 섹션이 자동으로 나타나요.
@@ -1318,6 +1340,7 @@ export const zh: SiteContent = {
   galleryCta,
   seasonProgram,
   instructor,
+  teamCertificates,
   shootSamples,
   galleryItems,
   reviews,

@@ -650,8 +650,8 @@ const instructor = {
     "I'm also a photographer, capturing the precious moments of every lesson in photo and video.",
   ],
   certifications: [
-    { icon: "🎿", label: "Korea Ski Instructors Association – Ski Level 2" },
-    { icon: "🏂", label: "Korea Ski Instructors Association – Snowboard Level 1" },
+    { icon: "🎿", label: "Korea Ski Instructors Association – Ski Level 2", image: "/images/certs/cert-ski-l2-jinho.jpg" },
+    { icon: "🏂", label: "Korea Ski Instructors Association – Snowboard Level 1", image: "/images/certs/cert-sb-l1-jinho.jpg" },
     { icon: "🤿", label: "PADI Open Water Scuba Instructor (OWSI)" },
     { icon: "❤️", label: "Emergency First Response (EFR) Instructor" },
     { icon: "📷", label: "Certified Photographer (Korea National Technical Qualification)" },
@@ -661,6 +661,28 @@ const instructor = {
     instagram: contact.instagram,
     youtube: contact.youtube,
   },
+};
+
+const teamCertificates: SiteContent["teamCertificates"] = {
+  eyebrow: "Certified Instructors",
+  title: "A fully certified team",
+  description: "Every JinoSki instructor holds an official Korea Ski Instructors Association (KSIA) certification. Tap a certificate to view it. (Names and birthdates are hidden for privacy.)",
+  items: [
+    { image: "/images/certs/cert-ski-l2-jinho.jpg", level: "ski2" },
+    { image: "/images/certs/cert-sb-l1-jinho.jpg", level: "sb1" },
+    { image: "/images/certs/cert-ski-l1-01.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-02.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-03.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-04.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-05.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-06.jpg", level: "ski1" },
+    { image: "/images/certs/cert-ski-l1-07.jpg", level: "ski1" },
+    { image: "/images/certs/cert-sb-l1-01.jpg", level: "sb1" },
+    { image: "/images/certs/cert-sb-l1-02.jpg", level: "sb1" },
+    { image: "/images/certs/cert-sb-l1-03.jpg", level: "sb1" },
+    { image: "/images/certs/cert-sb-l1-04.jpg", level: "sb1" },
+  ],
+  levelLabels: { ski2: "Ski Level 2", ski1: "Ski Level 1", sb1: "Snowboard Level 1" },
 };
 
 // TODO: 샘플 영상(public/videos/sample.mp4)·사진(public/images/samples/*.jpg)을 넣고 아래를 채우면 섹션이 자동으로 나타나요.
@@ -1369,6 +1391,7 @@ export const en: SiteContent = {
   galleryCta,
   seasonProgram,
   instructor,
+  teamCertificates,
   shootSamples,
   galleryItems,
   reviews,
