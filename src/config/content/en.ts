@@ -597,9 +597,15 @@ const galleryCta: SiteContent["galleryCta"] = {
 };
 
 const seasonProgram: SiteContent["seasonProgram"] = {
-  title: "26/27 Season Pass",
-  subtitle: "For students who want to keep learning consistently over time",
-  passes: ["2-Hour × 10 Sessions", "3-Hour × 8 Sessions"],
+  title: "26/27 Season 8-Lesson Package",
+  subtitle: "For students who want to keep learning all season · book any time slot you like",
+  passes: ["2 hours × 8 lessons"],
+  badge: "Early Bird 10% OFF",
+  priceRows: [
+    { people: "1:1", original: "1,120,000KRW", price: "1,008,000KRW" },
+    { people: "1:2", original: "1,600,000KRW", price: "1,440,000KRW" },
+    { people: "1:3", original: "1,920,000KRW", price: "1,728,000KRW" },
+  ],
   benefits: [
     {
       icon: "📈",
@@ -632,8 +638,7 @@ const seasonProgram: SiteContent["seasonProgram"] = {
         "Consistent, repeated practice — not just one or two tries — builds confident riding and stable skiing. By the end of the season you'll notice a clear difference in yourself.",
     },
   ],
-  priceNote:
-    "Pricing varies by group size (1:1 / 1:2 / 1:3), so please call us for exact rates.",
+  priceNote: "Early-bird price (10% off). Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
   phoneButton: "Call Us",
   kakaoButton: "KakaoTalk",
 };

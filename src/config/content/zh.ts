@@ -558,9 +558,15 @@ const galleryCta: SiteContent["galleryCta"] = {
 };
 
 const seasonProgram: SiteContent["seasonProgram"] = {
-  title: "26/27 季节课程",
-  subtitle: "适合希望长期持续学习的学员",
-  passes: ["2小时 10次卡", "3小时 8次卡"],
+  title: "26/27 季节课程 8次套餐",
+  subtitle: "适合希望整个雪季持续学习的学员 · 可自由选择时间预约",
+  passes: ["2小时 × 8次课程"],
+  badge: "早鸟优惠 10%",
+  priceRows: [
+    { people: "1:1", original: "1,120,000韩元", price: "1,008,000韩元" },
+    { people: "1:2", original: "1,600,000韩元", price: "1,440,000韩元" },
+    { people: "1:3", original: "1,920,000韩元", price: "1,728,000韩元" },
+  ],
   benefits: [
     {
       icon: "📈",
@@ -593,7 +599,7 @@ const seasonProgram: SiteContent["seasonProgram"] = {
         "并非一两次体验，而是通过持续反复的练习，完成自信的滑行与稳定的滑雪。季节结束时，您会明显感受到与之前不同的自己。",
     },
   ],
-  priceNote: "价格根据人数（1:1 / 1:2 / 1:3）有所不同，具体价格请电话咨询。",
+  priceNote: "早鸟10%优惠价。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
   phoneButton: "电话咨询",
   kakaoButton: "KakaoTalk咨询",
 };

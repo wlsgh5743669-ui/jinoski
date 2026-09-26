@@ -145,6 +145,8 @@ export type SiteContent = {
     title: string;
     subtitle: string;
     passes: string[];
+    badge?: string;
+    priceRows?: { people: string; original: string; price: string }[];
     benefits: { icon: string; title: string; description: string }[];
     priceNote: string;
     phoneButton: string;

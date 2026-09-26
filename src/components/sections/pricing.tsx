@@ -267,6 +267,27 @@ function SeasonProgramCard() {
         ))}
       </ul>
 
+      {seasonProgram.priceRows && (
+        <div className="rounded-2xl bg-snow-100/60 p-4">
+          {seasonProgram.badge && (
+            <span className="mb-3 inline-block rounded-full bg-red-500 px-2.5 py-1 text-[12px] font-bold text-white">
+              {seasonProgram.badge}
+            </span>
+          )}
+          <ul className="flex flex-col gap-2">
+            {seasonProgram.priceRows.map((row) => (
+              <li key={row.people} className="flex items-baseline justify-between gap-3">
+                <span className="text-[15px] font-bold text-ink-900">{row.people}</span>
+                <span className="flex items-baseline gap-2">
+                  <span className="text-[13px] text-snow-500 line-through">{row.original}</span>
+                  <span className="text-[17px] font-bold text-red-500">{row.price}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="flex flex-col gap-2">
         {seasonProgram.benefits.map((benefit, i) => {
           const open = openBenefit === i;

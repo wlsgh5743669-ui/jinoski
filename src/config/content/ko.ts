@@ -577,9 +577,15 @@ const galleryCta: SiteContent["galleryCta"] = {
 };
 
 const seasonProgram: SiteContent["seasonProgram"] = {
-  title: "26/27시즌강습",
-  subtitle: "장기적으로 꾸준히 배우고 싶은 분들을 위한 횟수권",
-  passes: ["2시간 10회권", "3시간 8회권"],
+  title: "26/27 시즌 강습 8회 패키지",
+  subtitle: "꾸준히 배우고 싶은 분들을 위한 시즌 패키지 · 원하는 시간대로 자유롭게 예약",
+  passes: ["2시간 × 8회 (총 8회 강습)"],
+  badge: "얼리버드 10% 할인",
+  priceRows: [
+    { people: "1:1", original: "1,120,000원", price: "1,008,000원" },
+    { people: "1:2", original: "1,600,000원", price: "1,440,000원" },
+    { people: "1:3", original: "1,920,000원", price: "1,728,000원" },
+  ],
   benefits: [
     {
       icon: "📈",
@@ -612,7 +618,7 @@ const seasonProgram: SiteContent["seasonProgram"] = {
         "한두 번의 체험이 아닌 꾸준한 반복 학습을 통해 자신감 있는 라이딩과 안정적인 스킹을 완성할 수 있습니다. 시즌이 끝날 때쯤에는 이전과 확연히 달라진 자신의 모습을 느낄 수 있습니다.",
     },
   ],
-  priceNote: "인원(1:1 / 1:2 / 1:3)에 따라 가격이 달라져 정확한 안내는 유선 상담이 필요합니다.",
+  priceNote: "얼리버드 10% 할인가예요. 1:1 / 1:2 / 1:3 인원에 따라 금액이 달라지며, 일정 조율은 전화나 카카오톡으로 편하게 문의해주세요.",
   phoneButton: "전화 문의",
   kakaoButton: "카카오톡 문의",
 };
