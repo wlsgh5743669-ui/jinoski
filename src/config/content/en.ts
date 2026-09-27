@@ -101,7 +101,7 @@ const stats = [
 const whyJinoSki = [
   {
     number: "01",
-    image: "/images/instructor-jinho.jpg",
+    image: "/images/team-group.jpg",
     highlight: "8+ years on snow",
     title: "Extensive Field Experience",
     description:

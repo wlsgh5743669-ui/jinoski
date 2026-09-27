@@ -101,7 +101,7 @@ const stats = [
 const whyJinoSki = [
   {
     number: "01",
-    image: "/images/instructor-jinho.jpg",
+    image: "/images/team-group.jpg",
     highlight: "8年以上经验",
     title: "丰富的现场经验",
     description: "凭借8年以上的教学经验，提供符合您水平与目标的课程。",

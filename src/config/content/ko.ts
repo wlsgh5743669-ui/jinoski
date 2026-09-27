@@ -105,7 +105,7 @@ const stats = [
 const whyJinoSki = [
   {
     number: "01",
-    image: "/images/instructor-jinho.jpg",
+    image: "/images/team-group.jpg",
     highlight: "8년+ 현장 경력",
     title: "풍부한 현장 경험",
     description: "8년 이상의 강습 경험을 바탕으로 실력과 목표에 맞는 레슨을 제공합니다.",
