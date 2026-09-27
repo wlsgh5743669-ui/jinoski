@@ -101,30 +101,40 @@ const stats = [
 const whyJinoSki = [
   {
     number: "01",
+    image: "/images/instructor-jinho.jpg",
+    highlight: "8年以上经验",
     title: "丰富的现场经验",
     description: "凭借8年以上的教学经验，提供符合您水平与目标的课程。",
     icon: "Award",
   },
   {
     number: "02",
+    image: "/images/gallery-3.jpg",
+    highlight: "1:1定制课程",
     title: "个性化课程",
     description: "从初级到高级，根据个人水平和目标量身定制一对一课程，助您快速进步。",
     icon: "UserCheck",
   },
   {
     number: "03",
+    image: "/images/gallery-23.jpg",
+    highlight: "大明滑雪场专属",
     title: "大明滑雪场专家",
     description: "充分考虑大明滑雪场的雪道与地形，提供高效且令人满意的课程。",
     icon: "Mountain",
   },
   {
     number: "04",
+    image: "/images/gallery-21.jpg",
+    highlight: "照片·视频拍摄",
     title: "高端摄影服务",
     description: "以照片和视频记录课程中珍贵的瞬间，让您长久珍藏冬日回忆。",
     icon: "Camera",
   },
   {
     number: "05",
+    image: "/images/gallery-5.jpg",
+    highlight: "无线耳机",
     title: "对讲机实时指导",
     description:
       "通过无线耳机（对讲机）在雪道上也能实时传达讲解和反馈，学得更快更准确。",
@@ -132,6 +142,8 @@ const whyJinoSki = [
   },
   {
     number: "06",
+    image: "/images/gallery-10.jpg",
+    highlight: "保险 · EFR认证",
     title: "安全第一",
     description:
       "已投保营业赔偿责任保险以应对课程中的意外，拥有急救（EFR）教练资格的教练从热身到安全守则都细心把关。",

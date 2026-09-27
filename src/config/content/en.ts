@@ -101,6 +101,8 @@ const stats = [
 const whyJinoSki = [
   {
     number: "01",
+    image: "/images/instructor-jinho.jpg",
+    highlight: "8+ years on snow",
     title: "Extensive Field Experience",
     description:
       "Over 8 years of on-slope teaching experience, delivering lessons tailored to your ability and goals.",
@@ -108,6 +110,8 @@ const whyJinoSki = [
   },
   {
     number: "02",
+    image: "/images/gallery-3.jpg",
+    highlight: "1:1 custom plan",
     title: "Personalized Lessons",
     description:
       "From beginner to advanced, a 1:1 curriculum tailored to your ability and goals accelerates your progress.",
@@ -115,6 +119,8 @@ const whyJinoSki = [
   },
   {
     number: "03",
+    image: "/images/gallery-23.jpg",
+    highlight: "Vivaldi Park specialist",
     title: "Vivaldi Park Specialist",
     description:
       "Lessons designed around Vivaldi Park's slopes and terrain for maximum efficiency and satisfaction.",
@@ -122,6 +128,8 @@ const whyJinoSki = [
   },
   {
     number: "04",
+    image: "/images/gallery-21.jpg",
+    highlight: "Photos & video",
     title: "Premium Photo & Video",
     description:
       "We capture the precious moments of your lesson in photo and video, so your winter memories last.",
@@ -129,6 +137,8 @@ const whyJinoSki = [
   },
   {
     number: "05",
+    image: "/images/gallery-5.jpg",
+    highlight: "Wireless headset",
     title: "Real-time radio coaching",
     description:
       "Wireless headsets let us give instructions and feedback in real time right on the slope, so you learn faster and more precisely.",
@@ -136,6 +146,8 @@ const whyJinoSki = [
   },
   {
     number: "06",
+    image: "/images/gallery-10.jpg",
+    highlight: "Insured · EFR certified",
     title: "Safety first",
     description:
       "We carry business liability insurance for lessons, and your instructor is a certified Emergency First Response (EFR) instructor who takes care of everything from warm-ups to safety rules.",

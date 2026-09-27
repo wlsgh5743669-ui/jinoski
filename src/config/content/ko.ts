@@ -105,12 +105,16 @@ const stats = [
 const whyJinoSki = [
   {
     number: "01",
+    image: "/images/instructor-jinho.jpg",
+    highlight: "8년+ 현장 경력",
     title: "풍부한 현장 경험",
     description: "8년 이상의 강습 경험을 바탕으로 실력과 목표에 맞는 레슨을 제공합니다.",
     icon: "Award",
   },
   {
     number: "02",
+    image: "/images/gallery-3.jpg",
+    highlight: "1:1 맞춤 커리큘럼",
     title: "맞춤형 레슨",
     description:
       "초급부터 상급까지 개인의 실력과 목표에 맞춘 1:1 맞춤 커리큘럼으로 빠른 성장을 돕습니다.",
@@ -118,12 +122,16 @@ const whyJinoSki = [
   },
   {
     number: "03",
+    image: "/images/gallery-23.jpg",
+    highlight: "비발디파크 전담",
     title: "비발디파크 전문",
     description: "비발디파크 슬로프와 지형을 고려해 효율적이고 만족도 높은 레슨을 제공합니다.",
     icon: "Mountain",
   },
   {
     number: "04",
+    image: "/images/gallery-21.jpg",
+    highlight: "사진·영상 제공",
     title: "프리미엄 촬영 서비스",
     description:
       "레슨의 소중한 순간을 사진과 영상으로 기록하여 겨울의 추억을 오래 간직할 수 있도록 도와드립니다.",
@@ -131,6 +139,8 @@ const whyJinoSki = [
   },
   {
     number: "05",
+    image: "/images/gallery-5.jpg",
+    highlight: "무선 헤드셋",
     title: "무전기 실시간 코칭",
     description:
       "무선 헤드셋(무전기)으로 슬로프 위에서도 설명과 피드백을 실시간으로 전달해 더 빠르고 정확하게 배웁니다.",
@@ -138,6 +148,8 @@ const whyJinoSki = [
   },
   {
     number: "06",
+    image: "/images/gallery-10.jpg",
+    highlight: "보험 · EFR 자격",
     title: "안전 최우선",
     description:
       "영업배상책임보험에 가입되어 레슨 중 사고에 대비하고, 응급처치(EFR) 강사 자격을 갖춘 강사가 준비운동부터 안전 수칙까지 꼼꼼히 챙깁니다.",

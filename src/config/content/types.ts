@@ -55,6 +55,8 @@ export type SiteContent = {
     title: string;
     description: string;
     icon: string;
+    image?: string;
+    highlight?: string;
   }[];
   lessonPrograms: {
     slug: string;
