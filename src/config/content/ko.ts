@@ -57,6 +57,7 @@ const navLinks = [
   { label: "요금 안내", href: "/pricing" },
   { label: "강사 소개", href: "/instructor" },
   { label: "갤러리", href: "/gallery" },
+  { label: "인생사진", href: "/snap" },
   { label: "후기", href: "/reviews" },
   { label: "FAQ", href: "/faq" },
   { label: "예약 안내", href: "/reserve" },

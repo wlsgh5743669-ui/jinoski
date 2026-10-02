@@ -68,7 +68,7 @@ jobs:
         continue-on-error: true
         run: |
           sleep 30
-          BODY='{"host":"jinoski.com","key":"606c479ad57b56f20eb559d238c6cc98","keyLocation":"https://jinoski.com/606c479ad57b56f20eb559d238c6cc98.txt","urlList":["https://jinoski.com/ko/","https://jinoski.com/ko/lessons/","https://jinoski.com/ko/pricing/","https://jinoski.com/ko/instructor/","https://jinoski.com/ko/gallery/","https://jinoski.com/ko/reviews/","https://jinoski.com/ko/faq/","https://jinoski.com/ko/reserve/","https://jinoski.com/en/","https://jinoski.com/zh/"]}'
+          BODY='{"host":"jinoski.com","key":"606c479ad57b56f20eb559d238c6cc98","keyLocation":"https://jinoski.com/606c479ad57b56f20eb559d238c6cc98.txt","urlList":["https://jinoski.com/ko/","https://jinoski.com/ko/lessons/","https://jinoski.com/ko/pricing/","https://jinoski.com/ko/instructor/","https://jinoski.com/ko/gallery/","https://jinoski.com/ko/snap/","https://jinoski.com/ko/reviews/","https://jinoski.com/ko/faq/","https://jinoski.com/ko/reserve/","https://jinoski.com/en/","https://jinoski.com/zh/"]}'
           for EP in https://searchadvisor.naver.com/indexnow https://api.indexnow.org/indexnow; do
             echo "== $EP"
             curl -sS -w "\nHTTP %{http_code}\n" -X POST "$EP" -H "Content-Type: application/json; charset=utf-8" -d "$BODY"

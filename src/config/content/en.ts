@@ -49,6 +49,7 @@ const navLinks = [
   { label: "Pricing", href: "/pricing" },
   { label: "Instructor", href: "/instructor" },
   { label: "Gallery", href: "/gallery" },
+  { label: "Photo Snap", href: "/snap" },
   { label: "Reviews", href: "/reviews" },
   { label: "FAQ", href: "/faq" },
   { label: "Booking", href: "/reserve" },

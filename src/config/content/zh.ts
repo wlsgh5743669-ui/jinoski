@@ -49,6 +49,7 @@ const navLinks = [
   { label: "价格说明", href: "/pricing" },
   { label: "教练介绍", href: "/instructor" },
   { label: "作品集", href: "/gallery" },
+  { label: "人生照", href: "/snap" },
   { label: "客户评价", href: "/reviews" },
   { label: "FAQ", href: "/faq" },
   { label: "预约咨询", href: "/reserve" },
