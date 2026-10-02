@@ -139,7 +139,7 @@ const whyJinoSki = [
   },
   {
     number: "05",
-    image: "/images/gallery-5.jpg",
+    image: "/images/why-radio.jpg",
     highlight: "무선 헤드셋",
     title: "무전기 실시간 코칭",
     description:

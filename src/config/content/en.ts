@@ -137,7 +137,7 @@ const whyJinoSki = [
   },
   {
     number: "05",
-    image: "/images/gallery-5.jpg",
+    image: "/images/why-radio.jpg",
     highlight: "Wireless headset",
     title: "Real-time radio coaching",
     description:

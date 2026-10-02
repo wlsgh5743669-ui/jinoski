@@ -133,7 +133,7 @@ const whyJinoSki = [
   },
   {
     number: "05",
-    image: "/images/gallery-5.jpg",
+    image: "/images/why-radio.jpg",
     highlight: "无线耳机",
     title: "对讲机实时指导",
     description:
