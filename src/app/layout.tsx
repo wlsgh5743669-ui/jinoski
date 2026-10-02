@@ -7,7 +7,8 @@ const fallback = getContent(defaultLocale);
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "SportsActivityLocation",
-  name: fallback.siteConfig.name,
+  name: "지노스키 JinoSki",
+  alternateName: ["지노스키", "JinoSki", "지노 스키앤보드스쿨", "JINO SKI & BOARD SCHOOL"],
   description: fallback.siteConfig.description,
   url: fallback.siteConfig.url,
   image: `${fallback.siteConfig.url}${fallback.siteConfig.ogImage}`,

@@ -1,10 +1,10 @@
 import type { SiteContent } from "./types";
 
 const siteConfig = {
-  name: "JinoSki",
-  title: "비발디파크 스키강습 | JinoSki 프리미엄 1:1 레슨",
+  name: "지노스키 JinoSki",
+  title: "지노스키(JinoSki) | 비발디파크 스키·보드 강습 프리미엄 1:1 레슨",
   description:
-    "비발디파크 스키강습 전문 JinoSki. 비발디파크스키강습, 비발디스키강습, 어린이 스키강습, 유아 스키강습까지 프리미엄 1:1 스키·스노보드 레슨으로 완벽한 겨울을 만듭니다.",
+    "지노스키(JinoSki, 지노 스키앤보드스쿨)는 비발디파크 스키강습 전문 스키·보드 스쿨입니다. 비발디파크스키강습, 비발디스키강습, 어린이 스키강습, 유아 스키강습까지 프리미엄 1:1 스키·스노보드 레슨으로 완벽한 겨울을 만듭니다.",
   url: "https://jinoski.com",
   ogImage: "/images/og-image-2627.jpg",
   locale: "ko_KR",
@@ -19,6 +19,10 @@ const siteConfig = {
     "프리미엄 스키레슨",
     "1:1 스키 강습",
     "박진호 스키강사",
+    "지노스키",
+    "지노 스키",
+    "지노스키앤보드스쿨",
+    "지노스키 비발디",
     "JinoSki",
   ],
 };
@@ -61,7 +65,7 @@ const navLinks = [
 const heroContent = {
   eyebrow: "JinoSki Premium Lesson",
   headline: ["겨울은,", "배우는 순간부터", "더 즐거워집니다."],
-  description: "JinoSki는 비발디파크 프리미엄 스키·스노보드 레슨을 제공합니다.",
+  description: "지노스키(JinoSki)는 비발디파크 프리미엄 스키·스노보드 레슨을 제공합니다.",
   primaryCta: { label: "예약하기", href: "/reserve" },
   secondaryCta: { label: "레슨 보기", href: "/lessons" },
   videoSrc: "/videos/hero-carving.mp4",
@@ -1314,7 +1318,7 @@ const ui: SiteContent["ui"] = {
       "비발디파크 프리미엄 스키·스노보드 레슨. 겨울을 가장 특별한 추억으로 만드는 브랜드, JinoSki입니다.",
     menuHeading: "Menu",
     contactHeading: "Contact",
-    copyrightSuffix: "JinoSki. All rights reserved.",
+    copyrightSuffix: "지노스키 JinoSki. All rights reserved.",
     photoCredits: "Photography & Film by JINO VISUALS",
     instagramAriaLabel: "Instagram",
     youtubeAriaLabel: "YouTube",
