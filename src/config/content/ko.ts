@@ -6,7 +6,7 @@ const siteConfig = {
   description:
     "비발디파크 스키강습 전문 JinoSki. 비발디파크스키강습, 비발디스키강습, 어린이 스키강습, 유아 스키강습까지 프리미엄 1:1 스키·스노보드 레슨으로 완벽한 겨울을 만듭니다.",
   url: "https://jinoski.com",
-  ogImage: "/images/og-image.jpg",
+  ogImage: "/images/og-image-2627.jpg",
   locale: "ko_KR",
   keywords: [
     "비발디파크 스키강습",
@@ -148,7 +148,6 @@ const whyJinoSki = [
   },
   {
     number: "06",
-    image: "/images/why-safety.jpg",
     highlight: "보험 · EFR 자격",
     title: "안전 최우선",
     description:

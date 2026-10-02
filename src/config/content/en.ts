@@ -6,7 +6,7 @@ const siteConfig = {
   description:
     "JinoSki is a premium 1:1 ski and snowboard lesson brand based at Vivaldi Park. Safe, structured lessons that turn your first winter into an unforgettable memory.",
   url: "https://jinoski.com",
-  ogImage: "/images/og-image.jpg",
+  ogImage: "/images/og-image-2627.jpg",
   locale: "en_US",
   keywords: [
     "Vivaldi Park ski lessons",
@@ -146,7 +146,6 @@ const whyJinoSki = [
   },
   {
     number: "06",
-    image: "/images/why-safety.jpg",
     highlight: "Insured · EFR certified",
     title: "Safety first",
     description:

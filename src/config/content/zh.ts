@@ -6,7 +6,7 @@ const siteConfig = {
   description:
     "JinoSki 是韩国大明滑雪场（Vivaldi Park）的高端一对一滑雪·单板滑雪课程品牌。安全、系统的教学，让您的第一个冬天成为最难忘的回忆。",
   url: "https://jinoski.com",
-  ogImage: "/images/og-image.jpg",
+  ogImage: "/images/og-image-2627.jpg",
   locale: "zh_CN",
   keywords: [
     "大明滑雪场滑雪课程",
@@ -142,7 +142,6 @@ const whyJinoSki = [
   },
   {
     number: "06",
-    image: "/images/why-safety.jpg",
     highlight: "保险 · EFR认证",
     title: "安全第一",
     description:
