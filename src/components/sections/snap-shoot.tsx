@@ -40,6 +40,7 @@ export function SnapShoot() {
   const [time, setTime] = useState("");
   const [pkg, setPkg] = useState<SnapPackage["id"]>("solo");
   const [noFrame, setNoFrame] = useState(false);
+  const [delivery, setDelivery] = useState("");
   const [qty, setQty] = useState<Record<string, number>>({ a2: 0, a4: 0, a6: 0 });
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -64,6 +65,7 @@ export function SnapShoot() {
     `${b.phone}: ${phone.trim()}`,
     `${b.date}: ${date}`,
     `${b.time}: ${time}`,
+    `${b.delivery}: ${delivery}`,
     `${b.breakdown}:`,
     ...lines.map((l) => `· ${l.label} ${l.amount < 0 ? "-" : ""}${b.won(Math.abs(l.amount))}`),
     `${b.total}: ${b.won(total)}`,
@@ -72,7 +74,7 @@ export function SnapShoot() {
     .filter(Boolean)
     .join("\n");
 
-  const valid = date && time && name.trim() && phone.trim();
+  const valid = date && time && delivery && name.trim() && phone.trim();
 
   async function notify() {
     try {
@@ -89,7 +91,7 @@ export function SnapShoot() {
           equipment: "",
           level: "",
           total: b.won(total),
-          note: [lines.slice(1).map((l) => l.label).join(", "), note.trim()].filter(Boolean).join(" / "),
+          note: [`${b.delivery}: ${delivery}`, lines.slice(1).map((l) => l.label).join(", "), note.trim()].filter(Boolean).join(" / "),
         }),
       });
     } catch {
@@ -321,6 +323,17 @@ export function SnapShoot() {
                   <input type="checkbox" checked={noFrame} onChange={(e) => setNoFrame(e.target.checked)} className="h-4 w-4 accent-brand-500" />
                   {b.noFrame}
                 </label>
+              </div>
+
+              <div className="grid gap-2">
+                <span className="text-[14px] font-semibold text-ink-900">{b.delivery}</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {b.deliveryOptions.map((d) => (
+                    <button key={d} type="button" onClick={() => setDelivery(d)} className={`rounded-xl border px-2 py-3 text-[13.5px] font-semibold transition-colors ${delivery === d ? "border-brand-500 bg-brand-50 text-brand-600" : "border-snow-300/70 text-ink-900"}`}>
+                      {d}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="grid gap-2">

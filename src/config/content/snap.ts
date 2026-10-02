@@ -33,6 +33,8 @@ export type SnapContent = {
     time: string;
     timeOptions: string[];
     pkg: string;
+    delivery: string;
+    deliveryOptions: string[];
     noFrame: string;
     options: string;
     qty: (n: number) => string;
@@ -59,12 +61,12 @@ const ko: SnapContent = {
   meta: {
     title: "인생사진 스냅 촬영",
     description:
-      "비발디파크 스키장 스냅 촬영 — 야간 패닝샷, 카빙샷까지 2시간 동안 인생사진을 남기고 전문가용 엡손 SC-P904로 직접 인화한 A2 액자로 받아보세요.",
+      "비발디파크 스키장 스냅 촬영 — 야간 패닝샷, 카빙샷까지 3시간 동안 인생사진을 남기고 전문가용 엡손 SC-P904로 직접 인화한 A2 액자로 받아보세요.",
   },
   hero: {
     eyebrow: "JINO VISUALS · Snow Snap",
     title: ["슬로프 위,", "당신의 인생사진"],
-    description: "레슨 없이 촬영만. 2시간 동안 가장 멋진 라이딩 순간을 담고, A2 액자로 완성해 드립니다.",
+    description: "레슨 없이 촬영만. 3시간 동안 가장 멋진 라이딩 순간을 담고, A2 액자로 완성해 드립니다.",
   },
   intro: {
     badge: "A2 액자 포함",
@@ -84,14 +86,14 @@ const ko: SnapContent = {
   galleryHint: "사진을 누르면 크게 볼 수 있어요",
   gallery,
   pricingTitle: "가격 안내",
-  pricingSubtitle: "2시간 촬영 · A2 액자 포함",
+  pricingSubtitle: "3시간 촬영 · A2 액자 포함",
   packages: [
     { id: "solo", label: "1인", people: "혼자 · 라이딩 위주", price: 390000 },
     { id: "duo", label: "2인", people: "커플 · 친구", price: 450000 },
     { id: "family", label: "가족", people: "3~4인", price: 520000 },
   ],
   includesTitle: "모든 패키지 포함",
-  includes: ["2시간 촬영", "원본 사진 전체", "보정 사진 20장", "숏폼(릴스) 영상 1개", "A2 파인아트 액자 1점"],
+  includes: ["3시간 촬영", "원본 사진 전체", "보정 사진 20장", "숏폼(릴스) 영상 1개", "A2 파인아트 액자 1점"],
   noFrameLabel: "액자 없이 촬영만",
   noFrameDiscount: 100000,
   optionsTitle: "추가 인화 옵션",
@@ -109,14 +111,14 @@ const ko: SnapContent = {
   processTitle: "진행 순서",
   process: [
     { step: "01", title: "예약 신청", description: "날짜·시간대·패키지를 골라 신청하면 일정을 확인해 연락드려요." },
-    { step: "02", title: "2시간 촬영", description: "슬로프 상황과 빛에 맞춰 라이딩·인물 컷을 촬영합니다. 야간 패닝샷도 가능해요." },
+    { step: "02", title: "3시간 촬영", description: "슬로프 상황과 빛에 맞춰 라이딩·인물 컷을 촬영합니다. 야간 패닝샷도 가능해요." },
     { step: "03", title: "셀렉 · 보정", description: "원본 전체와 보정 20장, 숏폼 영상을 전달합니다. 액자에 넣을 컷을 함께 골라요." },
     { step: "04", title: "인화 · 액자 전달", description: "엡손 P904로 직접 인화해 액자로 제작한 뒤 촬영 후 1주일 이내에 전달해 드립니다." },
   ],
   notesTitle: "꼭 확인해 주세요",
   notes: [
     "리프트권은 손님이 개별로 준비해 주세요. (촬영 상품은 패찰이 필요 없어요)",
-    "사진·영상과 인화·액자는 촬영 후 1주일 이내에 전달해 드려요.",
+    "사진·영상과 인화·액자는 촬영 후 1주일 이내에 전달해 드려요. 받는 방법은 택배 또는 현장 수령 중 선택할 수 있어요.",
     "기상 악화로 슬로프 운영이 중단되면 무료 일정 변경 또는 전액 환불해 드려요.",
     "환불 규정: 촬영 3일 전 100%, 1~2일 전 50%, 당일·노쇼 환불 불가.",
   ],
@@ -127,6 +129,8 @@ const ko: SnapContent = {
     time: "희망 시간대",
     timeOptions: ["오전 (주간)", "오후 (주간)", "야간 (패닝샷 추천)"],
     pkg: "패키지",
+    delivery: "받는 방법",
+    deliveryOptions: ["택배", "현장 수령"],
     noFrame: "액자 없이 촬영만 (-100,000원)",
     options: "추가 인화",
     qty: (n) => `${n}개`,
@@ -139,10 +143,10 @@ const ko: SnapContent = {
     smsButton: "문자로 예약 신청",
     kakaoButton: "카카오톡으로 신청",
     copied: "신청 내용이 복사됐어요. 카카오톡 채팅창에 붙여넣어 보내주세요.",
-    required: "날짜, 시간대, 이름, 연락처를 입력해 주세요.",
+    required: "날짜, 시간대, 받는 방법, 이름, 연락처를 입력해 주세요.",
     sentNotice: "신청 내용이 강사에게 전달됐어요. 확인 후 연락드릴게요!",
     won,
-    programName: "인생사진 스냅 (2시간)",
+    programName: "인생사진 스냅 (3시간)",
   },
 };
 
@@ -150,12 +154,12 @@ const en: SnapContent = {
   ...ko,
   meta: {
     title: "Snow Photo Snap",
-    description: "2-hour ski resort photo session at Vivaldi Park — night panning and carving shots, with an A2 fine-art frame printed on a professional Epson SC-P904.",
+    description: "3-hour ski resort photo session at Vivaldi Park — night panning and carving shots, with an A2 fine-art frame printed on a professional Epson SC-P904.",
   },
   hero: {
     eyebrow: "JINO VISUALS · Snow Snap",
     title: ["Your best shot", "on the slopes"],
-    description: "No lesson, just photos. Two hours capturing your best riding moments, finished as an A2 framed print.",
+    description: "No lesson, just photos. Three hours capturing your best riding moments, finished as an A2 framed print.",
   },
   intro: {
     badge: "A2 frame included",
@@ -173,14 +177,14 @@ const en: SnapContent = {
   galleryTitle: "Sample shots",
   galleryHint: "Tap a photo to enlarge",
   pricingTitle: "Pricing",
-  pricingSubtitle: "2-hour session · A2 frame included",
+  pricingSubtitle: "3-hour session · A2 frame included",
   packages: [
     { id: "solo", label: "Solo", people: "1 person · riding focused", price: 390000 },
     { id: "duo", label: "Duo", people: "Couple · friends", price: 450000 },
     { id: "family", label: "Family", people: "3–4 people", price: 520000 },
   ],
   includesTitle: "Every package includes",
-  includes: ["2-hour session", "All original photos", "20 edited photos", "1 short-form video", "1 A2 fine-art frame"],
+  includes: ["3-hour session", "All original photos", "20 edited photos", "1 short-form video", "1 A2 fine-art frame"],
   noFrameLabel: "Photos only (no frame)",
   optionsTitle: "Extra prints",
   options: [
@@ -197,14 +201,14 @@ const en: SnapContent = {
   processTitle: "How it works",
   process: [
     { step: "01", title: "Request", description: "Choose a date, time and package — we confirm and get back to you." },
-    { step: "02", title: "2-hour shoot", description: "Riding and portrait shots matched to the light and slope. Night panning available." },
+    { step: "02", title: "3-hour shoot", description: "Riding and portrait shots matched to the light and slope. Night panning available." },
     { step: "03", title: "Select & edit", description: "You receive all originals, 20 edits and a short video, and pick the frame shot with us." },
     { step: "04", title: "Print & deliver", description: "Printed in-house on the Epson P904, framed and delivered within 1 week." },
   ],
   notesTitle: "Please note",
   notes: [
     "Lift tickets are prepared by the guest. (No teaching pass needed for photo sessions.)",
-    "Photos, video, prints and frames are delivered within 1 week of the shoot.",
+    "Photos, video, prints and frames are delivered within 1 week of the shoot — by courier or in-person pickup, your choice.",
     "If slopes close due to weather, reschedule for free or get a full refund.",
     "Refunds: 100% up to 3 days before, 50% 1–2 days before, none on the day / no-show.",
   ],
@@ -216,6 +220,8 @@ const en: SnapContent = {
     time: "Preferred time",
     timeOptions: ["Morning", "Afternoon", "Night (panning recommended)"],
     pkg: "Package",
+    delivery: "Delivery",
+    deliveryOptions: ["Courier", "Pickup in person"],
     noFrame: "Photos only, no frame (-100,000 KRW)",
     options: "Extra prints",
     qty: (n) => `${n}`,
@@ -228,10 +234,10 @@ const en: SnapContent = {
     smsButton: "Request by SMS",
     kakaoButton: "Request via KakaoTalk",
     copied: "Copied! Paste it into the KakaoTalk chat to send.",
-    required: "Please enter date, time, name and phone.",
+    required: "Please choose date, time, delivery, and enter name and phone.",
     sentNotice: "Your request has been sent. We'll contact you soon!",
     won: (n) => `${n.toLocaleString("en-US")} KRW`,
-    programName: "Snow Photo Snap (2h)",
+    programName: "Snow Photo Snap (3h)",
   },
 };
 
@@ -239,12 +245,12 @@ const zh: SnapContent = {
   ...ko,
   meta: {
     title: "雪场人生照拍摄",
-    description: "大明维瓦尔第滑雪场2小时跟拍 —— 夜间追焦、刻滑镜头，并用专业爱普生SC-P904亲自打印A2装裱作品。",
+    description: "大明维瓦尔第滑雪场3小时跟拍 —— 夜间追焦、刻滑镜头，并用专业爱普生SC-P904亲自打印A2装裱作品。",
   },
   hero: {
     eyebrow: "JINO VISUALS · Snow Snap",
     title: ["在雪道上，", "拍出你的人生照"],
-    description: "无需上课，只拍照。2小时记录你最帅的滑行瞬间，并制作成A2装裱作品。",
+    description: "无需上课，只拍照。3小时记录你最帅的滑行瞬间，并制作成A2装裱作品。",
   },
   intro: {
     badge: "含A2装裱",
@@ -262,14 +268,14 @@ const zh: SnapContent = {
   galleryTitle: "作品样片",
   galleryHint: "点击照片可放大查看",
   pricingTitle: "价格",
-  pricingSubtitle: "2小时拍摄 · 含A2装裱",
+  pricingSubtitle: "3小时拍摄 · 含A2装裱",
   packages: [
     { id: "solo", label: "1人", people: "单人 · 以滑行为主", price: 390000 },
     { id: "duo", label: "2人", people: "情侣 · 朋友", price: 450000 },
     { id: "family", label: "家庭", people: "3~4人", price: 520000 },
   ],
   includesTitle: "所有套餐包含",
-  includes: ["2小时拍摄", "全部原片", "精修20张", "短视频1条", "A2艺术装裱1幅"],
+  includes: ["3小时拍摄", "全部原片", "精修20张", "短视频1条", "A2艺术装裱1幅"],
   noFrameLabel: "仅拍摄（不含装裱）",
   optionsTitle: "加印选项",
   options: [
@@ -286,14 +292,14 @@ const zh: SnapContent = {
   processTitle: "流程",
   process: [
     { step: "01", title: "提交预约", description: "选择日期、时段和套餐，确认档期后联系您。" },
-    { step: "02", title: "2小时拍摄", description: "根据光线与雪道拍摄滑行与人像，可拍夜间追焦。" },
+    { step: "02", title: "3小时拍摄", description: "根据光线与雪道拍摄滑行与人像，可拍夜间追焦。" },
     { step: "03", title: "选片 · 修图", description: "交付全部原片、精修20张和短视频，并一起挑选装裱照片。" },
     { step: "04", title: "打印 · 交付", description: "用爱普生P904亲自打印装裱，拍摄后1周内交付。" },
   ],
   notesTitle: "注意事项",
   notes: [
     "缆车票需客人自行准备。（拍摄项目无需教学许可证）",
-    "照片、视频及打印装裱作品将在拍摄后1周内交付。",
+    "照片、视频及打印装裱作品将在拍摄后1周内交付，可选择快递或现场领取。",
     "如因天气停运，可免费改期或全额退款。",
     "退款：拍摄前3天100%，前1~2天50%，当天及爽约不退。",
   ],
@@ -305,6 +311,8 @@ const zh: SnapContent = {
     time: "希望时段",
     timeOptions: ["上午", "下午", "夜间（推荐追焦）"],
     pkg: "套餐",
+    delivery: "领取方式",
+    deliveryOptions: ["快递", "现场领取"],
     noFrame: "仅拍摄，不含装裱（-100,000韩元）",
     options: "加印",
     qty: (n) => `${n}`,
@@ -317,10 +325,10 @@ const zh: SnapContent = {
     smsButton: "短信预约",
     kakaoButton: "KakaoTalk预约",
     copied: "已复制，请粘贴到KakaoTalk聊天中发送。",
-    required: "请填写日期、时段、姓名和电话。",
+    required: "请填写日期、时段、领取方式、姓名和电话。",
     sentNotice: "预约已发送，我们会尽快联系您！",
     won: (n) => `${n.toLocaleString("en-US")}韩元`,
-    programName: "雪场人生照 (2小时)",
+    programName: "雪场人生照 (3小时)",
   },
 };
 
