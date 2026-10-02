@@ -133,7 +133,7 @@ const whyJinoSki = [
   },
   {
     number: "05",
-    image: "/images/why-radio.jpg",
+    image: "/images/why-radio-coaching.jpg",
     highlight: "无线耳机",
     title: "对讲机实时指导",
     description:
@@ -142,7 +142,7 @@ const whyJinoSki = [
   },
   {
     number: "06",
-    image: "/images/gallery-10.jpg",
+    image: "/images/why-safety.jpg",
     highlight: "保险 · EFR认证",
     title: "安全第一",
     description:

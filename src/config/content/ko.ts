@@ -139,7 +139,7 @@ const whyJinoSki = [
   },
   {
     number: "05",
-    image: "/images/why-radio.jpg",
+    image: "/images/why-radio-coaching.jpg",
     highlight: "무선 헤드셋",
     title: "무전기 실시간 코칭",
     description:
@@ -148,7 +148,7 @@ const whyJinoSki = [
   },
   {
     number: "06",
-    image: "/images/gallery-10.jpg",
+    image: "/images/why-safety.jpg",
     highlight: "보험 · EFR 자격",
     title: "안전 최우선",
     description:

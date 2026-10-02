@@ -137,7 +137,7 @@ const whyJinoSki = [
   },
   {
     number: "05",
-    image: "/images/why-radio.jpg",
+    image: "/images/why-radio-coaching.jpg",
     highlight: "Wireless headset",
     title: "Real-time radio coaching",
     description:
@@ -146,7 +146,7 @@ const whyJinoSki = [
   },
   {
     number: "06",
-    image: "/images/gallery-10.jpg",
+    image: "/images/why-safety.jpg",
     highlight: "Insured · EFR certified",
     title: "Safety first",
     description:
