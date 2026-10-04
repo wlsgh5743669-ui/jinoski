@@ -226,25 +226,25 @@ const lessonPricing: SiteContent["lessonPricing"] = [
   {
     program: "2h",
     rows: [
-      { people: "1:1", price: "140,000원" },
-      { people: "1:2", price: "200,000원" },
-      { people: "1:3", price: "240,000원" },
+      { people: "1:1", price: "140,000韩元" },
+      { people: "1:2", price: "200,000韩元" },
+      { people: "1:3", price: "240,000韩元" },
     ],
   },
   {
     program: "3h",
     rows: [
-      { people: "1:1", price: "210,000원" },
-      { people: "1:2", price: "300,000원" },
-      { people: "1:3", price: "360,000원" },
+      { people: "1:1", price: "210,000韩元" },
+      { people: "1:2", price: "300,000韩元" },
+      { people: "1:3", price: "360,000韩元" },
     ],
   },
   {
     program: "4h",
     rows: [
-      { people: "1:1", price: "280,000원" },
-      { people: "1:2", price: "400,000원" },
-      { people: "1:3", price: "480,000원" },
+      { people: "1:1", price: "280,000韩元" },
+      { people: "1:2", price: "400,000韩元" },
+      { people: "1:3", price: "480,000韩元" },
     ],
   },
 ];
@@ -257,9 +257,9 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     tagline: "从见面到拍摄，满满当当的一整天高端单日课程",
     duration: "课程7小时",
     rows: [
-      { people: "1p", price: "550,000원" },
-      { people: "2p", price: "700,000원" },
-      { people: "3p", price: "900,000원" },
+      { people: "1p", price: "550,000韩元" },
+      { people: "2p", price: "700,000韩元" },
+      { people: "3p", price: "900,000韩元" },
     ],
     priceNote: "已包含大明滑雪场教学许可证（雪票）费用。",
     schedule: [
@@ -307,9 +307,9 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       "JinoSki 的 Night Full Care 是从下午延续到夜晚的7小时课程高端项目。下午打好基础与姿势，压雪之后在最佳雪质中体验更加精进的课程。",
     duration: "课程7小时",
     rows: [
-      { people: "1p", price: "550,000원" },
-      { people: "2p", price: "700,000원" },
-      { people: "3p", price: "900,000원" },
+      { people: "1p", price: "550,000韩元" },
+      { people: "2p", price: "700,000韩元" },
+      { people: "3p", price: "900,000韩元" },
     ],
     priceNote: "已包含大明滑雪场教学许可证（雪票）费用。",
     schedule: [
@@ -370,9 +370,9 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
 ];
 
 const liftPassPricing: SiteContent["liftPassPricing"] = [
-  { program: "2h", durationLabel: "2小时", price: "25,000원" },
-  { program: "3h", durationLabel: "3小时", price: "35,000원" },
-  { program: "4h", durationLabel: "4小时", price: "50,000원" },
+  { program: "2h", durationLabel: "2小时", price: "25,000韩元" },
+  { program: "3h", durationLabel: "3小时", price: "35,000韩元" },
+  { program: "4h", durationLabel: "4小时", price: "50,000韩元" },
 ];
 
 const preLessonGuidance: SiteContent["preLessonGuidance"] = {
@@ -612,6 +612,7 @@ const seasonProgram: SiteContent["seasonProgram"] = {
     },
   ],
   priceNote: "早鸟10%优惠价（11月10日前预约）。教学许可证（雪票）费用另计。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
+  priceNoteRegular: "教学许可证（雪票）费用另计。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
   phoneButton: "电话咨询",
   kakaoButton: "KakaoTalk咨询",
 };

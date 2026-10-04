@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { isEarlyBirdActive } from "@/lib/pricing";
 import { Clock, Users, ChevronDown, Check, Repeat, Phone, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useContent } from "@/lib/use-content";
@@ -234,6 +235,12 @@ function FullCareCard({
 
 function SeasonProgramCard() {
   const { seasonProgram, contact } = useContent();
+  // 얼리버드 기간(11/10까지)이 지나면 할인 표시를 숨기고 정상가로 보여줌
+  const [eb, setEb] = useState(true);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setEb(isEarlyBirdActive());
+  }, []);
   const [openBenefit, setOpenBenefit] = useState<number | null>(null);
 
   return (
@@ -269,7 +276,7 @@ function SeasonProgramCard() {
 
       {seasonProgram.priceRows && (
         <div className="rounded-2xl bg-snow-100/60 p-4">
-          {seasonProgram.badge && (
+          {eb && seasonProgram.badge && (
             <span className="mb-3 inline-block rounded-full bg-red-500 px-2.5 py-1 text-[12px] font-bold text-white">
               {seasonProgram.badge}
             </span>
@@ -278,10 +285,14 @@ function SeasonProgramCard() {
             {seasonProgram.priceRows.map((row) => (
               <li key={row.people} className="flex items-baseline justify-between gap-3">
                 <span className="text-[15px] font-bold text-ink-900">{row.people}</span>
-                <span className="flex items-baseline gap-2">
-                  <span className="text-[13px] text-snow-500 line-through">{row.original}</span>
-                  <span className="text-[17px] font-bold text-red-500">{row.price}</span>
-                </span>
+                {eb ? (
+                  <span className="flex items-baseline gap-2">
+                    <span className="text-[13px] text-snow-500 line-through">{row.original}</span>
+                    <span className="text-[17px] font-bold text-red-500">{row.price}</span>
+                  </span>
+                ) : (
+                  <span className="text-[17px] font-bold text-ink-900">{row.original}</span>
+                )}
               </li>
             ))}
           </ul>
@@ -334,7 +345,7 @@ function SeasonProgramCard() {
       </div>
 
       <p className="text-[13px] leading-relaxed text-snow-500">
-        ※ {seasonProgram.priceNote}
+        ※ {eb ? seasonProgram.priceNote : seasonProgram.priceNoteRegular ?? seasonProgram.priceNote}
       </p>
 
       <div className="mt-auto flex flex-col gap-3 sm:flex-row">

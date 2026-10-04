@@ -151,6 +151,7 @@ export type SiteContent = {
     priceRows?: { people: string; original: string; price: string }[];
     benefits: { icon: string; title: string; description: string }[];
     priceNote: string;
+    priceNoteRegular?: string;
     phoneButton: string;
     kakaoButton: string;
   };

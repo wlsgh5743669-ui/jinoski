@@ -230,25 +230,25 @@ const lessonPricing: SiteContent["lessonPricing"] = [
   {
     program: "2h",
     rows: [
-      { people: "1:1", price: "140,000원" },
-      { people: "1:2", price: "200,000원" },
-      { people: "1:3", price: "240,000원" },
+      { people: "1:1", price: "140,000 KRW" },
+      { people: "1:2", price: "200,000 KRW" },
+      { people: "1:3", price: "240,000 KRW" },
     ],
   },
   {
     program: "3h",
     rows: [
-      { people: "1:1", price: "210,000원" },
-      { people: "1:2", price: "300,000원" },
-      { people: "1:3", price: "360,000원" },
+      { people: "1:1", price: "210,000 KRW" },
+      { people: "1:2", price: "300,000 KRW" },
+      { people: "1:3", price: "360,000 KRW" },
     ],
   },
   {
     program: "4h",
     rows: [
-      { people: "1:1", price: "280,000원" },
-      { people: "1:2", price: "400,000원" },
-      { people: "1:3", price: "480,000원" },
+      { people: "1:1", price: "280,000 KRW" },
+      { people: "1:2", price: "400,000 KRW" },
+      { people: "1:3", price: "480,000 KRW" },
     ],
   },
 ];
@@ -261,9 +261,9 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     tagline: "From morning meeting to final photos — a full premium day, start to finish.",
     duration: "7h of lessons",
     rows: [
-      { people: "1p", price: "550,000원" },
-      { people: "2p", price: "700,000원" },
-      { people: "3p", price: "900,000원" },
+      { people: "1p", price: "550,000 KRW" },
+      { people: "2p", price: "700,000 KRW" },
+      { people: "3p", price: "900,000 KRW" },
     ],
     priceNote: "Includes the Vivaldi Park lift/teaching pass fee.",
     schedule: [
@@ -331,9 +331,9 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       "JinoSki's Night Full Care is a premium program with 7 hours of lessons running from afternoon into night. Build fundamentals in the afternoon, then experience an even more refined lesson on freshly groomed snow at night.",
     duration: "7h of lessons",
     rows: [
-      { people: "1p", price: "550,000원" },
-      { people: "2p", price: "700,000원" },
-      { people: "3p", price: "900,000원" },
+      { people: "1p", price: "550,000 KRW" },
+      { people: "2p", price: "700,000 KRW" },
+      { people: "3p", price: "900,000 KRW" },
     ],
     priceNote: "Includes the Vivaldi Park lift/teaching pass fee.",
     schedule: [
@@ -404,9 +404,9 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
 ];
 
 const liftPassPricing: SiteContent["liftPassPricing"] = [
-  { program: "2h", durationLabel: "2 Hours", price: "25,000원" },
-  { program: "3h", durationLabel: "3 Hours", price: "35,000원" },
-  { program: "4h", durationLabel: "4 Hours", price: "50,000원" },
+  { program: "2h", durationLabel: "2 Hours", price: "25,000 KRW" },
+  { program: "3h", durationLabel: "3 Hours", price: "35,000 KRW" },
+  { program: "4h", durationLabel: "4 Hours", price: "50,000 KRW" },
 ];
 
 const preLessonGuidance: SiteContent["preLessonGuidance"] = {
@@ -651,6 +651,7 @@ const seasonProgram: SiteContent["seasonProgram"] = {
     },
   ],
   priceNote: "Early-bird price (10% off, book by Nov 10). Lift/teaching pass fee is separate. Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
+  priceNoteRegular: "Lift/teaching pass fee is separate. Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
   phoneButton: "Call Us",
   kakaoButton: "KakaoTalk",
 };
