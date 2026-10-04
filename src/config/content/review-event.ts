@@ -40,7 +40,7 @@ const ko: ReviewEventContent = {
   rewards: [
     { label: "인스타 게시글 · 릴스", reward: "A6 인화 3장 또는 스타벅스 아메리카노 1잔" },
     { label: "숏폼 영상 (릴스·쇼츠·틱톡)", reward: "위 혜택 + A4 인화 1장" },
-    { label: "시즌 베스트 3명", reward: "A2 액자 또는 2시간 레슨 무료", highlight: true },
+    { label: "시즌 베스트 3명", reward: "A3 액자 제공", highlight: true },
   ],
   hashtagsLabel: "필수 태그 · 해시태그",
   hashtags: "@jino_ski #지노스키 #비발디스키강습 #광고",
@@ -79,7 +79,7 @@ const en: ReviewEventContent = {
   rewards: [
     { label: "Instagram post · reel", reward: "3 A6 prints or a Starbucks Americano" },
     { label: "Short-form video", reward: "Above + 1 A4 print" },
-    { label: "Season best (top 3)", reward: "A2 frame or a free 2-hour lesson", highlight: true },
+    { label: "Season best (top 3)", reward: "A3 framed print", highlight: true },
   ],
   hashtagsLabel: "Required tag · hashtags",
   hashtags: "@jino_ski #지노스키 #비발디스키강습 #ad",
@@ -117,7 +117,7 @@ const zh: ReviewEventContent = {
   rewards: [
     { label: "Instagram帖子 · Reels", reward: "A6打印3张 或 星巴克美式咖啡1杯" },
     { label: "短视频", reward: "以上奖励 + A4打印1张" },
-    { label: "雪季最佳（3名）", reward: "A2装裱 或 免费2小时课程", highlight: true },
+    { label: "雪季最佳（3名）", reward: "赠送A3装裱作品", highlight: true },
   ],
   hashtagsLabel: "必填标记 · 话题标签",
   hashtags: "@jino_ski #지노스키 #비발디스키강습 #广告",
