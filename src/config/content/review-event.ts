@@ -22,7 +22,7 @@ const ko: ReviewEventContent = {
   banner: {
     badge: "후기 이벤트",
     title: "레슨 영상 올리고 인화 선물 받아가세요",
-    description: "인스타 게시글·릴스에 @jino_ski 태그만 하면 A6 인화 3장 또는 다음 레슨 1만 원 할인!",
+    description: "인스타 게시글·릴스에 @jino_ski 태그만 하면 A6 인화 3장 또는 스타벅스 아메리카노!",
     cta: "참여 방법 보기",
   },
   eyebrow: "Review Event",
@@ -38,7 +38,7 @@ const ko: ReviewEventContent = {
   ],
   rewardsTitle: "참여 혜택",
   rewards: [
-    { label: "인스타 게시글 · 릴스", reward: "A6 인화 3장 또는 다음 레슨 1만 원 할인" },
+    { label: "인스타 게시글 · 릴스", reward: "A6 인화 3장 또는 스타벅스 아메리카노 1잔" },
     { label: "숏폼 영상 (릴스·쇼츠·틱톡)", reward: "위 혜택 + A4 인화 1장" },
     { label: "시즌 베스트 3명", reward: "A2 액자 또는 2시간 레슨 무료", highlight: true },
   ],
@@ -53,7 +53,7 @@ const ko: ReviewEventContent = {
     "아이가 나오는 사진·영상은 보호자 동의 후 올려주세요.",
     "공개 계정 게시물만 참여로 인정되며, 혜택 지급 전에 삭제하면 지급이 취소될 수 있어요.",
     "이 이벤트는 인스타그램·숏폼 게시물 대상이에요. 네이버 스마트스토어 구매 후기는 이벤트와 관계없이 자유롭게 남겨주세요.",
-    "할인 혜택은 26/27 시즌 레슨 예약 시 1회 사용할 수 있어요. 인화 선물은 다음 레슨 때 드리거나 택배로 보내드려요.",
+    "스타벅스 아메리카노는 링크 확인 후 카카오톡 기프티콘으로 보내드려요. 인화 선물은 다음 레슨 때 드리거나 택배로 보내드려요.",
     "시즌 베스트는 조회수·좋아요와 콘텐츠 완성도를 함께 보고 선정해요.",
   ],
 };
@@ -62,7 +62,7 @@ const en: ReviewEventContent = {
   banner: {
     badge: "Review event",
     title: "Post your lesson video, get free prints",
-    description: "Tag @jino_ski in an Instagram post or reel and get 3 A6 prints or 10,000 KRW off your next lesson!",
+    description: "Tag @jino_ski in an Instagram post or reel and get 3 A6 prints or a Starbucks Americano!",
     cta: "How to join",
   },
   eyebrow: "Review Event",
@@ -77,7 +77,7 @@ const en: ReviewEventContent = {
   ],
   rewardsTitle: "Rewards",
   rewards: [
-    { label: "Instagram post · reel", reward: "3 A6 prints or 10,000 KRW off your next lesson" },
+    { label: "Instagram post · reel", reward: "3 A6 prints or a Starbucks Americano" },
     { label: "Short-form video", reward: "Above + 1 A4 print" },
     { label: "Season best (top 3)", reward: "A2 frame or a free 2-hour lesson", highlight: true },
   ],
@@ -92,7 +92,7 @@ const en: ReviewEventContent = {
     "Get a parent's consent before posting photos or videos of children.",
     "Only public posts count; rewards may be cancelled if the post is deleted before they are given.",
     "This event is for Instagram and short-form posts only. Naver Smart Store reviews are separate and always welcome.",
-    "The discount can be used once for a 26/27 season booking. Prints are handed over at your next lesson or sent by courier.",
+    "The Starbucks Americano is sent as a KakaoTalk gift after we check your link. Prints are handed over at your next lesson or sent by courier.",
   ],
 };
 
@@ -100,7 +100,7 @@ const zh: ReviewEventContent = {
   banner: {
     badge: "评价活动",
     title: "上传课程视频，领取打印照片",
-    description: "在Instagram帖子或Reels中标记 @jino_ski，即可获得A6打印3张或下次课程立减1万韩元！",
+    description: "在Instagram帖子或Reels中标记 @jino_ski，即可获得A6打印3张或星巴克美式咖啡一杯！",
     cta: "查看参与方式",
   },
   eyebrow: "Review Event",
@@ -115,7 +115,7 @@ const zh: ReviewEventContent = {
   ],
   rewardsTitle: "参与奖励",
   rewards: [
-    { label: "Instagram帖子 · Reels", reward: "A6打印3张 或 下次课程立减1万韩元" },
+    { label: "Instagram帖子 · Reels", reward: "A6打印3张 或 星巴克美式咖啡1杯" },
     { label: "短视频", reward: "以上奖励 + A4打印1张" },
     { label: "雪季最佳（3名）", reward: "A2装裱 或 免费2小时课程", highlight: true },
   ],
@@ -130,7 +130,7 @@ const zh: ReviewEventContent = {
     "含儿童的照片和视频请在监护人同意后发布。",
     "仅限公开帖子，奖励发放前删除可能取消奖励。",
     "本活动仅限Instagram和短视频，Naver Smart Store购买评价与活动无关。",
-    "折扣可在26/27雪季预约时使用一次，打印照片在下次课程时交付或快递寄送。",
+    "星巴克美式咖啡确认链接后以KakaoTalk礼品券发送，打印照片在下次课程时交付或快递寄送。",
   ],
 };
 
