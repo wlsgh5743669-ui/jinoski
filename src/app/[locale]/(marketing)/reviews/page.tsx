@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getContent, isLocale, defaultLocale } from "@/config/site";
 import { pageMetadata } from "@/lib/page-metadata";
+import { ReviewEvent } from "@/components/sections/review-event";
 import { PageHero } from "@/components/shared/page-hero";
 import { Reviews } from "@/components/sections/reviews";
 
@@ -37,6 +38,7 @@ export default async function ReviewsPage({
         title={title}
         description={content.pageMeta.reviews.description}
       />
+      <ReviewEvent />
       <Reviews />
     </>
   );

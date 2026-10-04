@@ -4,6 +4,7 @@ import { WhyJinoSki } from "@/components/sections/why-jinoski";
 import { MenuCards } from "@/components/sections/menu-cards";
 import { Directions } from "@/components/sections/directions";
 import { Reservation } from "@/components/sections/reservation";
+import { ReviewEventBanner } from "@/components/sections/review-event";
 import { SeasonPopup } from "@/components/sections/season-popup";
 
 export default function HomePage() {
@@ -14,6 +15,7 @@ export default function HomePage() {
       <Stats />
       <WhyJinoSki />
       <MenuCards />
+      <ReviewEventBanner />
       <Directions />
       <Reservation />
     </>
