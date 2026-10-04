@@ -453,124 +453,124 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
 // TODO: translate — Korean content shown to EN visitors until translated.
 const faq: SiteContent["faq"] = [
   {
-    question: "스키를 한 번도 안 타봤는데 가능할까요?",
+    question: "I've never skied before. Can I still take a lesson?",
     answer:
-      "물론 가능합니다.\n장비 착용부터 기본 자세, 넘어지고 일어나는 방법, 안전하게 멈추는 방법까지 처음부터 차근차근 알려드립니다. 처음 배우시는 분들도 개인의 속도에 맞춰 안전하게 실력을 키워드립니다.",
+      "Of course.\nWe start from the very beginning — putting on your gear, basic stance, how to fall and get up, and how to stop safely. First-timers progress safely at their own pace.",
   },
   {
-    question: "몇 살부터 강습이 가능한가요?",
+    question: "From what age can children take lessons?",
     answer:
-      "보통 만 5세 이상부터 가능합니다.\n어린이부터 성인까지 누구나 수강 가능하며, 연령과 수준에 맞춘 맞춤형 레슨을 진행합니다.",
+      "Usually from age 5 (international age).\nAnyone from kids to adults can join, with lessons tailored to age and level.",
   },
   {
-    question: "강습 시간은 어떻게 되나요?",
+    question: "What are the lesson times?",
     answer:
-      "기본적으로 2시간 단위로 운영됩니다.\n\n· 오전 09:00 ~ 11:00\n· 오전 11:00 ~ 13:00\n· 오후 13:00 ~ 15:00\n· 오후 15:00 ~ 17:00\n· 야간 19:00 ~ 21:00\n\n원데이 프리미엄 레슨도 운영하고 있습니다.",
+      "Lessons run in the following time slots.\n\n2-hour lessons\n· Morning 09:00–11:00 / 11:00–13:00\n· Afternoon 13:20–15:20 / 15:30–17:30\n· Night 19:00–21:00\n\n3-hour lessons: 09:00–12:00 / 13:20–16:20 / 19:00–22:00\n4-hour lessons: 09:00–13:00 / 13:20–17:20 / 19:00–23:00\n\nWe also offer One Day Full Care (meet 08:40 – 16:30) and Night Full Care (meet 14:00 – 22:00).",
   },
   {
-    question: "장비가 없어도 강습을 받을 수 있나요?",
+    question: "Can I take a lesson without my own equipment?",
     answer:
-      "네, 가능합니다.\n스키, 스노보드, 부츠, 헬멧, 의류 등 필요한 장비는 모두 렌탈이 가능합니다. 예약 시 미리 말씀해 주시면 안내해드립니다.",
+      "Yes.\nSkis, snowboards, boots, helmets and clothing can all be rented. Let us know when booking and we'll guide you.",
   },
   {
-    question: "리프트권은 별도로 구매해야 하나요?",
+    question: "Do I need to buy a lift ticket separately?",
     answer:
-      "네.\n리프트권은 강습료에 포함되어 있지 않습니다. 예약 시 가장 합리적인 구매 방법도 함께 안내해드립니다.",
+      "Yes.\nLift tickets are not included in the lesson fee. We'll let you know the most cost-effective way to buy one when you book.",
   },
   {
-    question: "강습료 외 추가 비용이 있나요?",
+    question: "Are there any costs besides the lesson fee?",
     answer:
-      "있습니다.\n강습료 외에 리프트권, 패찰 비용, 장비 렌탈, 의류 렌탈 등이 필요할 수 있으며, 예약 전에 예상 비용을 모두 안내해드립니다.",
+      "Yes.\nYou may need a lift ticket, the teaching pass fee, equipment rental and clothing rental. We explain all expected costs before you book.",
   },
   {
-    question: "혼자 신청해도 되나요?",
+    question: "Can I sign up alone?",
     answer:
-      "물론 가능합니다.\n1:1 개인 레슨부터 가족, 친구, 커플 등 그룹 레슨까지 모두 가능합니다.",
+      "Of course.\nWe offer everything from 1:1 private lessons to group lessons for families, friends and couples.",
   },
   {
-    question: "사진과 영상 촬영도 해주시나요?",
+    question: "Do you take photos and videos?",
     answer:
-      "네.\n레슨 중 자연스러운 사진과 영상을 촬영해드리며, 소중한 겨울의 추억을 남겨드립니다.",
+      "Yes.\nWe capture natural photos and videos during your lesson so you can keep your winter memories.",
   },
   {
-    question: "비나 눈이 와도 강습을 하나요?",
+    question: "Do lessons go ahead in rain or snow?",
     answer:
-      "대부분 정상적으로 진행됩니다.\n기상 악화로 슬로프 운영이 중단되는 경우에는 일정 변경 또는 환불 규정에 따라 안내해드립니다.",
+      "Usually yes.\nIf the slopes close due to bad weather, you can reschedule for free or get a full refund.",
   },
   {
-    question: "예약은 언제 하는 것이 좋나요?",
+    question: "When should I book?",
     answer:
-      "가능한 빨리 예약하시는 것을 추천드립니다.\n주말과 성수기에는 예약이 빠르게 마감되므로 원하는 시간대를 이용하시려면 최소 1~2주 전에 예약하는 것이 좋습니다.",
+      "As early as possible.\nWeekends and peak season fill up quickly, so we recommend booking at least 1–2 weeks ahead to get your preferred time.",
   },
   {
-    question: "강습 당일 몇 분 전에 도착하면 되나요?",
+    question: "How early should I arrive on the day?",
     answer:
-      "최소 30분 전에 도착해 주세요.\n장비 렌탈과 환복 시간을 고려하면 여유 있게 도착하시는 것을 추천드립니다.",
+      "At least 30 minutes early.\nPlease allow extra time for equipment rental and changing.",
   },
   {
-    question: "어떤 복장을 준비해야 하나요?",
+    question: "What should I wear?",
     answer:
-      "방수 기능이 있는 스키복을 추천드립니다.\n장갑, 헬멧, 고글은 안전을 위해 착용을 권장하며, 없으신 경우 렌탈도 가능합니다.",
+      "Waterproof ski wear is recommended.\nGloves, a helmet and goggles are recommended for safety — rentals are available if you don't have them.",
   },
   {
-    question: "스노보드와 인라인스키 강습도 가능한가요?",
+    question: "Do you teach snowboarding and inline skiing too?",
     answer:
-      "네, 가능합니다.\nJINO SKI & BOARD SCHOOL에서는 아래 종목을 모두 지도하고 있습니다.\n\n· 🎿 스키\n· 🏂 스노보드\n· 🛼 인라인스키\n\n인라인스키는 겨울 시즌을 준비하는 오프트레이닝과 밸런스, 엣지 감각, 턴 기술 향상에 효과적이며, 초보부터 상급자까지 맞춤형 레슨을 제공합니다.",
+      "Yes.\nJINO SKI & BOARD SCHOOL teaches all of the following:\n\n· 🎿 Ski\n· 🏂 Snowboard\n· 🛼 Inline ski\n\nInline skiing is great off-season training for balance, edging and turning, with lessons for beginners to advanced skiers.",
   },
   {
-    question: "초급 이후 중급·상급 레슨도 가능한가요?",
+    question: "Do you offer intermediate and advanced lessons?",
     answer:
-      "가능합니다.\n기본 자세 교정부터 카빙, 숏턴, 롱턴, 모글, 급사면 등 고객님의 목표에 맞는 전문 레슨을 진행합니다.",
+      "Yes.\nFrom posture correction to carving, short turns, long turns, moguls and steep slopes — lessons are built around your goals.",
   },
   {
-    question: "JINO SKI만의 강습 방식은 무엇인가요?",
+    question: "What makes JINO SKI's teaching style different?",
     answer:
-      "고객 맞춤형 프리미엄 레슨입니다.\n단순히 따라 하는 강습이 아니라 현재 실력을 분석하고, 부족한 부분을 집중적으로 코칭합니다. 실시간 피드백을 통해 빠르고 정확하게 실력을 향상시켜 드립니다.",
+      "Personalized premium lessons.\nRather than just following along, we analyze your current level and focus on what you need, with real-time feedback for fast, accurate progress.",
   },
   {
-    question: "취소 및 환불은 어떻게 진행되나요?",
+    question: "How do cancellations, refunds and rescheduling work?",
     answer:
-      "운영 규정에 따라 진행됩니다.\n기상 악화나 슬로프 운영 중단 등 불가항력적인 상황은 별도로 안내해드리며, 자세한 환불 규정은 예약 시 확인하실 수 있습니다.",
+      "Our refund policy:\n· Cancel 3+ days before: 100% refund\n· Cancel 1–2 days before: 50% refund\n· Same-day cancellation or no-show: no refund\n\nRescheduling\n· One free change up to 2 days before (to a date the instructor is available, within the season)\n· Later changes or cancellations follow the refund policy above\n· If slopes close due to bad weather: free reschedule or full refund",
   },
   {
-    question: "JINO SKI & BOARD SCHOOL만의 차별점은 무엇인가요?",
+    question: "What makes JINO SKI & BOARD SCHOOL special?",
     answer:
-      "단순한 강습이 아닌, 겨울 최고의 경험을 제공합니다.\n\n✅ 전문 강사진의 체계적인 레슨\n✅ 맞춤형 1:1 프리미엄 코칭\n✅ 스키 · 스노보드 · 인라인스키 전문 교육\n✅ 사진 및 영상 촬영 서비스\n✅ 레슨 후 맞춤형 피드백 제공\n✅ 초보부터 상급자까지 체계적인 커리큘럼\n✅ 안전을 최우선으로 하는 교육 시스템",
+      "Not just a lesson — the best winter experience.\n\n✅ Structured lessons by professional instructors\n✅ Personalized 1:1 premium coaching\n✅ Ski · snowboard · inline ski expertise\n✅ Photo and video service\n✅ Personalized feedback after each lesson\n✅ A curriculum from beginner to advanced\n✅ Safety-first teaching",
   },
   {
-    question: "패찰 비용이 무엇인가요?",
+    question: "What is the teaching pass (패찰) fee?",
     answer:
-      "패찰은 비발디파크에서 외부 강습을 진행하기 위해 필요한 공식 이용권입니다.\n외부 강습은 비발디파크 운영 규정에 따라 패찰을 착용해야 하며, 해당 비용은 강습료와 별도로 발생합니다.\n※ 패찰 비용은 JINO SKI & BOARD SCHOOL이 받는 비용이 아닌, 비발디파크 운영 규정에 따른 공식 비용입니다.",
+      "A teaching pass is the official permit required to give outside lessons at Vivaldi Park.\nPark rules require it for all outside lessons, and it is charged separately from the lesson fee.\n※ This fee is not charged by JINO SKI & BOARD SCHOOL — it is an official Vivaldi Park fee.",
   },
   {
-    question: "패찰은 어디에서 구매하나요?",
+    question: "Where do I buy the teaching pass?",
     answer:
-      "별도로 구매하실 필요는 없습니다.\n예약이 확정되면 JINO SKI & BOARD SCHOOL에서 발급 절차를 안내해드리며, 고객님은 안내에 따라 진행하시면 됩니다.",
+      "You don't need to buy it yourself.\nOnce your booking is confirmed, we'll guide you through the issuing process.",
   },
   {
-    question: "강사도 리프트권이 필요한가요?",
+    question: "Does the instructor need a lift ticket too?",
     answer:
-      "아닙니다.\n강사의 리프트 이용은 패찰에 포함되어 있으므로 고객님은 본인 리프트권만 준비하시면 됩니다.",
+      "No.\nThe instructor's lift access is included in the teaching pass, so you only need your own lift ticket.",
   },
   {
-    question: "강습료에는 무엇이 포함되어 있나요?",
+    question: "What is included in the lesson fee?",
     answer:
-      "아래 서비스가 포함됩니다.\n\n포함 사항\n· 🎿 전문 강사의 맞춤형 레슨\n· 📚 수준별 커리큘럼\n· ✅ 자세 교정 및 실시간 피드백\n· 📸 사진 및 영상 촬영(서비스 제공 시)\n· 📝 레슨 종료 후 피드백\n\n별도 비용\n· 🎫 리프트권\n· 🦺 패찰 비용\n· 🎿 장비 렌탈\n· 👕 의류 렌탈\n· 🍽️ 식사 및 개인 비용",
+      "Included\n· 🎿 Personalized lesson by a professional instructor\n· 📚 Level-based curriculum\n· ✅ Posture correction and real-time feedback\n· 📸 Photos and videos (when provided)\n· 📝 Feedback after the lesson\n\nNot included\n· 🎫 Lift ticket\n· 🦺 Teaching pass fee\n· 🎿 Equipment rental\n· 👕 Clothing rental\n· 🍽️ Meals and personal expenses",
   },
   {
-    question: "외국인도 강습을 받을 수 있나요?",
+    question: "Can foreigners take lessons?",
     answer:
-      "네, 가능합니다.\n외국인 고객도 편안하게 이용할 수 있도록 운영하고 있습니다.\n\n🇰🇷 한국어\n🇺🇸 영어(기본 의사소통 가능)\n🇨🇳 중국어(기본 의사소통 가능)",
+      "Yes.\nWe welcome international guests.\n\n🇰🇷 Korean\n🇺🇸 English (basic communication)\n🇨🇳 Chinese (basic communication)",
   },
   {
-    question: "당일 예약도 가능한가요?",
+    question: "Can I book on the same day?",
     answer:
-      "가능합니다.\n다만 당일 예약은 강사 일정과 예약 현황에 따라 가능 여부가 달라질 수 있습니다.\n주말과 성수기에는 조기 마감되는 경우가 많아 사전 예약을 권장드립니다.",
+      "Yes.\nSame-day availability depends on the instructor's schedule. Weekends and peak season often fill up early, so booking ahead is recommended.",
   },
   {
-    question: "강습을 받기 위해 무엇을 준비해야 하나요?",
+    question: "What should I prepare for the lesson?",
     answer:
-      "아래 준비물을 확인해 주세요.\n\n필수 준비물\n· 🎿 스키 또는 스노보드 장비(렌탈 가능)\n· 🎫 리프트권\n· 🦺 패찰(외부 강습 이용 시)\n\n권장 준비물\n· 🧥 방수 스키복\n· 🧤 장갑\n· 🥽 고글\n· 🪖 헬멧\n· 🧦 여벌 양말\n· 💧 생수 또는 음료\n\n장비와 의류가 없으신 경우 렌탈이 가능하며, 예약 시 미리 안내해드립니다.",
+      "Please check the list below.\n\nRequired\n· 🎿 Ski or snowboard equipment (rental available)\n· 🎫 Lift ticket\n· 🦺 Teaching pass (for outside lessons)\n\nRecommended\n· 🧥 Waterproof ski wear\n· 🧤 Gloves\n· 🥽 Goggles\n· 🪖 Helmet\n· 🧦 Spare socks\n· 💧 Water or drinks\n\nIf you don't have equipment or clothing, rentals are available — we'll guide you when you book.",
   },
 ];
 

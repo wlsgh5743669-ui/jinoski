@@ -80,6 +80,7 @@ export function SnapShoot() {
     try {
       await fetch(KAKAO_NOTIFY_URL, {
         method: "POST",
+        keepalive: true,
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify({
           name: name.trim(),
