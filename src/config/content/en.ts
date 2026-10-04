@@ -288,13 +288,13 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         ],
       },
       {
-        time: "12:30 – 13:30",
-        title: "Lunch & Rest (60 min)",
+        time: "12:30 – 13:00",
+        title: "Lunch & Rest (30 min)",
         items: ["Lunch", "Morning session feedback", "Afternoon plan briefing"],
       },
       {
-        time: "13:30 – 16:30",
-        title: "Afternoon Lesson (3h)",
+        time: "13:00 – 16:30",
+        title: "Afternoon Lesson (3h 30m)",
         items: [
           "Real-slope riding practice",
           "Individual skill development",
@@ -338,7 +338,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
     priceNote: "Includes the Vivaldi Park lift/teaching pass fee.",
     schedule: [
       {
-        time: "14:00",
+        time: "13:30",
         title: "Meeting & Gear Check",
         items: [
           "Meet your instructor",
@@ -348,8 +348,8 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
         ],
       },
       {
-        time: "14:00 – 17:30",
-        title: "Afternoon Lesson",
+        time: "13:30 – 17:30",
+        title: "Afternoon Lesson (4h)",
         items: [
           "Improve stance and balance",
           "1:1 personalized lesson",
@@ -366,7 +366,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       },
       {
         time: "19:00 – 22:00",
-        title: "Night Lesson on Groomed Snow",
+        title: "Night Lesson on Groomed Snow (3h)",
         items: [
           "Lesson on freshly groomed, ideal snow",
           "Advanced carving training",
@@ -465,7 +465,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "What are the lesson times?",
     answer:
-      "Lessons run in the following time slots.\n\n2-hour lessons\n· Morning 09:00–11:00 / 11:00–13:00\n· Afternoon 13:20–15:20 / 15:30–17:30\n· Night 19:00–21:00\n\n3-hour lessons: 09:00–12:00 / 13:20–16:20 / 19:00–22:00\n4-hour lessons: 09:00–13:00 / 13:20–17:20 / 19:00–23:00\n\nWe also offer One Day Full Care (meet 08:40 – 16:30) and Night Full Care (meet 14:00 – 22:00).",
+      "Lessons run in the following time slots.\n\n2-hour lessons\n· Morning 09:00–11:00 / 11:00–13:00\n· Afternoon 13:20–15:20 / 15:30–17:30\n· Night 19:00–21:00\n\n3-hour lessons: 09:00–12:00 / 13:20–16:20 / 19:00–22:00\n4-hour lessons: 09:00–13:00 / 13:20–17:20 / 19:00–23:00\n\nWe also offer One Day Full Care (meet 08:40 – 16:30) and Night Full Care (meet 13:30 – 22:00).",
   },
   {
     question: "Can I take a lesson without my own equipment?",
@@ -1150,8 +1150,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   fullCareGroupLabel: "Full Care (7-hour full-day lesson)",
   fullCareInfo: {
     groupDescription: "A 7-hour premium lesson with your instructor all day · meal, photo/video and lift pass included",
-    oneDay: "Meet at 08:40 · 3h30 morning + 3h afternoon lesson (ends 16:30) · lunch, photo/video and lift pass included",
-    night: "Meet at 14:00 · 3h30 afternoon + 3h night lesson on fresh groomed snow (ends 22:10–22:20) · dinner, photo/video and lift pass included",
+    oneDay: "Meet at 08:40 · 3h30 morning + 3h30 afternoon = 7 hours of lessons (ends 16:30) · lunch, photo/video and lift pass included",
+    night: "Meet at 13:30 · 4h afternoon + 3h night lesson = 7 hours on fresh groomed snow (ends 22:10–22:20) · dinner, photo/video and lift pass included",
     scheduleTitle: "How your day goes",
     scheduleNote: "Times may shift slightly depending on weather, slope conditions and how you feel.",
   },
@@ -1179,8 +1179,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     reviewTitle: "Your selection",
   },
   fixedTimeNote: {
-    oneDay: "Starts at 08:40 (about 7 hours of lessons)",
-    night: "Starts at 14:00 (about 7 hours of lessons)",
+    oneDay: "Starts at 08:40 (7 hours of lessons)",
+    night: "Starts at 13:30 (7 hours of lessons)",
   },
   fixedTimeDisabledNote: "This program starts at a fixed time.",
   liftPassExplainer:
