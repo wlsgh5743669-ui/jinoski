@@ -9,6 +9,8 @@ import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { Lightbox } from "@/components/shared/lightbox";
 import { RevealGroup, revealItem } from "@/components/shared/reveal";
+import { getPrivacy } from "@/config/content/privacy";
+import { Link } from "@/i18n/navigation";
 import { getSnapContent, optionCost, type SnapPackage } from "@/config/content/snap";
 
 const KAKAO_NOTIFY_URL =
@@ -34,6 +36,7 @@ export function SnapShoot() {
   const s = getSnapContent(locale);
   const { contact } = useContent();
   const b = s.booking;
+  const privacy = getPrivacy(locale);
 
   const [lightbox, setLightbox] = useState<string | null>(null);
   const [date, setDate] = useState("");
@@ -398,6 +401,12 @@ export function SnapShoot() {
                 </button>
               </div>
               {msg && <p className="text-center text-[13.5px] font-medium text-brand-600">{msg}</p>}
+              <p className="text-center text-[12px] leading-relaxed text-snow-500">
+                {privacy.formNotice}{" "}
+                <Link href="/privacy" className="font-semibold underline underline-offset-2">
+                  {privacy.footerLink}
+                </Link>
+              </p>
             </div>
           </div>
         </Container>

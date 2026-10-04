@@ -1,5 +1,6 @@
 "use client";
 
+import { getPrivacy } from "@/config/content/privacy";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocale } from "next-intl";
@@ -867,7 +868,20 @@ export function BookingWizard() {
           </button>
         )}
       </div>
+      {step === totalSteps && <PrivacyNotice />}
     </div>
+  );
+}
+
+function PrivacyNotice() {
+  const p = getPrivacy(useLocale());
+  return (
+    <p className="mt-3 text-center text-[12px] leading-relaxed text-snow-500">
+      {p.formNotice}{" "}
+      <Link href="/privacy" className="font-semibold underline underline-offset-2">
+        {p.footerLink}
+      </Link>
+    </p>
   );
 }
 

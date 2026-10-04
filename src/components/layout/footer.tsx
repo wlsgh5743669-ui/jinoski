@@ -11,10 +11,13 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
+import { useLocale } from "next-intl";
+import { getPrivacy } from "@/config/content/privacy";
 import { Container } from "@/components/shared/container";
 
 export function Footer() {
   const { contact, navLinks, ui } = useContent();
+  const locale = useLocale();
   const year = new Date().getFullYear();
 
   return (
@@ -120,6 +123,10 @@ export function Footer() {
           <div className="flex flex-col gap-1 text-[13px] sm:flex-row sm:items-center sm:justify-between">
             <p>
               &copy; {year} {ui.footer.copyrightSuffix}
+              <span className="mx-2 text-white/20">|</span>
+              <Link href="/privacy" className="font-semibold text-white/70 hover:text-white">
+                {getPrivacy(locale).footerLink}
+              </Link>
             </p>
             <p>{ui.footer.photoCredits}</p>
           </div>
