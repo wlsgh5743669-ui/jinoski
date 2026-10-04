@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { locales, isLocale, getContent } from "@/config/site";
+import { Analytics } from "@/components/shared/analytics";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -90,6 +91,7 @@ export default async function LocaleLayout({
       <div lang={locale} className={locale === "ko" ? "contents ko-text" : "contents"}>
         {children}
       </div>
+      <Analytics />
     </NextIntlClientProvider>
   );
 }

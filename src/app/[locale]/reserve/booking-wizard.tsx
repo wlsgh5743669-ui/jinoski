@@ -1,5 +1,6 @@
 "use client";
 
+import { trackEvent } from "@/components/shared/analytics";
 import { getPrivacy } from "@/config/content/privacy";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -144,6 +145,7 @@ const KAKAO_NOTIFY_URL =
  * Disabled (no-op) until NEXT_PUBLIC_KAKAO_NOTIFY_URL is configured.
  */
 async function notifyOwnerKakao(state: WizardState, content: SiteContent) {
+  trackEvent("booking_submit", { program: state.program ?? "", group: String(state.groupSize ?? "") });
   if (!KAKAO_NOTIFY_URL || !state.program || !state.groupSize) return;
   const breakdown = buildPriceBreakdown(state, content);
   await fetch(KAKAO_NOTIFY_URL, {

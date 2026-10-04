@@ -1,5 +1,7 @@
 // 개인정보처리방침 — 개인정보 보호법 제30조에 따른 공개 문서
 // ※ 내용이 바뀌면 effectiveDate 와 해당 항목을 함께 수정하세요.
+import { analyticsConfig } from "@/config/analytics";
+
 export type PrivacySection = { title: string; body: string[] };
 export type PrivacyContent = {
   title: string;
@@ -79,7 +81,7 @@ const ko: PrivacyContent = {
       ],
     },
     {
-      title: "8. 쿠키 및 브라우저 저장소",
+      title: "8. 쿠키",
       body: [
         "홈페이지는 광고·추적용 쿠키를 사용하지 않습니다.",
         "'오늘 하루 보지 않기' 같은 화면 설정만 고객님 브라우저(로컬 저장소)에 저장되며, 브라우저 설정에서 언제든 지울 수 있습니다.",
@@ -151,7 +153,66 @@ const zh: PrivacyContent = {
   formNotice: "提交即表示同意为处理预约而收集和使用您的姓名与电话。",
 };
 
+// 방문자 분석(네이버/구글)을 켜면 해당 문구가 자동으로 들어가요.
+const analyticsText = {
+  ko: {
+    cookieTitle: "8. 쿠키",
+    cookie: (tools: string) => [
+      `홈페이지는 방문 통계를 위해 ${tools}를 사용하며, 이 과정에서 쿠키가 저장될 수 있습니다. 수집 정보: 방문 페이지, 유입 경로(검색어 등), 접속 기기·브라우저 종류, 대략적인 지역, 방문 일시. 이름·연락처 등 고객님을 직접 알아볼 수 있는 정보는 분석 도구로 보내지 않습니다.`,
+      "광고 목적의 쿠키는 사용하지 않습니다. 브라우저 설정에서 쿠키 저장을 거부하거나 삭제할 수 있으며, 거부하셔도 예약 이용에는 지장이 없습니다.",
+      "'오늘 하루 보지 않기' 같은 화면 설정은 고객님 브라우저(로컬 저장소)에 저장됩니다.",
+      "유튜브 영상은 재생 버튼을 누를 때에만 유튜브(개인정보 강화 모드)에서 불러옵니다.",
+    ],
+    naver: "· 네이버㈜: 방문 통계 분석(네이버 애널리틱스)",
+    google: "· Google LLC (미국): 방문 통계 분석(구글 애널리틱스). 이전 항목: 쿠키 식별자, 방문 기록 / 이전 방법: 페이지 방문 시 네트워크 전송 / 보관 기간: 최대 14개월",
+    naverName: "네이버 애널리틱스",
+    googleName: "구글 애널리틱스",
+  },
+  en: {
+    cookieTitle: "7. Cookies",
+    cookie: (tools: string) => [
+      `We use ${tools} for visitor statistics, which may set cookies (pages visited, referrer/search terms, device and browser type, approximate region, time). No name or phone number is sent to these tools. No advertising cookies are used; you can block or delete cookies in your browser without affecting bookings. YouTube videos load only when you press play.`,
+    ],
+    naver: "Naver Corp.: visitor statistics (Naver Analytics).",
+    google: "Google LLC (USA): visitor statistics (Google Analytics), cookie identifiers and visit records, kept up to 14 months.",
+    naverName: "Naver Analytics",
+    googleName: "Google Analytics",
+  },
+  zh: {
+    cookieTitle: "7. Cookie",
+    cookie: (tools: string) => [
+      `本网站使用${tools}统计访问情况，可能会保存Cookie（访问页面、来源/搜索词、设备与浏览器类型、大致地区、时间）。不会向分析工具发送姓名或电话。不使用广告Cookie，您可在浏览器中拒绝或删除，不影响预约。YouTube视频仅在点击播放时加载。`,
+    ],
+    naver: "Naver Corp.：访问统计（Naver Analytics）。",
+    google: "Google LLC（美国）：访问统计（Google Analytics），Cookie标识与访问记录，最长保存14个月。",
+    naverName: "Naver Analytics",
+    googleName: "Google Analytics",
+  },
+} as const;
+
+function withAnalytics(base: PrivacyContent, loc: keyof typeof analyticsText): PrivacyContent {
+  const { naverId, gaId } = analyticsConfig;
+  if (!naverId && !gaId) return base;
+  const t = analyticsText[loc];
+  const tools = [naverId ? t.naverName : "", gaId ? t.googleName : ""].filter(Boolean).join(loc === "en" ? " and " : "·");
+  const processors = [naverId ? t.naver : "", gaId ? t.google : ""].filter(Boolean);
+  return {
+    ...base,
+    sections: base.sections.map((s) => {
+      if (s.title === t.cookieTitle) return { ...s, body: [...t.cookie(tools)] };
+      if (s.title.startsWith("5.")) {
+        const body = [...s.body];
+        const last = body.length - 1; // 마지막 줄(전화 예약 안내) 앞에 넣기
+        body.splice(last, 0, ...processors);
+        return { ...s, body };
+      }
+      return s;
+    }),
+  };
+}
+
 const map: Record<string, PrivacyContent> = { ko, en, zh };
 export function getPrivacy(locale: string): PrivacyContent {
-  return map[locale] ?? ko;
+  const loc = (locale in map ? locale : "ko") as keyof typeof analyticsText;
+  return withAnalytics(map[loc], loc);
 }

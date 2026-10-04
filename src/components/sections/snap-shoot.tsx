@@ -1,5 +1,6 @@
 "use client";
 
+import { trackEvent } from "@/components/shared/analytics";
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useLocale } from "next-intl";
@@ -80,6 +81,7 @@ export function SnapShoot() {
   const valid = date && time && delivery && name.trim() && phone.trim();
 
   async function notify() {
+    trackEvent("snap_submit", { package: selected.label });
     try {
       await fetch(KAKAO_NOTIFY_URL, {
         method: "POST",
