@@ -15,7 +15,11 @@ body {
   color: #0a0b0d;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* 한글이 단어 중간에서 줄바꿈되지 않도록 (예: "바탕으/로" 방지) */
+}
+
+/* 한국어 페이지만: 한글이 단어 중간에서 줄바꿈되지 않도록 (예: "바탕으/로" 방지).
+   중국어·일본어에 적용하면 줄바꿈이 안 돼서 화면이 넘치므로 ko 에만 적용 */
+.ko-text {
   word-break: keep-all;
   overflow-wrap: break-word;
 }

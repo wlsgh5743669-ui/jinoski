@@ -86,6 +86,10 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <NextIntlClientProvider locale={locale}>{children}</NextIntlClientProvider>
+    <NextIntlClientProvider locale={locale}>
+      <div lang={locale} className={locale === "ko" ? "contents ko-text" : "contents"}>
+        {children}
+      </div>
+    </NextIntlClientProvider>
   );
 }
