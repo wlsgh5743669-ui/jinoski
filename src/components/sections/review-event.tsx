@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLocale } from "next-intl";
-import { Camera, Copy, Gift, Instagram, Link2, Send, Sparkles, Trophy } from "lucide-react";
+import { Camera, Copy, Gift, Instagram, Link2, Send, Sparkles, Store, Trophy } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
@@ -113,6 +113,14 @@ export function ReviewEvent() {
                 className="mt-4 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#833AB4] via-[#E1306C] to-[#F77737] px-6 text-[14.5px] font-semibold text-white"
               >
                 <Instagram size={18} /> {e.instagramCta}
+              </a>
+              <a
+                href={contact.smartStore}
+                target="_blank"
+                rel="noreferrer"
+                className="ml-0 mt-3 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#03C75A] px-6 text-[14.5px] font-semibold text-white sm:ml-3"
+              >
+                <Store size={18} /> {e.smartStoreCta}
               </a>
             </div>
 
