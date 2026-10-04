@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { analyticsConfig } from "@/config/analytics";
 
 type W = Window & {
+  dataLayer?: Record<string, unknown>[];
   gtag?: (...a: unknown[]) => void;
   wcs?: unknown;
   wcs_add?: Record<string, string>;
@@ -17,12 +18,13 @@ export function trackEvent(name: string, params: Record<string, string | number>
   if (typeof window === "undefined") return;
   const w = window as W;
   try {
-    w.gtag?.("event", name, params);
+    if (w.gtag) w.gtag("event", name, params);
+    else if (w.dataLayer) w.dataLayer.push({ event: name, ...params });
   } catch {}
 }
 
 export function Analytics() {
-  const { naverId, gaId } = analyticsConfig;
+  const { naverId, gaId, gtmId } = analyticsConfig;
   const pathname = usePathname();
 
   // 네이버 애널리틱스: 페이지 이동마다 방문 기록
@@ -34,12 +36,12 @@ export function Analytics() {
     if (w.wcs && w.wcs_do) w.wcs_do();
   }, [naverId, pathname]);
 
-  if (!naverId && !gaId) return null;
+  if (!naverId && !gaId && !gtmId) return null;
   return (
     <>
       {naverId && (
         <Script
-          src="https://wcs.naver.net/wcslog.js"
+          src="https://wcs.pstatic.net/wcslog.js"
           strategy="afterInteractive"
           onLoad={() => {
             const w = window as W;
@@ -48,6 +50,21 @@ export function Analytics() {
             w.wcs_do?.();
           }}
         />
+      )}
+      {gtmId && (
+        <>
+          <Script id="gtm-init" strategy="afterInteractive">
+            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtmId}');`}
+          </Script>
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
+        </>
       )}
       {gaId && (
         <>

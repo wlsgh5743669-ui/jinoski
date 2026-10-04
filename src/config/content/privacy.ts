@@ -191,7 +191,8 @@ const analyticsText = {
 } as const;
 
 function withAnalytics(base: PrivacyContent, loc: keyof typeof analyticsText): PrivacyContent {
-  const { naverId, gaId } = analyticsConfig;
+  const { naverId, gtmId } = analyticsConfig;
+  const gaId = analyticsConfig.gaId || gtmId;
   if (!naverId && !gaId) return base;
   const t = analyticsText[loc];
   const tools = [naverId ? t.naverName : "", gaId ? t.googleName : ""].filter(Boolean).join(loc === "en" ? " and " : "·");
