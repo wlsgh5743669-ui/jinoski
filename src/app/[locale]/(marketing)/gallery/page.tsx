@@ -3,6 +3,7 @@ import { getContent, isLocale, defaultLocale } from "@/config/site";
 import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
 import { ShootSamples } from "@/components/sections/shoot-samples";
+import { YoutubeVideos } from "@/components/sections/youtube-videos";
 import { Gallery } from "@/components/sections/gallery";
 
 export async function generateMetadata({
@@ -35,6 +36,7 @@ export default async function GalleryPage({
     <>
       <PageHero eyebrow={eyebrow} title={title} description={description} />
       <ShootSamples />
+      <YoutubeVideos dark />
       <Gallery />
     </>
   );
