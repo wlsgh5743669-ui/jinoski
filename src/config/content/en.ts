@@ -428,9 +428,9 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
     },
     {
       icon: "🎫",
-      title: "Lift pass & instructor permit",
+      title: "Lift ticket for riding",
       description:
-        "The lift pass isn't included in the lesson fee and must be purchased separately. We'll guide you to the most cost-effective option once your booking is confirmed.",
+        "Your own lift ticket for riding the lifts is not included and is bought separately at the resort (this is different from the lesson permit fee in your booking). We'll tell you the most cost-effective ticket once your booking is confirmed.",
     },
     {
       icon: "📞",

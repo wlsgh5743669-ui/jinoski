@@ -392,9 +392,9 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
     },
     {
       icon: "🎫",
-      title: "缆车票 · 教学许可证",
+      title: "乘坐缆车的缆车票",
       description:
-        "缆车票费用不包含在课程费中，需另行购买。确认预约后我们会为您推荐最划算的购买方式。",
+        "学员乘坐缆车所需的缆车票不包含在内，需在滑雪场另行购买（与预约中的教学许可费不同）。确认预约后我们会告诉您最划算的购买方式。",
     },
     {
       icon: "📞",

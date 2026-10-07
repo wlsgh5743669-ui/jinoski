@@ -39,6 +39,47 @@ import {
 } from "@/lib/booking-options";
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
+import { getContent } from "@/config/site";
+
+/** 영어·중국어 예약: 문자·카톡 대신 이메일로 접수하고 이메일로 확정 안내 */
+const FOREIGN_TEXT = {
+  en: {
+    emailPlaceholder: "Email (we'll send your confirmation here)",
+    phonePlaceholder: "Phone with country code (optional)",
+    messengerPlaceholder: "WhatsApp / LINE / WeChat ID (optional)",
+    emailField: "email",
+    emailLabel: "Email",
+    messengerLabel: "Messenger",
+    heading: "Booking request received",
+    description: (email: string) =>
+      `Thank you! We'll check the instructor schedule and reply to ${email} within 24 hours with your confirmation and payment details. Your spot is held once payment is confirmed.`,
+    failedHeading: "Your request was not sent yet",
+    failedDescription:
+      "Something went wrong while sending your request. Please copy the summary below and email it to us. We'll reply within 24 hours.",
+    emailUs: "Questions? Email us",
+    copyButton: "Copy booking summary",
+    copied: "Copied",
+  },
+  zh: {
+    emailPlaceholder: "电子邮箱（确认信息将发送至此）",
+    phonePlaceholder: "手机号码（含国家区号，选填）",
+    messengerPlaceholder: "WeChat / WhatsApp / LINE ID（选填）",
+    emailField: "电子邮箱",
+    emailLabel: "邮箱",
+    messengerLabel: "联系方式",
+    heading: "预约申请已收到",
+    description: (email: string) =>
+      `谢谢！我们会确认教练日程，并在24小时内发送确认信息和付款方式至 ${email}。付款确认后即为预约成功。`,
+    failedHeading: "预约申请尚未发送",
+    failedDescription: "发送时出现问题。请复制下方预约内容并发送邮件给我们，我们会在24小时内回复。",
+    emailUs: "如有疑问，请发邮件",
+    copyButton: "复制预约内容",
+    copied: "已复制",
+  },
+} as const;
+type ForeignLocale = keyof typeof FOREIGN_TEXT;
+const isForeignLocale = (l: string): l is ForeignLocale => l === "en" || l === "zh";
+const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
 type WizardState = {
   date: string;
@@ -53,6 +94,8 @@ type WizardState = {
   phone: string;
   requestNote: string;
   earlyBird: boolean;
+  email: string;
+  messenger: string;
 };
 
 const INITIAL_STATE: WizardState = {
@@ -68,9 +111,14 @@ const INITIAL_STATE: WizardState = {
   phone: "",
   requestNote: "",
   earlyBird: false,
+  email: "",
+  messenger: "",
 };
 
-function formatPrice(value: number): string {
+function formatPrice(value: number, content: SiteContent): string {
+  const loc = content.siteConfig.locale;
+  if (loc.startsWith("en")) return `${value.toLocaleString("en-US")} KRW`;
+  if (loc.startsWith("zh")) return `${value.toLocaleString("en-US")}韩元`;
   return `${value.toLocaleString("ko-KR")}원`;
 }
 
@@ -105,14 +153,14 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
   lines.push({
     label: content.bookingWizard.priceSummary.lessonFee,
     detail: lessonDetail,
-    amount: price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.basePrice),
+    amount: price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.basePrice, content),
   });
 
   if (price.earlyBirdDiscount > 0) {
     lines.push({
       label: content.bookingWizard.priceSummary.earlyBird,
       detail: content.bookingWizard.priceSummary.earlyBirdDetail,
-      amount: `-${formatPrice(price.earlyBirdDiscount)}`,
+      amount: `-${formatPrice(price.earlyBirdDiscount, content)}`,
     });
   }
 
@@ -121,17 +169,17 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
   } else if (!price.priceOnRequest && price.liftPassPersonCount > 0) {
     lines.push({
       label: labels.liftPassAmount,
-      detail: `${labels.perPerson} ${formatPrice(price.liftPassFeePerPerson)} × ${labels.people(price.liftPassPersonCount)}${
+      detail: `${labels.perPerson} ${formatPrice(price.liftPassFeePerPerson, content)} × ${labels.people(price.liftPassPersonCount)}${
         liftPassPayment === "pay-onsite" ? ` (${labels.liftPassOnsite})` : ""
       }`,
-      amount: formatPrice(price.liftPassFee),
+      amount: formatPrice(price.liftPassFee, content),
     });
   }
 
   return {
     price,
     lines,
-    total: price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.totalPrice),
+    total: price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.totalPrice, content),
   };
 }
 
@@ -144,27 +192,40 @@ const KAKAO_NOTIFY_URL =
  * number arrives even if they never paste the message into the channel chat.
  * Disabled (no-op) until NEXT_PUBLIC_KAKAO_NOTIFY_URL is configured.
  */
-async function notifyOwnerKakao(state: WizardState, content: SiteContent) {
-  trackEvent("booking_submit", { program: state.program ?? "", group: String(state.groupSize ?? "") });
-  if (!KAKAO_NOTIFY_URL || !state.program || !state.groupSize) return;
-  const breakdown = buildPriceBreakdown(state, content);
-  await fetch(KAKAO_NOTIFY_URL, {
+async function notifyOwnerKakao(state: WizardState, content: SiteContent, locale: string): Promise<boolean> {
+  trackEvent("booking_submit", { program: state.program ?? "", group: String(state.groupSize ?? ""), locale });
+  if (!KAKAO_NOTIFY_URL || !state.program || !state.groupSize) return false;
+  const foreign = isForeignLocale(locale);
+  // 사장님이 읽는 알림은 항상 한국어 표기로
+  const ko = foreign ? getContent("ko") : content;
+  const breakdown = buildPriceBreakdown(state, ko);
+  const contact = foreign
+    ? [state.email.trim(), state.phone.trim()].filter(Boolean).join(" / ")
+    : state.phone.trim();
+  const note = foreign
+    ? [`${locale === "zh" ? "중국어" : "영어"} 예약·이메일 회신`, state.messenger.trim(), state.requestNote.trim()]
+        .filter(Boolean)
+        .join(" / ")
+    : state.requestNote.trim();
+  const res = await fetch(KAKAO_NOTIFY_URL, {
     method: "POST",
+    keepalive: true,
     // text/plain avoids a CORS preflight; the worker parses it as JSON.
     headers: { "Content-Type": "text/plain" },
     body: JSON.stringify({
       name: state.name.trim(),
-      phone: state.phone.trim(),
+      phone: contact,
       date: state.date,
-      program: getProgramLabel(state.program, content),
-      timeSlot: getTimeSlotLabel(state.program, state.timeSlot, content),
-      groupSize: getGroupSizeLabel(state.groupSize as GroupSizeValue, content),
-      equipment: state.equipment ? getEquipmentLabel(state.equipment, content) : "",
-      level: state.level ? getLevelInfo(state.level, content).label : "",
+      program: getProgramLabel(state.program, ko),
+      timeSlot: getTimeSlotLabel(state.program, state.timeSlot, ko),
+      groupSize: getGroupSizeLabel(state.groupSize as GroupSizeValue, ko),
+      equipment: state.equipment ? getEquipmentLabel(state.equipment, ko) : "",
+      level: state.level ? getLevelInfo(state.level, ko).label : "",
       total: breakdown?.total ?? "",
-      note: state.requestNote.trim(),
+      note,
     }),
   });
+  return res.ok;
 }
 
 function getPriceRows(program: ProgramValue, content: SiteContent) {
@@ -211,7 +272,13 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
     labels.greeting(state.name.trim()),
     "",
     `${labels.booker}: ${state.name.trim()}`,
-    `${labels.phone}: ${state.phone.trim()}`,
+    ...(state.email.trim() || state.messenger.trim()
+      ? [
+          state.email.trim() ? `Email: ${state.email.trim()}` : "",
+          state.phone.trim() ? `${labels.phone}: ${state.phone.trim()}` : "",
+          state.messenger.trim() ? `WhatsApp/LINE/WeChat: ${state.messenger.trim()}` : "",
+        ].filter(Boolean)
+      : [`${labels.phone}: ${state.phone.trim()}`]),
     `${labels.date}: ${state.date}`,
     `${labels.program}: ${getProgramLabel(program, content)}`,
     `${labels.timeSlot}: ${getTimeSlotLabel(program, state.timeSlot, content)}`,
@@ -239,7 +306,13 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
 
   lines.push("", ...buildGuidanceLines(content));
   lines.push("", labels.closing);
-  lines.push(`${labels.businessPhone}: ${content.contact.phone}`);
+  lines.push(
+    `${labels.businessPhone}: ${
+      content.siteConfig.locale.startsWith("ko")
+        ? content.contact.phone
+        : "+82-" + content.contact.phone.replace(/^0/, "")
+    }`
+  );
 
   return lines.join("\n");
 }
@@ -254,6 +327,9 @@ export function BookingWizard() {
   const [state, setState] = useState<WizardState>(INITIAL_STATE);
   const [showSummary, setShowSummary] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [notifyOk, setNotifyOk] = useState(true);
+  const foreign = isForeignLocale(locale);
+  const ft = foreign ? FOREIGN_TEXT[locale as ForeignLocale] : null;
 
   const isFullCare = state.program === "one-day" || state.program === "night";
 
@@ -357,7 +433,7 @@ export function BookingWizard() {
       case 8:
         return (
           state.name.trim().length > 0 &&
-          state.phone.trim().length >= 9 &&
+          (foreign ? isValidEmail(state.email) : state.phone.trim().length >= 9) &&
           state.ageGroup !== null
         );
       default:
@@ -408,9 +484,10 @@ export function BookingWizard() {
         // deploy) — the customer can still send the summary via SMS/KakaoTalk.
       }
       try {
-        await notifyOwnerKakao(state, content);
+        setNotifyOk(await notifyOwnerKakao(state, content, locale));
       } catch {
-        // Notification is best-effort.
+        // 한국어 예약은 문자·카톡으로도 보낼 수 있지만, 외국어 예약은 이 알림이 유일한 접수 경로
+        setNotifyOk(false);
       } finally {
         setSubmitting(false);
       }
@@ -420,6 +497,7 @@ export function BookingWizard() {
   }
 
   if (showSummary) {
+    if (ft) return <ForeignSummaryView state={state} content={content} ft={ft} sent={notifyOk} />;
     return <SummaryView state={state} content={content} />;
   }
 
@@ -668,11 +746,11 @@ export function BookingWizard() {
                           {content.ui.pricing.liftPassCardTitle} ({passInfo.durationLabel})
                         </p>
                         <p className="mt-1 text-[18px] font-bold text-brand-600">
-                          {labels.perPerson} {formatPrice(price.liftPassFeePerPerson)}
+                          {labels.perPerson} {formatPrice(price.liftPassFeePerPerson, content)}
                         </p>
                         <p className="mt-2 text-[14px] font-semibold tabular-nums text-ink-900">
-                          {formatPrice(price.liftPassFeePerPerson)} × {labels.people(price.liftPassPersonCount)} ={" "}
-                          {formatPrice(price.liftPassFee)}
+                          {formatPrice(price.liftPassFeePerPerson, content)} × {labels.people(price.liftPassPersonCount)} ={" "}
+                          {formatPrice(price.liftPassFee, content)}
                         </p>
                       </div>
                     );
@@ -710,13 +788,33 @@ export function BookingWizard() {
                     onChange={(e) => update("name", e.target.value)}
                     className="h-14 rounded-2xl border border-snow-300/60 px-5 text-[15px] outline-none transition-colors focus:border-brand-500"
                   />
+                  {ft && (
+                    <input
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      placeholder={ft.emailPlaceholder}
+                      value={state.email}
+                      onChange={(e) => update("email", e.target.value)}
+                      className="h-14 rounded-2xl border border-snow-300/60 px-5 text-[15px] outline-none transition-colors focus:border-brand-500"
+                    />
+                  )}
                   <input
                     type="tel"
-                    placeholder={content.bookingWizard.form.phonePlaceholder}
+                    placeholder={ft ? ft.phonePlaceholder : content.bookingWizard.form.phonePlaceholder}
                     value={state.phone}
                     onChange={(e) => update("phone", e.target.value)}
                     className="h-14 rounded-2xl border border-snow-300/60 px-5 text-[15px] outline-none transition-colors focus:border-brand-500"
                   />
+                  {ft && (
+                    <input
+                      type="text"
+                      placeholder={ft.messengerPlaceholder}
+                      value={state.messenger}
+                      onChange={(e) => update("messenger", e.target.value)}
+                      className="h-14 rounded-2xl border border-snow-300/60 px-5 text-[15px] outline-none transition-colors focus:border-brand-500"
+                    />
+                  )}
                   <div>
                     <p className="mb-2.5 text-[13.5px] font-semibold text-ink-900">
                       {content.bookingWizard.form.ageGroupLabel}
@@ -777,7 +875,7 @@ export function BookingWizard() {
                             on ? "bg-red-500 text-white" : "bg-red-100 text-red-600"
                           }`}
                         >
-                          {on ? `-${formatPrice(price.earlyBirdDiscount)}` : "10%"}
+                          {on ? `-${formatPrice(price.earlyBirdDiscount, content)}` : "10%"}
                         </span>
                       </button>
                     );
@@ -828,7 +926,7 @@ export function BookingWizard() {
         const g = content.bookingWizard.guide;
         const missing = [
           !state.name.trim() && g.fieldNames.name,
-          state.phone.trim().length < 9 && g.fieldNames.phone,
+          (ft ? !isValidEmail(state.email) && ft.emailField : state.phone.trim().length < 9 && g.fieldNames.phone),
           !state.ageGroup && g.fieldNames.ageGroup,
         ].filter(Boolean) as string[];
         return missing.length ? (
@@ -1072,6 +1170,84 @@ function SummaryView({
   );
 }
 
+
+function ForeignSummaryView({
+  state,
+  content,
+  ft,
+  sent,
+}: {
+  state: WizardState;
+  content: SiteContent;
+  ft: (typeof FOREIGN_TEXT)[ForeignLocale];
+  sent: boolean;
+}) {
+  const [copied, setCopied] = useState(false);
+  const message = useMemo(() => buildSummaryMessage(state, content), [state, content]);
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(message);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // clipboard unavailable — the summary text stays selectable
+    }
+  }
+
+  return (
+    <div className="mx-auto flex min-h-[100svh] max-w-lg flex-col justify-center px-5 py-10">
+      <div
+        className={cn(
+          "flex h-14 w-14 items-center justify-center rounded-full",
+          sent ? "bg-brand-50 text-brand-600" : "bg-rose-50 text-rose-500"
+        )}
+      >
+        {sent ? <Check size={24} /> : <MessageSquare size={24} />}
+      </div>
+      <h1 className="mt-6 text-[24px] font-bold tracking-tight text-ink-900 sm:text-[26px]">
+        {sent ? ft.heading : ft.failedHeading}
+      </h1>
+      <p className="mt-3 text-[14.5px] leading-relaxed text-snow-700">
+        {sent ? ft.description(state.email.trim()) : ft.failedDescription}
+      </p>
+
+      <pre className="mt-6 whitespace-pre-wrap rounded-2xl border border-snow-300/60 bg-white p-6 text-[14px] leading-relaxed text-ink-800">
+        {message}
+      </pre>
+
+      <div className="mt-4">
+        <BookingNotice content={content} />
+      </div>
+
+      <button
+        type="button"
+        onClick={handleCopy}
+        className={cn(
+          "mt-6 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full text-[15px] font-semibold transition-all active:scale-[0.98]",
+          sent
+            ? "border border-snow-300 text-ink-900 hover:border-brand-500"
+            : "bg-brand-500 text-white hover:bg-brand-600"
+        )}
+      >
+        <Copy size={18} />
+        {copied ? ft.copied : ft.copyButton}
+      </button>
+
+      <div className="mt-4 rounded-2xl bg-snow-100/70 p-4 text-center text-[13.5px] text-snow-700">
+        {ft.emailUs}
+        <p className="mt-1 select-all font-semibold text-ink-900">{content.contact.email}</p>
+      </div>
+
+      <Link
+        href="/"
+        className="mt-5 text-center text-[14px] font-medium text-snow-500 hover:text-ink-700"
+      >
+        {content.bookingWizard.summary.backHome}
+      </Link>
+    </div>
+  );
+}
 
 function FullCareSchedule({
   program,
