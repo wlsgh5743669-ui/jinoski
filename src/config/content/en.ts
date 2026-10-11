@@ -70,7 +70,7 @@ const statsEyebrow = "Trusted by Hundreds of Skiers";
 
 const stats = [
   {
-    target: 1800,
+    target: 2500,
     decimals: 0,
     suffix: "+",
     label: "LESSONS COMPLETED",
@@ -91,7 +91,7 @@ const stats = [
     description: "Years teaching at Vivaldi Park",
   },
   {
-    target: 5.0,
+    target: 4.8,
     decimals: 1,
     suffix: "★",
     label: "CUSTOMER RATING",

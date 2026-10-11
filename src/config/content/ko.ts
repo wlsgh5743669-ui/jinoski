@@ -78,7 +78,7 @@ const statsEyebrow = "Trusted by Hundreds of Skiers";
 
 const stats = [
   {
-    target: 1800,
+    target: 2500,
     decimals: 0,
     suffix: "+",
     label: "LESSONS COMPLETED",
@@ -99,7 +99,7 @@ const stats = [
     description: "비발디파크 강습 경력",
   },
   {
-    target: 5.0,
+    target: 4.8,
     decimals: 1,
     suffix: "★",
     label: "CUSTOMER RATING",

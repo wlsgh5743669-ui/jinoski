@@ -70,7 +70,7 @@ const statsEyebrow = "Trusted by Hundreds of Skiers";
 
 const stats = [
   {
-    target: 1800,
+    target: 2500,
     decimals: 0,
     suffix: "+",
     label: "LESSONS COMPLETED",
@@ -91,7 +91,7 @@ const stats = [
     description: "大明滑雪场教学经验",
   },
   {
-    target: 5.0,
+    target: 4.8,
     decimals: 1,
     suffix: "★",
     label: "CUSTOMER RATING",
