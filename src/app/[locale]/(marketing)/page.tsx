@@ -7,6 +7,7 @@ import { Reservation } from "@/components/sections/reservation";
 import { YoutubeVideos } from "@/components/sections/youtube-videos";
 import { ReviewEventBanner } from "@/components/sections/review-event";
 import { SeasonPopup } from "@/components/sections/season-popup";
+import { Consult } from "@/components/sections/consult";
 
 export default function HomePage() {
   return (
@@ -18,6 +19,7 @@ export default function HomePage() {
       <MenuCards />
       <YoutubeVideos />
       <ReviewEventBanner />
+      <Consult />
       <Directions />
       <Reservation />
     </>
