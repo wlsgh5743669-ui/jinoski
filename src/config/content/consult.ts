@@ -8,6 +8,8 @@ export const consultText = {
       title: "카카오톡 채널 상담",
       body: "가장 빠른 답변. 일정·사진·영상도 편하게 보내실 수 있어요.",
       button: "카톡으로 상담하기",
+      addButton: "채널 추가하고 소식 받기",
+      addHint: "얼리버드·이벤트 소식을 카톡으로 먼저 받아보세요.",
     },
     phone: {
       title: "유선 상담",
@@ -59,6 +61,9 @@ export const consultText = {
 export type ConsultLocale = keyof typeof consultText;
 export const getConsult = (locale: string) =>
   consultText[(locale in consultText ? locale : "ko") as ConsultLocale];
+
+/** 카카오톡 채널 친구 추가 링크 (채팅 링크 …/chat → …/friend) */
+export const kakaoAddFriendUrl = (chatUrl: string) => chatUrl.replace(/\/chat\/?$/, "/friend");
 
 /** 외국어 페이지는 국제번호로 보여요 */
 export const displayPhone = (phone: string, locale: string) =>

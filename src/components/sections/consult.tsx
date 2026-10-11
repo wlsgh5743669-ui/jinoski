@@ -1,11 +1,11 @@
 "use client";
 
-import { Clock, Mail, MessageCircle, Phone } from "lucide-react";
+import { Bell, Clock, Mail, MessageCircle, Phone } from "lucide-react";
 import { useLocale } from "next-intl";
 import { Container } from "@/components/shared/container";
 import { Reveal } from "@/components/shared/reveal";
 import { useContent } from "@/lib/use-content";
-import { displayPhone, getConsult } from "@/config/content/consult";
+import { displayPhone, getConsult, kakaoAddFriendUrl } from "@/config/content/consult";
 import { trackEvent } from "@/components/shared/analytics";
 
 /** 홈 '상담 안내' 구간: 카카오톡 채널(외국어는 이메일) + 24시간 유선 상담 */
@@ -61,6 +61,22 @@ export function Consult() {
                 {ko ? <MessageCircle size={18} fill="currentColor" /> : <Mail size={18} />}
                 {t.kakao.button}
               </a>
+              {"addButton" in t.kakao && (
+                <>
+                  <a
+                    href={kakaoAddFriendUrl(contact.kakaoChannel)}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => trackEvent("contact_click", { channel: "kakao_add", place: "home" })}
+                    className="mt-2.5 inline-flex items-center justify-center gap-2 rounded-full border border-snow-300 bg-white text-[14.5px] font-semibold text-ink-900 transition-colors hover:border-[#E5CE00] hover:bg-[#FFFBE0]"
+                    style={{ height: 48 }}
+                  >
+                    <Bell size={16} />
+                    {t.kakao.addButton}
+                  </a>
+                  <p className="mt-2 text-center text-[12.5px] text-snow-500">{t.kakao.addHint}</p>
+                </>
+              )}
             </div>
           </Reveal>
 
