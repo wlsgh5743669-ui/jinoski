@@ -22,6 +22,7 @@ export async function generateMetadata({
   for (const l of locales) {
     languages[l] = `/${l}/`;
   }
+  languages["x-default"] = "/ko/";
 
   return {
     title: {

@@ -35,6 +35,11 @@ export const metadata: Metadata = {
   },
   description: fallback.siteConfig.description,
   keywords: fallback.siteConfig.keywords,
+  // 루트(jinoski.com/)는 /ko/로 넘겨주는 페이지라, 검색엔진에 대표 주소를 /ko/로 알려줘요
+  alternates: {
+    canonical: "/ko/",
+    languages: { ko: "/ko/", en: "/en/", zh: "/zh/", "x-default": "/ko/" },
+  },
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
