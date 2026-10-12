@@ -1,6 +1,11 @@
 "use client";
 
 import Image from "next/image";
+
+/** 사진별로 보여줄 위치 (얼굴이 잘리지 않게) */
+const IMAGE_FOCUS: Record<string, string> = {
+  "/images/gallery-3.jpg": "center 60%",
+};
 import { Award, UserCheck, Mountain, Camera, Radio, ShieldCheck, type LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useContent } from "@/lib/use-content";
@@ -56,7 +61,8 @@ export function WhyJinoSki() {
                       alt={item.title}
                       fill
                       sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 40vw"
-                      className="object-cover object-[center_30%] transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                      style={{ objectPosition: IMAGE_FOCUS[item.image] ?? "center 30%" }}
                     />
                   ) : (
                     <div className="absolute inset-0 bg-brand-50" />
