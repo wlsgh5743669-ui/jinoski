@@ -25,9 +25,9 @@ export const consultText = {
     title: "Questions? Just ask",
     description: "Tell us your dates, group size and level, and we'll recommend the right lesson.",
     kakao: {
-      title: "Email",
-      body: "We reply within 24 hours, in English.",
-      button: "Send an email",
+      title: "Email inquiry",
+      body: "Send your question with the form below. We reply by email within 24 hours, in English.",
+      button: "Write your question",
     },
     phone: {
       title: "Phone",
@@ -43,9 +43,9 @@ export const consultText = {
     title: "有任何问题，欢迎咨询",
     description: "告诉我们日期、人数和水平，我们会为您推荐合适的课程。",
     kakao: {
-      title: "电子邮件",
-      body: "24小时内回复（中文/英文）。",
-      button: "发送邮件",
+      title: "邮件咨询",
+      body: "通过下方表格发送问题，我们会在24小时内通过邮件回复（中文/英文）。",
+      button: "填写咨询",
     },
     phone: {
       title: "电话咨询",

@@ -36,7 +36,7 @@ export function QuickContact() {
         }
       : {
           key: "email",
-          href: `mailto:${contact.email}`,
+          href: `/${locale}/#inquiry`,
           external: false,
           label: l.email,
           aria: t.kakao.button,

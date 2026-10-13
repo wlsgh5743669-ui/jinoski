@@ -7,6 +7,7 @@ import { Reveal } from "@/components/shared/reveal";
 import { useContent } from "@/lib/use-content";
 import { displayPhone, getConsult, kakaoAddFriendUrl } from "@/config/content/consult";
 import { trackEvent } from "@/components/shared/analytics";
+import { InquiryForm } from "@/components/sections/inquiry-form";
 
 /** 홈 '상담 안내' 구간: 카카오톡 채널(외국어는 이메일) + 24시간 유선 상담 */
 export function Consult() {
@@ -47,7 +48,7 @@ export function Consult() {
               <p className="mt-4 flex-1 text-[14.5px] leading-relaxed text-snow-700">{t.kakao.body}</p>
               {!ko && <p className="mt-2 select-all text-[15px] font-semibold text-ink-900">{contact.email}</p>}
               <a
-                href={ko ? contact.kakaoChannel : `mailto:${contact.email}`}
+                href={ko ? contact.kakaoChannel : "#inquiry"}
                 target={ko ? "_blank" : undefined}
                 rel={ko ? "noreferrer" : undefined}
                 onClick={() => trackEvent("contact_click", { channel: ko ? "kakao" : "email", place: "home" })}
@@ -109,6 +110,7 @@ export function Consult() {
             </div>
           </Reveal>
         </div>
+        {!ko && <InquiryForm />}
       </Container>
     </section>
   );
