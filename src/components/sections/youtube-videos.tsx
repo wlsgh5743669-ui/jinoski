@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { Play, Youtube } from "lucide-react";
 import { Container } from "@/components/shared/container";
@@ -12,6 +12,21 @@ type Loc = "ko" | "en" | "zh";
 /** 썸네일을 먼저 보여주고, 누르면 그 자리에서 유튜브 플레이어를 불러와요 (페이지 속도 유지). */
 function VideoCard({ v, loc }: { v: YoutubeVideo; loc: Loc }) {
   const [play, setPlay] = useState(false);
+  const thumbs = [
+    `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`,
+    `https://img.youtube.com/vi/${v.id}/0.jpg`,
+    "/images/og-image-2627.jpg",
+  ];
+  const [thumbIdx, setThumbIdx] = useState(0);
+  const thumb = thumbs[Math.min(thumbIdx, thumbs.length - 1)];
+  const imgRef = useRef<HTMLImageElement>(null);
+  const fallback = () => setThumbIdx((i) => (i < thumbs.length - 1 ? i + 1 : i));
+  useEffect(() => {
+    const img = imgRef.current;
+    // 로딩이 이미 실패한 채로 끝났다면(하이드레이션 전에 실패한 경우) 다음 이미지로
+    if (img && img.complete && img.naturalWidth === 0) fallback();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [thumbIdx]);
   const isShort = v.kind === "short";
   const title = v.title[loc] ?? v.title.ko;
   return (
@@ -26,14 +41,14 @@ function VideoCard({ v, loc }: { v: YoutubeVideo; loc: Loc }) {
         />
       ) : (
         <button type="button" onClick={() => setPlay(true)} className="group absolute inset-0 h-full w-full text-left" aria-label={title}>
+          {/* 썸네일: 모든 영상(쇼츠 포함)에 항상 있는 hqdefault 사용.
+              페이지가 준비되기 전에 이미지가 실패해도 아래 useEffect가 다시 확인해서 대체 이미지를 보여줘요. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`https://i.ytimg.com/vi/${v.id}/${isShort ? "oardefault" : "hqdefault"}.jpg`}
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`;
-            }}
+            ref={imgRef}
+            src={thumb}
+            onError={fallback}
             alt=""
-            loading="lazy"
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
