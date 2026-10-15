@@ -3,6 +3,7 @@ import { getContent, isLocale, defaultLocale } from "@/config/site";
 import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
 import { Pricing } from "@/components/sections/pricing";
+import { PaymentMethods } from "@/components/sections/payment-methods";
 
 export async function generateMetadata({
   params,
@@ -53,6 +54,7 @@ export default async function PricingPage({
         </p>
       </PageHero>
       <Pricing />
+      <PaymentMethods locale={isLocale(locale) ? locale : defaultLocale} />
     </>
   );
 }
