@@ -10,6 +10,7 @@ import { Container } from "@/components/shared/container";
 import { RevealGroup, revealItem, Reveal } from "@/components/shared/reveal";
 import { ReserveCta } from "@/components/shared/reserve-cta";
 import { cn } from "@/lib/utils";
+import { useUsd } from "@/lib/usd";
 
 function InfoCard({
   icon: Icon,
@@ -73,6 +74,7 @@ function FullCareCard({
   onTabChange: (tab: "one-day" | "night") => void;
 }) {
   const { groupSizeFullCareLabels, ui, programLabels, bookingWizard } = useContent();
+  const usd = useUsd();
   const [open, setOpen] = useState(false);
   const program = programs.find((p) => p.slug === activeTab) ?? programs[0];
 
@@ -142,9 +144,12 @@ function FullCareCard({
                 <span className="whitespace-nowrap text-[13px] font-bold tabular-nums sm:text-[18px]">
                   {row.price}
                 </span>
+                {usd(row.price) !== row.price && (
+                  <span className="whitespace-nowrap text-[11px] text-white/50">{usd(row.price).slice(row.price.length + 1)}</span>
+                )}
                 {peopleCount > 1 && (
                   <span className="whitespace-nowrap text-[11px] text-white/40">
-                    {ui.pricing.perPersonPriceLabel} {perPersonPrice.toLocaleString("ko-KR")}원
+                    {ui.pricing.perPersonPriceLabel} {perPersonPrice.toLocaleString("ko-KR")}{row.price.includes("KRW") ? " KRW" : row.price.includes("韩元") ? "韩元" : "원"}
                   </span>
                 )}
               </div>
@@ -234,6 +239,7 @@ function FullCareCard({
 }
 
 function SeasonProgramCard() {
+  const usd = useUsd();
   const { seasonProgram, contact } = useContent();
   // 얼리버드 기간(11/10까지)이 지나면 할인 표시를 숨기고 정상가로 보여줌
   const [eb, setEb] = useState(true);
@@ -288,10 +294,10 @@ function SeasonProgramCard() {
                 {eb ? (
                   <span className="flex items-baseline gap-2">
                     <span className="text-[13px] text-snow-500 line-through">{row.original}</span>
-                    <span className="text-[17px] font-bold text-red-500">{row.price}</span>
+                    <span className="text-[17px] font-bold text-red-500">{usd(row.price)}</span>
                   </span>
                 ) : (
-                  <span className="text-[17px] font-bold text-ink-900">{row.original}</span>
+                  <span className="text-[17px] font-bold text-ink-900">{usd(row.original)}</span>
                 )}
               </li>
             ))}
@@ -371,6 +377,7 @@ function SeasonProgramCard() {
 }
 
 export function Pricing() {
+  const usd = useUsd();
   const content = useContent();
   const { scheduleTimes, lessonPricing, fullCarePrograms, ui } = content;
   const [activeDuration, setActiveDuration] = useState<
@@ -449,7 +456,7 @@ export function Pricing() {
                 subtitle={ui.pricing.perPersonPricingSubtitle}
                 rows={activeLessonPricing.rows.map((r) => ({
                   label: r.people,
-                  value: r.price,
+                  value: usd(r.price),
                 }))}
               />
             )}

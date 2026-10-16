@@ -4,6 +4,7 @@ import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
 import { Pricing } from "@/components/sections/pricing";
 import { PaymentMethods } from "@/components/sections/payment-methods";
+import { withUsd } from "@/lib/usd";
 
 export async function generateMetadata({
   params,
@@ -44,7 +45,7 @@ export default async function PricingPage({
                 key={p.program}
                 className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-[13.5px] font-medium text-white/90 backdrop-blur-sm"
               >
-                {p.durationLabel} <span className="text-white/40">·</span> {p.price}
+                {p.durationLabel} <span className="text-white/40">·</span> {withUsd(p.price, locale)}
               </span>
             ))}
           </div>

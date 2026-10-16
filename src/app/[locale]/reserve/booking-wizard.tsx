@@ -40,6 +40,7 @@ import {
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
 import { getContent } from "@/config/site";
+import { approxUsd, withUsd } from "@/lib/usd";
 
 /** 영어·중국어 예약: 문자·카톡 대신 이메일로 접수하고 이메일로 확정 안내 */
 const FOREIGN_TEXT = {
@@ -117,8 +118,8 @@ const INITIAL_STATE: WizardState = {
 
 function formatPrice(value: number, content: SiteContent): string {
   const loc = content.siteConfig.locale;
-  if (loc.startsWith("en")) return `${value.toLocaleString("en-US")} KRW`;
-  if (loc.startsWith("zh")) return `${value.toLocaleString("en-US")}韩元`;
+  if (loc.startsWith("en")) return `${value.toLocaleString("en-US")} KRW (${approxUsd(value)})`;
+  if (loc.startsWith("zh")) return `${value.toLocaleString("en-US")}韩元 (${approxUsd(value)})`;
   return `${value.toLocaleString("ko-KR")}원`;
 }
 
@@ -242,15 +243,16 @@ function getLiftPassPrice(program: ProgramValue, content: SiteContent) {
 /** "1명 기준 210,000원부터 · + 패찰 1인 35,000원" shown under each program card. */
 function programPriceHint(program: ProgramValue, content: SiteContent) {
   const g = content.bookingWizard.guide;
+  const locale = content.siteConfig.locale.slice(0, 2);
   const first = getPriceRows(program, content)[0]?.price;
   if (!first) return "";
   const eb =
     isEarlyBirdActive() && EARLY_BIRD.programs.includes(program)
       ? ` · ${content.bookingWizard.priceSummary.earlyBird} 10%`
       : "";
-  if (program === "one-day" || program === "night") return `${g.priceFrom(first)} · ${g.liftPassIncluded}${eb}`;
+  if (program === "one-day" || program === "night") return `${withUsd(g.priceFrom(first), locale)} · ${g.liftPassIncluded}${eb}`;
   const pass = getLiftPassPrice(program, content);
-  return (pass ? `${g.priceFrom(first)} · ${g.liftPassPlus(pass)}` : g.priceFrom(first)) + eb;
+  return (pass ? `${withUsd(g.priceFrom(first), locale)} · ${g.liftPassPlus(pass)}` : withUsd(g.priceFrom(first), locale)) + eb;
 }
 
 function buildSmsHref(phone: string, body: string): string {

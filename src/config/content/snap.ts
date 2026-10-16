@@ -1,3 +1,4 @@
+import { approxUsd } from "@/lib/usd";
 // 인생사진 스냅(촬영 단독 상품) 콘텐츠 — ko / en / zh
 export type SnapPackage = { id: "solo" | "duo" | "family"; label: string; people: string; price: number };
 export type SnapOption = { id: "a2" | "a4" | "a6"; label: string; detail: string; unitPrice: number; setSize?: number; setPrice?: number };
@@ -236,7 +237,7 @@ const en: SnapContent = {
     copied: "Copied! Paste it into the KakaoTalk chat to send.",
     required: "Please choose date, time, delivery, and enter name and phone.",
     sentNotice: "Your request has been sent. We'll contact you soon!",
-    won: (n) => `${n.toLocaleString("en-US")} KRW`,
+    won: (n) => `${n.toLocaleString("en-US")} KRW (${approxUsd(n)})`,
     programName: "Snow Photo Snap (3h)",
   },
 };
@@ -327,7 +328,7 @@ const zh: SnapContent = {
     copied: "已复制，请粘贴到KakaoTalk聊天中发送。",
     required: "请填写日期、时段、领取方式、姓名和电话。",
     sentNotice: "预约已发送，我们会尽快联系您！",
-    won: (n) => `${n.toLocaleString("en-US")}韩元`,
+    won: (n) => `${n.toLocaleString("en-US")}韩元 (${approxUsd(n)})`,
     programName: "雪场人生照 (3小时)",
   },
 };

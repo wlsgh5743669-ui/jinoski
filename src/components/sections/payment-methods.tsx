@@ -15,7 +15,7 @@ const T = {
   en: {
     eyebrow: "PAYMENT",
     title: "How to pay",
-    lead: "Please pay after we confirm your instructor and time. Your confirmation email includes the exact amount and payment link.",
+    lead: "Prices are set in Korean won (KRW); USD amounts shown on this site are approximate. Please pay after we confirm your instructor and time — your confirmation email includes the exact USD amount and payment link.",
     bank: { title: "Bank transfer (Korea)", body: "KB Kookmin Bank 010-4047-7711\nAccount holder: 박진호 (Jino Company)" },
     store: null,
     paypal: { title: "PayPal / international card", body: "Pay in USD with PayPal or any international card. We send the USD amount with your confirmation.", button: "Pay with PayPal" },
@@ -23,7 +23,7 @@ const T = {
   zh: {
     eyebrow: "PAYMENT",
     title: "付款方式",
-    lead: "请在我们确认教练与时间后再付款。确认邮件中会附上准确金额和付款链接。",
+    lead: "价格以韩元(KRW)为准，网站上的美元金额仅供参考。请在我们确认教练与时间后再付款，确认邮件中会附上准确的美元金额和付款链接。",
     bank: { title: "韩国银行转账", body: "国民银行 (KB) 010-4047-7711\n收款人：박진호 (Jino Company)" },
     store: null,
     paypal: { title: "PayPal / 国际信用卡", body: "可通过PayPal或国际信用卡以美元付款。确认时会告知美元金额。", button: "PayPal付款" },

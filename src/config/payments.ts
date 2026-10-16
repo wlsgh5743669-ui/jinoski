@@ -4,4 +4,9 @@ export const paymentConfig = {
   paypalMe: "https://www.paypal.com/ncp/payment/Z5UL454666PXS",
   /** 스마트스토어 레슨 상품 페이지 (비워 두면 스토어 첫 화면으로 연결) */
   smartStoreLessons: "",
+  /**
+   * 영어·중국어 페이지에 붙는 달러 대략 금액용 환율 (1달러 = ?원).
+   * 실제 환율보다 약 3~4% 낮게 잡아 PayPal 수수료·환전 손실을 반영해요. (2026-10 기준 실제 약 1,345원 → 1,300원)
+   */
+  usdRate: 1300,
 };
