@@ -13,6 +13,7 @@ import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
 import { useLocale } from "next-intl";
 import { getPrivacy } from "@/config/content/privacy";
+import { guideLinkLabel } from "@/config/content/guide";
 import { Container } from "@/components/shared/container";
 
 export function Footer() {
@@ -126,6 +127,10 @@ export function Footer() {
               <span className="mx-2 text-white/20">|</span>
               <Link href="/privacy" className="font-semibold text-white/70 hover:text-white">
                 {getPrivacy(locale).footerLink}
+              </Link>
+              <span className="mx-2 text-white/20">|</span>
+              <Link href="/guide" className="font-semibold text-white/70 hover:text-white">
+                {guideLinkLabel[locale] ?? guideLinkLabel.ko}
               </Link>
             </p>
             <p>{ui.footer.photoCredits}</p>

@@ -6,9 +6,13 @@ import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Reveal, RevealGroup, revealItem } from "@/components/shared/reveal";
 import { motion } from "framer-motion";
+import { useLocale } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { guideLinkLabel } from "@/config/content/guide";
 
 export function Directions() {
   const { contact, mapLinks, ui } = useContent();
+  const locale = useLocale();
   const mapButtons = [
     { label: ui.directions.naverMapLabel, href: mapLinks.naver },
     { label: ui.directions.kakaoMapLabel, href: mapLinks.kakao },
@@ -65,6 +69,11 @@ export function Directions() {
             </motion.a>
           ))}
         </RevealGroup>
+        <div className="mt-5 text-center">
+          <Link href="/guide" className="inline-flex items-center gap-1.5 text-[14.5px] font-semibold text-brand-600 underline-offset-4 hover:underline">
+            {guideLinkLabel[locale] ?? guideLinkLabel.ko} →
+          </Link>
+        </div>
       </Container>
     </section>
   );
