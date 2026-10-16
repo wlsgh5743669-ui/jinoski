@@ -572,6 +572,16 @@ const faq: SiteContent["faq"] = [
     answer:
       "Please check the list below.\n\nRequired\n· 🎿 Ski or snowboard equipment (rental available)\n· 🎫 Lift ticket\n· 🦺 Teaching pass (for outside lessons)\n\nRecommended\n· 🧥 Waterproof ski wear\n· 🧤 Gloves\n· 🥽 Goggles\n· 🪖 Helmet\n· 🧦 Spare socks\n· 💧 Water or drinks\n\nIf you don't have equipment or clothing, rentals are available — we'll guide you when you book.",
   },
+  {
+    question: "How do I pay?",
+    answer:
+      "Please pay after we confirm your instructor and time.\n\n· PayPal or international credit card (USD) — we send the exact USD amount and a payment link with your confirmation email.\n· Korean bank transfer (KRW): KB Kookmin Bank 010-4047-7711, account holder 박진호 (Jino Company).\n\nPrices are set in Korean won (KRW). USD amounts shown on this website are approximate.",
+  },
+  {
+    question: "Can I pay with Alipay or WeChat Pay?",
+    answer:
+      "Online payment by Alipay or WeChat Pay is not available yet. Please use PayPal or an international credit card for now. We are preparing on-site QR payment and will update this page when it is ready.",
+  },
 ];
 
 const faqCta: SiteContent["faqCta"] = {

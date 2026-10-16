@@ -1,6 +1,7 @@
 "use client";
 
 import { Instagram, Mail, MessageCircle, Phone } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { useContent } from "@/lib/use-content";
 import { getConsult } from "@/config/content/consult";
@@ -22,6 +23,21 @@ export function QuickContact() {
   const t = getConsult(locale);
   const l = LABELS[(locale in LABELS ? locale : "ko") as keyof typeof LABELS];
   const ko = locale === "ko";
+  // 스크롤하는 동안엔 살짝 투명하게 → 글자를 가리지 않게, 멈추면 다시 선명하게
+  const [scrolling, setScrolling] = useState(false);
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout> | undefined;
+    const onScroll = () => {
+      setScrolling(true);
+      if (t) clearTimeout(t);
+      t = setTimeout(() => setScrolling(false), 700);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (t) clearTimeout(t);
+    };
+  }, []);
 
   const items = [
     ko
@@ -66,7 +82,9 @@ export function QuickContact() {
   return (
     <nav
       aria-label="Contact"
-      className="fixed bottom-[calc(88px+env(safe-area-inset-bottom,0px))] right-2.5 z-40 flex flex-col items-center gap-2 rounded-full bg-white/95 px-1.5 py-2.5 shadow-[0_10px_30px_-12px_rgba(10,11,13,0.45)] ring-1 ring-snow-300/60 backdrop-blur sm:bottom-8 sm:right-5 sm:gap-2.5 sm:px-2 sm:py-3"
+      className={`fixed bottom-[calc(20px+env(safe-area-inset-bottom,0px))] right-1.5 z-40 flex flex-col items-center gap-1.5 rounded-full bg-white/90 px-1 py-1.5 shadow-[0_10px_30px_-12px_rgba(10,11,13,0.45)] ring-1 ring-snow-300/60 backdrop-blur transition-opacity duration-300 sm:bottom-8 sm:right-5 sm:gap-2.5 sm:px-2 sm:py-3 ${
+        scrolling ? "opacity-30 sm:opacity-100" : "opacity-100"
+      }`}
     >
       {items.map((it) => (
         <a
@@ -79,11 +97,11 @@ export function QuickContact() {
           className="group flex flex-col items-center gap-0.5"
         >
           <span
-            className={`flex h-9 w-9 items-center justify-center rounded-full transition-transform group-hover:scale-110 group-active:scale-95 sm:h-10 sm:w-10 ${it.circle}`}
+            className={`flex h-8 w-8 items-center justify-center rounded-full transition-transform group-hover:scale-110 group-active:scale-95 sm:h-10 sm:w-10 ${it.circle}`}
           >
             {it.icon}
           </span>
-          <span className="text-[10px] font-semibold leading-none text-ink-800 sm:text-[10.5px]">{it.label}</span>
+          <span className="hidden text-[10.5px] font-semibold leading-none text-ink-800 sm:block">{it.label}</span>
         </a>
       ))}
     </nav>
