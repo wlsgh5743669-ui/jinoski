@@ -1,10 +1,10 @@
 import { useLocale } from "next-intl";
 import { paymentConfig } from "@/config/payments";
 
-/** 원화 금액 → "≈ $105" (50달러 이상은 5달러 단위로 반올림) */
+/** 원화 금액 → "≈ $115" (50달러 이상은 5달러 단위로 올림, 그 아래는 1달러 단위 올림) */
 export function approxUsd(krw: number): string {
   const usd = krw / paymentConfig.usdRate;
-  const rounded = usd >= 50 ? Math.round(usd / 5) * 5 : Math.max(1, Math.round(usd));
+  const rounded = usd >= 50 ? Math.ceil(usd / 5) * 5 : Math.max(1, Math.ceil(usd));
   return `≈ $${rounded.toLocaleString("en-US")}`;
 }
 
