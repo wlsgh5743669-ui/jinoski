@@ -77,14 +77,14 @@ export function SeasonPopup() {
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ duration: 0.25 }}
             className="relative w-full"
-            style={{ maxWidth: "min(28rem, 54vh)" }}
+            style={{ maxWidth: "min(22rem, 44vh)" }}
             onClick={(event) => event.stopPropagation()}
           >
             <button
               type="button"
               aria-label="닫기"
               onClick={handleClose}
-              className="absolute -top-3 -right-3 flex h-9 w-9 items-center justify-center rounded-full bg-white text-ink-900 shadow-lg transition-transform hover:scale-105"
+              className="absolute -top-3 -right-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white text-ink-900 shadow-lg transition-transform hover:scale-105"
             >
               <X size={18} />
             </button>
