@@ -38,6 +38,7 @@ export function Instructor() {
 
           <Reveal delay={0.1} className="w-full">
             <SectionHeading
+              as="h1"
               eyebrow={ui.instructor.eyebrow}
               light
               title={

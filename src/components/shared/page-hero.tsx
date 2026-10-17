@@ -17,6 +17,7 @@ export function PageHero({
       <div className="pointer-events-none absolute -left-40 -top-40 h-[480px] w-[480px] rounded-full bg-brand-500/20 blur-[120px]" />
       <Container className="relative">
         <SectionHeading
+          as="h1"
           eyebrow={eyebrow}
           light
           title={

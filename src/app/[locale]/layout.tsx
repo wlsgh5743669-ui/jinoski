@@ -89,6 +89,10 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale}>
+      {/* 루트 <html lang="ko">를 페이지 언어에 맞게 바로잡아요 (영어·중국어 페이지 검색·번역·스크린리더용) */}
+      {locale !== "ko" && (
+        <script dangerouslySetInnerHTML={{ __html: `document.documentElement.lang=${JSON.stringify(locale)}` }} />
+      )}
       <div lang={locale} className={locale === "ko" ? "contents ko-text" : "contents"}>
         {children}
       </div>

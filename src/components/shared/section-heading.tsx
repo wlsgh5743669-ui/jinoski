@@ -10,6 +10,7 @@ export function SectionHeading({
   align = "left",
   light = false,
   className,
+  as: Tag = "h2",
 }: {
   eyebrow?: string;
   title: React.ReactNode;
@@ -17,6 +18,8 @@ export function SectionHeading({
   align?: "left" | "center";
   light?: boolean;
   className?: string;
+  /** 페이지 맨 위 제목은 h1 (검색엔진이 페이지 주제를 알아보게) */
+  as?: "h1" | "h2";
 }) {
   return (
     <div
@@ -39,14 +42,14 @@ export function SectionHeading({
         </Reveal>
       )}
       <Reveal delay={0.08}>
-        <h2
+        <Tag
           className={cn(
             "text-[32px] font-bold leading-[1.15] tracking-tightest sm:text-[40px] lg:text-[52px]",
             light ? "text-white" : "text-ink-900"
           )}
         >
           {title}
-        </h2>
+        </Tag>
       </Reveal>
       {description && (
         <Reveal delay={0.16}>
