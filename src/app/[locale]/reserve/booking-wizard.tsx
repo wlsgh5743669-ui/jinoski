@@ -43,17 +43,6 @@ import { getContent } from "@/config/site";
 import { approxUsd, withUsd } from "@/lib/usd";
 import { paymentConfig } from "@/config/payments";
 
-// 한국어 예약: 결제 방법 선택 (계좌이체 / 스마트스토어 네이버페이·카드)
-type PayMethod = "bank" | "store";
-const PAY_METHODS: { value: PayMethod; icon: string; label: string; detail: string }[] = [
-  { value: "bank", icon: "🏦", label: "계좌이체", detail: "국민은행 입금 · 가장 간단해요" },
-  { value: "store", icon: "💳", label: "네이버페이·카드", detail: "스마트스토어에서 간편결제" },
-];
-const BANK_LINE = "국민은행 010-4047-7711 · 예금주 박진호(지노컴퍼니)";
-function payMethodLabel(m: PayMethod) {
-  return m === "store" ? "네이버페이·카드 (스마트스토어)" : "계좌이체";
-}
-
 /** 영어·중국어 예약: 문자·카톡 대신 이메일로 접수하고 이메일로 확정 안내 */
 const FOREIGN_TEXT = {
   en: {
@@ -109,7 +98,6 @@ type WizardState = {
   earlyBird: boolean;
   email: string;
   messenger: string;
-  payMethod: PayMethod;
 };
 
 const INITIAL_STATE: WizardState = {
@@ -127,7 +115,6 @@ const INITIAL_STATE: WizardState = {
   earlyBird: false,
   email: "",
   messenger: "",
-  payMethod: "bank",
 };
 
 function formatPrice(value: number, content: SiteContent): string {
@@ -221,7 +208,7 @@ async function notifyOwnerKakao(state: WizardState, content: SiteContent, locale
     ? [`${locale === "zh" ? "중국어" : "영어"} 예약·이메일 회신`, state.messenger.trim(), state.requestNote.trim()]
         .filter(Boolean)
         .join(" / ")
-    : [`결제: ${payMethodLabel(state.payMethod)}`, state.requestNote.trim()].filter(Boolean).join(" / ");
+    : state.requestNote.trim();
   const res = await fetch(KAKAO_NOTIFY_URL, {
     method: "POST",
     keepalive: true,
@@ -317,9 +304,6 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
     );
   }
   lines.push(`→ ${labels.price}: ${breakdown.total}`);
-  if (content.siteConfig.locale.startsWith("ko")) {
-    lines.push(`결제 방법: ${payMethodLabel(state.payMethod)}`);
-  }
 
   if (state.requestNote.trim()) lines.push("", `${labels.note}: ${state.requestNote.trim()}`);
 
@@ -542,7 +526,9 @@ export function BookingWizard() {
         />
       </div>
 
-      <div className="mt-10 flex-1">
+      {!foreign && step === 1 && <PayChoice storeUrl={paymentConfig.smartStoreLessons || content.contact.smartStore} />}
+
+      <div className={cn("flex-1", !foreign && step === 1 ? "mt-8" : "mt-10")}>
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={step}
@@ -933,35 +919,6 @@ export function BookingWizard() {
                       </div>
                     );
                   })()}
-                  {!ft && (
-                    <div>
-                      <p className="mb-2.5 text-[13.5px] font-semibold text-ink-900">결제 방법</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {PAY_METHODS.map((m) => (
-                          <button
-                            key={m.value}
-                            type="button"
-                            onClick={() => update("payMethod", m.value)}
-                            aria-pressed={state.payMethod === m.value}
-                            className={cn(
-                              "flex flex-col items-start rounded-2xl border px-4 py-3.5 text-left transition-colors",
-                              state.payMethod === m.value
-                                ? "border-brand-500 bg-brand-50"
-                                : "border-snow-300/60 bg-white hover:border-brand-300"
-                            )}
-                          >
-                            <span className={cn("text-[14.5px] font-bold", state.payMethod === m.value ? "text-brand-600" : "text-ink-900")}>
-                              {m.icon} {m.label}
-                            </span>
-                            <span className="mt-0.5 text-[12px] leading-snug text-snow-500">{m.detail}</span>
-                          </button>
-                        ))}
-                      </div>
-                      <p className="mt-2 text-[12px] leading-relaxed text-snow-500">
-                        결제는 강사 일정 확정 연락을 받은 뒤에 해주세요.
-                      </p>
-                    </div>
-                  )}
                   <BookingNotice content={content} />
                 </div>
               )}
@@ -1092,45 +1049,24 @@ function OptionList({
   );
 }
 
-function PaymentBox({ method, content }: { method: PayMethod; content: SiteContent }) {
-  const [copied, setCopied] = useState(false);
-  const storeUrl = paymentConfig.smartStoreLessons || content.contact.smartStore;
+/** 한국어 예약 첫 화면: 카드·네이버페이는 스마트스토어로 바로, 나머지는 이 예약 문의로 */
+function PayChoice({ storeUrl }: { storeUrl: string }) {
   return (
-    <div className="mt-4 rounded-2xl border-2 border-brand-500/30 bg-white p-5">
-      <p className="text-[14px] font-bold text-ink-900">
-        선택하신 결제 방법: <span className="text-brand-600">{payMethodLabel(method)}</span>
-      </p>
-      <p className="mt-1 text-[13px] leading-relaxed text-snow-600">
-        강사 일정 확정 연락을 받으신 뒤 결제해 주세요.
-      </p>
-      {method === "store" ? (
-        <a
-          href={storeUrl}
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => trackEvent("pay_smartstore_click")}
-          className="mt-3 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#03C75A] text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
-        >
-          스마트스토어에서 결제하기
-        </a>
-      ) : (
-        <button
-          type="button"
-          onClick={async () => {
-            try {
-              await navigator.clipboard.writeText("국민은행 010-4047-7711");
-              setCopied(true);
-              setTimeout(() => setCopied(false), 2000);
-            } catch {
-              // clipboard unavailable — the account text stays selectable
-            }
-          }}
-          className="mt-3 flex w-full items-center justify-between gap-2 rounded-xl bg-snow-100/80 px-4 py-3 text-left text-[13.5px] text-ink-900"
-        >
-          <span className="select-all font-semibold">{BANK_LINE}</span>
-          <span className="shrink-0 text-[12px] font-semibold text-brand-600">{copied ? "복사됨" : "복사"}</span>
-        </button>
-      )}
+    <div className="mt-6 grid grid-cols-2 gap-2.5">
+      <a
+        href={storeUrl}
+        target="_blank"
+        rel="noreferrer"
+        onClick={() => trackEvent("pay_smartstore_click", { from: "reserve_top" })}
+        className="flex flex-col rounded-2xl border-2 border-[#03C75A] bg-[#03C75A]/[0.06] px-4 py-3.5 transition-colors hover:bg-[#03C75A]/[0.12]"
+      >
+        <span className="text-[14.5px] font-bold text-ink-900">💳 카드·네이버페이</span>
+        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">스마트스토어에서 바로 예약·결제 →</span>
+      </a>
+      <div className="flex flex-col rounded-2xl border-2 border-brand-500 bg-brand-50 px-4 py-3.5">
+        <span className="text-[14.5px] font-bold text-brand-600">📝 예약 문의</span>
+        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">아래에서 신청 · 확정 후 계좌이체</span>
+      </div>
     </div>
   );
 }
@@ -1187,8 +1123,6 @@ function SummaryView({
       <pre className="mt-6 whitespace-pre-wrap rounded-2xl border border-snow-300/60 bg-white p-6 text-[14px] leading-relaxed text-ink-800">
         {message}
       </pre>
-
-      <PaymentBox method={state.payMethod} content={content} />
 
       <div className="mt-4">
         <BookingNotice content={content} />
