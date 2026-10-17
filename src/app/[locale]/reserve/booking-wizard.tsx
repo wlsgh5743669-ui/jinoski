@@ -1064,7 +1064,7 @@ function PayChoice({ storeUrl }: { storeUrl: string }) {
         <span className="mt-0.5 text-[12px] leading-snug text-snow-600">스마트스토어에서 바로 예약·결제 →</span>
       </a>
       <div className="flex flex-col rounded-2xl border-2 border-brand-500 bg-brand-50 px-4 py-3.5">
-        <span className="text-[14.5px] font-bold text-brand-600">📝 예약 문의</span>
+        <span className="text-[14.5px] font-bold text-brand-600">📝 예약·상담 문의</span>
         <span className="mt-0.5 text-[12px] leading-snug text-snow-600">아래에서 신청 · 확정 후 계좌이체</span>
       </div>
     </div>
