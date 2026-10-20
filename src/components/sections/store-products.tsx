@@ -85,7 +85,13 @@ export function StoreProducts() {
                         ))}
                       </ul>
                       <div className="mt-auto pt-4">
-                        <p className={cn("text-[17px] font-bold", p.comingSoon ? "text-snow-500" : "text-ink-900")}>{price}</p>
+                        {eb && p.earlyBird && (
+                          <p className="text-[13px] text-snow-500 line-through">{p.price}</p>
+                        )}
+                        <p className={cn("text-[19px] font-bold", p.comingSoon ? "text-snow-500" : "text-ink-900")}>
+                          {eb && p.earlyBird && <span className="mr-1.5 text-red-500">10%</span>}
+                          {price}
+                        </p>
                         {p.priceNote && <p className="text-[11.5px] text-snow-500">{p.priceNote}</p>}
                         {p.comingSoon ? (
                           <a
