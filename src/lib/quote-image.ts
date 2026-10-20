@@ -84,7 +84,7 @@ export async function renderQuoteImage(d: QuoteImageData): Promise<Blob> {
       ctx.fillText(d.title, PAD, y);
     }
     y += 86;
-    ctx.font = font(84, 800);
+    ctx.font = font(70, 800);
     if (!dry) {
       ctx.fillStyle = INK;
       ctx.fillText(d.total, PAD, y);
