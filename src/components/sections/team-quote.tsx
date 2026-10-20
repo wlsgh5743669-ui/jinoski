@@ -61,6 +61,14 @@ const TWICE: Record<Len, { label: string; idx: [number, number] }[]> = {
 const HELMET_PRICE = { basic: 5000, visor: 15000 };
 /** 날짜별 수업: n = 0(안 함)·1번·2번, one = 1번일 때 교시, two = 2번일 때 추천 조합 */
 type Plan = { n: 0 | 1 | 2; one: number; two: number; len?: Len };
+type Extra = "none" | "lift" | "liftRental";
+type Helmet = 0 | 1 | 2; // 0 없음 · 1 기본 · 2 바이저
+type Person = { name: string; extra: Extra; helmet: Helmet };
+const newPerson = (): Person => ({ name: "", extra: "none", helmet: 0 });
+const EXTRA_CODE: Record<Extra, string> = { none: "n", lift: "l", liftRental: "r" };
+const CODE_EXTRA: Record<string, Extra> = { n: "none", l: "lift", r: "liftRental" };
+const EXTRA_LABEL: Record<Extra, string> = { none: "강습만", lift: "+ 리프트", liftRental: "+ 리프트·장비" };
+const HELMET_LABEL: Record<Helmet, string> = { 0: "헬멧 X", 1: "헬멧 5천", 2: "바이저 1.5만" };
 const LEN_CODE: Record<Len, string> = { "2h": "a", "3h": "b", "4h": "c" };
 const CODE_LEN: Record<string, Len> = { a: "2h", b: "3h", c: "4h" };
 const DAY_NAMES = ["첫째", "둘째", "셋째", "넷째", "다섯째", "여섯째", "일곱째", "여덟째", "아홉째", "열째"];
@@ -123,9 +131,8 @@ export function TeamQuote() {
   const [split, setSplit] = useState<number[]>([]);
   const [showAllSplits, setShowAllSplits] = useState(false);
   // 리프트·장비 (40% 할인) — 어른/어린이 각각 몇 명
-  const [lr, setLr] = useState({ a: 0, k: 0 }); // 리프트+장비
-  const [lo, setLo] = useState({ a: 0, k: 0 }); // 리프트만
-  const [helmet, setHelmet] = useState({ basic: 0, visor: 0 });
+  // 사람마다 이름·리프트·장비·헬멧 (앞 adults명은 어른, 나머지는 어린이)
+  const [persons, setPersons] = useState<Person[]>([]);
   // 날짜별 리프트 시간권: undefined = 그날 수업에 맞춰 자동 추천, 0 = 그날은 안 씀
   const [dayTickets, setDayTickets] = useState<(TicketHours | 0 | undefined)[]>([]);
 
@@ -174,12 +181,32 @@ export function TeamQuote() {
     }
     const g = (q.get("g") ?? "").split("-").map(Number);
     setSplit(g.every((x) => x >= 1 && x <= 3) && g.reduce((s, x) => s + x, 0) === a + k ? g : even(a + k, Math.ceil((a + k) / 3)));
-    const [lra, lrk] = pair(q.get("lr"));
-    const [loa, lok] = pair(q.get("lo"));
-    setLr({ a: lra, k: lrk });
-    setLo({ a: loa, k: lok });
-    const [hb, hv] = pair(q.get("h"));
-    setHelmet({ basic: hb, visor: hv });
+    // 사람별 pp=n0:민준.r1.l0 (리프트 n/l/r · 헬멧 0/1/2 · 이름) — 예전 링크(lr·lo·h 인원)도 읽어요
+    const pp = q.get("pp");
+    if (pp) {
+      setPersons(
+        pp
+          .split(".")
+          .slice(0, a + k)
+          .map((c) => ({
+            extra: CODE_EXTRA[c[0]] ?? "none",
+            helmet: (Number(c[1]) || 0) as Helmet,
+            name: c.includes(":") ? c.slice(c.indexOf(":") + 1, c.indexOf(":") + 11) : "",
+          }))
+      );
+    } else {
+      const [lra, lrk] = pair(q.get("lr"));
+      const [loa, lok] = pair(q.get("lo"));
+      const [hb, hv] = pair(q.get("h"));
+      const list: Person[] = Array.from({ length: a + k }, (_, i) => {
+        const child = i >= a;
+        const j = child ? i - a : i;
+        const lrN = child ? lrk : lra;
+        const loN = child ? lok : loa;
+        return { name: "", extra: j < lrN ? "liftRental" : j < lrN + loN ? "lift" : "none", helmet: (i < hb ? 1 : i < hb + hv ? 2 : 0) as Helmet };
+      });
+      setPersons(list);
+    }
     // 날짜별 시간권 dt=a-7-0 (a 자동 · 0 안 씀) — 예전 링크 tk=7 은 모든 날 같은 시간권
     const dt = q.get("dt");
     const tk0 = Number(q.get("tk"));
@@ -285,6 +312,15 @@ export function TeamQuote() {
       sale: perDayList.reduce((a, x) => a + x.sale, 0),
     };
   };
+  const roster: (Person & { child: boolean; index: number })[] = Array.from({ length: people }, (_, i) => ({
+    ...(persons[i] ?? newPerson()),
+    child: i >= adults,
+    index: i,
+  }));
+  const countOf = (child: boolean, extra: Extra) => roster.filter((x) => x.child === child && x.extra === extra).length;
+  const lr = { a: countOf(false, "liftRental"), k: countOf(true, "liftRental") };
+  const lo = { a: countOf(false, "lift"), k: countOf(true, "lift") };
+  const helmet = { basic: roster.filter((x) => x.helmet === 1).length, visor: roster.filter((x) => x.helmet === 2).length };
   const extras = [
     { key: "lr-a", label: "어른 · 리프트+장비", count: lr.a, ...extraPP(false, true) },
     { key: "lr-k", label: "어린이 · 리프트+장비", count: lr.k, ...extraPP(true, true) },
@@ -306,15 +342,35 @@ export function TeamQuote() {
   });
   const lessonExact = dayTotals.reduce((a, d) => a + d.lesson, 0);
   const grand = lessonExact + extrasTotal + helmetTotal;
-  const lessonOnly = { a: adults - lr.a - lo.a, k: kids - lr.k - lo.k };
   const evenGroups = new Set(usedSplit).size === 1;
 
-  /** 사람 유형별 1인 금액 (강습료 + 리프트·장비) */
-  const perType = [
-    { label: "어른 · 강습만", count: lessonOnly.a, add: 0 },
-    { label: "어린이 · 강습만", count: lessonOnly.k, add: 0 },
-    ...extras.map((x) => ({ label: x.label.replace(" · ", " · 강습+"), count: x.count, add: x.sale })),
-  ].filter((x) => x.count > 0);
+  // 반(강사)별로 앞에서부터 사람 배정 → 개인별 강습료
+  const groupOfIndex: number[] = usedSplit.flatMap((size, gi) => Array(size).fill(gi));
+  const extraSale = (child: boolean, e: Extra) => (e === "none" ? 0 : extraPP(child, e === "liftRental").sale);
+  const personRows = roster.map((x) => {
+    const g = groups[groupOfIndex[x.index] ?? 0];
+    const lesson = g?.lessonPP ?? 0;
+    const lift = extraSale(x.child, x.extra);
+    const helm = x.helmet === 2 ? HELMET_PRICE.visor * lessonDays : x.helmet === 1 ? HELMET_PRICE.basic * lessonDays : 0;
+    return {
+      ...x,
+      label: x.name.trim() || `손님 ${x.index + 1}`,
+      group: (groupOfIndex[x.index] ?? 0) + 1,
+      lesson,
+      lift,
+      helm,
+      pay: lesson + lift + helm,
+      desc: [x.child ? "어린이" : "어른", EXTRA_LABEL[x.extra].replace("+ ", "+"), x.helmet ? HELMET_LABEL[x.helmet] : ""].filter(Boolean).join(" · "),
+    };
+  });
+  function setPerson(i: number, patch: Partial<Person>) {
+    setPersons(() => roster.map((x, j) => ({ name: x.name, extra: x.extra, helmet: x.helmet, ...(j === i ? patch : {}) })));
+  }
+  function setAllPersons(patch: Partial<Person>) {
+    setPersons(() => roster.map((x) => ({ name: x.name, extra: x.extra, helmet: x.helmet, ...patch })));
+  }
+
+
 
   const trip = days === 1 ? "당일" : `${days - 1}박 ${days}일`;
   const period = startDate ? `${addDays(startDate, 0)}${days > 1 ? ` ~ ${addDays(startDate, days - 1)}` : ""}` : "날짜 미정";
@@ -333,10 +389,11 @@ export function TeamQuote() {
     setAdults(a);
     setKids(k);
     setSplit(a + k ? even(a + k, Math.ceil((a + k) / 3)) : []);
-    // 줄어든 인원에 맞춰 옵션 인원도 줄이기
-    setLr((x) => ({ a: Math.min(x.a, a), k: Math.min(x.k, k) }));
-    setLo((x) => ({ a: Math.min(x.a, a), k: Math.min(x.k, k) }));
-    setHelmet((h) => ({ basic: Math.min(h.basic, a + k), visor: Math.min(h.visor, a + k - Math.min(h.basic, a + k)) }));
+    // 어른·어린이 순서를 지키며 사람 목록 맞추기
+    const oldA = persons.slice(0, adults);
+    const oldK = persons.slice(adults, adults + kids);
+    const fit = (list: Person[], n: number) => Array.from({ length: n }, (_, i) => list[i] ?? newPerson());
+    setPersons([...fit(oldA, a), ...fit(oldK, k)]);
   }
 
   // ── 공유·문의 ─────────────────────────
@@ -373,8 +430,7 @@ export function TeamQuote() {
     ...(helmets.length ? ["■ 헬멧", ...helmets.map((x) => `  ${x.label} ${x.count}명 · 1인 +${won(x.pp)}`)] : []),
     "",
     "■ 1인 금액",
-    ...perType.map((x) => `  ${x.label} ${x.count}명 → 1인 ${won(lessonAvgPP + x.add)}`),
-    ...(helmets.length ? ["  (헬멧 대여하는 분은 위 금액 + 헬멧)"] : []),
+    ...personRows.map((x) => `  ${x.label} (${x.group}반 · ${x.desc}) ${won(x.pay)}`),
     "",
     ...(days > 1
       ? ["■ 날짜별 합계", ...dayTotals.map((d) => `  ${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}: ${won(d.total)}`)]
@@ -391,9 +447,9 @@ export function TeamQuote() {
       l: len,
       dp: dayPlans.map((p) => `${p.n}${p.n === 1 ? p.one : p.n === 2 ? p.two : ""}${LEN_CODE[p.len ?? len]}`).join("-"),
       g: usedSplit.join("-"),
-      lr: `${lr.a}-${lr.k}`,
-      lo: `${lo.a}-${lo.k}`,
-      h: `${helmet.basic}-${helmet.visor}`,
+      pp: roster
+        .map((x) => `${EXTRA_CODE[x.extra]}${x.helmet}${x.name.trim() ? `:${x.name.trim().replace(/[.:&=?#]/g, "")}` : ""}`)
+        .join("."),
     });
     if (dayTickets.some((t) => t !== undefined))
       q.set("dt", Array.from({ length: days }, (_, i) => (dayTickets[i] === undefined ? "a" : String(dayTickets[i]))).join("-"));
@@ -424,11 +480,10 @@ export function TeamQuote() {
         })),
         teams: [
           {
-            name: "1인 금액",
+            name: "개인별 금액",
             amount: "",
             lines: [
-              ...perType.map((x) => `${x.label} ${x.count}명 → 1인 ${won(lessonAvgPP + x.add)}`),
-              ...helmets.map((x) => `+ ${x.label} ${x.count}명 · 1인 ${won(x.pp)}`),
+              ...personRows.map((x) => `${x.label} (${x.group}반 · ${x.desc}) → ${won(x.pay)}`),
             ],
           },
           {
@@ -751,39 +806,82 @@ export function TeamQuote() {
             {step === 5 && (
               <div className="mt-5 flex flex-col gap-4">
                 <p className="rounded-2xl bg-[#E8F9EE] px-4 py-3 text-[14px] font-semibold text-[#03803D]">
-                  지노스키 손님은 리프트·장비 <span className="text-[17px]">40% 할인</span>! 필요한 인원만 넣어주세요. (없으면 그냥 다음)
+                  지노스키 손님은 리프트·장비 <span className="text-[17px]">40% 할인</span>! 이름을 넣고 사람마다 골라주세요. (필요 없으면 그냥 다음)
                 </p>
-                <OptionRow
-                  title="리프트 + 장비"
-                  sub="스키·보드 장비까지 빌려요"
-                  a={lr.a}
-                  k={lr.k}
-                  maxA={adults - lo.a}
-                  maxK={kids - lo.k}
-                  onChange={(a, k) => setLr({ a, k })}
-                  showKids={kids > 0}
-                  showAdults={adults > 0}
-                />
-                <OptionRow
-                  title="리프트만"
-                  sub="장비는 갖고 있어요"
-                  a={lo.a}
-                  k={lo.k}
-                  maxA={adults - lr.a}
-                  maxK={kids - lr.k}
-                  onChange={(a, k) => setLo({ a, k })}
-                  showKids={kids > 0}
-                  showAdults={adults > 0}
-                />
-                <div className="rounded-2xl border border-snow-300/60 p-4">
-                  <p className="text-[15px] font-bold text-ink-900">
-                    헬멧 <span className="text-[12.5px] font-medium text-snow-500">· 하루 기준 · 할인 제외</span>
-                  </p>
-                  <div className="mt-3 flex flex-col gap-2">
-                    <MiniCounter label="기본 헬멧 5,000원" value={helmet.basic} max={people - helmet.visor} onChange={(v) => setHelmet((h) => ({ ...h, basic: v }))} />
-                    <MiniCounter label="바이저 헬멧 15,000원" value={helmet.visor} max={people - helmet.basic} onChange={(v) => setHelmet((h) => ({ ...h, visor: v }))} />
-                  </div>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[12px] font-semibold text-snow-500">모두 한 번에:</span>
+                  {(["none", "lift", "liftRental"] as Extra[]).map((e) => (
+                    <button
+                      key={e}
+                      type="button"
+                      onClick={() => setAllPersons({ extra: e })}
+                      className="rounded-full bg-snow-100 px-3 py-1 text-[12.5px] font-semibold text-ink-700"
+                    >
+                      {EXTRA_LABEL[e].replace("+ ", "")}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setAllPersons({ helmet: 1 })}
+                    className="rounded-full bg-snow-100 px-3 py-1 text-[12.5px] font-semibold text-ink-700"
+                  >
+                    헬멧 모두
+                  </button>
                 </div>
+                <ul className="flex flex-col gap-2.5">
+                  {roster.map((x, i) => (
+                    <li key={i} className="rounded-2xl border border-snow-300/60 p-3">
+                      <div className="flex items-center gap-2">
+                        <input
+                          value={x.name}
+                          placeholder={`손님 ${i + 1}`}
+                          onChange={(e) => setPerson(i, { name: e.target.value.slice(0, 10) })}
+                          aria-label={`손님 ${i + 1} 이름`}
+                          className="h-10 min-w-0 flex-1 rounded-xl border border-snow-300/70 px-3 text-[15px] outline-none focus:border-brand-500"
+                        />
+                        <span
+                          className={cn(
+                            "shrink-0 rounded-full px-2.5 py-1 text-[12px] font-bold",
+                            x.child ? "bg-amber-100 text-amber-700" : "bg-snow-100 text-ink-700"
+                          )}
+                        >
+                          {x.child ? "어린이" : "어른"}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {(["none", "lift", "liftRental"] as Extra[]).map((e) => (
+                          <button
+                            key={e}
+                            type="button"
+                            onClick={() => setPerson(i, { extra: e })}
+                            className={cn(
+                              "rounded-full border px-3 py-1.5 text-[12.5px] font-semibold",
+                              x.extra === e ? "border-brand-500 bg-brand-500 text-white" : "border-snow-300/70 text-ink-700"
+                            )}
+                          >
+                            {EXTRA_LABEL[e]}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        {([0, 1, 2] as Helmet[]).map((h) => (
+                          <button
+                            key={h}
+                            type="button"
+                            onClick={() => setPerson(i, { helmet: h })}
+                            className={cn(
+                              "rounded-full border px-3 py-1 text-[12px] font-semibold",
+                              x.helmet === h ? "border-ink-900 bg-ink-900 text-white" : "border-snow-300/70 text-snow-600"
+                            )}
+                          >
+                            {HELMET_LABEL[h]}
+                          </button>
+                        ))}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-[12px] text-snow-500">헬멧은 수업 있는 날 기준 · 할인 제외 (기본 5,000원 · 바이저 15,000원)</p>
                 {extras.length > 0 && (
                   <div className="rounded-2xl border border-snow-300/60 p-4">
                     <p className="text-[15px] font-bold text-ink-900">
@@ -855,22 +953,22 @@ export function TeamQuote() {
                   </p>
                 )}
 
-                <h3 className="mt-6 text-[16px] font-bold text-ink-900">1인 금액 ({sessions}회 기준)</h3>
+                <h3 className="mt-6 text-[16px] font-bold text-ink-900">개인별 금액 ({sessions}회 기준)</h3>
                 <ul className="mt-2 flex flex-col gap-2">
-                  {perType.map((x) => (
-                    <li key={x.label} className="flex items-center justify-between gap-3 rounded-2xl bg-ice-200/70 px-4 py-3">
-                      <span className="text-[14.5px] font-semibold text-ink-900">
-                        {x.label} <span className="text-[13px] font-medium text-snow-500">{x.count}명</span>
-                      </span>
-                      <span className="text-[17px] font-bold tabular-nums text-ink-900">{won(lessonAvgPP + x.add)}</span>
-                    </li>
-                  ))}
-                  {helmets.map((x) => (
-                    <li key={x.key} className="flex items-center justify-between gap-3 px-4 text-[13.5px] text-snow-600">
-                      <span>
-                        + {x.label} {x.count}명 ({lessonDays}일)
-                      </span>
-                      <span className="tabular-nums">1인 {won(x.pp)}</span>
+                  {personRows.map((x) => (
+                    <li key={x.index} className="rounded-2xl bg-ice-200/70 px-4 py-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="min-w-0 text-[15px] font-bold text-ink-900">
+                          {x.label}
+                          <span className="ml-1.5 text-[12px] font-medium text-snow-500">{x.group}반</span>
+                        </span>
+                        <span className="shrink-0 text-[18px] font-bold tabular-nums text-ink-900">{won(x.pay)}</span>
+                      </div>
+                      <p className="mt-0.5 text-[12.5px] text-snow-600">
+                        {x.desc} · 강습 {won(x.lesson)}
+                        {x.lift > 0 && ` + 리프트${x.extra === "liftRental" ? "·장비" : ""} ${won(x.lift)}`}
+                        {x.helm > 0 && ` + 헬멧 ${won(x.helm)}`}
+                      </p>
                     </li>
                   ))}
                 </ul>
@@ -910,7 +1008,12 @@ export function TeamQuote() {
                 {showTotal ? (
                   <div className="mt-4 rounded-2xl border-2 border-ink-900 p-4">
                     <div className="flex flex-wrap gap-1.5">
-                      {[{ label: "전체", i: 0 }, ...dayTotals.map((d) => ({ label: `${d.day}일차`, i: d.day }))].map((t) => (
+                      {[
+                        { label: "전체", i: 0 },
+                        ...dayTotals.map((d) => ({ label: `${d.day}일차`, i: d.day })),
+                        { label: "강습료만", i: -1 },
+                        ...(extrasTotal + helmetTotal > 0 ? [{ label: "장비료만", i: -2 }] : []),
+                      ].map((t) => (
                         <button
                           key={t.i}
                           type="button"
@@ -924,7 +1027,42 @@ export function TeamQuote() {
                         </button>
                       ))}
                     </div>
-                    {(() => {
+                    {totalTab < 0 && (
+                      <div className="mt-3">
+                        <p className="text-[13px] text-snow-600">
+                          {totalTab === -1 ? "강습료만 (패찰 포함 · 얼리버드 반영)" : "장비료만 (리프트·장비 40% 할인 + 헬멧)"}
+                        </p>
+                        <p className="mt-2 text-[12px] font-semibold text-snow-500">날짜별</p>
+                        <div className="mt-1 flex flex-col gap-1 text-[14px]">
+                          {dayTotals.map((d) => (
+                            <div key={d.day} className="flex justify-between">
+                              <span className="text-snow-600">
+                                {d.day}일차{startDate && ` ${addDays(startDate, d.day - 1)}`}
+                              </span>
+                              <span className="tabular-nums">{won(totalTab === -1 ? d.lesson : d.extra + d.helm)}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="mt-3 text-[12px] font-semibold text-snow-500">개인별</p>
+                        <div className="mt-1 flex flex-col gap-1 text-[14px]">
+                          {personRows
+                            .filter((x) => totalTab === -1 || x.lift + x.helm > 0)
+                            .map((x) => (
+                              <div key={x.index} className="flex justify-between">
+                                <span className="text-snow-600">{x.label}</span>
+                                <span className="tabular-nums">{won(totalTab === -1 ? x.lesson : x.lift + x.helm)}</span>
+                              </div>
+                            ))}
+                        </div>
+                        <div className="mt-2 flex items-end justify-between border-t border-snow-300/60 pt-2">
+                          <span className="text-[14px] font-semibold text-ink-900">{totalTab === -1 ? "강습료 합계" : "장비료 합계"}</span>
+                          <span className="text-[24px] font-bold tabular-nums text-ink-900">
+                            {won(totalTab === -1 ? lessonExact : extrasTotal + helmetTotal)}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    {totalTab >= 0 && (() => {
                       const d = totalTab ? dayTotals[totalTab - 1] : null;
                       const lesson = d ? d.lesson : lessonExact;
                       const extra = d ? d.extra : extrasTotal;
@@ -1137,69 +1275,6 @@ function BigCounter({ label, sub, value, max, onChange }: { label: string; sub: 
         >
           <Plus size={20} />
         </button>
-      </div>
-    </div>
-  );
-}
-
-function MiniCounter({ label, value, max, onChange }: { label: string; value: number; max: number; onChange: (v: number) => void }) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <span className="text-[14px] text-ink-800">{label}</span>
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          aria-label={`${label} 줄이기`}
-          onClick={() => onChange(Math.max(0, value - 1))}
-          disabled={value <= 0}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-snow-300 disabled:opacity-30"
-        >
-          <Minus size={16} />
-        </button>
-        <span className="w-6 text-center text-[18px] font-bold tabular-nums">{value}</span>
-        <button
-          type="button"
-          aria-label={`${label} 늘리기`}
-          onClick={() => onChange(Math.min(max, value + 1))}
-          disabled={value >= max}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-snow-300 disabled:opacity-30"
-        >
-          <Plus size={16} />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function OptionRow({
-  title,
-  sub,
-  a,
-  k,
-  maxA,
-  maxK,
-  onChange,
-  showAdults,
-  showKids,
-}: {
-  title: string;
-  sub: string;
-  a: number;
-  k: number;
-  maxA: number;
-  maxK: number;
-  onChange: (a: number, k: number) => void;
-  showAdults: boolean;
-  showKids: boolean;
-}) {
-  return (
-    <div className="rounded-2xl border border-snow-300/60 p-4">
-      <p className="text-[15px] font-bold text-ink-900">
-        {title} <span className="text-[12.5px] font-medium text-snow-500">· {sub}</span>
-      </p>
-      <div className="mt-3 flex flex-col gap-2">
-        {showAdults && <MiniCounter label="어른" value={a} max={maxA} onChange={(v) => onChange(v, k)} />}
-        {showKids && <MiniCounter label="어린이" value={k} max={maxK} onChange={(v) => onChange(a, v)} />}
       </div>
     </div>
   );
