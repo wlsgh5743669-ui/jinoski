@@ -363,6 +363,42 @@ export function TeamQuote() {
       desc: [x.child ? "어린이" : "어른", EXTRA_LABEL[x.extra].replace("+ ", "+"), x.helmet ? HELMET_LABEL[x.helmet] : ""].filter(Boolean).join(" · "),
     };
   });
+  // 날짜별 준비표 (현장에서 리프트권·장비·헬멧 나눠줄 때)
+  const prep = schedule.map((d, i) => {
+    const t = ticketOf(i);
+    const hasLesson = d.slots.length > 0;
+    const rows = roster.map((x) => {
+      const items: string[] = [];
+      if (t && x.extra !== "none") items.push(`리프트 ${t}h`);
+      if (t && x.extra === "liftRental") items.push(`장비 ${RENTAL_H[t]}h`);
+      if (hasLesson && x.helmet) items.push(x.helmet === 2 ? "바이저 헬멧" : "헬멧");
+      return { label: x.name.trim() || `손님 ${x.index + 1}`, child: x.child, items };
+    });
+    const cnt = (f: (x: (typeof roster)[number]) => boolean) => ({
+      a: roster.filter((x) => !x.child && f(x)).length,
+      k: roster.filter((x) => x.child && f(x)).length,
+    });
+    const lift = t ? cnt((x) => x.extra !== "none") : { a: 0, k: 0 };
+    const rent = t ? cnt((x) => x.extra === "liftRental") : { a: 0, k: 0 };
+    const hb = hasLesson ? roster.filter((x) => x.helmet === 1).length : 0;
+    const hv = hasLesson ? roster.filter((x) => x.helmet === 2).length : 0;
+    const ak = (c: { a: number; k: number }) => [c.a ? `어른 ${c.a}` : "", c.k ? `어린이 ${c.k}` : ""].filter(Boolean).join("·");
+    const sum = [
+      lift.a + lift.k ? `리프트 ${t}h ${ak(lift)}` : "",
+      rent.a + rent.k ? `장비 ${RENTAL_H[t as TicketHours]}h ${ak(rent)}` : "",
+      hb ? `헬멧 ${hb}` : "",
+      hv ? `바이저 ${hv}` : "",
+    ]
+      .filter(Boolean)
+      .join(" / ");
+    // 리프트·장비는 주중 / 주말·공휴일 요금이 달라요 (날짜 미정이면 주말 요금)
+    const weekend = isWeekend(startDate, i);
+    const rateTag = startDate ? (weekend ? "주말 요금" : "주중 요금") : "주말 요금(날짜 미정)";
+    const liftCost = extras.reduce((a, x) => a + x.perDayList[i].sale * x.count, 0);
+    return { day: d.day, date: startDate ? addDays(startDate, i) : "", sum, rateTag, weekend, liftCost, rows: rows.filter((r) => r.items.length) };
+  });
+  const anyPrep = prep.some((d) => d.rows.length);
+
   function setPerson(i: number, patch: Partial<Person>) {
     setPersons(() => roster.map((x, j) => ({ name: x.name, extra: x.extra, helmet: x.helmet, ...(j === i ? patch : {}) })));
   }
@@ -432,6 +468,17 @@ export function TeamQuote() {
     "■ 1인 금액",
     ...personRows.map((x) => `  ${x.label} (${x.group}반 · ${x.desc}) ${won(x.pay)}`),
     "",
+    ...(anyPrep
+      ? [
+          "",
+          "■ 날짜별 준비표 (리프트·장비·헬멧)",
+          ...prep.flatMap((d) =>
+            d.rows.length
+              ? [`  ${d.day}일차${d.date ? ` ${d.date}` : ""} [${d.rateTag}]: ${d.sum}${d.liftCost ? ` → 리프트·장비 ${won(d.liftCost)}` : ""}`, ...d.rows.map((r) => `    - ${r.label}: ${r.items.join(" + ")}`)]
+              : [`  ${d.day}일차${d.date ? ` ${d.date}` : ""}: 없음`]
+          ),
+        ]
+      : []),
     ...(days > 1
       ? ["■ 날짜별 합계", ...dayTotals.map((d) => `  ${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}: ${won(d.total)}`)]
       : []),
@@ -486,6 +533,19 @@ export function TeamQuote() {
               ...personRows.map((x) => `${x.label} (${x.group}반 · ${x.desc}) → ${won(x.pay)}`),
             ],
           },
+          ...(anyPrep
+            ? [
+                {
+                  name: "날짜별 준비표",
+                  amount: "",
+                  lines: prep.flatMap((d) =>
+                    d.rows.length
+                      ? [`${d.day}일차${d.date ? ` ${d.date}` : ""} (${d.rateTag}) · ${d.sum}`, ...d.rows.map((r) => `   ${r.label}: ${r.items.join(" + ")}`)]
+                      : []
+                  ),
+                },
+              ]
+            : []),
           {
             name: "포함 내역",
             amount: "",
@@ -549,8 +609,7 @@ export function TeamQuote() {
           level: "",
           total: `${won(grand)} (수업 ${sessions}회)`,
           note: [
-            extras.map((x) => `${x.label.replace(" · ", "")}${x.count}`).join(" "),
-            helmets.map((x) => `${x.label}${x.count}`).join(" "),
+            anyPrep ? prep.filter((d) => d.sum).map((d) => `${d.day}일 ${d.sum}`).join(" | ") : "",
             note.trim(),
           ]
             .filter(Boolean)
@@ -972,6 +1031,53 @@ export function TeamQuote() {
                     </li>
                   ))}
                 </ul>
+
+                {anyPrep && (
+                  <div className="mt-5 rounded-2xl border-2 border-[#03C75A]/40 bg-[#F2FBF5] p-4">
+                    <h3 className="text-[16px] font-bold text-ink-900">📋 날짜별 준비표</h3>
+                    <p className="text-[12.5px] text-snow-600">현장에서 리프트권·장비·헬멧을 이대로 준비해 드려요</p>
+                    <ul className="mt-3 flex flex-col gap-3">
+                      {prep.map((d) => (
+                        <li key={d.day} className="rounded-xl bg-white p-3 ring-1 ring-snow-300/60">
+                          <p className="text-[14px] font-bold text-ink-900">
+                            {d.day}일차{d.date && <span className="ml-1 font-medium text-snow-500">{d.date}</span>}
+                            <span className="ml-1.5 text-[12px] font-medium text-snow-500">· {dayLine(schedule[d.day - 1])}</span>
+                          </p>
+                          {d.rows.length ? (
+                            <>
+                              <p className="mt-1 text-[12.5px] font-semibold text-[#03803D]">{d.sum}</p>
+                              {d.liftCost > 0 && (
+                                <p className="mt-0.5 text-[12px] text-snow-600">
+                                  <span
+                                    className={cn(
+                                      "mr-1 rounded-full px-2 py-0.5 text-[11px] font-bold",
+                                      d.weekend ? "bg-rose-100 text-rose-600" : "bg-sky-100 text-sky-700"
+                                    )}
+                                  >
+                                    {d.rateTag}
+                                  </span>
+                                  리프트·장비 {won(d.liftCost)} (40% 할인)
+                                </p>
+                              )}
+                              <ul className="mt-1.5 flex flex-col gap-0.5">
+                                {d.rows.map((r, k) => (
+                                  <li key={k} className="flex justify-between gap-3 text-[13.5px]">
+                                    <span className="font-semibold text-ink-900">
+                                      {r.label} <span className="text-[11.5px] font-normal text-snow-500">{r.child ? "어린이" : "어른"}</span>
+                                    </span>
+                                    <span className="text-right text-ink-800">{r.items.join(" + ")}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </>
+                          ) : (
+                            <p className="mt-1 text-[12.5px] text-snow-500">리프트·장비 없음</p>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 <details className="mt-4 rounded-2xl border border-snow-300/60 px-4 py-3">
                   <summary className="cursor-pointer text-[14px] font-semibold text-ink-900">시간표 · 자세한 내역 보기</summary>
