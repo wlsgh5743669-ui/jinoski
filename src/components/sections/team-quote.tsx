@@ -59,6 +59,9 @@ const TWICE: Record<Len, { label: string; idx: [number, number] }[]> = {
 };
 
 const HELMET_PRICE = { basic: 5000, visor: 15000 };
+/** 날짜별 수업: n = 0(안 함)·1번·2번, one = 1번일 때 교시, two = 2번일 때 추천 조합 */
+type Plan = { n: 0 | 1 | 2; one: number; two: number };
+const DAY_NAMES = ["첫째", "둘째", "셋째", "넷째", "다섯째", "여섯째", "일곱째", "여덟째", "아홉째", "열째"];
 const MAX_PEOPLE = 15;
 const MAX_DAYS = 10;
 const STEPS = ["언제 오세요?", "몇 명이 배우세요?", "수업은 어떻게 할까요?", "반은 어떻게 나눌까요?", "리프트·장비도 필요하세요?", "견적서"];
@@ -114,12 +117,7 @@ export function TeamQuote() {
   const [adults, setAdults] = useState(0);
   const [kids, setKids] = useState(0);
   const [len, setLen] = useState<Len>("2h");
-  const [perDay, setPerDay] = useState<1 | 2 | 0>(0);
-  const [timeIdx, setTimeIdx] = useState(0);
-  const [twiceIdx, setTwiceIdx] = useState(0);
-  const [edge, setEdge] = useState(false);
-  // 날짜별로 다르게 (예: 1일차 3교시만, 2일차 1+3교시, 3일차 1교시) — 수업 시간·일수가 바뀌면 다시 기본값
-  const [custom, setCustom] = useState<{ key: string; days: number[][] } | null>(null);
+  const [plans, setPlans] = useState<Plan[]>([]);
   const [split, setSplit] = useState<number[]>([]);
   const [showAllSplits, setShowAllSplits] = useState(false);
   // 리프트·장비 (40% 할인) — 어른/어린이 각각 몇 명
@@ -155,15 +153,20 @@ export function TeamQuote() {
     if (d >= 1 && d <= MAX_DAYS) setDays(d);
     const l = q.get("l") as Len;
     if (l in TIMES) setLen(l);
-    const n = Number(q.get("n"));
-    if (n === 1 || n === 2) setPerDay(n);
-    setTimeIdx(Math.max(0, Number(q.get("ti")) || 0));
-    setTwiceIdx(Math.max(0, Number(q.get("tw")) || 0));
-    setEdge(q.get("e") === "1");
+    // 날짜별 수업 dp=12-20-10 (1번·3교시 / 2번·1+3교시 / 1번·1교시) — 예전 링크(n·ti·tw)도 읽어요
     const dp = q.get("dp");
-    if (dp && d >= 1) {
-      const parsed = dp.split("-").map((x) => (x === "x" ? [] : x.split(".").map(Number).filter((n) => n >= 0 && n < 5)));
-      if (parsed.length === d) setCustom({ key: `${l in TIMES ? l : "2h"}|${d}`, days: parsed });
+    if (dp && /^[0-2]\d?(-[0-2]\d?)*$/.test(dp)) {
+      setPlans(
+        dp.split("-").map((c) => ({
+          n: Number(c[0]) as 0 | 1 | 2,
+          one: c[0] === "1" ? Number(c[1] ?? 0) : 0,
+          two: c[0] === "2" ? Number(c[1] ?? 0) : 0,
+        }))
+      );
+    } else {
+      const n = Number(q.get("n"));
+      if (n === 1 || n === 2)
+        setPlans(Array.from({ length: d || 1 }, () => ({ n, one: Number(q.get("ti")) || 0, two: Number(q.get("tw")) || 0 })));
     }
     const g = (q.get("g") ?? "").split("-").map(Number);
     setSplit(g.every((x) => x >= 1 && x <= 3) && g.reduce((s, x) => s + x, 0) === a + k ? g : even(a + k, Math.ceil((a + k) / 3)));
@@ -181,27 +184,24 @@ export function TeamQuote() {
 
   // ── 계산 ─────────────────────────────
   const times = TIMES[len];
-  const twice = TWICE[len][Math.min(twiceIdx, TWICE[len].length - 1)];
-  const slotsOfDay = perDay === 2 ? twice.idx.map((i) => times[i]) : perDay === 1 ? [times[Math.min(timeIdx, times.length - 1)]] : [];
-  const patternIdx = perDay === 2 ? [...twice.idx] : perDay === 1 ? [Math.min(timeIdx, times.length - 1)] : [];
-  const customOn = !!custom && custom.key === `${len}|${days}`;
-  const schedule = Array.from({ length: days }, (_, i) => {
-    let idx = patternIdx;
-    let tag = "";
-    if (customOn) idx = [...custom!.days[i]].sort((a, b) => a - b);
-    else if (edge && days >= 2 && perDay === 2) {
-      if (i === 0) [idx, tag] = [patternIdx.slice(-1), "도착일"];
-      else if (i === days - 1) [idx, tag] = [patternIdx.slice(0, 1), "출발일"];
-    }
-    return { day: i + 1, tag, idx, slots: idx.map((j) => times[j]).filter(Boolean) };
+  /** 그날 기본값: 도착일(첫날)은 오후 교시, 나머지는 오전 */
+  const defaultPlan = (i: number): Plan => ({ n: 0, one: days > 1 && i === 0 ? (len === "2h" ? 2 : 1) : 0, two: 0 });
+  const dayPlans: Plan[] = Array.from({ length: days }, (_, i) => plans[i] ?? defaultPlan(i));
+  const planIdx = (p: Plan) =>
+    p.n === 2 ? [...TWICE[len][Math.min(p.two, TWICE[len].length - 1)].idx] : p.n === 1 ? [Math.min(p.one, times.length - 1)] : [];
+  const schedule = dayPlans.map((p, i) => {
+    const idx = planIdx(p);
+    return { day: i + 1, tag: "", idx, slots: idx.map((j) => times[j]).filter(Boolean) };
   });
-  function toggleDaySlot(day: number, j: number) {
-    const base = schedule.map((d) => d.idx);
-    const next = base.map((list, i) => (i === day ? (list.includes(j) ? list.filter((x) => x !== j) : [...list, j]) : list));
-    setCustom({ key: `${len}|${days}`, days: next });
+  function setPlan(i: number, patch: Partial<Plan>) {
+    setPlans(() => dayPlans.map((p, j) => (j === i ? { ...p, ...patch } : p)));
+  }
+  function setAllDays(n: 1 | 2) {
+    setPlans(() => dayPlans.map((p) => ({ ...p, n })));
   }
   const maxPerDay = Math.max(0, ...schedule.map((d) => d.slots.length));
-  const dayText = customOn ? "날짜별 일정" : `하루 ${perDay}번`;
+  const sameN = dayPlans.every((p) => p.n === dayPlans[0]?.n);
+  const dayText = sameN && dayPlans[0]?.n ? `하루 ${dayPlans[0].n}번` : "날짜별 일정";
   const sessions = schedule.reduce((a, d) => a + d.slots.length, 0);
   const eb = isEarlyBirdActive() && EARLY_BIRD.programs.includes(len);
   const tk: TicketHours = ticket || (maxPerDay >= 2 ? 7 : len === "2h" ? 3 : 5);
@@ -277,11 +277,11 @@ export function TeamQuote() {
 
   const trip = days === 1 ? "당일" : `${days - 1}박 ${days}일`;
   const period = startDate ? `${addDays(startDate, 0)}${days > 1 ? ` ~ ${addDays(startDate, days - 1)}` : ""}` : "날짜 미정";
-  const timeText = slotsOfDay.map((s) => s.time).join(" · ");
+  const timeText = schedule.map((d) => `${d.day}일 ${d.slots.map((x) => x.label).join("+") || "없음"}`).join(" / ");
 
   // ── 단계 이동 ─────────────────────────
   const canNext = (s: number) =>
-    s === 1 ? true : s === 2 ? people > 0 : s === 3 ? perDay > 0 && sessions > 0 : s === 4 ? usedSplit.length > 0 : true;
+    s === 1 ? true : s === 2 ? people > 0 : s === 3 ? sessions > 0 : s === 4 ? usedSplit.length > 0 : true;
   function go(n: number) {
     if (n > step && !canNext(step)) return;
     setStep(Math.max(1, Math.min(6, n)));
@@ -303,8 +303,8 @@ export function TeamQuote() {
     `[지노스키 견적] ${trip} · ${LEN_LABEL[len]} · ${dayText}`,
     `기간: ${period}`,
     `인원: 어른 ${adults}명 · 어린이 ${kids}명 (반 ${usedSplit.join("+")}, 강사 ${usedSplit.length}명)`,
-    `시간: ${perDay === 2 ? `${twice.label} ` : perDay === 1 ? `${slotsOfDay[0]?.label} ` : ""}${timeText}${customOn ? " (날짜별로 조정)" : edge && perDay === 2 && days > 1 ? " (도착·출발일 1번)" : ""} · 수업 ${sessions}회`,
-    ...(days > 1
+    `수업: ${LEN_LABEL[len]} × ${sessions}회`,
+    ...(days >= 1
       ? [
           "■ 일정",
           ...schedule.map(
@@ -337,17 +337,13 @@ export function TeamQuote() {
       a: String(adults),
       k: String(kids),
       l: len,
-      n: String(perDay),
-      ti: String(timeIdx),
-      tw: String(twiceIdx),
+      dp: dayPlans.map((p) => `${p.n}${p.n === 1 ? p.one : p.n === 2 ? p.two : ""}`).join("-"),
       g: usedSplit.join("-"),
       lr: `${lr.a}-${lr.k}`,
       lo: `${lo.a}-${lo.k}`,
       h: `${helmet.basic}-${helmet.visor}`,
     });
     if (ticket) q.set("tk", String(ticket));
-    if (edge) q.set("e", "1");
-    if (customOn) q.set("dp", schedule.map((d) => (d.idx.length ? d.idx.join(".") : "x")).join("-"));
     if (startDate) q.set("sd", startDate);
     return `${window.location.origin}/ko/quote/?${q.toString()}`;
   }
@@ -447,11 +443,6 @@ export function TeamQuote() {
           note: [
             extras.map((x) => `${x.label.replace(" · ", "")}${x.count}`).join(" "),
             helmets.map((x) => `${x.label}${x.count}`).join(" "),
-            customOn
-              ? schedule.map((d) => `${d.day}일${d.slots.map((x) => x.label).join("+") || "없음"}`).join(" ")
-              : edge
-                ? "도착·출발일 1번"
-                : "",
             note.trim(),
           ]
             .filter(Boolean)
@@ -530,8 +521,7 @@ export function TeamQuote() {
                         on={len === l}
                         onClick={() => {
                           setLen(l);
-                          setTimeIdx(0);
-                          setTwiceIdx(0);
+                          setPlans(() => dayPlans.map((p, i) => ({ ...p, one: defaultPlan(i).one, two: 0 })));
                         }}
                         title={LEN_LABEL[l]}
                         sub={l === "2h" ? "가장 많이 해요" : l === "3h" ? "넉넉하게" : "집중 코스"}
@@ -540,105 +530,101 @@ export function TeamQuote() {
                   </div>
                 </div>
                 <div>
-                  <p className="mb-2 text-[14px] font-semibold text-ink-900">하루에 몇 번?</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    <BigChoice on={perDay === 1} onClick={() => setPerDay(1)} title="하루 1번" sub="원하는 교시 하나" />
-                    <BigChoice on={perDay === 2} onClick={() => setPerDay(2)} title="하루 2번" sub="쉬는 시간 두고 두 번" />
-                  </div>
-                </div>
-                {perDay === 2 && (
-                  <div>
-                    <p className="mb-2 text-[14px] font-semibold text-ink-900">
-                      이렇게 추천드려요 <span className="font-normal text-snow-500">· 중간에 점심 먹고 쉬어요</span>
-                    </p>
-                    <div className={cn("grid gap-2", TWICE[len].length > 1 ? "grid-cols-2" : "grid-cols-1")}>
-                      {TWICE[len].map((t, i) => (
-                        <BigChoice
-                          key={t.label}
-                          on={twiceIdx === i}
-                          onClick={() => setTwiceIdx(i)}
-                          title={`${t.label} 추천`}
-                          sub={t.idx.map((j) => TIMES[len][j].time).join(" · ")}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {perDay === 1 && (
-                  <div>
-                    <p className="mb-2 text-[14px] font-semibold text-ink-900">몇 교시가 좋으세요?</p>
-                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                      {times.map((t, i) => (
-                        <BigChoice key={t.time} on={timeIdx === i} onClick={() => setTimeIdx(i)} title={t.label} sub={t.time} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {perDay === 2 && days >= 2 && (
-                  <label className="flex cursor-pointer items-start gap-2 rounded-2xl bg-ice-200/70 px-4 py-3 text-[14px] text-ink-800">
-                    <input
-                      type="checkbox"
-                      checked={edge && !customOn}
-                      onChange={(e) => {
-                        setEdge(e.target.checked);
-                        setCustom(null);
-                      }}
-                      className="mt-1 h-4 w-4 accent-brand-500"
-                    />
-                    <span>
-                      도착하는 날·떠나는 날은 1번만 할게요
-                      <span className="block text-[12.5px] text-snow-500">도착일은 뒤 교시, 출발일은 앞 교시만 해요</span>
-                    </span>
-                  </label>
-                )}
-                {perDay > 0 && days >= 2 && (
-                  <div className="rounded-2xl border border-snow-300/60 p-4">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-[15px] font-bold text-ink-900">날짜별 일정</p>
-                      {customOn && (
+                  <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-[14px] font-semibold text-ink-900">날짜마다 몇 번 할까요?</p>
+                    {days > 1 && (
+                      <div className="flex gap-1.5">
                         <button
                           type="button"
-                          onClick={() => setCustom(null)}
-                          className="text-[12.5px] font-semibold text-snow-500 underline underline-offset-2"
+                          onClick={() => setAllDays(1)}
+                          className="rounded-full bg-snow-100 px-3 py-1 text-[12.5px] font-semibold text-ink-700"
                         >
-                          처음대로
+                          모두 1번
                         </button>
-                      )}
-                    </div>
-                    <p className="mt-0.5 text-[12.5px] text-snow-500">날마다 다르게 하고 싶으면 교시를 눌러서 넣고 빼세요</p>
-                    <ul className="mt-3 flex flex-col gap-2.5">
-                      {schedule.map((d, i) => (
-                        <li key={d.day}>
-                          <p className="text-[13.5px] font-semibold text-ink-900">
-                            {d.day}일차{startDate && ` ${addDays(startDate, i)}`}
-                            <span className="ml-1.5 font-normal text-snow-500">{d.slots.length ? `${d.slots.length}번` : "수업 없음"}</span>
-                          </p>
-                          <div className="mt-1.5 flex flex-wrap gap-1.5">
-                            {times.map((t, j) => {
-                              const on = d.idx.includes(j);
-                              return (
-                                <button
-                                  key={t.time}
-                                  type="button"
-                                  onClick={() => toggleDaySlot(i, j)}
-                                  aria-pressed={on}
-                                  className={cn(
-                                    "rounded-full border px-3 py-1.5 text-[12.5px] font-semibold",
-                                    on ? "border-brand-500 bg-brand-500 text-white" : "border-snow-300/70 text-snow-600"
-                                  )}
-                                >
-                                  {t.label}
-                                  <span className={cn("ml-1 font-normal", on ? "text-white/80" : "text-snow-400")}>{t.time.slice(0, 5)}</span>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="mt-3 text-right text-[13px] font-semibold text-brand-600">총 수업 {sessions}회</p>
+                        <button
+                          type="button"
+                          onClick={() => setAllDays(2)}
+                          className="rounded-full bg-snow-100 px-3 py-1 text-[12.5px] font-semibold text-ink-700"
+                        >
+                          모두 2번
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
+                  <ul className="flex flex-col gap-3">
+                    {dayPlans.map((p, i) => (
+                      <li
+                        key={i}
+                        className={cn("rounded-2xl border-2 p-3.5", p.n ? "border-brand-500/40 bg-brand-50/40" : "border-snow-300/60")}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="min-w-0 whitespace-nowrap text-[15px] font-bold text-ink-900">
+                            {days > 1 ? `${DAY_NAMES[i]} 날` : "수업 날"}
+                            {startDate && <span className="block text-[12.5px] font-medium text-snow-500">{addDays(startDate, i)}</span>}
+                          </p>
+                          <div className="flex shrink-0 rounded-full bg-white p-0.5 ring-1 ring-snow-300/70">
+                            {([0, 1, 2] as const).map((n) => (
+                              <button
+                                key={n}
+                                type="button"
+                                onClick={() => setPlan(i, { n })}
+                                aria-pressed={p.n === n}
+                                className={cn(
+                                  "whitespace-nowrap rounded-full px-3 py-1.5 text-[13.5px] font-bold",
+                                  p.n === n ? "bg-brand-500 text-white" : "text-snow-600"
+                                )}
+                              >
+                                {n === 0 ? "안 함" : `${n}번`}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        {p.n === 1 && (
+                          <div className="mt-2.5 flex flex-wrap gap-1.5">
+                            {times.map((t, j) => (
+                              <button
+                                key={t.time}
+                                type="button"
+                                onClick={() => setPlan(i, { one: j })}
+                                className={cn(
+                                  "rounded-full border px-3 py-1.5 text-[12.5px] font-semibold",
+                                  p.one === j ? "border-brand-500 bg-brand-500 text-white" : "border-snow-300/70 bg-white text-ink-700"
+                                )}
+                              >
+                                {t.label}{" "}
+                                <span className={cn("font-normal", p.one === j ? "text-white/80" : "text-snow-400")}>{t.time.slice(0, 5)}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                        {p.n === 2 && (
+                          <div className="mt-2.5 flex flex-wrap gap-1.5">
+                            {TWICE[len].map((t, j) => (
+                              <button
+                                key={t.label}
+                                type="button"
+                                onClick={() => setPlan(i, { two: j })}
+                                className={cn(
+                                  "rounded-full border px-3 py-1.5 text-[12.5px] font-semibold",
+                                  p.two === j ? "border-brand-500 bg-brand-500 text-white" : "border-snow-300/70 bg-white text-ink-700"
+                                )}
+                              >
+                                {t.label} 추천{" "}
+                                <span className={cn("font-normal", p.two === j ? "text-white/80" : "text-snow-400")}>
+                                  {t.idx.map((x) => TIMES[len][x].time.slice(0, 5)).join("·")}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-3 text-[12.5px] text-snow-500">
+                    하루 2번이면 중간에 점심 먹고 쉬어요{len === "2h" && " · 1+3교시 또는 2+4교시를 추천드려요"}
+                  </p>
+                  <p className="mt-1 text-right text-[14px] font-bold text-brand-600">총 수업 {sessions}회</p>
+                </div>
               </div>
             )}
 
