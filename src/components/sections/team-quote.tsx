@@ -117,13 +117,13 @@ export function TeamQuote() {
     return { table, pass };
   }, [content]);
 
-  const [days, setDays] = useState(3);
+  const [days, setDays] = useState(1);
   const [len, setLen] = useState<Len>("2h");
-  const [slots, setSlots] = useState<number[]>(DEFAULT_SLOTS["2h"]);
+  // 처음엔 타임을 비워 두고 0원에서 시작 (손님이 직접 골라야 금액이 올라가요)
+  const [slots, setSlots] = useState<number[]>([]);
   const [edge, setEdge] = useState(false);
   const [teams, setTeams] = useState<Team[]>([
-    { name: "가족 1", sport: "ski", ticket: 7, members: makeMembers(3) },
-    { name: "가족 2", sport: "ski", ticket: 7, members: makeMembers(3) },
+    { name: "가족 1", sport: "ski", ticket: 3, members: makeMembers(1) },
   ]);
   const [startDate, setStartDate] = useState("");
   const [name, setName] = useState("");
@@ -270,8 +270,8 @@ export function TeamQuote() {
   }
   function changeLen(l: Len) {
     setLen(l);
-    setSlots(DEFAULT_SLOTS[l]);
-    setTeams((ts) => ts.map((t) => ({ ...t, ticket: suggestTicket(l, DEFAULT_SLOTS[l].length) })));
+    setSlots([]);
+    setTeams((ts) => ts.map((t) => ({ ...t, ticket: suggestTicket(l, 1) })));
   }
   function toggleSlotAndTicket(i: number) {
     const next = slots.includes(i) ? slots.filter((x) => x !== i) : [...slots, i];
@@ -697,7 +697,7 @@ export function TeamQuote() {
             >
               <span className="text-[13px] text-white/70">
                 1인 1회 강습료
-                <span className="block text-[22px] font-bold tabular-nums text-brand-300">약 {won(perHeadAll)}</span>
+                <span className="block text-[22px] font-bold tabular-nums text-brand-300">{sessions ? `약 ${won(perHeadAll)}` : "0원"}</span>
               </span>
               <span className="text-[13.5px] font-semibold">시간표·문의 ↓</span>
             </a>
@@ -712,8 +712,13 @@ export function TeamQuote() {
               </p>
               <p className="mt-3 text-[13px] font-semibold text-white/60">1인 1회 강습료</p>
               <p className="text-[38px] font-bold leading-tight tabular-nums tracking-tight text-brand-300">
-                약 {won(perHeadAll)}
+                {sessions ? `약 ${won(perHeadAll)}` : "0원"}
               </p>
+              {!sessions && (
+                <p className="mt-2 rounded-xl bg-white/10 px-3 py-2 text-[12.5px] text-white/80">
+                  👉 날짜와 수업 타임을 고르면 금액이 계산돼요
+                </p>
+              )}
               <p className="mt-1 text-[12.5px] text-white/50">
                 패찰 포함{eb && " · 얼리버드 10% 반영"}
                 {anyExtra && " · 리프트·장비는 사람마다 아래에 따로"}
