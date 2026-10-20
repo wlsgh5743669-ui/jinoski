@@ -1350,7 +1350,74 @@ function PriceBoard() {
       <figcaption className="bg-snow-100 px-3 py-2 text-[12px] leading-relaxed text-snow-600">
         📷 비발디파크 매표소 요금 안내판 (현장 사진) · 이 정가에서 <b className="text-[#03803D]">40% 할인</b>해 계산해요 · 누르면 크게 보여요
       </figcaption>
+      <DiscountTable />
     </figure>
+  );
+}
+
+/** 지노스키 손님 40% 할인가 표 (리프트만 / 리프트+장비 · 주중·주말 · 대인·소인) */
+function DiscountTable() {
+  const [mode, setMode] = useState<"lift" | "rental">("rental");
+  const hours: TicketHours[] = [3, 5, 7];
+  const RH: Record<TicketHours, number> = { 3: 4, 5: 6, 7: 8 };
+  const sale = (h: TicketHours, who: "adult" | "child", w: 0 | 1) =>
+    roundUp100((LIFT_PRICES[h][who][w] + (mode === "rental" ? RENTAL_PRICES[h][who][w] : 0)) * (1 - LIFT_RENTAL_DISCOUNT));
+  const regular = (h: TicketHours, who: "adult" | "child", w: 0 | 1) =>
+    LIFT_PRICES[h][who][w] + (mode === "rental" ? RENTAL_PRICES[h][who][w] : 0);
+  const rows: { label: string; who: "adult" | "child"; w: 0 | 1 }[] = [
+    { label: "주중 대인", who: "adult", w: 0 },
+    { label: "주중 소인", who: "child", w: 0 },
+    { label: "주말 대인", who: "adult", w: 1 },
+    { label: "주말 소인", who: "child", w: 1 },
+  ];
+  return (
+    <div className="border-t border-snow-300/60 bg-white p-3">
+      <div className="flex items-center justify-between gap-2">
+        <p className="whitespace-nowrap text-[14px] font-bold text-[#03803D]">40% 할인가</p>
+        <div className="flex rounded-full bg-snow-100 p-0.5">
+          {(["rental", "lift"] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMode(m)}
+              className={cn(
+                "whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] font-bold",
+                mode === m ? "bg-[#03C75A] text-white" : "text-snow-600"
+              )}
+            >
+              {m === "rental" ? "리프트+장비" : "리프트만"}
+            </button>
+          ))}
+        </div>
+      </div>
+      <table className="mt-2 w-full table-fixed border-collapse text-center text-[12.5px]">
+        <thead>
+          <tr className="bg-[#0E1A33] text-white">
+            <th className="w-[26%] py-1.5 font-semibold">1인 1일</th>
+            {hours.map((h) => (
+              <th key={h} className="py-1.5 font-semibold">
+                {h}시간
+                {mode === "rental" && <span className="block text-[10.5px] font-normal text-white/70">장비 {RH[h]}시간</span>}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={r.label} className={cn(i % 2 ? "bg-snow-100/60" : "bg-white", i === 2 && "border-t-2 border-snow-300")}>
+              <td className={cn("py-1.5 font-semibold", r.w ? "text-rose-600" : "text-sky-700")}>{r.label}</td>
+              {hours.map((h) => (
+                <td key={h} className="py-1.5 tabular-nums">
+                  <span className="block text-[10.5px] text-snow-400 line-through">{regular(h, r.who, r.w).toLocaleString("ko-KR")}</span>
+                  <b className="text-ink-900">{sale(h, r.who, r.w).toLocaleString("ko-KR")}</b>
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="mt-1.5 text-[11px] text-snow-500">단위 원 · 주말에는 공휴일 포함 · 헬멧·의류는 할인 제외</p>
+    </div>
   );
 }
 
