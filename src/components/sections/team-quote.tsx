@@ -124,7 +124,8 @@ export function TeamQuote() {
   const [lr, setLr] = useState({ a: 0, k: 0 }); // 리프트+장비
   const [lo, setLo] = useState({ a: 0, k: 0 }); // 리프트만
   const [helmet, setHelmet] = useState({ basic: 0, visor: 0 });
-  const [ticket, setTicket] = useState<TicketHours | 0>(0); // 0 = 자동 추천
+  // 날짜별 리프트 시간권: undefined = 그날 수업에 맞춰 자동 추천, 0 = 그날은 안 씀
+  const [dayTickets, setDayTickets] = useState<(TicketHours | 0 | undefined)[]>([]);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -176,8 +177,11 @@ export function TeamQuote() {
     setLo({ a: loa, k: lok });
     const [hb, hv] = pair(q.get("h"));
     setHelmet({ basic: hb, visor: hv });
-    const tk = Number(q.get("tk"));
-    if ([3, 5, 7].includes(tk)) setTicket(tk as TicketHours);
+    // 날짜별 시간권 dt=a-7-0 (a 자동 · 0 안 씀) — 예전 링크 tk=7 은 모든 날 같은 시간권
+    const dt = q.get("dt");
+    const tk0 = Number(q.get("tk"));
+    if (dt) setDayTickets(dt.split("-").map((x) => ([0, 3, 5, 7].includes(Number(x)) && x !== "a" ? (Number(x) as TicketHours | 0) : undefined)));
+    else if ([3, 5, 7].includes(tk0)) setDayTickets(Array.from({ length: d || 1 }, () => tk0 as TicketHours));
     setStep(6);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
@@ -204,7 +208,19 @@ export function TeamQuote() {
   const dayText = sameN && dayPlans[0]?.n ? `하루 ${dayPlans[0].n}번` : "날짜별 일정";
   const sessions = schedule.reduce((a, d) => a + d.slots.length, 0);
   const eb = isEarlyBirdActive() && EARLY_BIRD.programs.includes(len);
-  const tk: TicketHours = ticket || (maxPerDay >= 2 ? 7 : len === "2h" ? 3 : 5);
+  void maxPerDay;
+  /** 그날 수업에 맞는 리프트 추천: 2번 → 7시간, 2시간 1번 → 3시간, 3·4시간 1번 → 5시간, 수업 없는 날 → 안 씀 */
+  const autoTicket = (i: number): TicketHours | 0 => {
+    const n = schedule[i]?.slots.length ?? 0;
+    return n >= 2 ? 7 : n === 1 ? (len === "2h" ? 3 : 5) : 0;
+  };
+  const ticketOf = (i: number): TicketHours | 0 => dayTickets[i] ?? autoTicket(i);
+  const RENTAL_H: Record<TicketHours, number> = { 3: 4, 5: 6, 7: 8 };
+  const ticketText = (t: TicketHours | 0) => (t ? `리프트 ${t}시간` : "안 씀");
+  function setDayTicket(i: number, t: TicketHours | 0) {
+    setDayTickets(() => Array.from({ length: days }, (_, j) => (j === i ? t : dayTickets[j])));
+  }
+  const lessonDays = schedule.filter((d) => d.slots.length > 0).length;
 
   const groupCost = (size: number) => {
     const lesson = prices.table[len][size - 1] ?? 0;
@@ -234,8 +250,11 @@ export function TeamQuote() {
   const extraPP = (child: boolean, withRental: boolean) => {
     const who = child ? "child" : "adult";
     const perDayList = Array.from({ length: days }, (_, d) => {
+      const t = ticketOf(d);
+      if (!t) return { regular: 0, sale: 0 };
       const w = isWeekend(startDate, d) ? 1 : 0;
-      const regular = LIFT_PRICES[tk][who][w] + (withRental ? RENTAL_PRICES[tk][who][w] : 0);
+      // 리프트 3시간 → 장비 4시간, 5시간 → 6시간, 7시간 → 8시간
+      const regular = LIFT_PRICES[t][who][w] + (withRental ? RENTAL_PRICES[t][who][w] : 0);
       return { regular, sale: roundUp100(regular * (1 - LIFT_RENTAL_DISCOUNT)) };
     });
     return {
@@ -251,8 +270,8 @@ export function TeamQuote() {
     { key: "lo-k", label: "어린이 · 리프트만", count: lo.k, ...extraPP(true, false) },
   ].filter((x) => x.count > 0);
   const helmets = [
-    { key: "basic", label: "기본 헬멧", count: helmet.basic, pp: HELMET_PRICE.basic * days },
-    { key: "visor", label: "바이저 헬멧", count: helmet.visor, pp: HELMET_PRICE.visor * days },
+    { key: "basic", label: "기본 헬멧", count: helmet.basic, pp: HELMET_PRICE.basic * lessonDays },
+    { key: "visor", label: "바이저 헬멧", count: helmet.visor, pp: HELMET_PRICE.visor * lessonDays },
   ].filter((x) => x.count > 0);
   const extrasTotal = extras.reduce((a, x) => a + x.sale * x.count, 0);
   const helmetTotal = helmets.reduce((a, x) => a + x.pp * x.count, 0);
@@ -260,7 +279,7 @@ export function TeamQuote() {
   const dayTotals = schedule.map((d, i) => {
     const lesson = usedSplit.reduce((a, size) => a + groupCost(size), 0) * d.slots.length;
     const extra = extras.reduce((a, x) => a + x.perDayList[i].sale * x.count, 0);
-    const helm = helmet.basic * HELMET_PRICE.basic + helmet.visor * HELMET_PRICE.visor;
+    const helm = d.slots.length ? helmet.basic * HELMET_PRICE.basic + helmet.visor * HELMET_PRICE.visor : 0;
     return { day: d.day, lesson, extra, helm, total: lesson + extra + helm };
   });
   const lessonExact = dayTotals.reduce((a, d) => a + d.lesson, 0);
@@ -317,7 +336,18 @@ export function TeamQuote() {
       : []),
     "",
     `■ 강습료 1인 ${evenGroups ? won(lessonAvgPP) : `약 ${won(lessonAvgPP)}`} (1회 약 ${won(perHead1)} × ${sessions}회, 패찰 포함)`,
-    ...(extras.length ? ["■ 리프트·장비 (40% 할인)", ...extras.map((x) => `  ${x.label} ${x.count}명 · 1인 +${won(x.sale)}`)] : []),
+    ...(extras.length
+      ? [
+          "■ 리프트·장비 (40% 할인)",
+          ...extras.map((x) => `  ${x.label} ${x.count}명 · 1인 +${won(x.sale)}`),
+          `  날짜별: ${schedule
+            .map((d, i) => {
+              const t = ticketOf(i);
+              return `${d.day}일 ${t ? `리프트 ${t}h·장비 ${RENTAL_H[t]}h` : "안 씀"}`;
+            })
+            .join(" / ")}`,
+        ]
+      : []),
     ...(helmets.length ? ["■ 헬멧", ...helmets.map((x) => `  ${x.label} ${x.count}명 · 1인 +${won(x.pp)}`)] : []),
     "",
     "■ 1인 금액",
@@ -343,7 +373,8 @@ export function TeamQuote() {
       lo: `${lo.a}-${lo.k}`,
       h: `${helmet.basic}-${helmet.visor}`,
     });
-    if (ticket) q.set("tk", String(ticket));
+    if (dayTickets.some((t) => t !== undefined))
+      q.set("dt", Array.from({ length: days }, (_, i) => (dayTickets[i] === undefined ? "a" : String(dayTickets[i]))).join("-"));
     if (startDate) q.set("sd", startDate);
     return `${window.location.origin}/ko/quote/?${q.toString()}`;
   }
@@ -712,21 +743,47 @@ export function TeamQuote() {
                   </div>
                 </div>
                 {extras.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-2 text-[13px] text-snow-600">
-                    <span>리프트 시간권:</span>
-                    {([3, 5, 7] as TicketHours[]).map((h) => (
-                      <button
-                        key={h}
-                        type="button"
-                        onClick={() => setTicket(h)}
-                        className={cn(
-                          "rounded-full border px-3 py-1 font-semibold",
-                          tk === h ? "border-brand-500 bg-brand-50 text-brand-600" : "border-snow-300/70 text-ink-700"
-                        )}
-                      >
-                        {h}시간{!ticket && tk === h && " (추천)"}
-                      </button>
-                    ))}
+                  <div className="rounded-2xl border border-snow-300/60 p-4">
+                    <p className="text-[15px] font-bold text-ink-900">
+                      날짜별 리프트 <span className="text-[12.5px] font-medium text-snow-500">· 수업 시간표에 맞춰 자동 추천</span>
+                    </p>
+                    <p className="mt-0.5 text-[12.5px] text-snow-500">장비는 리프트보다 1시간 길게 자동으로 맞춰요 (3시간 → 장비 4시간)</p>
+                    <ul className="mt-3 flex flex-col gap-2.5">
+                      {schedule.map((d, i) => {
+                        const cur = ticketOf(i);
+                        const rec = autoTicket(i);
+                        return (
+                          <li key={d.day}>
+                            <p className="text-[13.5px] font-semibold text-ink-900">
+                              {DAY_NAMES[i] ?? `${d.day}째`} 날{startDate && <span className="ml-1 font-normal text-snow-500">{addDays(startDate, i)}</span>}
+                              <span className="ml-1.5 text-[12px] font-normal text-snow-500">
+                                · 수업 {d.slots.map((x) => x.label).join("+") || "없음"}
+                              </span>
+                            </p>
+                            <div className="mt-1.5 flex flex-wrap gap-1.5">
+                              {([3, 5, 7, 0] as (TicketHours | 0)[]).map((t) => (
+                                <button
+                                  key={t}
+                                  type="button"
+                                  onClick={() => setDayTicket(i, t)}
+                                  aria-pressed={cur === t}
+                                  className={cn(
+                                    "rounded-full border px-3 py-1.5 text-[12.5px] font-semibold",
+                                    cur === t ? "border-brand-500 bg-brand-500 text-white" : "border-snow-300/70 bg-white text-ink-700"
+                                  )}
+                                >
+                                  {t ? `${t}시간` : "안 씀"}
+                                  {t === rec && t !== 0 && <span className={cn("ml-1 text-[11px]", cur === t ? "text-white/85" : "text-brand-500")}>추천</span>}
+                                </button>
+                              ))}
+                            </div>
+                            <p className="mt-1 text-[12px] text-snow-500">
+                              {cur ? `리프트 ${cur}시간 + 장비 ${RENTAL_H[cur]}시간 (리프트+장비 손님)` : "이날은 리프트·장비 안 써요"}
+                            </p>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
                 )}
                 <p className="text-[12.5px] text-snow-500">스키복·보드복은 제휴 렌탈샵을 안내해 드려요.</p>
@@ -769,7 +826,7 @@ export function TeamQuote() {
                   {helmets.map((x) => (
                     <li key={x.key} className="flex items-center justify-between gap-3 px-4 text-[13.5px] text-snow-600">
                       <span>
-                        + {x.label} {x.count}명 ({days}일)
+                        + {x.label} {x.count}명 ({lessonDays}일)
                       </span>
                       <span className="tabular-nums">1인 {won(x.pp)}</span>
                     </li>
@@ -795,7 +852,7 @@ export function TeamQuote() {
                     </p>
                     {extras.map((x) => (
                       <p key={x.key}>
-                        {x.label} · {tk}시간권 {days}일 · <span className="line-through">{won(x.regular)}</span>{" "}
+                        {x.label} · {schedule.map((_, i) => ticketOf(i) || "-").join("/")}시간권 · <span className="line-through">{won(x.regular)}</span>{" "}
                         <b className="text-[#03803D]">{won(x.sale)}</b> (40% 할인)
                       </p>
                     ))}
