@@ -228,10 +228,12 @@ export function TeamQuote() {
   // ── 계산 ─────────────────────────────
   /** 그날 기본값: 도착일(첫날)은 오후 교시, 나머지는 오전 · 수업 시간은 기본(len) */
   const defaultPlan = (i: number, l: Len = len): Plan => ({ n: 0, one: days > 1 && i === 0 ? (l === "2h" ? 2 : 1) : 0, two: 0, len: l });
-  const dayPlans: Plan[] = Array.from({ length: days }, (_, i) => {
-    const p = plans[i] ?? defaultPlan(i);
-    return { ...p, len: p.len ?? len };
-  });
+  const dayPlans: Plan[] = [];
+  for (let i = 0; i < days; i++) {
+    const prevLen = dayPlans[i - 1]?.len ?? len;
+    const p = plans[i] ?? defaultPlan(i, prevLen);
+    dayPlans.push({ ...p, len: p.len ?? prevLen });
+  }
   const planIdx = (p: Plan) => {
     const l = p.len ?? len;
     return p.n === 2 ? [...TWICE[l][Math.min(p.two, TWICE[l].length - 1)].idx] : p.n === 1 ? [Math.min(p.one, TIMES[l].length - 1)] : [];
@@ -695,27 +697,11 @@ export function TeamQuote() {
             {step === 3 && (
               <div className="mt-6 flex flex-col gap-6">
                 <div>
-                  <p className="mb-2 text-[14px] font-semibold text-ink-900">
-                    한 번에 몇 시간? <span className="font-normal text-snow-500">· 모든 날에 적용, 아래에서 날마다 바꿀 수 있어요</span>
-                  </p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(Object.keys(LEN_LABEL) as Len[]).map((l) => (
-                      <BigChoice
-                        key={l}
-                        on={len === l}
-                        onClick={() => {
-                          setLen(l);
-                          setPlans(() => dayPlans.map((p, i) => ({ ...p, len: l, one: defaultPlan(i, l).one, two: 0 })));
-                        }}
-                        title={LEN_LABEL[l]}
-                        sub={l === "2h" ? "가장 많이 해요" : l === "3h" ? "넉넉하게" : "집중 코스"}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div>
                   <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-[14px] font-semibold text-ink-900">날짜마다 몇 번 할까요?</p>
+                    <p className="text-[14px] font-semibold text-ink-900">
+                      날짜마다 순서대로 골라주세요{" "}
+                      <span className="block text-[12.5px] font-normal text-snow-500">몇 번 → 몇 시간 → 몇 교시 (날마다 달라도 돼요)</span>
+                    </p>
                     {days > 1 && (
                       <div className="flex gap-1.5">
                         <button
@@ -1496,26 +1482,6 @@ function BigCounter({ label, sub, value, max, onChange }: { label: string; sub: 
         </button>
       </div>
     </div>
-  );
-}
-
-function BigChoice({ on, onClick, title, sub }: { on: boolean; onClick: () => void; title: string; sub?: string }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={on}
-      className={cn(
-        "flex flex-col items-center justify-center rounded-2xl border-2 px-2 py-3.5 text-center transition-colors",
-        on ? "border-brand-500 bg-brand-50" : "border-snow-300/60 bg-white hover:border-brand-300"
-      )}
-    >
-      <span className={cn("text-[16px] font-bold", on ? "text-brand-600" : "text-ink-900")}>
-        {on && "✓ "}
-        {title}
-      </span>
-      {sub && <span className="mt-0.5 text-[12px] text-snow-500">{sub}</span>}
-    </button>
   );
 }
 
