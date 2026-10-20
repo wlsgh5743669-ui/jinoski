@@ -148,6 +148,8 @@ export function TeamQuote() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
+  /** 마지막으로 보낸 견적 링크 — 손님이 견적을 바꾸면 「수정본 다시 보내기」가 떠요 */
+  const [sentLink, setSentLink] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
   const [copied, setCopied] = useState<"" | "text" | "link">("");
   const [imgState, setImgState] = useState<"" | "making" | "done">("");
@@ -610,14 +612,18 @@ export function TeamQuote() {
   const canSend = name.trim().length > 0 && phone.replace(/[^0-9]/g, "").length >= 9;
   async function send() {
     if (!canSend) return;
+    const isEdit = !!sentLink;
+    const link = shareUrl();
     setStatus("sending");
-    trackEvent("quote_submit", { people, days });
+    trackEvent(isEdit ? "quote_resubmit" : "quote_submit", { people, days });
     try {
       const res = await fetch(KAKAO_NOTIFY_URL, {
         method: "POST",
         keepalive: true,
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify({
+          kind: isEdit ? "견적 수정" : "견적",
+          link,
           name: name.trim(),
           phone: phone.trim(),
           date: `${period} (${trip})`,
@@ -636,6 +642,7 @@ export function TeamQuote() {
         }),
       });
       setStatus(res.ok ? "sent" : "failed");
+      if (res.ok) setSentLink(link);
     } catch {
       setStatus("failed");
     }
@@ -1270,9 +1277,22 @@ export function TeamQuote() {
 
                 <div className="mt-5 rounded-2xl bg-ice-200/70 p-4">
                   {status === "sent" ? (
-                    <p className="text-center text-[15px] font-bold text-ink-900">
-                      ✓ 접수됐어요! 강사 일정을 확인해서 {phone}로 연락드릴게요.
-                    </p>
+                    <div className="text-center">
+                      <p className="text-[15px] font-bold text-ink-900">✓ 접수됐어요! 강사 일정을 확인해서 {phone}로 연락드릴게요.</p>
+                      {typeof window !== "undefined" && shareUrl() !== sentLink ? (
+                        <button
+                          type="button"
+                          onClick={send}
+                          className="mt-3 inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full bg-brand-500 text-[15px] font-semibold text-white"
+                        >
+                          <Send size={16} /> 수정한 견적 다시 보내기
+                        </button>
+                      ) : (
+                        <p className="mt-1.5 text-[12.5px] text-snow-500">
+                          일정·인원·리프트를 바꾸면 여기서 수정한 견적을 바로 다시 보낼 수 있어요
+                        </p>
+                      )}
+                    </div>
                   ) : (
                     <>
                       <p className="text-[14.5px] font-bold text-ink-900">연락처 남기고 견적 받기</p>

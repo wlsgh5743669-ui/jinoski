@@ -32,7 +32,9 @@ export default {
         if (!cors["Access-Control-Allow-Origin"]) return text("forbidden origin", 403);
         const data = JSON.parse(await request.text());
         if (!data || !data.name || !data.phone) return text("missing fields", 400, cors);
-        await sendMemo(env, formatBooking(data));
+        // 견적 계산기는 손님이 만든 견적 링크(link)를 같이 보내요 → 카톡 「견적 보기」 버튼으로 바로 열기
+        const link = typeof data.link === "string" && /^https:\/\/(www\.)?jinoski\.com\//.test(data.link) ? data.link : "";
+        await sendMemo(env, formatBooking(data), link);
         return text("ok", 200, cors);
       }
 
@@ -87,7 +89,7 @@ export default {
 // 카카오 "나에게 보내기" 텍스트는 최대 200자
 function formatBooking(d) {
   const lines = [
-    `[지노스키 예약] ${d.name}`,
+    `[지노스키 ${d.kind === "견적" || d.kind === "견적 수정" ? d.kind : "예약"}] ${d.name}`,
     `📞 ${d.phone}`,
     `📅 ${d.date} ${d.timeSlot || ""}`.trim(),
     `🎿 ${d.program} · ${d.groupSize}`,
@@ -99,13 +101,14 @@ function formatBooking(d) {
   return msg.length > 200 ? msg.slice(0, 199) + "…" : msg;
 }
 
-async function sendMemo(env, message) {
+async function sendMemo(env, message, link = "") {
   const accessToken = await getAccessToken(env);
+  const url = link || SITE_URL;
   const template = {
     object_type: "text",
     text: message,
-    link: { web_url: SITE_URL, mobile_web_url: SITE_URL },
-    button_title: "홈페이지",
+    link: { web_url: url, mobile_web_url: url },
+    button_title: link ? "견적 보기" : "홈페이지",
   };
   const res = await fetch(`${KAPI}/v2/api/talk/memo/default/send`, {
     method: "POST",
