@@ -19,8 +19,8 @@ export const RENTAL_PRICES: Record<TicketHours, { hours: number; adult: [number,
   7: { hours: 8, adult: [38000, 47000], child: [34000, 42000] },
 };
 
-/** 어린이 요금 기준 (만 13세 이하 · 초등학생까지) */
-export const CHILD_LABEL = "어린이(초등 이하)";
+/** 소인 기준: 13세 이하(초등학생, 한국 나이 · 3월 중학교 입학 예정자 포함) / 대인 14세 이상 — 소노 FAQ */
+export const CHILD_LABEL = "어린이(13세 이하·초등)";
 
 /** 안전헬멧 (할인 제외 · 현장 결제): 4시간권 3,000 / 6시간권 4,000 / 8시간권 5,000 */
 export const HELMET_NOTE = "헬멧은 할인 제외 (현장 3,000~5,000원)";

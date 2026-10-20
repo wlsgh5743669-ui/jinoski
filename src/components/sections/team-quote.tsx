@@ -670,7 +670,7 @@ export function TeamQuote() {
             {step === 2 && (
               <div className="mt-6 flex flex-col gap-4">
                 <BigCounter label="어른" sub="중학생 이상" value={adults} max={MAX_PEOPLE - kids} onChange={(v) => setPeople(v, kids)} />
-                <BigCounter label="어린이" sub="초등학생 이하 · 만 4세부터" value={kids} max={MAX_PEOPLE - adults} onChange={(v) => setPeople(adults, v)} />
+                <BigCounter label="어린이" sub="초등학생 이하(리프트 소인) · 만 4세부터" value={kids} max={MAX_PEOPLE - adults} onChange={(v) => setPeople(adults, v)} />
                 <p className="text-center text-[13px] text-snow-500">
                   {people ? `모두 ${people}명이 배워요` : "배울 사람 수를 넣어주세요"} · 구경만 하는 분은 빼고 넣어주세요
                 </p>
@@ -1416,7 +1416,11 @@ function DiscountTable() {
           ))}
         </tbody>
       </table>
-      <p className="mt-1.5 text-[11px] text-snow-500">단위 원 · 주말에는 공휴일 포함 · 헬멧·의류는 할인 제외</p>
+      <p className="mt-1.5 text-[11px] leading-relaxed text-snow-500">
+        단위 원 · 주말에는 공휴일 포함 · 헬멧·의류는 할인 제외
+        <br />
+        <b className="text-ink-700">소인</b> 13세 이하(초등학생, 한국 나이 · 3월 중학교 입학 예정자 포함) · <b className="text-ink-700">대인</b> 14세 이상
+      </p>
     </div>
   );
 }
