@@ -334,6 +334,8 @@ export function TeamQuote() {
     child: i >= adults,
     index: i,
   }));
+  /** 이름 기본값: 어른 1, 어른 2 … / 아이 1, 아이 2 … (어른·아이 리프트 요금이 달라서 구분) */
+  const defLabel = (i: number) => (i >= adults ? `아이 ${i - adults + 1}` : `어른 ${i + 1}`);
   const countOf = (child: boolean, extra: Extra) => roster.filter((x) => x.child === child && x.extra === extra).length;
   const lr = { a: countOf(false, "liftRental"), k: countOf(true, "liftRental") };
   const lo = { a: countOf(false, "lift"), k: countOf(true, "lift") };
@@ -371,13 +373,13 @@ export function TeamQuote() {
     const helm = x.helmet === 2 ? HELMET_PRICE.visor * lessonDays : x.helmet === 1 ? HELMET_PRICE.basic * lessonDays : 0;
     return {
       ...x,
-      label: x.name.trim() || `강습생 ${x.index + 1}`,
+      label: x.name.trim() || defLabel(x.index),
       group: (groupOfIndex[x.index] ?? 0) + 1,
       lesson,
       lift,
       helm,
       pay: lesson + lift + helm,
-      desc: [x.child ? "어린이" : "어른", EXTRA_LABEL[x.extra].replace("+ ", "+"), x.helmet ? HELMET_LABEL[x.helmet] : ""].filter(Boolean).join(" · "),
+      desc: [x.name.trim() ? (x.child ? "어린이" : "어른") : "", EXTRA_LABEL[x.extra].replace("+ ", "+"), x.helmet ? HELMET_LABEL[x.helmet] : ""].filter(Boolean).join(" · "),
     };
   });
   // 날짜별 준비표 (현장에서 리프트권·장비·헬멧 나눠줄 때)
@@ -389,7 +391,7 @@ export function TeamQuote() {
       if (t && x.extra !== "none") items.push(`리프트 ${t}h`);
       if (t && x.extra === "liftRental") items.push(`장비 ${RENTAL_H[t]}h`);
       if (hasLesson && x.helmet) items.push(x.helmet === 2 ? "바이저 헬멧" : "헬멧");
-      return { label: x.name.trim() || `강습생 ${x.index + 1}`, child: x.child, items };
+      return { label: x.name.trim() || defLabel(x.index), named: !!x.name.trim(), child: x.child, items };
     });
     const cnt = (f: (x: (typeof roster)[number]) => boolean) => ({
       a: roster.filter((x) => !x.child && f(x)).length,
@@ -898,9 +900,9 @@ export function TeamQuote() {
                       <div className="flex items-center gap-2">
                         <input
                           value={x.name}
-                          placeholder={`강습생 ${i + 1}`}
+                          placeholder={defLabel(i)}
                           onChange={(e) => setPerson(i, { name: e.target.value.slice(0, 10) })}
-                          aria-label={`강습생 ${i + 1} 이름`}
+                          aria-label={`${defLabel(i)} 이름`}
                           className="h-10 min-w-0 flex-1 rounded-xl border border-snow-300/70 px-3 text-[15px] outline-none focus:border-brand-500"
                         />
                         <span
@@ -1084,7 +1086,7 @@ export function TeamQuote() {
                                 {d.rows.map((r, k) => (
                                   <li key={k} className="flex justify-between gap-3 text-[13.5px]">
                                     <span className="font-semibold text-ink-900">
-                                      {r.label} <span className="text-[11.5px] font-normal text-snow-500">{r.child ? "어린이" : "어른"}</span>
+                                      {r.label}{r.named && <span className="ml-1 text-[11.5px] font-normal text-snow-500">{r.child ? "어린이" : "어른"}</span>}
                                     </span>
                                     <span className="text-right text-ink-800">{r.items.join(" + ")}</span>
                                   </li>
