@@ -8,6 +8,7 @@ import { YoutubeVideos } from "@/components/sections/youtube-videos";
 import { ReviewEventBanner } from "@/components/sections/review-event";
 import { SeasonPopup } from "@/components/sections/season-popup";
 import { Consult } from "@/components/sections/consult";
+import { QuoteBanner } from "@/components/sections/quote-banner";
 
 export default function HomePage() {
   return (
@@ -19,6 +20,7 @@ export default function HomePage() {
       <MenuCards />
       <YoutubeVideos />
       <ReviewEventBanner />
+      <QuoteBanner />
       <Consult />
       <Directions />
       <Reservation />

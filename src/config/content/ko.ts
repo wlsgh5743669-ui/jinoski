@@ -61,6 +61,7 @@ const navLinks = [
   { label: "후기", href: "/reviews" },
   { label: "FAQ", href: "/faq" },
   { label: "예약 안내", href: "/reserve" },
+  { label: "연박 견적", href: "/quote" },
 ];
 
 const heroContent = {

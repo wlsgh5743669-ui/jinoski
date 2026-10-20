@@ -56,13 +56,13 @@ export function Header() {
             JINO<span className="text-brand-500">SKI</span>
           </Link>
 
-          <nav className="hidden items-center gap-9 lg:flex">
+          <nav className="hidden items-center gap-3.5 lg:flex xl:gap-6 2xl:gap-9">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "text-[14px] font-medium tracking-tight transition-colors hover:text-brand-500",
+                  "whitespace-nowrap text-[13px] font-medium tracking-tight transition-colors hover:text-brand-500 xl:text-[14px]",
                   scrolled ? "text-ink-700" : "text-white/90"
                 )}
               >
@@ -76,7 +76,7 @@ export function Header() {
             <a
               {...storeLink}
               className={cn(
-                "inline-flex h-11 items-center gap-1.5 rounded-full border px-5 text-[14px] font-semibold transition-all active:scale-[0.98]",
+                "hidden h-11 items-center gap-1.5 rounded-full border px-5 text-[14px] font-semibold transition-all active:scale-[0.98] xl:inline-flex",
                 scrolled
                   ? "border-snow-300 text-ink-900 hover:border-brand-500"
                   : "border-white/30 text-white hover:border-white/60"

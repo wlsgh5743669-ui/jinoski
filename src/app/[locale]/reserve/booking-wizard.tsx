@@ -1064,6 +1064,17 @@ function PayChoice({ storeUrl }: { storeUrl: string }) {
         <span className="text-[14.5px] font-bold text-brand-600">📝 예약·상담 문의</span>
         <span className="mt-0.5 text-[12px] leading-snug text-snow-600">아래에서 신청 · 확정 후 계좌이체</span>
       </div>
+      <a
+        href="/ko/quote/"
+        onClick={() => trackEvent("quote_open", { from: "reserve_top" })}
+        className="col-span-2 flex items-center justify-between gap-3 rounded-2xl border-2 border-ink-900 bg-white px-4 py-3.5 transition-colors hover:bg-snow-100"
+      >
+        <span className="flex flex-col">
+          <span className="text-[14.5px] font-bold text-ink-900">🏔️ 연박·가족 여러 팀 견적내기</span>
+          <span className="mt-0.5 text-[12px] leading-snug text-snow-600">2박 3일 · 하루 2회 · 리프트·장비 40% 할인까지 한 번에</span>
+        </span>
+        <span className="shrink-0 text-[18px] font-bold text-ink-900">→</span>
+      </a>
     </div>
   );
 }
