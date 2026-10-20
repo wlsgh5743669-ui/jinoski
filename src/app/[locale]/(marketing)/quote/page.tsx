@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getContent, isLocale } from "@/config/site";
 import { PageHero } from "@/components/shared/page-hero";
 import { TeamQuote } from "@/components/sections/team-quote";
+import { QuoteFaq } from "@/components/sections/quote-faq";
 
 const TITLE = "가족·단체·연박 견적 계산기";
 const DESCRIPTION =
@@ -44,6 +45,7 @@ export default async function QuotePage({ params }: { params: Promise<{ locale: 
         description="며칠, 하루 몇 번, 몇 팀인지만 넣으면 시간표와 예상 비용이 바로 나와요. 리프트·장비도 40% 할인가로 함께 계산돼요."
       />
       <TeamQuote />
+      <QuoteFaq />
     </>
   );
 }
