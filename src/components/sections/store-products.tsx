@@ -47,19 +47,18 @@ export function StoreProducts() {
               return (
                 <Reveal key={p.id} delay={(i % 4) * 0.05} className="h-full">
                   <article className="flex h-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-snow-300/60">
-                    <div className="relative aspect-[4/3] overflow-hidden bg-snow-100">
+                    <div className="relative aspect-square overflow-hidden bg-snow-100">
                       <Image
                         src={p.image}
                         alt={p.name}
                         fill
                         sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                         className={cn("object-cover", p.comingSoon && "grayscale-[40%]")}
-                        style={{ objectPosition: p.imagePosition ?? "center 35%" }}
-                      />
+                                              />
                       {badge && (
                         <span
                           className={cn(
-                            "absolute left-3 top-3 rounded-full px-3 py-1 text-[12px] font-bold",
+                            "absolute right-3 top-3 rounded-full px-3 py-1 text-[12px] font-bold",
                             p.comingSoon
                               ? "bg-ink-900/80 text-white"
                               : eb && p.earlyBird
@@ -70,7 +69,7 @@ export function StoreProducts() {
                           {badge}
                         </span>
                       )}
-                      <span className="absolute bottom-3 left-3 rounded-full bg-black/45 px-2.5 py-0.5 text-[11.5px] font-semibold text-white backdrop-blur-sm">
+                      <span className="absolute bottom-3 right-3 rounded-full bg-black/45 px-2.5 py-0.5 text-[11.5px] font-semibold text-white backdrop-blur-sm">
                         {String(i + 1).padStart(2, "0")} / {String(storeProducts.length).padStart(2, "0")}
                       </span>
                     </div>
