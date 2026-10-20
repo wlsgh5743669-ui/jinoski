@@ -371,7 +371,7 @@ export function TeamQuote() {
     const helm = x.helmet === 2 ? HELMET_PRICE.visor * lessonDays : x.helmet === 1 ? HELMET_PRICE.basic * lessonDays : 0;
     return {
       ...x,
-      label: x.name.trim() || `손님 ${x.index + 1}`,
+      label: x.name.trim() || `강습생 ${x.index + 1}`,
       group: (groupOfIndex[x.index] ?? 0) + 1,
       lesson,
       lift,
@@ -389,7 +389,7 @@ export function TeamQuote() {
       if (t && x.extra !== "none") items.push(`리프트 ${t}h`);
       if (t && x.extra === "liftRental") items.push(`장비 ${RENTAL_H[t]}h`);
       if (hasLesson && x.helmet) items.push(x.helmet === 2 ? "바이저 헬멧" : "헬멧");
-      return { label: x.name.trim() || `손님 ${x.index + 1}`, child: x.child, items };
+      return { label: x.name.trim() || `강습생 ${x.index + 1}`, child: x.child, items };
     });
     const cnt = (f: (x: (typeof roster)[number]) => boolean) => ({
       a: roster.filter((x) => !x.child && f(x)).length,
@@ -898,9 +898,9 @@ export function TeamQuote() {
                       <div className="flex items-center gap-2">
                         <input
                           value={x.name}
-                          placeholder={`손님 ${i + 1}`}
+                          placeholder={`강습생 ${i + 1}`}
                           onChange={(e) => setPerson(i, { name: e.target.value.slice(0, 10) })}
-                          aria-label={`손님 ${i + 1} 이름`}
+                          aria-label={`강습생 ${i + 1} 이름`}
                           className="h-10 min-w-0 flex-1 rounded-xl border border-snow-300/70 px-3 text-[15px] outline-none focus:border-brand-500"
                         />
                         <span
