@@ -53,6 +53,14 @@ export default async function PricingPage({
         <p className="mt-3 max-w-xl text-[13px] leading-relaxed text-white/50">
           ※ {content.bookingWizard.liftPassExplainer}
         </p>
+        {locale === "ko" && (
+          <a
+            href="/ko/quote/"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-[14px] font-bold text-ink-900 shadow-lg transition-transform hover:scale-[1.02]"
+          >
+            👨‍👩‍👧‍👦 가족 여러 팀·연박 견적 계산하기 →
+          </a>
+        )}
       </PageHero>
       <Pricing />
       <PaymentMethods locale={isLocale(locale) ? locale : defaultLocale} />

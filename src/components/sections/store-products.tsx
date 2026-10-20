@@ -144,6 +144,12 @@ export function StoreProducts() {
               >
                 <Phone size={16} /> 전화
               </a>
+              <a
+                href="/ko/quote/"
+                className="inline-flex h-12 items-center rounded-full border border-white/25 px-5 text-[14px] font-semibold"
+              >
+                팀·연박 견적
+              </a>
               <Link
                 href="/reserve"
                 className="inline-flex h-12 items-center rounded-full border border-white/25 px-5 text-[14px] font-semibold"

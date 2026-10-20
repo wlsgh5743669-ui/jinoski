@@ -32,6 +32,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly" as const,
       priority: 0.8,
     },
+    {
+      url: `${siteConfig.url}/ko/quote/`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    },
   ];
 
   // 언어별 페이지를 각각 한 줄씩 넣고, 서로를 대체 언어로 연결 (구글 권장 방식)
