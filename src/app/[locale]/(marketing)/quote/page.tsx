@@ -41,7 +41,7 @@ export default async function QuotePage({ params }: { params: Promise<{ locale: 
       <PageHero
         eyebrow="TEAM · FAMILY QUOTE"
         title={["여러 팀·연박 견적,", "한 번에 계산해요"]}
-        description="며칠, 하루 몇 번, 몇 팀인지만 넣으면 시간표와 예상 비용이 바로 나와요. 그대로 문의까지 보낼 수 있어요."
+        description="며칠, 하루 몇 번, 몇 팀인지만 넣으면 시간표와 예상 비용이 바로 나와요. 리프트·장비도 40% 할인가로 함께 계산돼요."
       />
       <TeamQuote />
     </>

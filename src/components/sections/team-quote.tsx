@@ -7,13 +7,41 @@ import { trackEvent } from "@/components/shared/analytics";
 import { useContent } from "@/lib/use-content";
 import { EARLY_BIRD, isEarlyBirdActive } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
+import {
+  CHILD_LABEL,
+  HELMET_NOTE,
+  LIFT_PRICES,
+  LIFT_RENTAL_DISCOUNT,
+  RENTAL_PRICES,
+  type TicketHours,
+} from "@/config/lift-rental";
 
 const KAKAO_NOTIFY_URL =
   process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-notify.wlsgh5743669.workers.dev";
 
 type Len = "2h" | "3h" | "4h";
 type Sport = "ski" | "board" | "mix";
-type Team = { name: string; people: number; sport: Sport };
+type Extra = "none" | "lift" | "liftRental";
+type Team = { name: string; people: number; sport: Sport; extra: Extra; ticket: TicketHours; kids: number };
+
+const EXTRAS: { value: Extra; label: string }[] = [
+  { value: "none", label: "강습만" },
+  { value: "lift", label: "+ 리프트" },
+  { value: "liftRental", label: "+ 리프트·장비" },
+];
+const TICKETS: TicketHours[] = [3, 5, 7];
+/** 수업 시간·하루 횟수에 맞는 리프트 시간권 추천 */
+function suggestTicket(len: "2h" | "3h" | "4h", perDay: number): TicketHours {
+  if (perDay >= 2) return 7;
+  return len === "2h" ? 3 : 5;
+}
+const roundUp100 = (n: number) => Math.ceil(n / 100) * 100;
+function isWeekend(start: string, offset: number) {
+  if (!start) return true; // 날짜 모르면 주말 요금으로 넉넉하게
+  const t = new Date(`${start}T00:00:00`);
+  t.setDate(t.getDate() + offset);
+  return t.getDay() === 0 || t.getDay() === 6;
+}
 
 const LENS: { value: Len; label: string }[] = [
   { value: "2h", label: "2시간" },
@@ -88,8 +116,8 @@ export function TeamQuote() {
   const [slots, setSlots] = useState<number[]>(DEFAULT_SLOTS["2h"]);
   const [edge, setEdge] = useState(false);
   const [teams, setTeams] = useState<Team[]>([
-    { name: "가족 1", people: 3, sport: "ski" },
-    { name: "가족 2", people: 3, sport: "ski" },
+    { name: "가족 1", people: 3, sport: "ski", extra: "none", ticket: 7, kids: 0 },
+    { name: "가족 2", people: 3, sport: "ski", extra: "none", ticket: 7, kids: 0 },
   ]);
   const [startDate, setStartDate] = useState("");
   const [name, setName] = useState("");
@@ -116,12 +144,18 @@ export function TeamQuote() {
       const parsed = t
         .split("~")
         .map((x) => x.split("_"))
-        .filter((p) => p.length === 3)
-        .map(([n, p, sp]) => ({
-          name: n.slice(0, 12),
-          people: Math.min(MAX_PEOPLE, Math.max(1, Number(p) || 1)),
-          sport: (["ski", "board", "mix"].includes(sp) ? sp : "ski") as Sport,
-        }))
+        .filter((p) => p.length >= 3)
+        .map(([n, p, sp, ex, tk, kd]) => {
+          const people = Math.min(MAX_PEOPLE, Math.max(1, Number(p) || 1));
+          return {
+            name: n.slice(0, 12),
+            people,
+            sport: (["ski", "board", "mix"].includes(sp) ? sp : "ski") as Sport,
+            extra: (["none", "lift", "liftRental"].includes(ex) ? ex : "none") as Extra,
+            ticket: ([3, 5, 7].includes(Number(tk)) ? Number(tk) : 7) as TicketHours,
+            kids: Math.min(people, Math.max(0, Number(kd) || 0)),
+          };
+        })
         .slice(0, MAX_TEAMS);
       if (parsed.length) setTeams(parsed);
     }
@@ -159,8 +193,25 @@ export function TeamQuote() {
     const discount = eb ? Math.round((lesson * EARLY_BIRD.rate) / 1000) * 1000 : 0;
     const pass = prices.pass[len] * t.people;
     const perSession = lesson - discount + pass;
-    return { ...t, groups, lesson, discount, pass, perSession, total: perSession * sessions };
+    // 리프트(·장비): 하루 1장씩, 날짜별 평일/주말, 어른/어린이 요금 → 40% 할인
+    let extraRegular = 0;
+    if (t.extra !== "none") {
+      for (let d = 0; d < days; d++) {
+        const w = isWeekend(startDate, d) ? 1 : 0;
+        const adults = t.people - t.kids;
+        let day = LIFT_PRICES[t.ticket].adult[w] * adults + LIFT_PRICES[t.ticket].child[w] * t.kids;
+        if (t.extra === "liftRental")
+          day += RENTAL_PRICES[t.ticket].adult[w] * adults + RENTAL_PRICES[t.ticket].child[w] * t.kids;
+        extraRegular += day;
+      }
+    }
+    const extraTotal = roundUp100(extraRegular * (1 - LIFT_RENTAL_DISCOUNT));
+    const lessonTotal = perSession * sessions;
+    return { ...t, groups, lesson, discount, pass, perSession, lessonTotal, extraRegular, extraTotal, total: lessonTotal + extraTotal };
   });
+  const anyExtra = teams.some((t) => t.extra !== "none");
+  const extraLabel = (r: { extra: Extra; ticket: TicketHours }) =>
+    r.extra === "lift" ? `리프트 ${r.ticket}시간권` : `리프트 ${r.ticket}시간권+장비 ${RENTAL_PRICES[r.ticket].hours}시간`;
   const totalPeople = teams.reduce((a, t) => a + t.people, 0);
   const grand = rows.reduce((a, r) => a + r.total, 0);
   const instructorsAtOnce = rows.reduce((a, r) => a + r.groups.length, 0);
@@ -170,12 +221,15 @@ export function TeamQuote() {
   function setTeam(i: number, patch: Partial<Team>) {
     setTeams((ts) => ts.map((t, j) => (j === i ? { ...t, ...patch } : t)));
   }
-  function toggleSlot(i: number) {
-    setSlots((s) => (s.includes(i) ? s.filter((x) => x !== i) : [...s, i]));
-  }
   function changeLen(l: Len) {
     setLen(l);
     setSlots(DEFAULT_SLOTS[l]);
+    setTeams((ts) => ts.map((t) => ({ ...t, ticket: suggestTicket(l, DEFAULT_SLOTS[l].length) })));
+  }
+  function toggleSlotAndTicket(i: number) {
+    const next = slots.includes(i) ? slots.filter((x) => x !== i) : [...slots, i];
+    setSlots(next);
+    setTeams((ts) => ts.map((t) => ({ ...t, ticket: suggestTicket(len, next.length) })));
   }
 
   const summary = [
@@ -196,11 +250,17 @@ export function TeamQuote() {
       (r) =>
         `${r.name} ${r.people}명(${SPORTS.find((s) => s.value === r.sport)!.label}) · 강사 ${r.groups.length}명(${r.groups.join("+")}) · 1회 ${won(
           r.perSession
-        )} × ${sessions}회 = ${won(r.total)}`
+        )} × ${sessions}회 = ${won(r.lessonTotal)}${
+          r.extra !== "none"
+            ? `\n  └ ${extraLabel(r)} ${r.people}명${r.kids ? `(어린이 ${r.kids})` : ""} × ${days}일 = ${won(r.extraTotal)} (40% 할인)`
+            : ""
+        }`
     ),
     "",
     `예상 합계: ${won(grand)}${eb ? " (얼리버드 레슨료 10% 할인 반영)" : ""}`,
-    "※ 강습 허가권(패찰) 포함 · 리프트권·장비 렌탈 별도 · 강사 일정 확인 후 확정",
+    anyExtra
+      ? "※ 패찰 포함 · 리프트·장비는 정가 대비 40% 할인 (헬멧·의류 렌탈은 할인 제외·별도) · 강사 일정 확인 후 확정"
+      : "※ 강습 허가권(패찰) 포함 · 리프트권·장비 렌탈 별도 · 강사 일정 확인 후 확정",
   ]
     .filter((l, i, a) => l !== "" || a[i - 1] !== "")
     .join("\n");
@@ -210,7 +270,7 @@ export function TeamQuote() {
       d: String(days),
       l: len,
       s: chosen.join("."),
-      t: teams.map((t) => `${t.name.replace(/[_~]/g, " ")}_${t.people}_${t.sport}`).join("~"),
+      t: teams.map((t) => `${t.name.replace(/[_~]/g, " ")}_${t.people}_${t.sport}_${t.extra}_${t.ticket}_${t.kids}`).join("~"),
     });
     if (edge) q.set("e", "1");
     if (startDate) q.set("sd", startDate);
@@ -233,7 +293,14 @@ export function TeamQuote() {
     setStatus("sending");
     trackEvent("quote_submit", { teams: teams.length, people: totalPeople, days });
     try {
-      const teamLine = rows.map((r) => `${r.name} ${r.people}명(${r.groups.join("+")})`).join(", ");
+      const teamLine = rows
+        .map(
+          (r) =>
+            `${r.name} ${r.people}명(${r.groups.join("+")})${
+              r.extra === "none" ? "" : ` ${r.extra === "lift" ? "리프트" : "리프트+장비"}${r.ticket}h${r.kids ? ` 어린이${r.kids}` : ""}`
+            }`
+        )
+        .join(", ");
       const res = await fetch(KAKAO_NOTIFY_URL, {
         method: "POST",
         keepalive: true,
@@ -297,7 +364,7 @@ export function TeamQuote() {
                   <button
                     key={s.time}
                     type="button"
-                    onClick={() => toggleSlot(i)}
+                    onClick={() => toggleSlotAndTicket(i)}
                     aria-pressed={chosen.includes(i)}
                     className={cn(
                       "flex flex-col items-start rounded-xl border px-3 py-2.5 text-left transition-colors",
@@ -356,7 +423,7 @@ export function TeamQuote() {
                       </div>
                       <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-3">
                         <Field label="배울 사람">
-                          <Stepper value={t.people} min={1} max={MAX_PEOPLE} onChange={(v) => setTeam(i, { people: v })} suffix="명" />
+                          <Stepper value={t.people} min={1} max={MAX_PEOPLE} onChange={(v) => setTeam(i, { people: v, kids: Math.min(t.kids, v) })} suffix="명" />
                         </Field>
                         <Field label="종목">
                           <div className="flex gap-1.5">
@@ -367,6 +434,37 @@ export function TeamQuote() {
                             ))}
                           </div>
                         </Field>
+                      </div>
+                      <div className="mt-3">
+                        <p className="mb-1.5 text-[12.5px] font-semibold text-snow-600">
+                          리프트·장비 <span className="font-bold text-[#03A94F]">40% 할인</span>
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {EXTRAS.map((x) => (
+                            <Chip key={x.value} small on={t.extra === x.value} onClick={() => setTeam(i, { extra: x.value })}>
+                              {x.label}
+                            </Chip>
+                          ))}
+                        </div>
+                        {t.extra !== "none" && (
+                          <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-xl bg-white p-3 ring-1 ring-snow-300/60">
+                            <Field label="리프트 시간권 (하루)">
+                              <div className="flex gap-1.5">
+                                {TICKETS.map((h) => (
+                                  <Chip key={h} small on={t.ticket === h} onClick={() => setTeam(i, { ticket: h })}>
+                                    {h}시간
+                                  </Chip>
+                                ))}
+                              </div>
+                            </Field>
+                            <Field label={`그중 ${CHILD_LABEL}`}>
+                              <Stepper value={t.kids} min={0} max={t.people} onChange={(v) => setTeam(i, { kids: v })} suffix="명" />
+                            </Field>
+                            <p className="w-full text-[11.5px] leading-relaxed text-snow-500">
+                              하루 {perDay}회 수업이면 {suggestTicket(len, perDay)}시간권을 추천해요 · {HELMET_NOTE}
+                            </p>
+                          </div>
+                        )}
                       </div>
                       <p className="mt-2.5 text-[12.5px] text-snow-600">
                         {g.length === 1
@@ -380,7 +478,12 @@ export function TeamQuote() {
               {teams.length < MAX_TEAMS && (
                 <button
                   type="button"
-                  onClick={() => setTeams((ts) => [...ts, { name: `가족 ${ts.length + 1}`, people: 2, sport: "ski" }])}
+                  onClick={() =>
+                    setTeams((ts) => [
+                      ...ts,
+                      { name: `가족 ${ts.length + 1}`, people: 2, sport: "ski", extra: ts[0]?.extra ?? "none", ticket: suggestTicket(len, perDay), kids: 0 },
+                    ])
+                  }
                   className="mt-3 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-brand-400 text-[14px] font-semibold text-brand-600 hover:bg-brand-50"
                 >
                   <UserPlus size={16} /> 팀 추가
@@ -441,15 +544,26 @@ export function TeamQuote() {
                         <span className="tabular-nums">{won(r.total)}</span>
                       </div>
                       <p className="text-[12px] text-white/50">
-                        강사 {r.groups.length}명({r.groups.map((x) => `1:${x}`).join("+")}) · 1회 {won(r.perSession)} × {sessions}회
+                        강습 · 강사 {r.groups.length}명({r.groups.map((x) => `1:${x}`).join("+")}) · 1회 {won(r.perSession)} × {sessions}회 ={" "}
+                        {won(r.lessonTotal)}
                       </p>
+                      {r.extra !== "none" && (
+                        <p className="text-[12px] text-white/50">
+                          {extraLabel(r)} × {days}일 ·{" "}
+                          <span className="text-white/35 line-through">{won(r.extraRegular)}</span>{" "}
+                          <span className="font-semibold text-[#5BE38F]">40% {won(r.extraTotal)}</span>
+                        </p>
+                      )}
                     </li>
                   ))}
                 </ul>
               </div>
               <p className="mt-5 text-[11.5px] leading-relaxed text-white/45">
-                강습 허가권(패찰) 포함 · 리프트권·장비·의류 렌탈은 별도예요. 같은 시간에 강사 {instructorsAtOnce}명이 필요해요 — 강사 일정
-                확인 후 확정 금액을 안내드려요.
+                강습 허가권(패찰) 포함 ·{" "}
+                {anyExtra
+                  ? `리프트·장비는 정가 대비 40% 할인가예요${startDate ? " (날짜별 평일·주말 요금)" : " (날짜를 넣으면 평일 요금으로 다시 계산돼요)"} · ${HELMET_NOTE} · 공휴일은 주말 요금`
+                  : "리프트권·장비·의류 렌탈은 별도예요"}
+                . 같은 시간에 강사 {instructorsAtOnce}명이 필요해요 — 강사 일정 확인 후 확정 금액을 안내드려요.
               </p>
             </div>
 

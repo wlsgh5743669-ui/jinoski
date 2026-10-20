@@ -1,6 +1,6 @@
 "use client";
 
-import { Instagram, Mail, MessageCircle, Phone } from "lucide-react";
+import { Calculator, Instagram, Mail, MessageCircle, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { useContent } from "@/lib/use-content";
@@ -40,6 +40,20 @@ export function QuickContact() {
   }, []);
 
   const items = [
+    // 한국어: 맨 위에 「견적」 — 가족·연박 손님이 바로 계산해 볼 수 있게
+    ...(ko
+      ? [
+          {
+            key: "quote",
+            href: "/ko/quote/",
+            external: false,
+            label: "견적",
+            aria: "가족·단체·연박 견적 계산",
+            circle: "bg-[#03C75A] text-white",
+            icon: <Calculator size={17} />,
+          },
+        ]
+      : []),
     ko
       ? {
           key: "kakao",
