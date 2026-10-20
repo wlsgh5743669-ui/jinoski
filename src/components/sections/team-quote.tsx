@@ -874,14 +874,14 @@ export function TeamQuote() {
                 </p>
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-[12px] font-semibold text-snow-500">모두 한 번에:</span>
-                  {(["none", "lift", "liftRental"] as Extra[]).map((e) => (
+                  {(["lift", "liftRental", "none"] as Extra[]).map((e) => (
                     <button
                       key={e}
                       type="button"
                       onClick={() => setAllPersons({ extra: e })}
                       className="rounded-full bg-snow-100 px-3 py-1 text-[12.5px] font-semibold text-ink-700"
                     >
-                      {EXTRA_LABEL[e].replace("+ ", "")}
+                      {e === "none" ? "모두 필요없음" : e === "lift" ? "모두 리프트만" : "모두 리프트+장비"}
                     </button>
                   ))}
                   <button
@@ -912,18 +912,25 @@ export function TeamQuote() {
                           {x.child ? "어린이" : "어른"}
                         </span>
                       </div>
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        {(["none", "lift", "liftRental"] as Extra[]).map((e) => (
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                        {/* 강습은 기본 포함 — 리프트만 / 리프트+장비 / 필요없음 중 하나 */}
+                        <span className="rounded-full bg-snow-100 px-3 py-1.5 text-[12.5px] font-semibold text-snow-500">✓ 강습 포함</span>
+                        {(["lift", "liftRental", "none"] as Extra[]).map((e) => (
                           <button
                             key={e}
                             type="button"
                             onClick={() => setPerson(i, { extra: e })}
+                            aria-pressed={x.extra === e}
                             className={cn(
                               "rounded-full border px-3 py-1.5 text-[12.5px] font-semibold",
-                              x.extra === e ? "border-brand-500 bg-brand-500 text-white" : "border-snow-300/70 text-ink-700"
+                              x.extra === e
+                                ? e === "none"
+                                  ? "border-ink-700 bg-ink-700 text-white"
+                                  : "border-brand-500 bg-brand-500 text-white"
+                                : "border-snow-300/70 text-ink-700"
                             )}
                           >
-                            {EXTRA_LABEL[e]}
+                            {e === "none" ? "필요없음" : e === "lift" ? "리프트만" : "리프트+장비"}
                           </button>
                         ))}
                       </div>
