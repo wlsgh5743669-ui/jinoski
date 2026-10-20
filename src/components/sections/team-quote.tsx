@@ -744,6 +744,7 @@ export function TeamQuote() {
                   </div>
                 )}
                 <p className="text-[12.5px] text-snow-500">스키복·보드복은 제휴 렌탈샵을 안내해 드려요.</p>
+                <PriceBoard />
               </div>
             )}
 
@@ -815,6 +816,9 @@ export function TeamQuote() {
                     <p className="mt-1 text-[12px] text-snow-500">
                       {startDate ? "날짜별 평일·주말 요금" : "날짜 미정이라 주말 요금"} · 공휴일은 주말 요금 · 스키복·보드복은 제휴 렌탈샵 안내
                     </p>
+                    <div className="mt-3">
+                      <PriceBoard />
+                    </div>
                   </div>
                 </details>
 
@@ -996,6 +1000,28 @@ export function TeamQuote() {
         </div>
       </Container>
     </section>
+  );
+}
+
+/** 비발디파크 매표소 리프트/렌탈 요금 안내판 사진 — 40% 할인 기준 정가를 손님이 직접 확인 */
+function PriceBoard() {
+  return (
+    <figure className="overflow-hidden rounded-2xl ring-1 ring-snow-300/60">
+      <a href="/images/vivaldi-lift-rental-price.jpg" target="_blank" rel="noreferrer" title="크게 보기">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/vivaldi-lift-rental-price.jpg"
+          alt="비발디파크 매표소 리프트·렌탈 요금표 — 리프트 3·5·7시간, 렌탈 4·6·8시간, 주중·주말공휴일, 대인·소인 요금"
+          width={1200}
+          height={412}
+          loading="lazy"
+          className="block h-auto w-full"
+        />
+      </a>
+      <figcaption className="bg-snow-100 px-3 py-2 text-[12px] leading-relaxed text-snow-600">
+        📷 비발디파크 매표소 요금 안내판 (현장 사진) · 이 정가에서 <b className="text-[#03803D]">40% 할인</b>해 계산해요 · 누르면 크게 보여요
+      </figcaption>
+    </figure>
   );
 }
 
