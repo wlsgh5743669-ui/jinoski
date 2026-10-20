@@ -60,7 +60,9 @@ const TWICE: Record<Len, { label: string; idx: [number, number] }[]> = {
 
 const HELMET_PRICE = { basic: 5000, visor: 15000 };
 /** 날짜별 수업: n = 0(안 함)·1번·2번, one = 1번일 때 교시, two = 2번일 때 추천 조합 */
-type Plan = { n: 0 | 1 | 2; one: number; two: number };
+type Plan = { n: 0 | 1 | 2; one: number; two: number; len?: Len };
+const LEN_CODE: Record<Len, string> = { "2h": "a", "3h": "b", "4h": "c" };
+const CODE_LEN: Record<string, Len> = { a: "2h", b: "3h", c: "4h" };
 const DAY_NAMES = ["첫째", "둘째", "셋째", "넷째", "다섯째", "여섯째", "일곱째", "여덟째", "아홉째", "열째"];
 const MAX_PEOPLE = 15;
 const MAX_DAYS = 10;
@@ -156,12 +158,13 @@ export function TeamQuote() {
     if (l in TIMES) setLen(l);
     // 날짜별 수업 dp=12-20-10 (1번·3교시 / 2번·1+3교시 / 1번·1교시) — 예전 링크(n·ti·tw)도 읽어요
     const dp = q.get("dp");
-    if (dp && /^[0-2]\d?(-[0-2]\d?)*$/.test(dp)) {
+    if (dp && /^[0-2]\d?[abc]?(-[0-2]\d?[abc]?)*$/.test(dp)) {
       setPlans(
         dp.split("-").map((c) => ({
           n: Number(c[0]) as 0 | 1 | 2,
           one: c[0] === "1" ? Number(c[1] ?? 0) : 0,
           two: c[0] === "2" ? Number(c[1] ?? 0) : 0,
+          len: CODE_LEN[c[c.length - 1]],
         }))
       );
     } else {
@@ -187,16 +190,25 @@ export function TeamQuote() {
   }, []);
 
   // ── 계산 ─────────────────────────────
-  const times = TIMES[len];
-  /** 그날 기본값: 도착일(첫날)은 오후 교시, 나머지는 오전 */
-  const defaultPlan = (i: number): Plan => ({ n: 0, one: days > 1 && i === 0 ? (len === "2h" ? 2 : 1) : 0, two: 0 });
-  const dayPlans: Plan[] = Array.from({ length: days }, (_, i) => plans[i] ?? defaultPlan(i));
-  const planIdx = (p: Plan) =>
-    p.n === 2 ? [...TWICE[len][Math.min(p.two, TWICE[len].length - 1)].idx] : p.n === 1 ? [Math.min(p.one, times.length - 1)] : [];
+  /** 그날 기본값: 도착일(첫날)은 오후 교시, 나머지는 오전 · 수업 시간은 기본(len) */
+  const defaultPlan = (i: number, l: Len = len): Plan => ({ n: 0, one: days > 1 && i === 0 ? (l === "2h" ? 2 : 1) : 0, two: 0, len: l });
+  const dayPlans: Plan[] = Array.from({ length: days }, (_, i) => {
+    const p = plans[i] ?? defaultPlan(i);
+    return { ...p, len: p.len ?? len };
+  });
+  const planIdx = (p: Plan) => {
+    const l = p.len ?? len;
+    return p.n === 2 ? [...TWICE[l][Math.min(p.two, TWICE[l].length - 1)].idx] : p.n === 1 ? [Math.min(p.one, TIMES[l].length - 1)] : [];
+  };
   const schedule = dayPlans.map((p, i) => {
     const idx = planIdx(p);
-    return { day: i + 1, tag: "", idx, slots: idx.map((j) => times[j]).filter(Boolean) };
+    const l = p.len ?? len;
+    return { day: i + 1, tag: "", len: l, idx, slots: idx.map((j) => TIMES[l][j]).filter(Boolean) };
   });
+  const usedLens = [...new Set(schedule.filter((d) => d.slots.length).map((d) => d.len))];
+  const lenText = usedLens.length === 1 ? LEN_LABEL[usedLens[0]] : usedLens.length ? usedLens.map((l) => LEN_LABEL[l]).join("·") : LEN_LABEL[len];
+  const dayLine = (d: { len: Len; slots: { label: string }[] }) =>
+    d.slots.length ? `${LEN_LABEL[d.len]} ${d.slots.map((x) => x.label).join("+")}` : "수업 없음";
   function setPlan(i: number, patch: Partial<Plan>) {
     setPlans(() => dayPlans.map((p, j) => (j === i ? { ...p, ...patch } : p)));
   }
@@ -207,12 +219,13 @@ export function TeamQuote() {
   const sameN = dayPlans.every((p) => p.n === dayPlans[0]?.n);
   const dayText = sameN && dayPlans[0]?.n ? `하루 ${dayPlans[0].n}번` : "날짜별 일정";
   const sessions = schedule.reduce((a, d) => a + d.slots.length, 0);
-  const eb = isEarlyBirdActive() && EARLY_BIRD.programs.includes(len);
+  const ebFor = (l: Len) => isEarlyBirdActive() && EARLY_BIRD.programs.includes(l);
+  const eb = schedule.some((d) => d.slots.length && ebFor(d.len));
   void maxPerDay;
   /** 그날 수업에 맞는 리프트 추천: 2번 → 7시간, 2시간 1번 → 3시간, 3·4시간 1번 → 5시간, 수업 없는 날 → 안 씀 */
   const autoTicket = (i: number): TicketHours | 0 => {
     const n = schedule[i]?.slots.length ?? 0;
-    return n >= 2 ? 7 : n === 1 ? (len === "2h" ? 3 : 5) : 0;
+    return n >= 2 ? 7 : n === 1 ? (schedule[i].len === "2h" ? 3 : 5) : 0;
   };
   const ticketOf = (i: number): TicketHours | 0 => dayTickets[i] ?? autoTicket(i);
   const RENTAL_H: Record<TicketHours, number> = { 3: 4, 5: 6, 7: 8 };
@@ -222,11 +235,14 @@ export function TeamQuote() {
   }
   const lessonDays = schedule.filter((d) => d.slots.length > 0).length;
 
-  const groupCost = (size: number) => {
-    const lesson = prices.table[len][size - 1] ?? 0;
-    const discount = eb ? Math.round((lesson * EARLY_BIRD.rate) / 1000) * 1000 : 0;
-    return lesson - discount + prices.pass[len] * size;
+  /** 반(강사 1명) 1회 비용 = 레슨료(얼리버드는 2·3시간 강습료만 10%) + 패찰 × 인원 */
+  const groupCost = (size: number, l: Len = len) => {
+    const lesson = prices.table[l][size - 1] ?? 0;
+    const discount = ebFor(l) ? Math.round((lesson * EARLY_BIRD.rate) / 1000) * 1000 : 0;
+    return lesson - discount + prices.pass[l] * size;
   };
+  /** 반 하나의 전체 강습료 (날짜마다 수업 시간이 달라도 합산) */
+  const groupTotal = (size: number) => schedule.reduce((a, d) => a + groupCost(size, d.len) * d.slots.length, 0);
   const splitCheapest = people ? even(people, Math.ceil(people / 3)) : [];
   const splitSmall = people ? even(people, Math.ceil(people / 2)) : [];
   const splitPrivate = people ? Array(people).fill(1) : [];
@@ -236,13 +252,19 @@ export function TeamQuote() {
     no: i + 1,
     size,
     perSession: groupCost(size),
-    lessonPP: Math.round((groupCost(size) * sessions) / size / 100) * 100,
+    lessonPP: Math.round(groupTotal(size) / size / 100) * 100,
   }));
   const lessonTotal = groups.reduce((a, g) => a + g.lessonPP * g.size, 0);
   // 얼리버드 10%는 강습료에만 (패찰·리프트·장비·헬멧 제외)
-  const ebSaved = eb
-    ? usedSplit.reduce((a, size) => a + Math.round(((prices.table[len][size - 1] ?? 0) * EARLY_BIRD.rate) / 1000) * 1000, 0) * sessions
-    : 0;
+  const ebSaved = schedule.reduce(
+    (a, d) =>
+      a +
+      (ebFor(d.len)
+        ? usedSplit.reduce((b, size) => b + Math.round(((prices.table[d.len][size - 1] ?? 0) * EARLY_BIRD.rate) / 1000) * 1000, 0) *
+          d.slots.length
+        : 0),
+    0
+  );
   const lessonAvgPP = people ? Math.round(lessonTotal / people / 100) * 100 : 0;
   const perHead1 = people && sessions ? Math.round(lessonTotal / people / sessions / 1000) * 1000 : 0;
 
@@ -277,7 +299,7 @@ export function TeamQuote() {
   const helmetTotal = helmets.reduce((a, x) => a + x.pp * x.count, 0);
   // 날짜별 합계 (토탈 보기: 전체 / 1일차 / 2일차 …)
   const dayTotals = schedule.map((d, i) => {
-    const lesson = usedSplit.reduce((a, size) => a + groupCost(size), 0) * d.slots.length;
+    const lesson = usedSplit.reduce((a, size) => a + groupCost(size, d.len), 0) * d.slots.length;
     const extra = extras.reduce((a, x) => a + x.perDayList[i].sale * x.count, 0);
     const helm = d.slots.length ? helmet.basic * HELMET_PRICE.basic + helmet.visor * HELMET_PRICE.visor : 0;
     return { day: d.day, lesson, extra, helm, total: lesson + extra + helm };
@@ -296,7 +318,7 @@ export function TeamQuote() {
 
   const trip = days === 1 ? "당일" : `${days - 1}박 ${days}일`;
   const period = startDate ? `${addDays(startDate, 0)}${days > 1 ? ` ~ ${addDays(startDate, days - 1)}` : ""}` : "날짜 미정";
-  const timeText = schedule.map((d) => `${d.day}일 ${d.slots.map((x) => x.label).join("+") || "없음"}`).join(" / ");
+  const timeText = schedule.map((d) => `${d.day}일 ${dayLine(d)}`).join(" / ");
 
   // ── 단계 이동 ─────────────────────────
   const canNext = (s: number) =>
@@ -319,17 +341,17 @@ export function TeamQuote() {
 
   // ── 공유·문의 ─────────────────────────
   const summary = [
-    `[지노스키 견적] ${trip} · ${LEN_LABEL[len]} · ${dayText}`,
+    `[지노스키 견적] ${trip} · ${lenText} · ${dayText}`,
     `기간: ${period}`,
     `인원: 어른 ${adults}명 · 어린이 ${kids}명 (반 ${usedSplit.join("+")}, 강사 ${usedSplit.length}명)`,
-    `수업: ${LEN_LABEL[len]} × ${sessions}회`,
+    `수업: 총 ${sessions}회 (${schedule.filter((d) => d.slots.length).map((d) => dayLine(d)).join(" / ")})`,
     ...(days >= 1
       ? [
           "■ 일정",
           ...schedule.map(
             (d) =>
               `  ${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}: ${
-                d.slots.map((x) => `${x.label}(${x.time})`).join(" · ") || "수업 없음"
+                d.slots.length ? `${LEN_LABEL[d.len]} ${d.slots.map((x) => `${x.label}(${x.time})`).join(" · ")}` : "수업 없음"
               }`
           ),
         ]
@@ -367,7 +389,7 @@ export function TeamQuote() {
       a: String(adults),
       k: String(kids),
       l: len,
-      dp: dayPlans.map((p) => `${p.n}${p.n === 1 ? p.one : p.n === 2 ? p.two : ""}`).join("-"),
+      dp: dayPlans.map((p) => `${p.n}${p.n === 1 ? p.one : p.n === 2 ? p.two : ""}${LEN_CODE[p.len ?? len]}`).join("-"),
       g: usedSplit.join("-"),
       lr: `${lr.a}-${lr.k}`,
       lo: `${lo.a}-${lo.k}`,
@@ -393,7 +415,7 @@ export function TeamQuote() {
     trackEvent("quote_image", { people, days });
     try {
       const blob = await renderQuoteImage({
-        title: `${trip} · ${period} · ${LEN_LABEL[len]} ${dayText} · 수업 ${sessions}회`,
+        title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
         total: `1인 1회 약 ${won(perHead1)}`,
         totalSub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")} · 합계 ${won(grand)}${ebSaved ? " · 얼리버드 강습료 10% 반영" : ""}`,
         schedule: schedule.map((d) => ({
@@ -465,7 +487,7 @@ export function TeamQuote() {
           name: name.trim(),
           phone: phone.trim(),
           date: `${period} (${trip})`,
-          program: `견적 ${LEN_LABEL[len]} · ${dayText}`,
+          program: `견적 ${lenText} · ${dayText}`,
           timeSlot: timeText,
           groupSize: `어른${adults} 어린이${kids} · 반 ${usedSplit.join("+")}`,
           equipment: "",
@@ -544,7 +566,9 @@ export function TeamQuote() {
             {step === 3 && (
               <div className="mt-6 flex flex-col gap-6">
                 <div>
-                  <p className="mb-2 text-[14px] font-semibold text-ink-900">한 번에 몇 시간?</p>
+                  <p className="mb-2 text-[14px] font-semibold text-ink-900">
+                    한 번에 몇 시간? <span className="font-normal text-snow-500">· 모든 날에 적용, 아래에서 날마다 바꿀 수 있어요</span>
+                  </p>
                   <div className="grid grid-cols-3 gap-2">
                     {(Object.keys(LEN_LABEL) as Len[]).map((l) => (
                       <BigChoice
@@ -552,7 +576,7 @@ export function TeamQuote() {
                         on={len === l}
                         onClick={() => {
                           setLen(l);
-                          setPlans(() => dayPlans.map((p, i) => ({ ...p, one: defaultPlan(i).one, two: 0 })));
+                          setPlans(() => dayPlans.map((p, i) => ({ ...p, len: l, one: defaultPlan(i, l).one, two: 0 })));
                         }}
                         title={LEN_LABEL[l]}
                         sub={l === "2h" ? "가장 많이 해요" : l === "3h" ? "넉넉하게" : "집중 코스"}
@@ -610,9 +634,27 @@ export function TeamQuote() {
                             ))}
                           </div>
                         </div>
+                        {p.n > 0 && (
+                          <div className="mt-2.5 flex items-center gap-1.5">
+                            <span className="text-[12px] font-semibold text-snow-500">수업 시간</span>
+                            {(Object.keys(LEN_LABEL) as Len[]).map((l) => (
+                              <button
+                                key={l}
+                                type="button"
+                                onClick={() => setPlan(i, { len: l, one: defaultPlan(i, l).one, two: 0 })}
+                                className={cn(
+                                  "rounded-full px-2.5 py-1 text-[12.5px] font-bold",
+                                  (p.len ?? len) === l ? "bg-ink-900 text-white" : "bg-white text-snow-600 ring-1 ring-snow-300/70"
+                                )}
+                              >
+                                {LEN_LABEL[l]}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                         {p.n === 1 && (
                           <div className="mt-2.5 flex flex-wrap gap-1.5">
-                            {times.map((t, j) => (
+                            {TIMES[p.len ?? len].map((t, j) => (
                               <button
                                 key={t.time}
                                 type="button"
@@ -630,7 +672,7 @@ export function TeamQuote() {
                         )}
                         {p.n === 2 && (
                           <div className="mt-2.5 flex flex-wrap gap-1.5">
-                            {TWICE[len].map((t, j) => (
+                            {TWICE[p.len ?? len].map((t, j) => (
                               <button
                                 key={t.label}
                                 type="button"
@@ -642,7 +684,7 @@ export function TeamQuote() {
                               >
                                 {t.label} 추천{" "}
                                 <span className={cn("font-normal", p.two === j ? "text-white/80" : "text-snow-400")}>
-                                  {t.idx.map((x) => TIMES[len][x].time.slice(0, 5)).join("·")}
+                                  {t.idx.map((x) => TIMES[p.len ?? len][x].time.slice(0, 5)).join("·")}
                                 </span>
                               </button>
                             ))}
@@ -652,7 +694,7 @@ export function TeamQuote() {
                     ))}
                   </ul>
                   <p className="mt-3 text-[12.5px] text-snow-500">
-                    하루 2번이면 중간에 점심 먹고 쉬어요{len === "2h" && " · 1+3교시 또는 2+4교시를 추천드려요"}
+                    하루 2번이면 중간에 점심 먹고 쉬어요 · 2시간 수업은 1+3교시 또는 2+4교시를 추천드려요
                   </p>
                   <p className="mt-1 text-right text-[14px] font-bold text-brand-600">총 수업 {sessions}회</p>
                 </div>
@@ -757,7 +799,7 @@ export function TeamQuote() {
                             <p className="text-[13.5px] font-semibold text-ink-900">
                               {DAY_NAMES[i] ?? `${d.day}째`} 날{startDate && <span className="ml-1 font-normal text-snow-500">{addDays(startDate, i)}</span>}
                               <span className="ml-1.5 text-[12px] font-normal text-snow-500">
-                                · 수업 {d.slots.map((x) => x.label).join("+") || "없음"}
+                                · {dayLine(d)}
                               </span>
                             </p>
                             <div className="mt-1.5 flex flex-wrap gap-1.5">
@@ -794,7 +836,7 @@ export function TeamQuote() {
             {step === 6 && (
               <div className="mt-4">
                 <p className="text-[14px] text-snow-600">
-                  {trip} · {period} · {LEN_LABEL[len]} {dayText} · 수업 {sessions}회
+                  {trip} · {period} · {lenText} · 수업 {sessions}회
                 </p>
 
                 <div className="mt-4 rounded-2xl bg-ink-900 p-5 text-white">
@@ -894,7 +936,7 @@ export function TeamQuote() {
                           <p className="text-[13px] text-snow-600">
                             {d
                               ? `${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""} · ${
-                                  sched!.slots.map((x) => x.label).join("+") || "수업 없음"
+                                  dayLine(sched!)
                                 }`
                               : `${trip} 전체 · ${people}명 · 수업 ${sessions}회`}
                           </p>
