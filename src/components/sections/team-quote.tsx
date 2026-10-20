@@ -21,7 +21,7 @@ import { trackEvent } from "@/components/shared/analytics";
 import { useContent } from "@/lib/use-content";
 import { EARLY_BIRD, isEarlyBirdActive } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
-import { LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, type TicketHours } from "@/config/lift-rental";
+import { HOLIDAYS, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, type TicketHours } from "@/config/lift-rental";
 
 const KAKAO_NOTIFY_URL =
   process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-notify.wlsgh5743669.workers.dev";
@@ -86,11 +86,20 @@ function addDays(date: string, d: number) {
   t.setDate(t.getDate() + d);
   return `${t.getMonth() + 1}/${t.getDate()}(${WEEK[t.getDay()]})`;
 }
-function isWeekend(start: string, offset: number) {
-  if (!start) return true; // 날짜 모르면 주말 요금으로 넉넉하게
+function dateAt(start: string, offset: number) {
   const t = new Date(`${start}T00:00:00`);
   t.setDate(t.getDate() + offset);
-  return t.getDay() === 0 || t.getDay() === 6;
+  return t;
+}
+const keyOf = (t: Date) => `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+/** 공휴일이면 주말 요금 (시즌 공휴일 목록은 config/lift-rental.ts) */
+function isHoliday(start: string, offset: number) {
+  return !!start && HOLIDAYS.includes(keyOf(dateAt(start, offset)));
+}
+function isWeekend(start: string, offset: number) {
+  if (!start) return true; // 날짜 모르면 주말 요금으로 넉넉하게
+  const t = dateAt(start, offset);
+  return t.getDay() === 0 || t.getDay() === 6 || HOLIDAYS.includes(keyOf(t));
 }
 
 /** n명을 g개 반으로 고르게 (6명 3반 → 2+2+2) */
@@ -255,6 +264,12 @@ export function TeamQuote() {
     return n >= 2 ? 7 : n === 1 ? (schedule[i].len === "2h" ? 3 : 5) : 0;
   };
   const ticketOf = (i: number): TicketHours | 0 => dayTickets[i] ?? autoTicket(i);
+  /** 그날(주중/주말) 1인 할인가 */
+  const dayRate = (i: number, t: TicketHours, child: boolean, withRental: boolean) => {
+    const w = isWeekend(startDate, i) ? 1 : 0;
+    const who = child ? "child" : "adult";
+    return roundUp100((LIFT_PRICES[t][who][w] + (withRental ? RENTAL_PRICES[t][who][w] : 0)) * (1 - LIFT_RENTAL_DISCOUNT));
+  };
   const RENTAL_H: Record<TicketHours, number> = { 3: 4, 5: 6, 7: 8 };
   const ticketText = (t: TicketHours | 0) => (t ? `리프트 ${t}시간` : "안 씀");
   function setDayTicket(i: number, t: TicketHours | 0) {
@@ -393,7 +408,7 @@ export function TeamQuote() {
       .join(" / ");
     // 리프트·장비는 주중 / 주말·공휴일 요금이 달라요 (날짜 미정이면 주말 요금)
     const weekend = isWeekend(startDate, i);
-    const rateTag = startDate ? (weekend ? "주말 요금" : "주중 요금") : "주말 요금(날짜 미정)";
+    const rateTag = startDate ? (isHoliday(startDate, i) ? "공휴일·주말 요금" : weekend ? "주말 요금" : "주중 요금") : "주말 요금(날짜 미정)";
     const liftCost = extras.reduce((a, x) => a + x.perDayList[i].sale * x.count, 0);
     return { day: d.day, date: startDate ? addDays(startDate, i) : "", sum, rateTag, weekend, liftCost, rows: rows.filter((r) => r.items.length) };
   });
@@ -729,7 +744,11 @@ export function TeamQuote() {
                         <div className="flex items-center justify-between gap-2">
                           <p className="min-w-0 whitespace-nowrap text-[15px] font-bold text-ink-900">
                             {days > 1 ? `${DAY_NAMES[i]} 날` : "수업 날"}
-                            {startDate && <span className="block text-[12.5px] font-medium text-snow-500">{addDays(startDate, i)}</span>}
+                            {startDate && (
+                              <span className="block text-[12.5px] font-medium text-snow-500">
+                                {addDays(startDate, i)} <RateBadge weekend={isWeekend(startDate, i)} holiday={isHoliday(startDate, i)} />
+                              </span>
+                            )}
                           </p>
                           <div className="flex shrink-0 rounded-full bg-white p-0.5 ring-1 ring-snow-300/70">
                             {([0, 1, 2] as const).map((n) => (
@@ -952,9 +971,16 @@ export function TeamQuote() {
                         const cur = ticketOf(i);
                         const rec = autoTicket(i);
                         return (
-                          <li key={d.day}>
+                          <li
+                            key={d.day}
+                            className={cn(
+                              "rounded-xl p-2.5",
+                              isWeekend(startDate, i) ? "bg-rose-50 ring-1 ring-rose-200" : "bg-sky-50/60 ring-1 ring-sky-100"
+                            )}
+                          >
                             <p className="text-[13.5px] font-semibold text-ink-900">
-                              {DAY_NAMES[i] ?? `${d.day}째`} 날{startDate && <span className="ml-1 font-normal text-snow-500">{addDays(startDate, i)}</span>}
+                              {DAY_NAMES[i] ?? `${d.day}째`} 날{startDate && <span className="ml-1 font-normal text-snow-500">{addDays(startDate, i)}</span>}{" "}
+                              <RateBadge weekend={isWeekend(startDate, i)} holiday={isHoliday(startDate, i)} dateless={!startDate} />
                               <span className="ml-1.5 text-[12px] font-normal text-snow-500">
                                 · {dayLine(d)}
                               </span>
@@ -977,7 +1003,9 @@ export function TeamQuote() {
                               ))}
                             </div>
                             <p className="mt-1 text-[12px] text-snow-500">
-                              {cur ? `리프트 ${cur}시간 + 장비 ${RENTAL_H[cur]}시간 (리프트+장비 손님)` : "이날은 리프트·장비 안 써요"}
+                              {cur
+                                ? `리프트 ${cur}시간 + 장비 ${RENTAL_H[cur]}시간 · 1인 대인 ${won(dayRate(i, cur, false, true))} · 소인 ${won(dayRate(i, cur, true, true))} (리프트만 대인 ${won(dayRate(i, cur, false, false))} · 소인 ${won(dayRate(i, cur, true, false))})`
+                                : "이날은 리프트·장비 안 써요"}
                             </p>
                           </li>
                         );
@@ -1116,7 +1144,7 @@ export function TeamQuote() {
                     <div className="flex flex-wrap gap-1.5">
                       {[
                         { label: "전체", i: 0 },
-                        ...dayTotals.map((d) => ({ label: `${d.day}일차`, i: d.day })),
+                        ...dayTotals.map((d) => ({ label: `${d.day}일차${startDate && isWeekend(startDate, d.day - 1) ? " 주말" : ""}`, i: d.day })),
                         { label: "강습료만", i: -1 },
                         ...(extrasTotal + helmetTotal > 0 ? [{ label: "장비료만", i: -2 }] : []),
                       ].map((t) => (
@@ -1329,6 +1357,20 @@ export function TeamQuote() {
         </div>
       </Container>
     </section>
+  );
+}
+
+/** 주중(파랑) / 주말·공휴일(빨강) 요금 표시 — 금요일은 주중, 토·일은 주말 요금 */
+function RateBadge({ weekend, holiday, dateless }: { weekend: boolean; holiday?: boolean; dateless?: boolean }) {
+  return (
+    <span
+      className={cn(
+        "inline-block whitespace-nowrap rounded-full px-2 py-0.5 align-middle text-[11px] font-bold",
+        weekend ? "bg-rose-500 text-white" : "bg-sky-500 text-white"
+      )}
+    >
+      {dateless ? "주말 요금(날짜 미정)" : holiday ? "공휴일·주말 요금" : weekend ? "주말 요금" : "주중 요금"}
+    </span>
   );
 }
 
