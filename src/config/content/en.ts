@@ -460,7 +460,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "From what age can children take lessons?",
     answer:
-      "Usually from age 5 (international age).\nAnyone from kids to adults can join, with lessons tailored to age and level.",
+      "Ski and snowboard lessons are available from age 4 (international age).\nAnyone from kids to adults can join, with lessons tailored to age and level.",
   },
   {
     question: "What are the lesson times?",
@@ -1140,7 +1140,7 @@ const liftPassPaymentLabels: SiteContent["liftPassPaymentLabels"] = {
 };
 
 const ageGroupLabels: SiteContent["ageGroupLabels"] = {
-  kids: "Child (age 5+, pre-school)",
+  kids: "Child (age 4+, pre-school)",
   elementary: "Elementary school",
   teen: "Middle/high school",
   adult: "Adult",

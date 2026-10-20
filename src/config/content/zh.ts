@@ -423,7 +423,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "几岁可以开始上课？",
     answer:
-      "一般满5周岁即可。\n儿童到成人都可以报名，课程会根据年龄和水平量身定制。",
+      "滑雪和单板均从满4周岁开始。\n儿童到成人都可以报名，课程会根据年龄和水平量身定制。",
   },
   {
     question: "课程时间是怎样的？",
@@ -1101,7 +1101,7 @@ const liftPassPaymentLabels: SiteContent["liftPassPaymentLabels"] = {
 };
 
 const ageGroupLabels: SiteContent["ageGroupLabels"] = {
-  kids: "幼儿（满5岁以上）",
+  kids: "幼儿（满4岁以上）",
   elementary: "小学生",
   teen: "初中~高中生",
   adult: "成人",

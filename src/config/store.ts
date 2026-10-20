@@ -87,7 +87,7 @@ export const storeProducts: StoreProduct[] = [
     id: "kids",
     name: "유아 1:1 강습",
     summary: "처음 스키장에 온 아이도 놀이처럼 즐겁게. 강사 한 명이 아이 한 명만 봐요.",
-    points: ["만 4~5세부터", "놀이식 레슨 · 안전 최우선", "레슨 사진·영상으로 부모님께 공유"],
+    points: ["만 4세부터", "놀이식 레슨 · 안전 최우선", "레슨 사진·영상으로 부모님께 공유"],
     price: "140,000원~",
     priceNote: "1:1 · 2시간 기준",
     image: "/images/store/kids.jpg",

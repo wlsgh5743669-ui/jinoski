@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Check, Copy, Link2, MessageCircle, Minus, Plus, Send, Trash2, UserPlus } from "lucide-react";
+import { Check, Copy, ImageDown, Link2, MessageCircle, Minus, Plus, Send, Trash2, UserPlus } from "lucide-react";
+import { renderQuoteImage } from "@/lib/quote-image";
 import { Container } from "@/components/shared/container";
 import { trackEvent } from "@/components/shared/analytics";
 import { useContent } from "@/lib/use-content";
@@ -125,6 +126,7 @@ export function TeamQuote() {
   const [note, setNote] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
   const [copied, setCopied] = useState<"" | "text" | "link">("");
+  const [imgState, setImgState] = useState<"" | "making" | "done">("");
 
   // 링크로 받은 견적 불러오기 (?d=3&l=2h&s=0.2&e=1&t=가족1_3_ski~가족2_3_board&sd=2026-12-20)
   useEffect(() => {
@@ -285,6 +287,65 @@ export function TeamQuote() {
       trackEvent("quote_copy", { kind });
     } catch {
       // clipboard unavailable — summary text stays selectable
+    }
+  }
+
+  // 견적을 이미지(PNG)로 만들어 저장 — 휴대폰은 공유창(사진 저장·카톡 전송), PC는 다운로드
+  async function saveImage() {
+    setImgState("making");
+    trackEvent("quote_image", { teams: teams.length, people: totalPeople });
+    try {
+      const blob = await renderQuoteImage({
+        title: `${trip} · ${lenLabel} · 하루 ${perDay}회 · 수업 ${sessions}회`,
+        total: won(grand),
+        totalSub: `${teams.length}팀 ${totalPeople}명 · 1인 평균 ${won(totalPeople ? Math.round(grand / totalPeople / 1000) * 1000 : 0)}${
+          eb ? " · 얼리버드 10% 반영" : ""
+        }`,
+        schedule: schedule.map((d) => ({
+          left: `${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}${d.tag ? ` ${d.tag}` : ""}`,
+          right: d.slots.map((x) => x.time).join("  ·  ") || "-",
+        })),
+        teams: rows.map((r) => ({
+          name: `${r.name} · ${r.people}명 (${SPORTS.find((x) => x.value === r.sport)!.label})`,
+          amount: won(r.total),
+          lines: [
+            `강습 · 강사 ${r.groups.length}명(${r.groups.map((x) => `1:${x}`).join("+")}) · 1회 ${won(r.perSession)} × ${sessions}회 = ${won(r.lessonTotal)}`,
+            ...(r.extra !== "none"
+              ? [
+                  `${extraLabel(r)}${r.kids ? ` (어린이 ${r.kids})` : ""} × ${days}일 = ${won(r.extraTotal)} (정가 ${won(r.extraRegular)}에서 40% 할인)`,
+                ]
+              : []),
+          ],
+        })),
+        notes: [
+          "강습 허가권(패찰) 포함 · 매 수업 사진·영상 무료",
+          anyExtra ? `리프트·장비 40% 할인 · ${HELMET_NOTE} · 공휴일은 주말 요금` : "리프트권·장비·의류 렌탈 별도",
+          "예상 견적이에요. 강사 일정 확인 후 확정 금액을 안내드려요.",
+        ],
+        phone: contact.phone,
+      });
+      const file = new File([blob], `지노스키_견적_${trip.replace(/\s/g, "")}.png`, { type: "image/png" });
+      const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
+      if (nav.canShare?.({ files: [file] }) && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        try {
+          await nav.share({ files: [file], title: "지노스키 견적" });
+        } catch {
+          // 공유창 닫음 — 무시
+        }
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      }
+      setImgState("done");
+      setTimeout(() => setImgState(""), 3000);
+    } catch {
+      setImgState("");
     }
   }
 
@@ -567,6 +628,18 @@ export function TeamQuote() {
               </p>
             </div>
 
+            <button
+              type="button"
+              onClick={saveImage}
+              disabled={imgState === "making" || perDay === 0}
+              className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ink-900 text-[15px] font-bold text-white transition-all hover:bg-black active:scale-[0.98] disabled:opacity-50"
+            >
+              {imgState === "done" ? <Check size={18} /> : <ImageDown size={18} />}
+              {imgState === "making" ? "이미지 만드는 중..." : imgState === "done" ? "저장 완료! 카톡으로 보내주세요" : "견적서 이미지로 저장"}
+            </button>
+            <p className="-mt-2 text-center text-[12px] text-snow-500">
+              저장한 사진(또는 화면 캡처)을 카톡 「지노스키」로 보내주시면 바로 확인해 드려요
+            </p>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"

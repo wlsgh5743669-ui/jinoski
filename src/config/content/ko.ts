@@ -445,7 +445,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "몇 살부터 강습이 가능한가요?",
     answer:
-      "보통 만 5세 이상부터 가능합니다.\n어린이부터 성인까지 누구나 수강 가능하며, 연령과 수준에 맞춘 맞춤형 레슨을 진행합니다.",
+      "스키·스노보드 모두 만 4세부터 가능합니다.\n어린이부터 성인까지 누구나 수강 가능하며, 연령과 수준에 맞춘 맞춤형 레슨을 진행합니다.",
   },
   {
     question: "강습 시간은 어떻게 되나요?",
@@ -1125,7 +1125,7 @@ const liftPassPaymentLabels: SiteContent["liftPassPaymentLabels"] = {
 };
 
 const ageGroupLabels: SiteContent["ageGroupLabels"] = {
-  kids: "유아 (만 5세 이상)",
+  kids: "유아 (만 4세 이상)",
   elementary: "초등학생",
   teen: "중~고교생",
   adult: "성인",
