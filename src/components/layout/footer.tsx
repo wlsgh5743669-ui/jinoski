@@ -61,9 +61,9 @@ export function Footer() {
                 <MessageCircle size={18} />
               </a>
               <a
-                href={contact.smartStore}
-                target="_blank"
-                rel="noreferrer"
+                {...(locale === "ko"
+                  ? { href: "/ko/store/" }
+                  : { href: contact.smartStore, target: "_blank", rel: "noreferrer" })}
                 aria-label={ui.footer.smartStoreAriaLabel}
                 className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 transition-colors hover:border-brand-500 hover:text-brand-400"
               >

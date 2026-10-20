@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, ShoppingBag } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
@@ -11,6 +12,11 @@ import { cn } from "@/lib/utils";
 
 export function Header() {
   const { navLinks, contact, ui } = useContent();
+  // 한국어: 스토어 버튼 → 홈페이지 안의 상품 모음 페이지(/ko/store), 그 외 언어는 스마트스토어로
+  const isKo = useLocale() === "ko";
+  const storeLink = isKo
+    ? { href: "/ko/store/" }
+    : { href: contact.smartStore, target: "_blank", rel: "noreferrer" };
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -68,9 +74,7 @@ export function Header() {
           <div className="hidden items-center gap-3 lg:flex">
             <LanguageSwitcher dark={!scrolled} />
             <a
-              href={contact.smartStore}
-              target="_blank"
-              rel="noreferrer"
+              {...storeLink}
               className={cn(
                 "inline-flex h-11 items-center gap-1.5 rounded-full border px-5 text-[14px] font-semibold transition-all active:scale-[0.98]",
                 scrolled
@@ -176,9 +180,7 @@ export function Header() {
                   {ui.header.bookNowButton}
                 </Link>
                 <a
-                  href={contact.smartStore}
-                  target="_blank"
-                  rel="noreferrer"
+                  {...storeLink}
                   className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-white/20 text-[16px] font-semibold text-white"
                 >
                   <ShoppingBag size={17} />

@@ -41,7 +41,6 @@ import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
 import { getContent } from "@/config/site";
 import { approxUsd, withUsd } from "@/lib/usd";
-import { paymentConfig } from "@/config/payments";
 
 /** 영어·중국어 예약: 문자·카톡 대신 이메일로 접수하고 이메일로 확정 안내 */
 const FOREIGN_TEXT = {
@@ -526,7 +525,7 @@ export function BookingWizard() {
         />
       </div>
 
-      {!foreign && step === 1 && <PayChoice storeUrl={paymentConfig.smartStoreLessons || content.contact.smartStore} />}
+      {!foreign && step === 1 && <PayChoice storeUrl="/ko/store/" />}
 
       <div className={cn("flex-1", !foreign && step === 1 ? "mt-8" : "mt-10")}>
         <AnimatePresence mode="popLayout" initial={false}>
@@ -1055,13 +1054,11 @@ function PayChoice({ storeUrl }: { storeUrl: string }) {
     <div className="mt-6 grid grid-cols-2 gap-2.5">
       <a
         href={storeUrl}
-        target="_blank"
-        rel="noreferrer"
         onClick={() => trackEvent("pay_smartstore_click", { from: "reserve_top" })}
         className="flex flex-col rounded-2xl border-2 border-[#03C75A] bg-[#03C75A]/[0.06] px-4 py-3.5 transition-colors hover:bg-[#03C75A]/[0.12]"
       >
         <span className="text-[14.5px] font-bold text-ink-900">💳 카드·네이버페이</span>
-        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">스마트스토어에서 바로 예약·결제 →</span>
+        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">스토어 상품 보고 바로 결제 →</span>
       </a>
       <div className="flex flex-col rounded-2xl border-2 border-brand-500 bg-brand-50 px-4 py-3.5">
         <span className="text-[14.5px] font-bold text-brand-600">📝 예약·상담 문의</span>

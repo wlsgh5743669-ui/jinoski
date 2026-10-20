@@ -34,7 +34,8 @@ const T = {
 export function PaymentMethods({ locale }: { locale: Locale }) {
   const t = T[locale];
   const { contact } = getContent(locale);
-  const storeUrl = paymentConfig.smartStoreLessons || contact.smartStore;
+  // 한국어: 홈페이지 안의 스토어 상품 모음 페이지로
+  const storeUrl = locale === "ko" ? "/ko/store/" : paymentConfig.smartStoreLessons || contact.smartStore;
   const cards: { key: string; icon: React.ReactNode; title: string; body: string; href?: string; button?: string; tone: string }[] = [
     { key: "bank", icon: <Building2 size={22} />, title: t.bank.title, body: t.bank.body, tone: "bg-brand-50 text-brand-600" },
   ];

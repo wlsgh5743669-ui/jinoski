@@ -24,8 +24,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/privacy/",
   ];
 
+  // 스토어 페이지는 한국어만 있어요
+  const koOnly = [
+    {
+      url: `${siteConfig.url}/ko/store/`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    },
+  ];
+
   // 언어별 페이지를 각각 한 줄씩 넣고, 서로를 대체 언어로 연결 (구글 권장 방식)
-  return locales.flatMap((pageLocale) =>
+  return [...koOnly, ...locales.flatMap((pageLocale) =>
     paths.map((path) => ({
       url: `${siteConfig.url}${localizedPath(pageLocale, path)}`,
       lastModified,
@@ -40,5 +50,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
         ),
       },
     }))
-  );
+  )];
 }
