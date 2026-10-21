@@ -35,7 +35,7 @@ const TIMES: Record<Len, { label: string; time: string }[]> = {
     { label: "2교시", time: "11:00~13:00" },
     { label: "3교시", time: "13:20~15:20" },
     { label: "4교시", time: "15:30~17:30" },
-    { label: "야간", time: "19:00~21:00" },
+    { label: "5교시(야간)", time: "19:00~21:00" },
   ],
   "3h": [
     { label: "오전", time: "09:00~12:00" },
@@ -53,6 +53,10 @@ const TWICE: Record<Len, { label: string; idx: [number, number]; rec?: boolean }
   "2h": [
     { label: "1+3교시", idx: [0, 2], rec: true },
     { label: "2+4교시", idx: [1, 3], rec: true },
+    { label: "1+5교시", idx: [0, 4] },
+    { label: "2+5교시", idx: [1, 4] },
+    { label: "3+5교시", idx: [2, 4] },
+    { label: "4+5교시", idx: [3, 4] },
   ],
   "3h": [
     { label: "오전+오후", idx: [0, 1], rec: true },
@@ -1522,7 +1526,7 @@ function PriceGuide({ prices, people }: { prices: { table: Record<Len, number[]>
                     return ts.length ? (
                       <li key={l} className="flex gap-2">
                         <span className="w-11 shrink-0 font-semibold text-snow-500">{LEN_LABEL[l]}</span>
-                        <span>{ts.map((t) => (l === "2h" && part.key !== "night" ? `${t.label} ${t.time}` : t.time)).join(" · ")}</span>
+                        <span>{ts.map((t) => (l === "2h" ? `${t.label} ${t.time}` : t.time)).join(" · ")}</span>
                       </li>
                     ) : null;
                   })}
