@@ -521,7 +521,7 @@ export function TeamQuote() {
       ? ["■ 날짜별 합계", ...dayTotals.map((d) => `  ${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}: ${won(d.total)}`)]
       : []),
     `예상 합계: ${won(grand)}${ebSaved ? ` (얼리버드 강습료 10% 할인 -${won(ebSaved)} 반영)` : ""}`,
-    "※ 스키복·보드복은 제휴 렌탈샵 안내 · 강사 일정 확인 후 확정",
+    "※ 의류는 제휴 렌탈샵 안내 드립니다.^^ · 강사 일정 확인 후 확정",
   ].join("\n");
 
   function shareUrl() {
@@ -599,7 +599,7 @@ export function TeamQuote() {
             ? `얼리버드 10%는 강습료에만 적용 (-${won(ebSaved)}) · 리프트·장비 40% 할인 · 헬멧 할인 제외`
             : "매 수업 사진·영상 무료 · 리프트·장비 40% 할인 · 헬멧 할인 제외",
           ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
-          "스키복·보드복은 제휴 렌탈샵을 안내해 드려요",
+          "의류는 제휴 렌탈샵 안내 드립니다.^^",
           "예상 견적이에요. 강사 일정 확인 후 확정 금액을 안내드려요.",
         ],
         phone: contact.phone,
@@ -1037,7 +1037,7 @@ export function TeamQuote() {
                     </ul>
                   </div>
                 )}
-                <p className="text-[12.5px] text-snow-500">스키복·보드복은 제휴 렌탈샵을 안내해 드려요.</p>
+                <p className="text-[12.5px] text-snow-500">의류는 제휴 렌탈샵 안내 드립니다.^^</p>
                 <PriceBoard />
               </div>
             )}
@@ -1155,7 +1155,7 @@ export function TeamQuote() {
                       </p>
                     ))}
                     <p className="mt-1 text-[12px] text-snow-500">
-                      {startDate ? "날짜별 평일·주말 요금" : "날짜 미정이라 주말 요금"} · 공휴일은 주말 요금 · 스키복·보드복은 제휴 렌탈샵 안내
+                      {startDate ? "날짜별 평일·주말 요금" : "날짜 미정이라 주말 요금"} · 공휴일은 주말 요금 · 의류는 제휴 렌탈샵 안내 드립니다.^^
                     </p>
                     <div className="mt-3">
                       <PriceBoard />
