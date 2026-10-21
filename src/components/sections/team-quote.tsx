@@ -76,7 +76,7 @@ const newPerson = (): Person => ({ name: "", extra: "none", helmet: 0 });
 const EXTRA_CODE: Record<Extra, string> = { none: "n", lift: "l", liftRental: "r" };
 const CODE_EXTRA: Record<string, Extra> = { n: "none", l: "lift", r: "liftRental" };
 const EXTRA_LABEL: Record<Extra, string> = { none: "강습만", lift: "+ 리프트", liftRental: "+ 리프트·장비" };
-const HELMET_LABEL: Record<Helmet, string> = { 0: "헬멧 X", 1: "헬멧 5천", 2: "바이저 1.5만" };
+const HELMET_LABEL: Record<Helmet, string> = { 0: "헬멧 없음", 1: "헬멧 5천", 2: "바이저 1.5만" };
 const LEN_CODE: Record<Len, string> = { "2h": "a", "3h": "b", "4h": "c" };
 const CODE_LEN: Record<string, Len> = { a: "2h", b: "3h", c: "4h" };
 const DAY_NAMES = ["첫째", "둘째", "셋째", "넷째", "다섯째", "여섯째", "일곱째", "여덟째", "아홉째", "열째"];
@@ -941,9 +941,9 @@ export function TeamQuote() {
                           {x.child ? "어린이" : "어른"}
                         </span>
                       </div>
-                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                        {/* 강습은 기본 포함 — 리프트만 / 리프트+장비 / 필요없음 중 하나 */}
-                        <span className="rounded-full bg-snow-100 px-3 py-1.5 text-[12.5px] font-semibold text-snow-500">✓ 강습 포함</span>
+                      <p className="mt-2 text-[12px] font-semibold text-snow-500">✓ 강습은 기본 포함 · 리프트·장비만 골라주세요</p>
+                      <div className="mt-1.5 grid grid-cols-3 gap-1.5">
+                        {/* 리프트만 / 리프트+장비 / 필요없음 중 하나 */}
                         {(["lift", "liftRental", "none"] as Extra[]).map((e) => (
                           <button
                             key={e}
@@ -951,7 +951,7 @@ export function TeamQuote() {
                             onClick={() => setPerson(i, { extra: e })}
                             aria-pressed={x.extra === e}
                             className={cn(
-                              "rounded-full border px-3 py-1.5 text-[12.5px] font-semibold",
+                              "whitespace-nowrap rounded-full border px-1 py-2 text-[12.5px] font-semibold",
                               x.extra === e
                                 ? e === "none"
                                   ? "border-ink-700 bg-ink-700 text-white"
@@ -963,14 +963,14 @@ export function TeamQuote() {
                           </button>
                         ))}
                       </div>
-                      <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      <div className="mt-1.5 grid grid-cols-3 gap-1.5">
                         {([0, 1, 2] as Helmet[]).map((h) => (
                           <button
                             key={h}
                             type="button"
                             onClick={() => setPerson(i, { helmet: h })}
                             className={cn(
-                              "rounded-full border px-3 py-1 text-[12px] font-semibold",
+                              "whitespace-nowrap rounded-full border px-1 py-1.5 text-[12px] font-semibold",
                               x.helmet === h ? "border-ink-900 bg-ink-900 text-white" : "border-snow-300/70 text-snow-600"
                             )}
                           >
@@ -1307,7 +1307,11 @@ export function TeamQuote() {
                   <MessageCircle size={18} /> 카톡으로 상담하기
                 </a>
                 <p className="mt-2 text-center text-[12.5px] text-snow-500">
-                  저장한 사진(또는 화면 캡처)을 카톡 「지노스키」로 보내주시면 바로 확인해 드려요
+                  {copied === "text" ? (
+                    <b className="text-ink-900">✓ 견적 내용이 복사됐어요 · 카톡 채팅창에 붙여넣기만 하세요</b>
+                  ) : (
+                    "저장한 사진(또는 화면 캡처)을 카톡 「지노스키」로 보내주시면 바로 확인해 드려요"
+                  )}
                 </p>
 
                 <div className="mt-5 rounded-2xl bg-ice-200/70 p-4">
@@ -1456,6 +1460,8 @@ const partOf = (time: string) => {
   return h < 13 ? "am" : h < 19 ? "pm" : "night";
 };
 /** 2단계(인원) 아래 안내: 강습료 가격대 · 패찰 · 시간표 · 저녁 정설 */
+/** 140000 → 14만, 125000 → 12.5만 */
+const man = (n: number) => `${Number((n / 10000).toFixed(1))}만`;
 function PriceGuide({ prices, people }: { prices: { table: Record<Len, number[]>; pass: Record<Len, number> }; people: number }) {
   const lens = Object.keys(LEN_LABEL) as Len[];
   const sizes = Math.max(...lens.map((l) => prices.table[l].length));
@@ -1466,7 +1472,7 @@ function PriceGuide({ prices, people }: { prices: { table: Record<Len, number[]>
       <div>
         <p className="text-[14.5px] font-bold text-ink-900">💰 강습료 (1회 · 강사 1명 기준)</p>
         <div className="mt-2 overflow-x-auto">
-          <table className="w-full min-w-[300px] text-center text-[12.5px] tabular-nums">
+          <table className="w-full text-center text-[12.5px] tabular-nums">
             <thead>
               <tr className="text-snow-500">
                 <th className="py-1 text-left font-semibold">인원</th>
@@ -1483,8 +1489,8 @@ function PriceGuide({ prices, people }: { prices: { table: Record<Len, number[]>
                     const v = prices.table[l][n - 1];
                     return (
                       <td key={l} className="py-1.5 text-ink-900">
-                        {v ? won(v) : "-"}
-                        {v && n > 1 ? <span className="block text-[11px] font-normal text-snow-500">1인 {won(Math.round(v / n / 100) * 100)}</span> : null}
+                        {v ? `${man(v)}원` : "-"}
+                        {v && n > 1 ? <span className="block text-[11px] font-normal text-snow-500">1인 {man(Math.round(v / n / 1000) * 1000)}</span> : null}
                       </td>
                     );
                   })}
