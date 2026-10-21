@@ -1165,18 +1165,33 @@ export function TeamQuote() {
                   <div className="mt-4 rounded-2xl border-2 border-ink-900 p-4">
                     <div className="flex flex-wrap gap-1.5">
                       {[
-                        { label: "전체", i: 0 },
-                        ...dayTotals.map((d) => ({ label: `${d.day}일차${startDate && isWeekend(startDate, d.day - 1) ? " 주말" : ""}`, i: d.day })),
-                        { label: "강습료만", i: -1 },
-                        ...(extrasTotal + helmetTotal > 0 ? [{ label: "장비료만", i: -2 }] : []),
+                        ...dayTotals.map((d) => {
+                          const hol = !!startDate && isHoliday(startDate, d.day - 1);
+                          const wk = !!startDate && isWeekend(startDate, d.day - 1);
+                          return { label: `${d.day}일차${startDate ? (hol ? " 공휴일" : wk ? " 주말" : " 주중") : ""}`, i: d.day, tone: startDate ? (wk ? "red" : "blue") : "" };
+                        }),
+                        { label: "강습료만", i: -1, tone: "" },
+                        ...(extrasTotal + helmetTotal > 0 ? [{ label: "장비료만", i: -2, tone: "" }] : []),
+                        { label: "전체", i: 0, tone: "" },
                       ].map((t) => (
                         <button
                           key={t.i}
                           type="button"
                           onClick={() => setTotalTab(t.i)}
+                          aria-pressed={totalTab === t.i}
                           className={cn(
                             "rounded-full px-3.5 py-1.5 text-[13px] font-bold",
-                            totalTab === t.i ? "bg-ink-900 text-white" : "bg-snow-100 text-ink-700"
+                            t.tone === "red"
+                              ? totalTab === t.i
+                                ? "bg-rose-500 text-white"
+                                : "bg-rose-50 text-rose-600"
+                              : t.tone === "blue"
+                                ? totalTab === t.i
+                                  ? "bg-brand-500 text-white"
+                                  : "bg-brand-50 text-brand-600"
+                                : totalTab === t.i
+                                  ? "bg-ink-900 text-white"
+                                  : "bg-snow-100 text-ink-700"
                           )}
                         >
                           {t.label}
@@ -1821,6 +1836,7 @@ function RangeCalendar({
           const isEnd = !!endD && days > 1 && d.getTime() === endD.getTime();
           const inRange = !!startD && !!endD && d > startD && d < endD;
           const wk = d.getDay();
+          const red = wk === 0 || HOLIDAYS.includes(dateKey(d));
           return (
             <div
               key={dateKey(d)}
@@ -1838,7 +1854,7 @@ function RangeCalendar({
                 className={cn(
                   "flex h-10 w-10 items-center justify-center rounded-full text-[14.5px] font-medium transition-colors",
                   past && "cursor-not-allowed text-snow-300",
-                  !past && !isStart && !isEnd && (wk === 0 ? "text-rose-500" : wk === 6 ? "text-brand-600" : "text-ink-800"),
+                  !past && !isStart && !isEnd && (red ? "font-bold text-rose-500" : wk === 6 ? "text-brand-600" : "text-ink-800"),
                   !past && !isStart && !isEnd && "hover:bg-ice-200",
                   (isStart || isEnd) && "bg-brand-500 font-bold text-white"
                 )}
@@ -1849,7 +1865,10 @@ function RangeCalendar({
           );
         })}
       </div>
-      <p className="mt-2 text-center text-[12.5px] text-snow-500">
+      <p className="mt-2 text-center text-[12px] text-snow-500">
+        <span className="font-semibold text-rose-500">빨간 날(일·공휴일)</span>과 <span className="font-semibold text-brand-600">토요일</span>은 리프트·장비 주말 요금이에요
+      </p>
+      <p className="mt-1 text-center text-[12.5px] text-snow-500">
         {picking ? "마지막 날을 눌러주세요 (당일이면 같은 날을 한 번 더)" : "첫날을 누르고, 마지막 날을 누르면 기간이 정해져요"}
       </p>
     </div>
