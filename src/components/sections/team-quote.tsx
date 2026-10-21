@@ -78,7 +78,7 @@ const newPerson = (): Person => ({ name: "", extra: "none", helmet: 0 });
 const EXTRA_CODE: Record<Extra, string> = { none: "n", lift: "l", liftRental: "r" };
 const CODE_EXTRA: Record<string, Extra> = { n: "none", l: "lift", r: "liftRental" };
 const EXTRA_LABEL: Record<Extra, string> = { none: "강습만", lift: "+ 리프트", liftRental: "+ 리프트·장비" };
-const HELMET_LABEL: Record<Helmet, string> = { 0: "헬멧 없음", 1: "헬멧 5천", 2: "바이저 1.5만" };
+const HELMET_LABEL: Record<Helmet, string> = { 0: "헬멧 있음", 1: "헬멧 5천", 2: "바이저 1.5만" };
 const LEN_CODE: Record<Len, string> = { "2h": "a", "3h": "b", "4h": "c" };
 const CODE_LEN: Record<string, Len> = { a: "2h", b: "3h", c: "4h" };
 const DAY_NAMES = ["첫째", "둘째", "셋째", "넷째", "다섯째", "여섯째", "일곱째", "여덟째", "아홉째", "열째"];
@@ -968,9 +968,9 @@ export function TeamQuote() {
                           {x.child ? "어린이" : "어른"}
                         </span>
                       </div>
-                      <p className="mt-2 text-[12px] font-semibold text-snow-500">✓ 강습은 기본 포함 · 리프트·장비만 골라주세요</p>
-                      <div className="mt-1.5 grid grid-cols-3 gap-1.5">
-                        {/* 리프트만 / 리프트+장비 / 필요없음 중 하나 */}
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                        {/* 강습은 고정 포함 — 리프트만 / 리프트+장비 / 필요없음 중 하나 */}
+                        <span className="rounded-full bg-snow-100 px-3 py-1.5 text-[12.5px] font-semibold text-snow-500">✓ 강습 포함</span>
                         {(["lift", "liftRental", "none"] as Extra[]).map((e) => (
                           <button
                             key={e}
@@ -978,7 +978,7 @@ export function TeamQuote() {
                             onClick={() => setPerson(i, { extra: e })}
                             aria-pressed={x.extra === e}
                             className={cn(
-                              "whitespace-nowrap rounded-full border px-1 py-2 text-[12.5px] font-semibold",
+                              "rounded-full border px-3 py-1.5 text-[12.5px] font-semibold",
                               x.extra === e
                                 ? e === "none"
                                   ? "border-ink-700 bg-ink-700 text-white"
@@ -986,6 +986,7 @@ export function TeamQuote() {
                                 : "border-snow-300/70 text-ink-700"
                             )}
                           >
+                            {x.extra === e && e !== "none" && "✓ "}
                             {e === "none" ? "필요없음" : e === "lift" ? "리프트만" : "리프트+장비"}
                           </button>
                         ))}
@@ -998,9 +999,14 @@ export function TeamQuote() {
                             onClick={() => setPerson(i, { helmet: h })}
                             className={cn(
                               "whitespace-nowrap rounded-full border px-1 py-1.5 text-[12px] font-semibold",
-                              x.helmet === h ? "border-ink-900 bg-ink-900 text-white" : "border-snow-300/70 text-snow-600"
+                              x.helmet === h
+                                ? h === 0
+                                  ? "border-ink-900 bg-ink-900 text-white"
+                                  : "border-brand-500 bg-brand-500 text-white"
+                                : "border-snow-300/70 text-snow-600"
                             )}
                           >
+                            {x.helmet === h && h !== 0 && "✓ "}
                             {HELMET_LABEL[h]}
                           </button>
                         ))}
