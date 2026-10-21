@@ -668,6 +668,7 @@ export function TeamQuote() {
           imageW: 1080,
           imageH,
           headline: `1인 1회 약 ${won(perHead1)} · 합계 ${won(grand)}`,
+          request: [teacherPref ? `강사 ${TEACHER_PREFS[teacherPref]}` : "", note.trim()].filter(Boolean).join(" / "),
           name: name.trim(),
           phone: phone.trim(),
           date: `${period} (${trip})`,

@@ -110,6 +110,20 @@ export default {
 
 // 카카오 "나에게 보내기" 텍스트는 최대 200자
 function formatBooking(d) {
+  // 견적 계산기 알림은 짧게 — 전체 내용은 「견적 보기」 버튼(손님이 만든 견적 화면 그대로)으로 확인
+  if (d.kind === "견적" || d.kind === "견적 수정") {
+    const q = [
+      `[지노스키 ${d.kind}] ${d.name}`,
+      `📞 ${d.phone}`,
+      `📅 ${d.date}`,
+      `👥 ${d.groupSize}`,
+      `💰 ${d.total}`,
+      d.request ? `📝 ${d.request}` : "",
+      "👇 견적 보기에서 일정·리프트·개인별 금액 전체 확인",
+    ].filter(Boolean);
+    const qm = q.join("\n");
+    return qm.length > 200 ? qm.slice(0, 199) + "…" : qm;
+  }
   const lines = [
     `[지노스키 ${d.kind === "견적" || d.kind === "견적 수정" ? d.kind : "예약"}] ${d.name}`,
     `📞 ${d.phone}`,
