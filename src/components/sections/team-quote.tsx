@@ -49,13 +49,21 @@ const TIMES: Record<Len, { label: string; time: string }[]> = {
   ],
 };
 /** 하루 2번 추천 조합 — 2시간은 1+3교시 / 2+4교시, 3·4시간은 오전+오후 */
-const TWICE: Record<Len, { label: string; idx: [number, number] }[]> = {
+const TWICE: Record<Len, { label: string; idx: [number, number]; rec?: boolean }[]> = {
   "2h": [
-    { label: "1+3교시", idx: [0, 2] },
-    { label: "2+4교시", idx: [1, 3] },
+    { label: "1+3교시", idx: [0, 2], rec: true },
+    { label: "2+4교시", idx: [1, 3], rec: true },
   ],
-  "3h": [{ label: "오전+오후", idx: [0, 1] }],
-  "4h": [{ label: "오전+오후", idx: [0, 1] }],
+  "3h": [
+    { label: "오전+오후", idx: [0, 1], rec: true },
+    { label: "오전+야간", idx: [0, 2] },
+    { label: "오후+야간", idx: [1, 2] },
+  ],
+  "4h": [
+    { label: "오전+오후", idx: [0, 1], rec: true },
+    { label: "오전+야간", idx: [0, 2] },
+    { label: "오후+야간", idx: [1, 2] },
+  ],
 };
 
 const HELMET_PRICE = { basic: 5000, visor: 15000 };
@@ -167,15 +175,16 @@ export function TeamQuote() {
     if (!q.get("a") && !q.get("k")) return;
     /* eslint-disable react-hooks/set-state-in-effect */
     const pair = (v: string | null) => (v ?? "0-0").split("-").map((x) => Math.max(0, Math.min(MAX_PEOPLE, Number(x) || 0)));
-    const a = Math.min(MAX_PEOPLE, Number(q.get("a")) || 0);
-    const k = Math.min(MAX_PEOPLE - a, Number(q.get("k")) || 0);
+    const int = (v: string | null) => Math.max(0, Math.floor(Number(v)) || 0);
+    const a = Math.min(MAX_PEOPLE, int(q.get("a")));
+    const k = Math.min(MAX_PEOPLE - a, int(q.get("k")));
     setAdults(a);
     setKids(k);
     const sd = q.get("sd");
-    if (sd && /^\d{4}-\d{2}-\d{2}$/.test(sd)) setStartDate(sd);
+    if (sd && /^\d{4}-\d{2}-\d{2}$/.test(sd) && !isNaN(Date.parse(sd)) && new Date(sd).toISOString().slice(0, 10) === sd) setStartDate(sd);
     const tp = Number(q.get("tp"));
     if (tp > 0 && tp < TEACHER_PREFS.length) setTeacherPref(tp);
-    const d = Number(q.get("d"));
+    const d = int(q.get("d"));
     if (d >= 1 && d <= MAX_DAYS) setDays(d);
     const l = q.get("l") as Len;
     if (l in TIMES) setLen(l);
@@ -228,7 +237,7 @@ export function TeamQuote() {
     const tk0 = Number(q.get("tk"));
     if (dt) setDayTickets(dt.split("-").map((x) => ([0, 3, 5, 7].includes(Number(x)) && x !== "a" ? (Number(x) as TicketHours | 0) : undefined)));
     else if ([3, 5, 7].includes(tk0)) setDayTickets(Array.from({ length: d || 1 }, () => tk0 as TicketHours));
-    setStep(6);
+    setStep(a + k > 0 ? 6 : 2);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
@@ -747,7 +756,7 @@ export function TeamQuote() {
                         className={cn("rounded-2xl border-2 p-3.5", p.n ? "border-brand-500/40 bg-brand-50/40" : "border-snow-300/60")}
                       >
                         <div className="flex items-center justify-between gap-2">
-                          <p className="min-w-0 whitespace-nowrap text-[15px] font-bold text-ink-900">
+                          <p className="min-w-0 text-[15px] font-bold text-ink-900">
                             {days > 1 ? `${DAY_NAMES[i]} 날` : "수업 날"}
                             {startDate && (
                               <span className="block text-[12.5px] font-medium text-snow-500">
@@ -820,7 +829,8 @@ export function TeamQuote() {
                                   p.two === j ? "border-brand-500 bg-brand-500 text-white" : "border-snow-300/70 bg-white text-ink-700"
                                 )}
                               >
-                                {t.label} 추천{" "}
+                                {t.label}
+                                {t.rec ? " 추천" : ""}{" "}
                                 <span className={cn("font-normal", p.two === j ? "text-white/80" : "text-snow-400")}>
                                   {t.idx.map((x) => TIMES[p.len ?? len][x].time.slice(0, 5)).join("·")}
                                 </span>
@@ -1038,7 +1048,7 @@ export function TeamQuote() {
 
                 <div className="mt-4 rounded-2xl bg-ink-900 p-5 text-white">
                   <p className="text-[13px] text-white/60">1인 1회 강습료</p>
-                  <p className="text-[34px] font-bold tabular-nums text-brand-300">약 {won(perHead1)}</p>
+                  <p className="whitespace-nowrap text-[30px] font-bold tabular-nums text-brand-300 sm:text-[34px]">약 {won(perHead1)}</p>
                   <p className="text-[12.5px] text-white/50">패찰 포함 · 매 수업 사진·영상 무료</p>
                   {eb && ebSaved > 0 && (
                     <p className="mt-2 inline-block rounded-full bg-red-500 px-3 py-1 text-[12.5px] font-bold text-white">
@@ -1630,6 +1640,15 @@ function BigCounter({ label, sub, value, max, onChange }: { label: string; sub: 
   );
 }
 
+/** 2+2+1 / 인원이 많으면 3명×4 + 2명 */
+function splitText(sp: number[]) {
+  if (sp.length <= 4) return sp.join("+");
+  return [3, 2, 1]
+    .map((n) => ({ n, c: sp.filter((x) => x === n).length }))
+    .filter((x) => x.c)
+    .map((x) => (x.c > 1 ? `${x.n}명×${x.c}` : `${x.n}명`))
+    .join(" + ");
+}
 function SplitButton({
   title,
   desc,
@@ -1655,10 +1674,10 @@ function SplitButton({
         on ? "border-brand-500 bg-brand-50" : "border-snow-300/60 bg-white hover:border-brand-300"
       )}
     >
-      <span>
+      <span className="min-w-0">
         <span className={cn("block text-[17px] font-bold", on ? "text-brand-600" : "text-ink-900")}>
           {on && "✓ "}
-          {title} <span className="tabular-nums">{sp.join("+")}</span>
+          {title} <span className="tabular-nums">{splitText(sp)}</span>
         </span>
         <span className="text-[12.5px] text-snow-500">
           {desc} · 강사 {sp.length}명

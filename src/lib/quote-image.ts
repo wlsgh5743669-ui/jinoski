@@ -126,7 +126,7 @@ export async function renderQuoteImage(d: QuoteImageData): Promise<Blob> {
     }
     y += 34;
 
-    section("팀별 비용");
+    section("금액 내역");
     for (const t of d.teams) {
       y += 52;
       ctx.font = font(32, 700);
