@@ -76,6 +76,8 @@ const MAX_PEOPLE = 15;
 const MAX_DAYS = 10;
 const STEPS = ["언제 오세요?", "몇 명이 배우세요?", "수업은 어떻게 할까요?", "반은 어떻게 나눌까요?", "리프트·장비도 필요하세요?", "견적서"];
 
+/** 강사 배정 희망 (특이사항) */
+const TEACHER_PREFS = ["상관없음", "여자 선생님", "남자 선생님", "여자+남자 섞어서"] as const;
 const won = (n: number) => `${n.toLocaleString("ko-KR")}원`;
 const num = (s: string | undefined) => Number((s ?? "").replace(/[^0-9]/g, "")) || 0;
 const roundUp100 = (n: number) => Math.ceil(n / 100) * 100;
@@ -148,6 +150,7 @@ export function TeamQuote() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
+  const [teacherPref, setTeacherPref] = useState(0);
   /** 마지막으로 보낸 견적 링크 — 손님이 견적을 바꾸면 「수정본 다시 보내기」가 떠요 */
   const [sentLink, setSentLink] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
@@ -170,6 +173,8 @@ export function TeamQuote() {
     setKids(k);
     const sd = q.get("sd");
     if (sd && /^\d{4}-\d{2}-\d{2}$/.test(sd)) setStartDate(sd);
+    const tp = Number(q.get("tp"));
+    if (tp > 0 && tp < TEACHER_PREFS.length) setTeacherPref(tp);
     const d = Number(q.get("d"));
     if (d >= 1 && d <= MAX_DAYS) setDays(d);
     const l = q.get("l") as Len;
@@ -458,6 +463,7 @@ export function TeamQuote() {
     `[지노스키 견적] ${trip} · ${lenText} · ${dayText}`,
     `기간: ${period}`,
     `인원: 어른 ${adults}명 · 어린이 ${kids}명 (반 ${usedSplit.join("+")}, 강사 ${usedSplit.length}명)`,
+    ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
     `수업: 총 ${sessions}회 (${schedule.filter((d) => d.slots.length).map((d) => dayLine(d)).join(" / ")})`,
     ...(days >= 1
       ? [
@@ -522,6 +528,7 @@ export function TeamQuote() {
     if (dayTickets.some((t) => t !== undefined))
       q.set("dt", Array.from({ length: days }, (_, i) => (dayTickets[i] === undefined ? "a" : String(dayTickets[i]))).join("-"));
     if (startDate) q.set("sd", startDate);
+    if (teacherPref) q.set("tp", String(teacherPref));
     return `${window.location.origin}/ko/quote/?${q.toString()}`;
   }
   async function copy(kind: "text" | "link") {
@@ -580,6 +587,7 @@ export function TeamQuote() {
           ebSaved
             ? `얼리버드 10%는 강습료에만 적용 (-${won(ebSaved)}) · 리프트·장비 40% 할인 · 헬멧 할인 제외`
             : "매 수업 사진·영상 무료 · 리프트·장비 40% 할인 · 헬멧 할인 제외",
+          ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
           "스키복·보드복은 제휴 렌탈샵을 안내해 드려요",
           "예상 견적이에요. 강사 일정 확인 후 확정 금액을 안내드려요.",
         ],
@@ -635,6 +643,7 @@ export function TeamQuote() {
           total: `${won(grand)} (수업 ${sessions}회)`,
           note: [
             anyPrep ? prep.filter((d) => d.sum).map((d) => `${d.day}일 ${d.sum}`).join(" | ") : "",
+            teacherPref ? `강사 ${TEACHER_PREFS[teacherPref]}` : "",
             note.trim(),
           ]
             .filter(Boolean)
@@ -700,6 +709,7 @@ export function TeamQuote() {
                 <p className="text-center text-[13px] text-snow-500">
                   {people ? `모두 ${people}명이 배워요` : "배울 사람 수를 넣어주세요"} · 구경만 하는 분은 빼고 넣어주세요
                 </p>
+                <PriceGuide prices={prices} people={people} />
               </div>
             )}
 
@@ -1311,6 +1321,28 @@ export function TeamQuote() {
                           className="h-12 rounded-xl border border-snow-300/70 bg-white px-4 text-[15px] outline-none focus:border-brand-500"
                         />
                       </div>
+                      <p className="mt-3 text-[13.5px] font-bold text-ink-900">
+                        특이사항 · 강사 배정 희망 <span className="font-normal text-snow-500">(선택)</span>
+                      </p>
+                      <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        {TEACHER_PREFS.map((t, i) => (
+                          <button
+                            key={t}
+                            type="button"
+                            onClick={() => setTeacherPref(i)}
+                            aria-pressed={teacherPref === i}
+                            className={cn(
+                              "rounded-full border px-3 py-1.5 text-[13px] font-semibold",
+                              teacherPref === i ? "border-brand-500 bg-brand-500 text-white" : "border-snow-300/70 bg-white text-ink-700"
+                            )}
+                          >
+                            {t}
+                          </button>
+                        ))}
+                      </div>
+                      {teacherPref === 3 && (
+                        <p className="mt-1.5 text-[12px] text-snow-500">반이 2개 이상일 때 여자·남자 선생님을 섞어서 배정해 드려요</p>
+                      )}
                       <input
                         placeholder="요청사항 (선택) · 아이 나이, 실력 등"
                         value={note}
@@ -1386,6 +1418,75 @@ function RateBadge({ weekend, holiday, dateless }: { weekend: boolean; holiday?:
     >
       {dateless ? "주말 요금(날짜 미정)" : holiday ? "공휴일·주말 요금" : weekend ? "주말 요금" : "주중 요금"}
     </span>
+  );
+}
+
+/** 2단계(인원) 아래 안내: 강습료 가격대 · 패찰 · 시간표 · 저녁 정설 */
+function PriceGuide({ prices, people }: { prices: { table: Record<Len, number[]>; pass: Record<Len, number> }; people: number }) {
+  const lens = Object.keys(LEN_LABEL) as Len[];
+  const sizes = Math.max(...lens.map((l) => prices.table[l].length));
+  const hot = people >= 3 ? 3 : people;
+  const eb = isEarlyBirdActive();
+  return (
+    <div className="mt-2 flex flex-col gap-3 rounded-2xl bg-snow-100/60 p-4 ring-1 ring-snow-300/60">
+      <div>
+        <p className="text-[14.5px] font-bold text-ink-900">💰 강습료 (1회 · 강사 1명 기준)</p>
+        <div className="mt-2 overflow-x-auto">
+          <table className="w-full min-w-[300px] text-center text-[12.5px] tabular-nums">
+            <thead>
+              <tr className="text-snow-500">
+                <th className="py-1 text-left font-semibold">인원</th>
+                {lens.map((l) => (
+                  <th key={l} className="py-1 font-semibold">{LEN_LABEL[l]}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: sizes }, (_, i) => i + 1).map((n) => (
+                <tr key={n} className={cn("border-t border-snow-300/60", hot === n && "bg-brand-50 font-semibold")}>
+                  <td className="py-1.5 text-left font-bold text-ink-900">1:{n}</td>
+                  {lens.map((l) => {
+                    const v = prices.table[l][n - 1];
+                    return (
+                      <td key={l} className="py-1.5 text-ink-900">
+                        {v ? won(v) : "-"}
+                        {v && n > 1 ? <span className="block text-[11px] font-normal text-snow-500">1인 {won(Math.round(v / n / 100) * 100)}</span> : null}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-2 text-[12.5px] leading-relaxed text-snow-600">
+          + 패찰(강습 허가권) 1인 {lens.map((l) => `${LEN_LABEL[l]} ${won(prices.pass[l])}`).join(" · ")} — 견적에 자동으로 포함돼요
+          {eb && <span className="block font-semibold text-brand-600">얼리버드: 2·3시간 강습료 {Math.round(EARLY_BIRD.rate * 100)}% 할인 적용 중</span>}
+        </p>
+      </div>
+      <div className="border-t border-snow-300/60 pt-3">
+        <p className="text-[14.5px] font-bold text-ink-900">🕘 수업 시간표</p>
+        <ul className="mt-1.5 flex flex-col gap-2 text-[12.5px] text-ink-700">
+          {lens.map((l) => (
+            <li key={l}>
+              <p className="font-bold text-ink-900">
+                {LEN_LABEL[l]} 수업 {l === "2h" ? "· 1~4교시 + 야간" : "· 오전 / 오후 / 야간 파트"}
+              </p>
+              <div className="mt-1 flex flex-wrap gap-1.5">
+                {TIMES[l].map((t) => (
+                  <span key={t.label} className="rounded-full bg-white px-2.5 py-1 ring-1 ring-snow-300/70">
+                    <b className="text-ink-900">{l === "2h" ? t.label : `${t.label} ${LEN_LABEL[l]}`}</b> {t.time}
+                  </span>
+                ))}
+              </div>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 rounded-xl bg-white px-3 py-2 text-[12.5px] text-ink-700 ring-1 ring-snow-300/60">
+          🌙 <b>저녁 정설</b> {TIMES["2h"][3]?.time.slice(-5)}~{TIMES["2h"][4]?.time.slice(0, 5)} · 슬로프를 정비하는 시간이라 수업이 없어요. 야간 강습은 정설이 끝난 뒤 시작해요.
+        </p>
+      </div>
+    </div>
   );
 }
 
