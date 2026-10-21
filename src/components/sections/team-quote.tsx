@@ -53,8 +53,6 @@ const TWICE: Record<Len, { label: string; idx: [number, number]; rec?: boolean }
   "2h": [
     { label: "1+3교시", idx: [0, 2], rec: true },
     { label: "2+4교시", idx: [1, 3], rec: true },
-    { label: "1+5교시", idx: [0, 4] },
-    { label: "2+5교시", idx: [1, 4] },
     { label: "3+5교시", idx: [2, 4] },
     { label: "4+5교시", idx: [3, 4] },
   ],
