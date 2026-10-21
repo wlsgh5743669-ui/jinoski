@@ -1467,11 +1467,36 @@ const man = (n: number) => `${Number((n / 10000).toFixed(1))}만`;
 function PriceGuide({ prices, people }: { prices: { table: Record<Len, number[]>; pass: Record<Len, number> }; people: number }) {
   const lens = Object.keys(LEN_LABEL) as Len[];
   const sizes = Math.max(...lens.map((l) => prices.table[l].length));
-  const hot = people >= 3 ? 3 : people;
+  // 인원에 맞는 추천 반 나누기: 4명 → 1:2+1:2, 5명 → 1:3+1:2 …
+  const rec = people > 0 ? even(people, Math.ceil(people / 3)) : [];
+  const hotSet = new Set(rec);
+  const TEAM_KO = ["", "한", "두", "세", "네", "다섯"];
   const eb = isEarlyBirdActive();
   return (
     <div className="mt-2 flex flex-col gap-3 rounded-2xl bg-snow-100/60 p-4 ring-1 ring-snow-300/60">
       <div>
+        {people > 0 && (
+          <div className="mb-3 rounded-xl bg-brand-50 p-3 ring-1 ring-brand-200">
+            <p className="text-[13.5px] font-bold text-ink-900">
+              👥 {people}명이면 {rec.length > 1 ? `강사 ${rec.length}명 · ${TEAM_KO[rec.length] ?? rec.length} 팀으로 나눠요` : "강사 1명이 가르쳐요"}
+            </p>
+            <p className="mt-0.5 text-[17px] font-bold text-brand-600">{rec.map((n) => `1:${n}`).join(" + ")}</p>
+            <ul className="mt-1.5 flex flex-col gap-0.5 text-[12.5px] text-ink-700">
+              {lens.map((l) => {
+                const total = rec.reduce((a, n) => a + (prices.table[l][n - 1] ?? 0), 0);
+                return (
+                  <li key={l} className="flex justify-between gap-2">
+                    <span>{LEN_LABEL[l]} 1회</span>
+                    <span className="tabular-nums">
+                      <b>{man(total)}원</b> <span className="text-snow-500">· 1인 약 {man(Math.round(total / people / 1000) * 1000)}</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="mt-1.5 text-[11.5px] text-snow-500">강습료만 표시 · 패찰은 견적에 자동 포함 · 다음 단계에서 다른 방법으로도 나눌 수 있어요</p>
+          </div>
+        )}
         <p className="text-[14.5px] font-bold text-ink-900">💰 강습료 (1회 · 강사 1명 기준)</p>
         <div className="mt-2 overflow-x-auto">
           <table className="w-full text-center text-[12.5px] tabular-nums">
@@ -1485,7 +1510,7 @@ function PriceGuide({ prices, people }: { prices: { table: Record<Len, number[]>
             </thead>
             <tbody>
               {Array.from({ length: sizes }, (_, i) => i + 1).map((n) => (
-                <tr key={n} className={cn("border-t border-snow-300/60", hot === n && "bg-brand-50 font-semibold")}>
+                <tr key={n} className={cn("border-t border-snow-300/60", hotSet.has(n) && "bg-brand-50 font-semibold")}>
                   <td className="py-1.5 text-left font-bold text-ink-900">1:{n}</td>
                   {lens.map((l) => {
                     const v = prices.table[l][n - 1];
