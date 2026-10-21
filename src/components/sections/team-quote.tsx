@@ -1421,6 +1421,15 @@ function RateBadge({ weekend, holiday, dateless }: { weekend: boolean; holiday?:
   );
 }
 
+const PARTS = [
+  { key: "am", label: "☀️ 오전" },
+  { key: "pm", label: "🌤 오후" },
+  { key: "night", label: "🌃 야간" },
+] as const;
+const partOf = (time: string) => {
+  const h = Number(time.slice(0, 2));
+  return h < 13 ? "am" : h < 19 ? "pm" : "night";
+};
 /** 2단계(인원) 아래 안내: 강습료 가격대 · 패찰 · 시간표 · 저녁 정설 */
 function PriceGuide({ prices, people }: { prices: { table: Record<Len, number[]>; pass: Record<Len, number> }; people: number }) {
   const lens = Object.keys(LEN_LABEL) as Len[];
@@ -1466,25 +1475,31 @@ function PriceGuide({ prices, people }: { prices: { table: Record<Len, number[]>
       </div>
       <div className="border-t border-snow-300/60 pt-3">
         <p className="text-[14.5px] font-bold text-ink-900">🕘 수업 시간표</p>
-        <ul className="mt-1.5 flex flex-col gap-2 text-[12.5px] text-ink-700">
-          {lens.map((l) => (
-            <li key={l}>
-              <p className="font-bold text-ink-900">
-                {LEN_LABEL[l]} 수업 {l === "2h" ? "· 1~4교시 + 야간" : "· 오전 / 오후 / 야간 파트"}
-              </p>
-              <div className="mt-1 flex flex-wrap gap-1.5">
-                {TIMES[l].map((t) => (
-                  <span key={t.label} className="rounded-full bg-white px-2.5 py-1 ring-1 ring-snow-300/70">
-                    <b className="text-ink-900">{l === "2h" ? t.label : `${t.label} ${LEN_LABEL[l]}`}</b> {t.time}
-                  </span>
-                ))}
+        <div className="mt-2 flex flex-col gap-2">
+          {PARTS.map((part) => (
+            <div key={part.key}>
+              {part.key === "night" && (
+                <p className="mb-2 rounded-xl bg-white px-3 py-2 text-[12.5px] text-ink-700 ring-1 ring-snow-300/60">
+                  🌙 <b>저녁 정설</b> {TIMES["2h"][3]?.time.slice(-5)}~{TIMES["2h"][4]?.time.slice(0, 5)} · 슬로프를 정비하는 시간이라 수업이 없어요. 야간 강습은 정설이 끝난 뒤 시작해요.
+                </p>
+              )}
+              <div className="rounded-xl bg-white p-3 ring-1 ring-snow-300/60">
+                <p className="text-[13.5px] font-bold text-ink-900">{part.label}</p>
+                <ul className="mt-1 flex flex-col gap-0.5 text-[12.5px] text-ink-700">
+                  {lens.map((l) => {
+                    const ts = TIMES[l].filter((t) => partOf(t.time) === part.key);
+                    return ts.length ? (
+                      <li key={l} className="flex gap-2">
+                        <span className="w-11 shrink-0 font-semibold text-snow-500">{LEN_LABEL[l]}</span>
+                        <span>{ts.map((t) => (l === "2h" && part.key !== "night" ? `${t.label} ${t.time}` : t.time)).join(" · ")}</span>
+                      </li>
+                    ) : null;
+                  })}
+                </ul>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
-        <p className="mt-2 rounded-xl bg-white px-3 py-2 text-[12.5px] text-ink-700 ring-1 ring-snow-300/60">
-          🌙 <b>저녁 정설</b> {TIMES["2h"][3]?.time.slice(-5)}~{TIMES["2h"][4]?.time.slice(0, 5)} · 슬로프를 정비하는 시간이라 수업이 없어요. 야간 강습은 정설이 끝난 뒤 시작해요.
-        </p>
+        </div>
       </div>
     </div>
   );
