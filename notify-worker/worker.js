@@ -46,7 +46,7 @@ export default {
             const bytes = Uint8Array.from(atob(m[2]), (c) => c.charCodeAt(0));
             await env.TOKENS.put(`img:${id}`, bytes, { expirationTtl: 60 * 60 * 24 * 90, metadata: { type: `image/${m[1]}` } });
             imageId = id;
-            await sendImageCard(env, data, `${url.origin}/img/${id}.jpg`, link);
+            await sendImageCard(env, data, `${url.origin}/img/${id}.jpg`, link, `${SITE_URL}/ko/quote/photo/?id=${id}`);
           } catch (e) {
             console.error("image card failed", e);
           }
@@ -201,7 +201,7 @@ function formatBooking(d) {
 }
 
 // 사진 카드 (피드 템플릿): 견적서 사진 + 이름·연락처·요약 + 「견적 보기」「사진 크게 보기」
-async function sendImageCard(env, d, imageUrl, link) {
+async function sendImageCard(env, d, imageUrl, link, photoPage) {
   const page = link || SITE_URL;
   const kind = d.kind === "견적" || d.kind === "견적 수정" ? d.kind : "예약";
   const content = {
@@ -213,10 +213,10 @@ async function sendImageCard(env, d, imageUrl, link) {
     link: { web_url: page, mobile_web_url: page },
   };
   const tries = [
-    // 사진 크게 보기는 워커 주소라 카카오 앱 「플랫폼 → Web」에 워커 도메인을 등록해야 동작해요 (안 되면 빼고 다시)
+    // 사진 크게 보기는 jinoski.com 안의 사진 화면으로 열어요 (카카오에 등록된 도메인이라 그대로 열림)
     [
       { title: "견적 보기", link: { web_url: page, mobile_web_url: page } },
-      { title: "사진 크게 보기", link: { web_url: imageUrl, mobile_web_url: imageUrl } },
+      { title: "사진 크게 보기", link: { web_url: photoPage, mobile_web_url: photoPage } },
     ],
     [{ title: "견적 보기", link: { web_url: page, mobile_web_url: page } }],
   ];
