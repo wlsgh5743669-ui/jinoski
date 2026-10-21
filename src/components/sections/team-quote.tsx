@@ -552,58 +552,61 @@ export function TeamQuote() {
       // clipboard unavailable
     }
   }
+  /** 견적서 이미지 (사진 저장 · 카톡 알림에 같이 사용) */
+  const quoteImage = (type: "image/png" | "image/jpeg" = "image/png") =>
+    renderQuoteImage({
+      title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
+      total: `1인 1회 약 ${won(perHead1)}`,
+      totalSub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")} · 합계 ${won(grand)}${ebSaved ? " · 얼리버드 강습료 10% 반영" : ""}`,
+      schedule: schedule.map((d) => ({
+        left: `${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}${d.tag ? ` ${d.tag}` : ""}`,
+        right: d.slots.map((x) => x.time).join("  ·  ") || "-",
+      })),
+      teams: [
+        {
+          name: "개인별 금액",
+          amount: "",
+          lines: [
+            ...personRows.map((x) => `${x.label} (${x.group}반 · ${x.desc}) → ${won(x.pay)}`),
+          ],
+        },
+        ...(anyPrep
+          ? [
+              {
+                name: "날짜별 준비표",
+                amount: "",
+                lines: prep.flatMap((d) =>
+                  d.rows.length
+                    ? [`${d.day}일차${d.date ? ` ${d.date}` : ""} (${d.rateTag}) · ${d.sum}`, ...d.rows.map((r) => `   ${r.label}: ${r.items.join(" + ")}`)]
+                    : []
+                ),
+              },
+            ]
+          : []),
+        {
+          name: "포함 내역",
+          amount: "",
+          lines: [
+            `강습료 1인 ${won(lessonAvgPP)} (패찰 포함 · 강사 ${usedSplit.length}명)`,
+            ...extras.map((x) => `${x.label} 40% 할인 · 1인 ${won(x.sale)} (정가 ${won(x.regular)})`),
+          ],
+        },
+      ],
+      notes: [
+        ebSaved
+          ? `얼리버드 10%는 강습료에만 적용 (-${won(ebSaved)}) · 리프트·장비 40% 할인 · 헬멧 할인 제외`
+          : "매 수업 사진·영상 무료 · 리프트·장비 40% 할인 · 헬멧 할인 제외",
+        ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
+        "의류는 제휴 렌탈샵 안내 드립니다.^^",
+        "예상 견적이에요. 강사 일정 확인 후 확정 금액을 안내드려요.",
+      ],
+      phone: contact.phone,
+    }, type);
   async function saveImage() {
     setImgState("making");
     trackEvent("quote_image", { people, days });
     try {
-      const blob = await renderQuoteImage({
-        title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
-        total: `1인 1회 약 ${won(perHead1)}`,
-        totalSub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")} · 합계 ${won(grand)}${ebSaved ? " · 얼리버드 강습료 10% 반영" : ""}`,
-        schedule: schedule.map((d) => ({
-          left: `${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}${d.tag ? ` ${d.tag}` : ""}`,
-          right: d.slots.map((x) => x.time).join("  ·  ") || "-",
-        })),
-        teams: [
-          {
-            name: "개인별 금액",
-            amount: "",
-            lines: [
-              ...personRows.map((x) => `${x.label} (${x.group}반 · ${x.desc}) → ${won(x.pay)}`),
-            ],
-          },
-          ...(anyPrep
-            ? [
-                {
-                  name: "날짜별 준비표",
-                  amount: "",
-                  lines: prep.flatMap((d) =>
-                    d.rows.length
-                      ? [`${d.day}일차${d.date ? ` ${d.date}` : ""} (${d.rateTag}) · ${d.sum}`, ...d.rows.map((r) => `   ${r.label}: ${r.items.join(" + ")}`)]
-                      : []
-                  ),
-                },
-              ]
-            : []),
-          {
-            name: "포함 내역",
-            amount: "",
-            lines: [
-              `강습료 1인 ${won(lessonAvgPP)} (패찰 포함 · 강사 ${usedSplit.length}명)`,
-              ...extras.map((x) => `${x.label} 40% 할인 · 1인 ${won(x.sale)} (정가 ${won(x.regular)})`),
-            ],
-          },
-        ],
-        notes: [
-          ebSaved
-            ? `얼리버드 10%는 강습료에만 적용 (-${won(ebSaved)}) · 리프트·장비 40% 할인 · 헬멧 할인 제외`
-            : "매 수업 사진·영상 무료 · 리프트·장비 40% 할인 · 헬멧 할인 제외",
-          ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
-          "의류는 제휴 렌탈샵 안내 드립니다.^^",
-          "예상 견적이에요. 강사 일정 확인 후 확정 금액을 안내드려요.",
-        ],
-        phone: contact.phone,
-      });
+      const blob = await quoteImage();
       const file = new File([blob], `지노스키_견적_${trip.replace(/\s/g, "")}.png`, { type: "image/png" });
       const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
       if (nav.canShare?.({ files: [file] }) && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
@@ -634,15 +637,37 @@ export function TeamQuote() {
     const isEdit = !!sentLink;
     const link = shareUrl();
     setStatus("sending");
+    // 견적서 사진도 같이 보내요 (실패해도 글 알림은 가요)
+    let image = "";
+    let imageH = 0;
+    try {
+      const blob = await quoteImage("image/jpeg");
+      if (blob.size < 1_500_000) {
+        image = await new Promise<string>((ok, no) => {
+          const r = new FileReader();
+          r.onload = () => ok(String(r.result));
+          r.onerror = () => no(r.error);
+          r.readAsDataURL(blob);
+        });
+        const bmp = await createImageBitmap(blob);
+        imageH = bmp.height;
+        bmp.close();
+      }
+    } catch {
+      image = "";
+    }
     trackEvent(isEdit ? "quote_resubmit" : "quote_submit", { people, days });
     try {
       const res = await fetch(KAKAO_NOTIFY_URL, {
         method: "POST",
-        keepalive: true,
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify({
           kind: isEdit ? "견적 수정" : "견적",
           link,
+          image,
+          imageW: 1080,
+          imageH,
+          headline: `1인 1회 약 ${won(perHead1)} · 합계 ${won(grand)}`,
           name: name.trim(),
           phone: phone.trim(),
           date: `${period} (${trip})`,

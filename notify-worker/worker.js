@@ -4,7 +4,8 @@
  * 고객이 홈페이지에서 예약을 제출하면, 사장님 카카오톡의 "나와의 채팅"으로
  * 이름·고객번호·날짜·프로그램·금액을 바로 보내줍니다.
  *
- *   POST /                → 예약 알림 전송 (홈페이지가 호출)
+ *   POST /                → 예약 알림 전송 (홈페이지가 호출) · 견적서 사진이 오면 사진 카드 + 글
+ *   GET  /img/<id>.jpg    → 견적서 사진 (카톡 사진 카드용, KV에 90일 보관)
  *   GET  /setup?key=...   → 최초 1회: 카카오 로그인 → 토큰 저장
  *   GET  /callback        → 카카오 로그인 리다이렉트 처리
  *   GET  /test?key=...    → 테스트 메시지 전송
@@ -34,8 +35,29 @@ export default {
         if (!data || !data.name || !data.phone) return text("missing fields", 400, cors);
         // 견적 계산기는 손님이 만든 견적 링크(link)를 같이 보내요 → 카톡 「견적 보기」 버튼으로 바로 열기
         const link = typeof data.link === "string" && /^https:\/\/(www\.)?jinoski\.com\//.test(data.link) ? data.link : "";
+        // 견적서 사진(data:image/jpeg;base64,...)이 있으면 KV에 저장 → 사진 카드로 먼저 보내요
+        const m = typeof data.image === "string" && data.image.match(/^data:image\/(jpeg|png);base64,([A-Za-z0-9+/=]+)$/);
+        if (m && m[2].length < 2_500_000) {
+          try {
+            const id = crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+            const bytes = Uint8Array.from(atob(m[2]), (c) => c.charCodeAt(0));
+            await env.TOKENS.put(`img:${id}`, bytes, { expirationTtl: 60 * 60 * 24 * 90, metadata: { type: `image/${m[1]}` } });
+            await sendImageCard(env, data, `${url.origin}/img/${id}.jpg`, link);
+          } catch (e) {
+            console.error("image card failed", e);
+          }
+        }
         await sendMemo(env, formatBooking(data), link);
         return text("ok", 200, cors);
+      }
+
+      const im = request.method === "GET" && url.pathname.match(/^\/img\/([a-f0-9]{16})\.jpg$/);
+      if (im) {
+        const { value, metadata } = await env.TOKENS.getWithMetadata(`img:${im[1]}`, "arrayBuffer");
+        if (!value) return text("not found", 404);
+        return new Response(value, {
+          headers: { "Content-Type": metadata?.type || "image/jpeg", "Cache-Control": "public, max-age=86400" },
+        });
       }
 
       if (url.pathname === "/setup") {
@@ -99,6 +121,50 @@ function formatBooking(d) {
   ].filter(Boolean);
   const msg = lines.join("\n");
   return msg.length > 200 ? msg.slice(0, 199) + "…" : msg;
+}
+
+// 사진 카드 (피드 템플릿): 견적서 사진 + 이름·연락처·요약 + 「견적 보기」「사진 크게 보기」
+async function sendImageCard(env, d, imageUrl, link) {
+  const page = link || SITE_URL;
+  const kind = d.kind === "견적" || d.kind === "견적 수정" ? d.kind : "예약";
+  const content = {
+    title: `[지노스키 ${kind}] ${d.name} · ${d.phone}`.slice(0, 80),
+    description: [d.date, d.groupSize, d.headline || d.total].filter(Boolean).join("\n").slice(0, 200),
+    image_url: imageUrl,
+    image_width: Number(d.imageW) || 1080,
+    image_height: Number(d.imageH) || 1350,
+    link: { web_url: page, mobile_web_url: page },
+  };
+  const tries = [
+    // 사진 크게 보기는 워커 주소라 카카오 앱 「플랫폼 → Web」에 워커 도메인을 등록해야 동작해요 (안 되면 빼고 다시)
+    [
+      { title: "견적 보기", link: { web_url: page, mobile_web_url: page } },
+      { title: "사진 크게 보기", link: { web_url: imageUrl, mobile_web_url: imageUrl } },
+    ],
+    [{ title: "견적 보기", link: { web_url: page, mobile_web_url: page } }],
+  ];
+  let last;
+  for (const buttons of tries) {
+    try {
+      return await sendTemplate(env, { object_type: "feed", content, buttons });
+    } catch (e) {
+      last = e;
+    }
+  }
+  throw last;
+}
+
+async function sendTemplate(env, template) {
+  const accessToken = await getAccessToken(env);
+  const res = await fetch(`${KAPI}/v2/api/talk/memo/default/send`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+    },
+    body: new URLSearchParams({ template_object: JSON.stringify(template) }),
+  });
+  if (!res.ok) throw new Error(`kakao send ${res.status}: ${await res.text()}`);
 }
 
 async function sendMemo(env, message, link = "") {

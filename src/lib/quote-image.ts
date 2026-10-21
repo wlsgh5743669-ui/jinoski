@@ -48,7 +48,7 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, max: number): string[
   return out;
 }
 
-export async function renderQuoteImage(d: QuoteImageData): Promise<Blob> {
+export async function renderQuoteImage(d: QuoteImageData, type: "image/png" | "image/jpeg" = "image/png"): Promise<Blob> {
   if (document.fonts?.ready) await document.fonts.ready;
   const inner = W - PAD * 2;
   // 1) 높이 계산용 그리기 함수 (dry=true면 위치만 계산)
@@ -195,6 +195,6 @@ export async function renderQuoteImage(d: QuoteImageData): Promise<Blob> {
   ctx.textBaseline = "alphabetic";
   draw(ctx, false);
   return new Promise((resolve, reject) =>
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), "image/png")
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), type, 0.85)
   );
 }
