@@ -6,6 +6,8 @@
  *
  *   POST /                → 예약 알림 전송 (홈페이지가 호출) · 견적서 사진이 오면 사진 카드 + 글
  *   GET  /img/<id>.jpg    → 견적서 사진 (카톡 사진 카드용, KV에 90일 보관)
+ *   GET  /inquiries       → 홈페이지 문의 목록 (운영 프로그램용, Authorization: Bearer QUOTES_KEY)
+ *   POST /inquiries/update → 문의 상태·메모 변경 (운영 프로그램용)
  *   GET  /setup?key=...   → 최초 1회: 카카오 로그인 → 토큰 저장
  *   GET  /callback        → 카카오 로그인 리다이렉트 처리
  *   GET  /test?key=...    → 테스트 메시지 전송
@@ -13,7 +15,7 @@
  *
  * 필요한 설정 (README.md 참고):
  *   KV 바인딩: TOKENS
- *   Secrets:   KAKAO_REST_KEY, SETUP_KEY, (선택) KAKAO_CLIENT_SECRET
+ *   Secrets:   KAKAO_REST_KEY, SETUP_KEY, (선택) KAKAO_CLIENT_SECRET, (선택) QUOTES_KEY — 운영 프로그램 연동 비밀키
  *   Vars:      ALLOWED_ORIGINS (예: "https://jinoski.com,http://localhost:3000")
  */
 
@@ -36,19 +38,50 @@ export default {
         // 견적 계산기는 손님이 만든 견적 링크(link)를 같이 보내요 → 카톡 「견적 보기」 버튼으로 바로 열기
         const link = typeof data.link === "string" && /^https:\/\/(www\.)?jinoski\.com\//.test(data.link) ? data.link : "";
         // 견적서 사진(data:image/jpeg;base64,...)이 있으면 KV에 저장 → 사진 카드로 먼저 보내요
+        let imageId = "";
         const m = typeof data.image === "string" && data.image.match(/^data:image\/(jpeg|png);base64,([A-Za-z0-9+/=]+)$/);
         if (m && m[2].length < 2_500_000) {
           try {
             const id = crypto.randomUUID().replace(/-/g, "").slice(0, 16);
             const bytes = Uint8Array.from(atob(m[2]), (c) => c.charCodeAt(0));
             await env.TOKENS.put(`img:${id}`, bytes, { expirationTtl: 60 * 60 * 24 * 90, metadata: { type: `image/${m[1]}` } });
+            imageId = id;
             await sendImageCard(env, data, `${url.origin}/img/${id}.jpg`, link);
           } catch (e) {
             console.error("image card failed", e);
           }
         }
+        // 운영 프로그램(ops.jinoski.com)에서 볼 수 있게 문의 내용도 보관 (실패해도 알림은 계속)
+        try {
+          await saveInquiry(env, data, imageId, link);
+        } catch (e) {
+          console.error("save inquiry failed", e);
+        }
         await sendMemo(env, formatBooking(data), link);
         return text("ok", 200, cors);
+      }
+
+      // ── 운영 프로그램용: 문의 목록 / 상태 변경 ──
+      if (url.pathname === "/inquiries" || url.pathname === "/inquiries/update") {
+        if (!env.QUOTES_KEY || request.headers.get("Authorization") !== `Bearer ${env.QUOTES_KEY}`) return text("forbidden", 403, cors);
+        const jsonRes = (o) => new Response(JSON.stringify(o), { headers: { "Content-Type": "application/json; charset=utf-8", ...cors } });
+        if (request.method === "GET" && url.pathname === "/inquiries") {
+          const list = await env.TOKENS.list({ prefix: "q:", limit: 300 });
+          const items = (await Promise.all(list.keys.map((k) => env.TOKENS.get(k.name, "json")))).filter(Boolean);
+          return jsonRes({ origin: url.origin, items });
+        }
+        if (request.method === "POST" && url.pathname === "/inquiries/update") {
+          const b = await request.json();
+          if (typeof b.key !== "string" || !b.key.startsWith("q:")) return text("bad key", 400, cors);
+          const rec = await env.TOKENS.get(b.key, "json");
+          if (!rec) return text("not found", 404, cors);
+          if (["new", "contacted", "booked", "closed"].includes(b.status)) rec.status = b.status;
+          if (typeof b.memo === "string") rec.memo = b.memo.slice(-4000);
+          rec.updatedAt = new Date().toISOString();
+          await env.TOKENS.put(b.key, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 365 });
+          return jsonRes(rec);
+        }
+        return text("method not allowed", 405, cors);
       }
 
       const im = request.method === "GET" && url.pathname.match(/^\/img\/([a-f0-9]{16})\.jpg$/);
@@ -107,6 +140,36 @@ export default {
     await getAccessToken(env, true);
   },
 };
+
+// 홈페이지 문의 보관: 최신순 정렬되게 키 앞에 (큰 수 - 시각)
+async function saveInquiry(env, d, imageId, link) {
+  const cut = (v, n = 300) => (typeof v === "string" ? v.slice(0, n) : "");
+  const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+  const key = `q:${String(9_000_000_000_000 - Date.now()).padStart(13, "0")}:${id}`;
+  const rec = {
+    key,
+    id,
+    createdAt: new Date().toISOString(),
+    kind: d.kind === "견적" || d.kind === "견적 수정" ? d.kind : "예약",
+    name: cut(d.name, 40),
+    phone: cut(d.phone, 30),
+    date: cut(d.date, 120),
+    program: cut(d.program, 120),
+    timeSlot: cut(d.timeSlot, 300),
+    groupSize: cut(d.groupSize, 120),
+    equipment: cut(d.equipment, 120),
+    level: cut(d.level, 60),
+    total: cut(d.total, 80),
+    headline: cut(d.headline, 120),
+    request: cut(d.request, 500),
+    note: cut(d.note, 1000),
+    link: link || "",
+    image: imageId ? `/img/${imageId}.jpg` : "",
+    status: "new",
+    memo: "",
+  };
+  await env.TOKENS.put(key, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 365 });
+}
 
 // 카카오 "나에게 보내기" 텍스트는 최대 200자
 function formatBooking(d) {
@@ -246,8 +309,8 @@ function corsHeaders(request, env) {
   if (!allowed.includes(origin)) return {};
   return {
     "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
 }
 
