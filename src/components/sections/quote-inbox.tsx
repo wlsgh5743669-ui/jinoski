@@ -29,6 +29,9 @@ type Inquiry = {
   image: string;
   status: Status;
   memo: string;
+  reply?: string;
+  replyAt?: string;
+  hasPw?: boolean;
 };
 
 const STATUS: { v: Status; label: string; on: string }[] = [
@@ -96,7 +99,7 @@ export function QuoteInbox() {
     if (saved) void load(saved);
   }, [load]);
 
-  async function update(key: string, patch: { status?: Status; memo?: string }) {
+  async function update(key: string, patch: { status?: Status; memo?: string; reply?: string }) {
     const res = await fetch(`${API}/inquiries/update`, {
       method: "POST",
       headers: { Authorization: `Bearer ${pw}`, "Content-Type": "application/json" },
@@ -211,11 +214,13 @@ function InquiryCard({
 }: {
   x: Inquiry;
   origin: string;
-  onUpdate: (key: string, p: { status?: Status; memo?: string }) => Promise<boolean>;
+  onUpdate: (key: string, p: { status?: Status; memo?: string; reply?: string }) => Promise<boolean>;
   onImage: (src: string) => void;
 }) {
   const [memo, setMemo] = useState("");
   const [busy, setBusy] = useState(false);
+  const [reply, setReply] = useState(x.reply ?? "");
+  const [replyMsg, setReplyMsg] = useState("");
   const img = x.image ? `${origin}${x.image}` : "";
   const isQuote = x.kind.startsWith("견적");
   const tel = x.phone.replace(/[^0-9]/g, "");
@@ -229,6 +234,7 @@ function InquiryCard({
           <div className="flex flex-wrap items-center gap-1.5">
             <b className="text-[16px] text-ink-900">{x.name}</b>
             <span className={cn("rounded-full px-2 py-0.5 text-[11.5px] font-bold", isQuote ? "bg-brand-50 text-brand-600" : "bg-amber-100 text-amber-700")}>{x.kind}</span>
+            {x.hasPw && <span className="rounded-full bg-snow-100 px-2 py-0.5 text-[11.5px] font-bold text-snow-600">🔒 손님 확인 가능</span>}
             <span className="text-[12px] text-snow-500" title={when(x.createdAt)}>
               {ago(x.createdAt)} · {when(x.createdAt)}
             </span>
@@ -284,7 +290,39 @@ function InquiryCard({
         </div>
       </div>
 
-      {/* 댓글처럼 메모 남기기 (시간과 함께 아래로 쌓여요) */}
+      {/* 손님에게 보이는 답변 — 「내 견적 확인」(휴대폰 + 비밀번호)에서 손님이 봐요 */}
+      <div className="mt-3 rounded-xl bg-brand-50/60 p-3">
+        <p className="text-[12.5px] font-bold text-brand-600">
+          손님에게 답변 {x.hasPw ? "· 손님이 「내 견적 확인」에서 봐요" : "· 이 손님은 비밀번호를 안 넣어서 전화·카톡으로 안내해 주세요"}
+        </p>
+        <textarea
+          value={reply}
+          onChange={(e) => {
+            setReply(e.target.value);
+            setReplyMsg("");
+          }}
+          rows={3}
+          placeholder="예) 12/24 2+4교시로 강사 배정 가능해요. 예약 진행할게요!"
+          className="mt-1.5 w-full rounded-xl border border-snow-300/70 bg-white px-3 py-2 text-[13.5px] outline-none focus:border-brand-500"
+        />
+        <div className="mt-1 flex items-center justify-end gap-2">
+          {replyMsg && <span className="text-[12px] text-emerald-600">{replyMsg}</span>}
+          {x.replyAt && !replyMsg && <span className="text-[11.5px] text-snow-400">답변 {when(x.replyAt)}</span>}
+          <button
+            disabled={busy || reply === (x.reply ?? "")}
+            onClick={async () => {
+              setBusy(true);
+              if (await onUpdate(x.key, { reply: reply.trim() })) setReplyMsg("✓ 답변 저장됨");
+              setBusy(false);
+            }}
+            className="rounded-xl bg-brand-500 px-3.5 py-2 text-[13px] font-bold text-white disabled:opacity-40"
+          >
+            답변 저장
+          </button>
+        </div>
+      </div>
+
+      {/* 나만 보는 메모 (시간과 함께 아래로 쌓여요) */}
       <div className="mt-3 border-t border-snow-300/60 pt-3">
         {x.memo && (
           <ul className="mb-2 flex flex-col gap-1">
@@ -315,7 +353,7 @@ function InquiryCard({
           <input
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
-            placeholder="댓글 메모 (예: 통화함, 2+4교시로 확정 예정)"
+            placeholder="나만 보는 메모 (예: 통화함, 입금 확인)"
             className="h-10 min-w-0 flex-1 rounded-xl border border-snow-300/70 px-3 text-[13.5px] outline-none focus:border-brand-500"
           />
           <button disabled={busy} className="shrink-0 rounded-xl bg-brand-500 px-3.5 text-[13px] font-bold text-white disabled:opacity-50">

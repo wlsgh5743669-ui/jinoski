@@ -7,7 +7,8 @@
  *   POST /                → 예약 알림 전송 (홈페이지가 호출) · 견적서 사진이 오면 사진 카드 + 글
  *   GET  /img/<id>.jpg    → 견적서 사진 (카톡 사진 카드용, KV에 90일 보관)
  *   GET  /inquiries       → 홈페이지 문의 목록 (운영 프로그램용, Authorization: Bearer QUOTES_KEY)
- *   POST /inquiries/update → 문의 상태·메모 변경 (운영 프로그램용)
+ *   POST /inquiries/update → 문의 상태·메모·답변 변경 (운영 프로그램용)
+ *   POST /my-quotes       → 손님이 휴대폰 번호 + 비밀번호로 내 견적·사장님 답변 확인
  *   GET  /setup?key=...   → 최초 1회: 카카오 로그인 → 토큰 저장
  *   GET  /callback        → 카카오 로그인 리다이렉트 처리
  *   GET  /test?key=...    → 테스트 메시지 전송
@@ -67,7 +68,9 @@ export default {
         const jsonRes = (o) => new Response(JSON.stringify(o), { headers: { "Content-Type": "application/json; charset=utf-8", ...cors } });
         if (request.method === "GET" && url.pathname === "/inquiries") {
           const list = await env.TOKENS.list({ prefix: "q:", limit: 300 });
-          const items = (await Promise.all(list.keys.map((k) => env.TOKENS.get(k.name, "json")))).filter(Boolean);
+          const items = (await Promise.all(list.keys.map((k) => env.TOKENS.get(k.name, "json"))))
+            .filter(Boolean)
+            .map(({ pwHash, ...r }) => ({ ...r, hasPw: !!pwHash }));
           return jsonRes({ origin: url.origin, items });
         }
         if (request.method === "POST" && url.pathname === "/inquiries/update") {
@@ -77,9 +80,15 @@ export default {
           if (!rec) return text("not found", 404, cors);
           if (["new", "contacted", "booked", "closed"].includes(b.status)) rec.status = b.status;
           if (typeof b.memo === "string") rec.memo = b.memo.slice(-4000);
+          // 손님에게 보이는 답변 (내 견적 확인 화면)
+          if (typeof b.reply === "string") {
+            rec.reply = b.reply.slice(0, 2000);
+            rec.replyAt = rec.reply ? new Date().toISOString() : "";
+          }
           rec.updatedAt = new Date().toISOString();
           await env.TOKENS.put(b.key, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 365 });
-          return jsonRes(rec);
+          const { pwHash, ...out } = rec;
+          return jsonRes({ ...out, hasPw: !!pwHash });
         }
         return text("method not allowed", 405, cors);
       }
@@ -91,6 +100,31 @@ export default {
         return new Response(value, {
           headers: { "Content-Type": metadata?.type || "image/jpeg", "Cache-Control": "public, max-age=86400" },
         });
+      }
+
+      // ── 손님용: 휴대폰 번호 + 비밀번호로 내 견적과 답변 보기 ──
+      if (request.method === "POST" && url.pathname === "/my-quotes") {
+        if (!cors["Access-Control-Allow-Origin"]) return text("forbidden origin", 403);
+        const b = await request.json().catch(() => ({}));
+        const phone = String(b.phone || "").replace(/\D/g, "");
+        const pw = String(b.pw || "");
+        if (phone.length < 9 || pw.length < 4) return text("bad request", 400, cors);
+        // 비밀번호 대입 방지: 같은 번호로 1시간에 10번까지
+        const rlKey = `rl:${phone}`;
+        const tries = Number((await env.TOKENS.get(rlKey)) || 0);
+        if (tries >= 10) return text("too many", 429, cors);
+        const list = await env.TOKENS.list({ prefix: "q:", limit: 300 });
+        const all = (await Promise.all(list.keys.map((k) => env.TOKENS.get(k.name, "json")))).filter(Boolean);
+        const mine = [];
+        for (const r of all) {
+          if (r.phoneDigits !== phone || !r.pwHash) continue;
+          if ((await hashPw(r.id, pw)) === r.pwHash) mine.push(publicView(r, url.origin));
+        }
+        if (!mine.length) {
+          await env.TOKENS.put(rlKey, String(tries + 1), { expirationTtl: 3600 });
+          return text("not found", 404, cors);
+        }
+        return new Response(JSON.stringify({ items: mine }), { headers: { "Content-Type": "application/json; charset=utf-8", ...cors } });
       }
 
       if (url.pathname === "/setup") {
@@ -142,6 +176,33 @@ export default {
 };
 
 // 홈페이지 문의 보관: 최신순 정렬되게 키 앞에 (큰 수 - 시각)
+// 손님 비밀번호는 그대로 저장하지 않고 문의 id를 섞어 해시로만 보관
+async function hashPw(salt, pw) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${salt}:${pw}`));
+  return [...new Uint8Array(buf)].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+
+// 손님에게 보여줄 항목만 (사장님 메모·전화번호 등은 빼고)
+function publicView(r, origin) {
+  return {
+    id: r.id,
+    createdAt: r.createdAt,
+    kind: r.kind,
+    name: r.name,
+    date: r.date,
+    groupSize: r.groupSize,
+    timeSlot: r.timeSlot,
+    total: r.total,
+    headline: r.headline,
+    request: r.request,
+    link: r.link,
+    image: r.image ? `${origin}${r.image}` : "",
+    status: r.status,
+    reply: r.reply || "",
+    replyAt: r.replyAt || "",
+  };
+}
+
 async function saveInquiry(env, d, imageId, link) {
   const cut = (v, n = 300) => (typeof v === "string" ? v.slice(0, n) : "");
   const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
@@ -167,7 +228,12 @@ async function saveInquiry(env, d, imageId, link) {
     image: imageId ? `/img/${imageId}.jpg` : "",
     status: "new",
     memo: "",
+    reply: "",
+    phoneDigits: cut(d.phone, 30).replace(/\D/g, ""),
+    pwHash: "",
   };
+  const pw = typeof d.pw === "string" ? d.pw.trim().slice(0, 20) : "";
+  if (pw.length >= 4) rec.pwHash = await hashPw(id, pw);
   await env.TOKENS.put(key, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 365 });
 }
 
