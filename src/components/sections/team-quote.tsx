@@ -242,6 +242,11 @@ export function TeamQuote() {
     if (dt) setDayTickets(dt.split("-").map((x) => ([0, 3, 5, 7].includes(Number(x)) && x !== "a" ? (Number(x) as TicketHours | 0) : undefined)));
     else if ([3, 5, 7].includes(tk0)) setDayTickets(Array.from({ length: d || 1 }, () => tk0 as TicketHours));
     setStep(a + k > 0 ? 6 : 2);
+    // 링크로 들어오면 소개 화면을 건너뛰고 견적서로 바로 이동
+    setTimeout(() => {
+      const el = document.getElementById("quote-top");
+      if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: "auto" });
+    }, 300);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
