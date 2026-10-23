@@ -251,7 +251,7 @@ function formatBooking(d) {
       "👇 견적 보기에서 일정·리프트·개인별 금액 전체 확인",
     ].filter(Boolean);
     const qm = q.join("\n");
-    return qm.length > 200 ? qm.slice(0, 199) + "…" : qm;
+    return qm.slice(0, 1200);
   }
   const lines = [
     `[지노스키 ${d.kind === "견적" || d.kind === "견적 수정" ? d.kind : "예약"}] ${d.name}`,
@@ -263,7 +263,7 @@ function formatBooking(d) {
     d.note ? `📝 ${d.note}` : "",
   ].filter(Boolean);
   const msg = lines.join("\n");
-  return msg.length > 200 ? msg.slice(0, 199) + "…" : msg;
+  return msg.slice(0, 1200);
 }
 
 // 사진 카드 (피드 템플릿): 견적서 사진 + 이름·연락처·요약 + 「견적 보기」「사진 크게 보기」
@@ -310,24 +310,43 @@ async function sendTemplate(env, template) {
   if (!res.ok) throw new Error(`kakao send ${res.status}: ${await res.text()}`);
 }
 
+// 카톡 「나에게 보내기」 글은 1통에 200자까지 → 길면 (1/2) (2/2)처럼 나눠서 전부 보내요
+function splitMessage(message, max = 190) {
+  const parts = [];
+  let cur = "";
+  for (const line of message.split("\n")) {
+    let rest = line;
+    while (rest.length > max) {
+      if (cur) {
+        parts.push(cur);
+        cur = "";
+      }
+      parts.push(rest.slice(0, max));
+      rest = rest.slice(max);
+    }
+    const next = cur ? `${cur}\n${rest}` : rest;
+    if (next.length > max) {
+      parts.push(cur);
+      cur = rest;
+    } else cur = next;
+  }
+  if (cur) parts.push(cur);
+  return parts.slice(0, 6);
+}
+
 async function sendMemo(env, message, link = "") {
-  const accessToken = await getAccessToken(env);
-  const url = link || SITE_URL;
-  const template = {
-    object_type: "text",
-    text: message,
-    link: { web_url: url, mobile_web_url: url },
-    button_title: link ? "견적 보기" : "홈페이지",
-  };
-  const res = await fetch(`${KAPI}/v2/api/talk/memo/default/send`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-    },
-    body: new URLSearchParams({ template_object: JSON.stringify(template) }),
-  });
-  if (!res.ok) throw new Error(`kakao send ${res.status}: ${await res.text()}`);
+  // 견적은 「견적 보기」(손님 견적 화면), 예약 문의는 「문의함 보기」(jinoski.com 문의함)
+  const url = link || `${SITE_URL}/ko/quote/inbox/`;
+  const parts = splitMessage(message);
+  for (let i = 0; i < parts.length; i++) {
+    const text = parts.length > 1 ? `${parts[i]}\n(${i + 1}/${parts.length})` : parts[i];
+    await sendTemplate(env, {
+      object_type: "text",
+      text,
+      link: { web_url: url, mobile_web_url: url },
+      button_title: link ? "견적 보기" : "문의함 보기",
+    });
+  }
 }
 
 async function getAccessToken(env, forceRefresh = false) {
