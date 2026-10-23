@@ -56,7 +56,7 @@ export function Header() {
             JINO<span className="text-brand-500">SKI</span>
           </Link>
 
-          <nav className="hidden items-center gap-3.5 lg:flex xl:gap-6 2xl:gap-9">
+          <nav className="hidden items-center gap-3 lg:flex xl:gap-[18px] 2xl:gap-9">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
