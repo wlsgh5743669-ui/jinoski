@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { approxUsd } from "@/lib/usd";
 
 /**
  * 연박 견적(견적 계산기 · 내 견적 · 견적서 사진) 영어·중국어 번역층
@@ -335,9 +336,9 @@ const RULES: Rule[] = [
   [/(\d+)반/g, "Group $1", "第$1组"],
   [/아이 (\d+)/g, "Child $1", "儿童$1"],
   [/(\d+)세부터/g, "from age $1", "$1岁起"],
-  [/1인 (\d+(?:\.\d+)?)만/g, (_: string, n: string) => `each ₩${Math.round(+n * 10)}K`, "每人$1万"],
-  [/(\d+(?:\.\d+)?)만원?/g, (_: string, n: string) => `₩${Math.round(+n * 10)}K`, "₩$1万"],
-  [/([\d,]+)원/g, "₩$1", "₩$1"],
+  [/1인 (\d+(?:\.\d+)?)만/g, (_: string, n: string) => `each ₩${Math.round(+n * 10)}K (${approxUsd(+n * 10000)})`, (_: string, n: string) => `每人${n}万 (${approxUsd(+n * 10000)})`],
+  [/(\d+(?:\.\d+)?)만원?/g, (_: string, n: string) => `₩${Math.round(+n * 10)}K (${approxUsd(+n * 10000)})`, (_: string, n: string) => `₩${n}万 (${approxUsd(+n * 10000)})`],
+  [/([\d,]+)원/g, (_: string, n: string) => `₩${n} (${approxUsd(+n.replace(/,/g, ""))})`, (_: string, n: string) => `₩${n} (${approxUsd(+n.replace(/,/g, ""))})`],
   [/약 /g, "≈ ", "约 "],
   [/(\d+)년 (\d+)월/g, (_: string, y: string, m: string) => `${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+m - 1]} ${y}`, "$1年$2月"],
   [/\((일|월|화|수|목|금|토)\)/g, (_: string, d: string) => `(${WD_EN[d]})`, (_: string, d: string) => `(${WD_ZH[d]})`],
