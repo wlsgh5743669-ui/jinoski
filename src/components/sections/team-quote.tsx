@@ -75,8 +75,13 @@ const HELMET_PRICE = { basic: 5000, visor: 15000 };
 type Plan = { n: 0 | 1 | 2; one: number; two: number; len?: Len };
 type Extra = "none" | "lift" | "liftRental";
 type Helmet = 0 | 1 | 2; // 0 없음 · 1 기본 · 2 바이저
-type Person = { name: string; extra: Extra; helmet: Helmet };
-const newPerson = (): Person => ({ name: "", extra: "none", helmet: 0 });
+/** 종목 · 실력 (스키와 보드는 반이 따로) */
+type Sport = "ski" | "board";
+type Level = 1 | 2 | 3;
+type Person = { name: string; extra: Extra; helmet: Helmet; sport: Sport; level: Level };
+const newPerson = (): Person => ({ name: "", extra: "none", helmet: 0, sport: "ski", level: 1 });
+const SPORT_LABEL: Record<Sport, string> = { ski: "스키", board: "보드" };
+const LEVEL_LABEL: Record<Level, string> = { 1: "초급", 2: "중급", 3: "상급" };
 const EXTRA_CODE: Record<Extra, string> = { none: "n", lift: "l", liftRental: "r" };
 const CODE_EXTRA: Record<string, Extra> = { n: "none", l: "lift", r: "liftRental" };
 const EXTRA_LABEL: Record<Extra, string> = { none: "강습만", lift: "+ 리프트", liftRental: "+ 리프트·장비" };
@@ -226,6 +231,8 @@ export function TeamQuote() {
             extra: CODE_EXTRA[c[0]] ?? "none",
             helmet: (Number(c[1]) || 0) as Helmet,
             name: c.includes(":") ? c.slice(c.indexOf(":") + 1, c.indexOf(":") + 11) : "",
+            sport: (c[2] === "b" ? "board" : "ski") as Sport,
+            level: (["1", "2", "3"].includes(c[3]) ? Number(c[3]) : 1) as Level,
           }))
       );
     } else {
@@ -237,7 +244,7 @@ export function TeamQuote() {
         const j = child ? i - a : i;
         const lrN = child ? lrk : lra;
         const loN = child ? lok : loa;
-        return { name: "", extra: j < lrN ? "liftRental" : j < lrN + loN ? "lift" : "none", helmet: (i < hb ? 1 : i < hb + hv ? 2 : 0) as Helmet };
+        return { name: "", extra: j < lrN ? "liftRental" : j < lrN + loN ? "lift" : "none", helmet: (i < hb ? 1 : i < hb + hv ? 2 : 0) as Helmet, sport: "ski", level: 1 };
       });
       setPersons(list);
     }
@@ -317,10 +324,30 @@ export function TeamQuote() {
   };
   /** 반 하나의 전체 강습료 (날짜마다 수업 시간이 달라도 합산) */
   const groupTotal = (size: number) => schedule.reduce((a, d) => a + groupCost(size, d.len) * d.slots.length, 0);
-  const splitCheapest = people ? even(people, Math.ceil(people / 3)) : [];
-  const splitSmall = people ? even(people, Math.ceil(people / 2)) : [];
+  // 스키·보드는 같은 반에서 못 배워요 → 스키 반들 먼저, 보드 반들 나중에
+  const sportOf = (i: number) => (persons[i] ?? newPerson()).sport ?? "ski";
+  const skiN = Array.from({ length: people }, (_, i) => i).filter((i) => sportOf(i) === "ski").length;
+  const boardN = people - skiN;
+  const bySport = (f: (n: number) => number[]) => [...(skiN ? f(skiN) : []), ...(boardN ? f(boardN) : [])];
+  const splitCheapest = people ? bySport((n) => even(n, Math.ceil(n / 3))) : [];
+  const splitSmall = people ? bySport((n) => even(n, Math.ceil(n / 2))) : [];
   const splitPrivate = people ? Array(people).fill(1) : [];
-  const usedSplit = split.length && split.reduce((a, b) => a + b, 0) === people ? split : splitCheapest;
+  /** 반 경계가 스키/보드 사이에 딱 맞아야 해요 */
+  const splitOk = (sp: number[]) => {
+    if (sp.reduce((a, b) => a + b, 0) !== people) return false;
+    if (!skiN || !boardN) return true;
+    let acc = 0;
+    for (const g of sp) {
+      acc += g;
+      if (acc === skiN) return true;
+      if (acc > skiN) return false;
+    }
+    return false;
+  };
+  const usedSplit = split.length && splitOk(split) ? split : splitCheapest;
+  const splitChoices = (
+    skiN && boardN ? allSplits(skiN).flatMap((a) => allSplits(boardN).map((b) => [...a, ...b])).sort((x, y) => x.length - y.length) : allSplits(people)
+  ).slice(0, 40);
 
   const groups = usedSplit.map((size, i) => ({
     no: i + 1,
@@ -366,6 +393,16 @@ export function TeamQuote() {
   }));
   /** 이름 기본값: 어른 1, 어른 2 … / 아이 1, 아이 2 … (어른·아이 리프트 요금이 달라서 구분) */
   const defLabel = (i: number) => (i >= adults ? `아이 ${i - adults + 1}` : `어른 ${i + 1}`);
+  /** 종목·실력 요약: 스키 초급 2명 · 보드 중급 1명 */
+  const sportSummary = (["ski", "board"] as Sport[])
+    .flatMap((sp) =>
+      ([1, 2, 3] as Level[]).map((lv) => {
+        const n = roster.filter((x) => x.sport === sp && x.level === lv).length;
+        return n ? `${SPORT_LABEL[sp]} ${LEVEL_LABEL[lv]} ${n}명` : "";
+      })
+    )
+    .filter(Boolean)
+    .join(" · ");
   const countOf = (child: boolean, extra: Extra) => roster.filter((x) => x.child === child && x.extra === extra).length;
   const lr = { a: countOf(false, "liftRental"), k: countOf(true, "liftRental") };
   const lo = { a: countOf(false, "lift"), k: countOf(true, "lift") };
@@ -394,7 +431,17 @@ export function TeamQuote() {
   const evenGroups = new Set(usedSplit).size === 1;
 
   // 반(강사)별로 앞에서부터 사람 배정 → 개인별 강습료
-  const groupOfIndex: number[] = usedSplit.flatMap((size, gi) => Array(size).fill(gi));
+  const groupBySeat: number[] = usedSplit.flatMap((size, gi) => Array(size).fill(gi));
+  const seatOrder = roster
+    .map((x) => x.index)
+    .sort((a, b) => {
+      const pa = roster[a], pb = roster[b];
+      return (pa.sport === pb.sport ? 0 : pa.sport === "ski" ? -1 : 1) || pa.level - pb.level || a - b;
+    });
+  const groupOfIndex: number[] = [];
+  seatOrder.forEach((pi, seat) => {
+    groupOfIndex[pi] = groupBySeat[seat] ?? 0;
+  });
   const extraSale = (child: boolean, e: Extra) => (e === "none" ? 0 : extraPP(child, e === "liftRental").sale);
   const personRows = roster.map((x) => {
     const g = groups[groupOfIndex[x.index] ?? 0];
@@ -409,7 +456,7 @@ export function TeamQuote() {
       lift,
       helm,
       pay: lesson + lift + helm,
-      desc: [x.name.trim() ? (x.child ? "어린이" : "어른") : "", EXTRA_LABEL[x.extra].replace("+ ", "+"), x.helmet ? HELMET_LABEL[x.helmet] : ""].filter(Boolean).join(" · "),
+      desc: [x.name.trim() ? (x.child ? "어린이" : "어른") : "", `${SPORT_LABEL[x.sport]} ${LEVEL_LABEL[x.level]}`, EXTRA_LABEL[x.extra].replace("+ ", "+"), x.helmet ? HELMET_LABEL[x.helmet] : ""].filter(Boolean).join(" · "),
     };
   });
   // 날짜별 준비표 (현장에서 리프트권·장비·헬멧 나눠줄 때)
@@ -449,10 +496,10 @@ export function TeamQuote() {
   const anyPrep = prep.some((d) => d.rows.length);
 
   function setPerson(i: number, patch: Partial<Person>) {
-    setPersons(() => roster.map((x, j) => ({ name: x.name, extra: x.extra, helmet: x.helmet, ...(j === i ? patch : {}) })));
+    setPersons(() => roster.map((x, j) => ({ name: x.name, extra: x.extra, helmet: x.helmet, sport: x.sport, level: x.level, ...(j === i ? patch : {}) })));
   }
   function setAllPersons(patch: Partial<Person>) {
-    setPersons(() => roster.map((x) => ({ name: x.name, extra: x.extra, helmet: x.helmet, ...patch })));
+    setPersons(() => roster.map((x) => ({ name: x.name, extra: x.extra, helmet: x.helmet, sport: x.sport, level: x.level, ...patch })));
   }
 
 
@@ -486,6 +533,7 @@ export function TeamQuote() {
     `[지노스키 견적] ${trip} · ${lenText} · ${dayText}`,
     `기간: ${period}`,
     `인원: 어른 ${adults}명 · 어린이 ${kids}명 (반 ${usedSplit.join("+")}, 강사 ${usedSplit.length}명)`,
+    ...(sportSummary ? [`종목·실력: ${sportSummary}`] : []),
     ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
     `수업: 총 ${sessions}회 (${schedule.filter((d) => d.slots.length).map((d) => dayLine(d)).join(" / ")})`,
     ...(days >= 1
@@ -545,7 +593,7 @@ export function TeamQuote() {
       dp: dayPlans.map((p) => `${p.n}${p.n === 1 ? p.one : p.n === 2 ? p.two : ""}${LEN_CODE[p.len ?? len]}`).join("-"),
       g: usedSplit.join("-"),
       pp: roster
-        .map((x) => `${EXTRA_CODE[x.extra]}${x.helmet}${x.name.trim() ? `:${x.name.trim().replace(/[.:&=?#]/g, "")}` : ""}`)
+        .map((x) => `${EXTRA_CODE[x.extra]}${x.helmet}${x.sport === "board" ? "b" : "s"}${x.level}${x.name.trim() ? `:${x.name.trim().replace(/[.:&=?#]/g, "")}` : ""}`)
         .join("."),
     });
     if (dayTickets.some((t) => t !== undefined))
@@ -605,6 +653,7 @@ export function TeamQuote() {
         },
       ],
       notes: [
+        ...(sportSummary ? [`종목·실력: ${sportSummary}`] : []),
         ebSaved
           ? `얼리버드 10%는 강습료에만 적용 (-${won(ebSaved)}) · 리프트·장비 40% 할인 · 헬멧 할인 제외`
           : "매 수업 사진·영상 무료 · 리프트·장비 40% 할인 · 헬멧 할인 제외",
@@ -693,7 +742,7 @@ export function TeamQuote() {
           program: `견적 ${lenText} · ${dayText}`,
           timeSlot: timeText,
           groupSize: `어른${adults} 어린이${kids} · 반 ${usedSplit.join("+")}`,
-          equipment: "",
+          equipment: sportSummary,
           level: "",
           total: `${won(grand)} (수업 ${sessions}회)`,
           note: [
@@ -764,10 +813,68 @@ export function TeamQuote() {
                 <p className="rounded-xl bg-ice-200/70 px-3.5 py-2.5 text-[12.5px] leading-relaxed text-ink-700">
                   🎫 리프트 요금 나이 기준: <b>소인 = 13세 이하(초등학생까지)</b> · <b>대인 = 14세 이상(중학생부터)</b> · 강습은 만 4세부터 가능해요
                 </p>
+                {people > 0 && (
+                  <div className="rounded-2xl bg-white p-4 ring-1 ring-snow-300/60">
+                    <p className="text-[15px] font-bold text-ink-900">🎿 스키·보드 / 실력</p>
+                    <p className="mt-0.5 text-[12px] leading-relaxed text-snow-500">초급 = 처음이거나 초보 슬로프 · 중급 = 턴하며 중급 슬로프 · 상급 = 상급 슬로프·기술 연습</p>
+                    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                      <span className="text-[12px] font-semibold text-snow-500">모두 한 번에:</span>
+                      {(["ski", "board"] as Sport[]).map((sp) => (
+                        <button
+                          key={sp}
+                          type="button"
+                          onClick={() => {
+                            setAllPersons({ sport: sp });
+                            setSplit([]);
+                          }}
+                          className="rounded-full bg-snow-100 px-3 py-1 text-[12.5px] font-semibold text-ink-700"
+                        >
+                          {sp === "ski" ? "모두 스키" : "모두 보드"}
+                        </button>
+                      ))}
+                    </div>
+                    <ul className="mt-1 flex flex-col divide-y divide-snow-300/50">
+                      {roster.map((x) => (
+                        <li key={x.index} className="flex flex-wrap items-center gap-x-2 gap-y-1.5 py-2.5">
+                          <span className={cn("w-[52px] shrink-0 text-[13px] font-bold", x.child ? "text-amber-700" : "text-ink-900")}>{defLabel(x.index)}</span>
+                          <div className="flex rounded-full bg-snow-100 p-0.5">
+                            {(["ski", "board"] as Sport[]).map((sp) => (
+                              <button
+                                key={sp}
+                                type="button"
+                                aria-pressed={x.sport === sp}
+                                onClick={() => {
+                                  setPerson(x.index, { sport: sp });
+                                  setSplit([]);
+                                }}
+                                className={cn("rounded-full px-3 py-1 text-[12.5px] font-bold", x.sport === sp ? "bg-brand-500 text-white" : "text-ink-700")}
+                              >
+                                {SPORT_LABEL[sp]}
+                              </button>
+                            ))}
+                          </div>
+                          <div className="flex rounded-full bg-snow-100 p-0.5">
+                            {([1, 2, 3] as Level[]).map((lv) => (
+                              <button
+                                key={lv}
+                                type="button"
+                                aria-pressed={x.level === lv}
+                                onClick={() => setPerson(x.index, { level: lv })}
+                                className={cn("rounded-full px-2.5 py-1 text-[12.5px] font-bold", x.level === lv ? "bg-ink-900 text-white" : "text-ink-700")}
+                              >
+                                {LEVEL_LABEL[lv]}
+                              </button>
+                            ))}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <p className="text-center text-[13px] text-snow-500">
                   {people ? `모두 ${people}명이 배워요` : "배울 사람 수를 넣어주세요"} · 구경만 하는 분은 빼고 넣어주세요
                 </p>
-                <PriceGuide prices={prices} people={people} />
+                <PriceGuide prices={prices} people={people} rec={splitCheapest} />
               </div>
             )}
 
@@ -903,6 +1010,11 @@ export function TeamQuote() {
                 <p className="text-[13.5px] text-snow-600">
                   강사 1명이 최대 3명까지 가르쳐요. 실력·나이가 비슷한 분끼리 묶어드려요.
                 </p>
+                {skiN > 0 && boardN > 0 && (
+                  <p className="rounded-xl bg-amber-50 px-3.5 py-2.5 text-[13px] font-semibold text-amber-700">
+                    🎿 스키 {skiN}명 · 🏂 보드 {boardN}명 — 스키와 보드는 반을 따로 나눠요
+                  </p>
+                )}
                 {[
                   { title: "알뜰하게", sp: splitCheapest, desc: "강사 1명당 3명까지" },
                   { title: "소수정예", sp: splitSmall, desc: "강사 1명당 2명까지" },
@@ -926,7 +1038,7 @@ export function TeamQuote() {
                   </button>
                 ) : (
                   <div className="mt-1 grid grid-cols-2 gap-2">
-                    {allSplits(people).map((sp) => (
+                    {splitChoices.map((sp) => (
                       <button
                         key={sp.join("-")}
                         type="button"
@@ -1545,11 +1657,11 @@ const partOf = (time: string) => {
 /** 2단계(인원) 아래 안내: 강습료 가격대 · 패찰 · 시간표 · 저녁 정설 */
 /** 140000 → 14만, 125000 → 12.5만 */
 const man = (n: number) => `${Number((n / 10000).toFixed(1))}만`;
-function PriceGuide({ prices, people }: { prices: { table: Record<Len, number[]>; pass: Record<Len, number> }; people: number }) {
+function PriceGuide({ prices, people, rec: recIn }: { prices: { table: Record<Len, number[]>; pass: Record<Len, number> }; people: number; rec?: number[] }) {
   const lens = Object.keys(LEN_LABEL) as Len[];
   const sizes = Math.max(...lens.map((l) => prices.table[l].length));
   // 인원에 맞는 추천 반 나누기: 4명 → 1:2+1:2, 5명 → 1:3+1:2 …
-  const rec = people > 0 ? even(people, Math.ceil(people / 3)) : [];
+  const rec = recIn ?? (people > 0 ? even(people, Math.ceil(people / 3)) : []);
   const hotSet = new Set(rec);
   const TEAM_KO = ["", "한", "두", "세", "네", "다섯"];
   const eb = isEarlyBirdActive();
