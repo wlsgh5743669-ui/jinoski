@@ -32,12 +32,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly" as const,
       priority: 0.8,
     },
-    {
-      url: `${siteConfig.url}/ko/quote/`,
+    ...["ko", "en", "zh"].map((l) => ({
+      url: `${siteConfig.url}/${l}/quote/`,
       lastModified,
       changeFrequency: "weekly" as const,
-      priority: 0.8,
-    },
+      priority: l === "ko" ? 0.8 : 0.6,
+    })),
   ];
 
   // 언어별 페이지를 각각 한 줄씩 넣고, 서로를 대체 언어로 연결 (구글 권장 방식)

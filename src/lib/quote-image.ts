@@ -1,3 +1,4 @@
+import { trQuote, type QLocale } from "@/lib/quote-i18n";
 // 견적 결과를 PNG 이미지로 그려요 (손님이 저장해서 카톡으로 사진 전송용)
 
 export type QuoteImageData = {
@@ -48,7 +49,12 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, max: number): string[
   return out;
 }
 
-export async function renderQuoteImage(d: QuoteImageData, type: "image/png" | "image/jpeg" = "image/png"): Promise<Blob> {
+export async function renderQuoteImage(
+  d: QuoteImageData,
+  type: "image/png" | "image/jpeg" = "image/png",
+  loc: QLocale = "ko"
+): Promise<Blob> {
+  const tr = (s: string) => trQuote(s, loc);
   if (document.fonts?.ready) await document.fonts.ready;
   const inner = W - PAD * 2;
   // 1) 높이 계산용 그리기 함수 (dry=true면 위치만 계산)
@@ -64,15 +70,22 @@ export async function renderQuoteImage(d: QuoteImageData, type: "image/png" | "i
       const w = ctx.measureText("JINO").width;
       ctx.fillStyle = BLUE;
       ctx.fillText("SKI", PAD + w, 96);
+      // 제목과 오른쪽 안내가 겹치지 않게 제목 글자 크기를 줄여요 (영어·중국어)
+      ctx.font = font(26, 500);
+      const subW = ctx.measureText(tr("비발디파크 스키·보드 강습")).width;
+      let ts = 54;
+      for (; ts > 36; ts -= 2) {
+        ctx.font = font(ts, 800);
+        if (ctx.measureText(tr("가족·연박 견적서")).width + subW + 30 <= W - PAD * 2) break;
+      }
       ctx.fillStyle = "#fff";
-      ctx.font = font(54, 800);
-      ctx.fillText("가족·연박 견적서", PAD, 172);
+      ctx.fillText(tr("가족·연박 견적서"), PAD, 172);
       ctx.fillStyle = "rgba(255,255,255,0.55)";
       ctx.font = font(26, 500);
       const now = new Date();
       ctx.textAlign = "right";
-      ctx.fillText(`${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()} 기준`, W - PAD, 96);
-      ctx.fillText("비발디파크 스키·보드 강습", W - PAD, 172);
+      ctx.fillText(tr(`${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()} 기준`), W - PAD, 96);
+      ctx.fillText(tr("비발디파크 스키·보드 강습"), W - PAD, 172);
       ctx.textAlign = "left";
     }
     y = 230 + 70;
@@ -84,7 +97,11 @@ export async function renderQuoteImage(d: QuoteImageData, type: "image/png" | "i
       ctx.fillText(d.title, PAD, y);
     }
     y += 86;
-    ctx.font = font(70, 800);
+    // 1인 금액 줄이 화면을 넘으면 글자를 줄여요
+    for (let fs = 70; fs >= 40; fs -= 2) {
+      ctx.font = font(fs, 800);
+      if (ctx.measureText(d.total).width <= W - PAD * 2) break;
+    }
     if (!dry) {
       ctx.fillStyle = INK;
       ctx.fillText(d.total, PAD, y);
@@ -111,7 +128,7 @@ export async function renderQuoteImage(d: QuoteImageData, type: "image/png" | "i
       y += 24;
     };
 
-    section("시간표");
+    section(tr("시간표"));
     for (const r of d.schedule) {
       y += 46;
       ctx.font = font(29, 600);
@@ -126,7 +143,7 @@ export async function renderQuoteImage(d: QuoteImageData, type: "image/png" | "i
     }
     y += 34;
 
-    section("금액 내역");
+    section(tr("금액 내역"));
     for (const t of d.teams) {
       y += 52;
       ctx.font = font(32, 700);
@@ -175,10 +192,10 @@ export async function renderQuoteImage(d: QuoteImageData, type: "image/png" | "i
       ctx.fillRect(0, y, W, 150);
       ctx.fillStyle = INK;
       ctx.font = font(30, 700);
-      ctx.fillText(`문의  ${d.phone}  ·  카카오톡 「지노스키」`, PAD, y + 66);
+      ctx.fillText(tr(`문의  ${d.phone}  ·  카카오톡 「지노스키」`), PAD, y + 66);
       ctx.fillStyle = GRAY;
       ctx.font = font(25, 500);
-      ctx.fillText("jinoski.com/ko/quote  ·  이 이미지를 카톡으로 보내주시면 바로 확인해 드려요", PAD, y + 112);
+      ctx.fillText(tr(`jinoski.com/${loc}/quote  ·  이 이미지를 카톡으로 보내주시면 바로 확인해 드려요`), PAD, y + 112);
     }
     y += 150;
     return y;

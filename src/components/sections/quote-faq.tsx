@@ -1,4 +1,5 @@
 import { Container } from "@/components/shared/container";
+import { QA_EN, QA_ZH } from "@/lib/quote-faq-i18n";
 
 // 연박·가족 여러 팀 손님이 자주 묻는 질문 (/ko/quote 아래)
 const QA: { q: string; a: string }[] = [
@@ -68,11 +69,18 @@ const QA: { q: string; a: string }[] = [
   },
 ];
 
-export function QuoteFaq() {
+const HEAD = {
+  ko: ["연박·가족 여행 자주 묻는 질문", "2박 3일, 하루 2회, 여러 가족이 함께 오실 때 많이 물어보세요."],
+  en: ["Multi-day & family trip FAQ", "Common questions about 3-day trips, two lessons a day, and several families together."],
+  zh: ["连住·家庭旅行常见问题", "三天两夜、一天两次课、多个家庭一起来时常问的问题。"],
+} as const;
+
+export function QuoteFaq({ locale = "ko" }: { locale?: "ko" | "en" | "zh" }) {
+  const list = locale === "en" ? QA_EN : locale === "zh" ? QA_ZH : QA;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: QA.map((x) => ({
+    mainEntity: list.map((x) => ({
       "@type": "Question",
       name: x.q,
       acceptedAnswer: { "@type": "Answer", text: x.a },
@@ -83,10 +91,10 @@ export function QuoteFaq() {
       <Container>
         <div className="mx-auto max-w-3xl">
           <p className="text-[12.5px] font-bold uppercase tracking-[0.18em] text-brand-500">Q&amp;A</p>
-          <h2 className="mt-2 text-[26px] font-bold tracking-tight text-ink-900 sm:text-[32px]">연박·가족 여행 자주 묻는 질문</h2>
-          <p className="mt-2 text-[14.5px] text-snow-600">2박 3일, 하루 2회, 여러 가족이 함께 오실 때 많이 물어보세요.</p>
+          <h2 className="mt-2 text-[26px] font-bold tracking-tight text-ink-900 sm:text-[32px]">{HEAD[locale][0]}</h2>
+          <p className="mt-2 text-[14.5px] text-snow-600">{HEAD[locale][1]}</p>
           <div className="mt-7 flex flex-col gap-2.5">
-            {QA.map((x, i) => (
+            {list.map((x, i) => (
               <details
                 key={x.q}
                 className="group rounded-2xl bg-ice-200/70 px-5 py-4 ring-1 ring-snow-300/50 open:bg-white open:ring-brand-500/30"

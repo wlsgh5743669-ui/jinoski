@@ -1,5 +1,8 @@
 "use client";
 
+import { useLocale } from "next-intl";
+import { asQLocale, useQuoteTranslate } from "@/lib/quote-i18n";
+
 import { useState } from "react";
 import { Container } from "@/components/shared/container";
 import { cn } from "@/lib/utils";
@@ -35,6 +38,8 @@ const when = (iso: string) =>
 
 /** 손님: 휴대폰 번호 + 비밀번호 → 내 견적서·상태·지노스키 답변 */
 export function MyQuotes() {
+  const qloc = asQLocale(useLocale());
+  useQuoteTranslate("myq-root", qloc);
   const [phone, setPhone] = useState("");
   const [pw, setPw] = useState("");
   const [items, setItems] = useState<MyQuote[] | null>(null);
@@ -68,7 +73,7 @@ export function MyQuotes() {
   }
 
   return (
-    <section className="bg-ice-100 py-10 md:py-16">
+    <section id="myq-root" className="bg-ice-100 py-10 md:py-16">
       <Container>
         <div className="mx-auto max-w-xl">
           <p className="text-[13px] font-bold tracking-widest text-brand-500">MY QUOTE</p>
@@ -98,7 +103,7 @@ export function MyQuotes() {
               </button>
               <p className="mt-3 text-center text-[12.5px] text-snow-500">
                 비밀번호를 잊으셨으면 카톡 「지노스키」로 문의해 주세요 ·{" "}
-                <a href="/ko/quote/" className="font-semibold text-brand-600 underline underline-offset-2">
+                <a href={`/${qloc}/quote/`} className="font-semibold text-brand-600 underline underline-offset-2">
                   새 견적 내기
                 </a>
               </p>
@@ -108,7 +113,7 @@ export function MyQuotes() {
               {items.map((x) => (
                 <article key={x.id} className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-snow-300/60">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <b className="text-[16px] text-ink-900">{x.name}님 {x.kind}</b>
+                    <b className="text-[16px] text-ink-900"><span data-notr>{qloc === "ko" ? `${x.name}님` : x.name}</span> {x.kind}</b>
                     <span className={cn("rounded-full px-2 py-0.5 text-[12px] font-bold", STATUS_TEXT[x.status]?.c)}>{STATUS_TEXT[x.status]?.t}</span>
                     <span className="text-[12px] text-snow-500">{when(x.createdAt)}</span>
                   </div>
@@ -118,7 +123,7 @@ export function MyQuotes() {
                       {x.groupSize && <p>👥 {x.groupSize}</p>}
                       {x.timeSlot && <p className="text-[12.5px] text-snow-600">🕘 {x.timeSlot}</p>}
                       <p className="font-bold text-ink-900">💰 {x.headline || x.total}</p>
-                      {x.request && <p className="text-[13px] text-snow-600">📝 {x.request}</p>}
+                      {x.request && <p data-notr className="text-[13px] text-snow-600">📝 {x.request}</p>}
                     </div>
                     {x.image && (
                       <button onClick={() => setBig(x.image)} className="shrink-0" aria-label="견적서 크게 보기">
@@ -141,7 +146,7 @@ export function MyQuotes() {
                           <p className="text-[12px] font-bold text-brand-600">
                             지노스키 답변 {x.replyAt && <span className="font-normal text-snow-500">· {when(x.replyAt)}</span>}
                           </p>
-                          <p className="mt-0.5 whitespace-pre-wrap text-[14px] text-ink-900">{x.reply}</p>
+                          <p data-notr className="mt-0.5 whitespace-pre-wrap text-[14px] text-ink-900">{x.reply}</p>
                         </div>
                       </div>
                     ) : (

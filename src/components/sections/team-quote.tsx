@@ -16,6 +16,8 @@ import {
   Send,
 } from "lucide-react";
 import { renderQuoteImage } from "@/lib/quote-image";
+import { useLocale } from "next-intl";
+import { asQLocale, trDeep, trQuote, useQuoteTranslate, type QLocale } from "@/lib/quote-i18n";
 import { Container } from "@/components/shared/container";
 import { trackEvent } from "@/components/shared/analytics";
 import { useContent } from "@/lib/use-content";
@@ -132,6 +134,9 @@ function allSplits(n: number): number[][] {
 
 export function TeamQuote() {
   const content = useContent();
+  // 영어·중국어 페이지는 화면 글자만 번역 (사장님 카톡 알림은 한국어 그대로)
+  const qloc = asQLocale(useLocale());
+  useQuoteTranslate("quote-root", qloc);
   const { contact } = content;
 
   const prices = useMemo(() => {
@@ -531,7 +536,7 @@ export function TeamQuote() {
     "※ 의류는 제휴 렌탈샵 안내 드립니다.^^ · 강사 일정 확인 후 확정",
   ].join("\n");
 
-  function shareUrl() {
+  function shareUrl(loc: QLocale = qloc) {
     const q = new URLSearchParams({
       d: String(days),
       a: String(adults),
@@ -547,11 +552,11 @@ export function TeamQuote() {
       q.set("dt", Array.from({ length: days }, (_, i) => (dayTickets[i] === undefined ? "a" : String(dayTickets[i]))).join("-"));
     if (startDate) q.set("sd", startDate);
     if (teacherPref) q.set("tp", String(teacherPref));
-    return `${window.location.origin}/ko/quote/?${q.toString()}`;
+    return `${window.location.origin}/${loc}/quote/?${q.toString()}`;
   }
   async function copy(kind: "text" | "link") {
     try {
-      await navigator.clipboard.writeText(kind === "text" ? summary : shareUrl());
+      await navigator.clipboard.writeText(kind === "text" ? trQuote(summary, qloc) : shareUrl());
       setCopied(kind);
       setTimeout(() => setCopied(""), 2000);
       trackEvent("quote_copy", { kind });
@@ -560,8 +565,8 @@ export function TeamQuote() {
     }
   }
   /** 견적서 이미지 (사진 저장 · 카톡 알림에 같이 사용) */
-  const quoteImage = (type: "image/png" | "image/jpeg" = "image/png") =>
-    renderQuoteImage({
+  const quoteImage = (type: "image/png" | "image/jpeg" = "image/png", loc: QLocale = qloc) =>
+    renderQuoteImage(trDeep({
       title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
       total: `1인 1회 약 ${won(perHead1)}`,
       totalSub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")} · 합계 ${won(grand)}${ebSaved ? " · 얼리버드 강습료 10% 반영" : ""}`,
@@ -608,17 +613,17 @@ export function TeamQuote() {
         "예상 견적이에요. 강사 일정 확인 후 확정 금액을 안내드려요.",
       ],
       phone: contact.phone,
-    }, type);
+    }, loc), type, loc);
   async function saveImage() {
     setImgState("making");
     trackEvent("quote_image", { people, days });
     try {
       const blob = await quoteImage();
-      const file = new File([blob], `지노스키_견적_${trip.replace(/\s/g, "")}.png`, { type: "image/png" });
+      const file = new File([blob], `${qloc === "ko" ? "지노스키_견적" : "JinoSki_quote"}_${trQuote(trip, qloc).replace(/\s/g, "")}.png`, { type: "image/png" });
       const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
       if (nav.canShare?.({ files: [file] }) && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         try {
-          await nav.share({ files: [file], title: "지노스키 견적" });
+          await nav.share({ files: [file], title: qloc === "ko" ? "지노스키 견적" : "JinoSki quote" });
         } catch {
           // 공유창 닫음
         }
@@ -642,13 +647,14 @@ export function TeamQuote() {
   async function send() {
     if (!canSend) return;
     const isEdit = !!sentLink;
-    const link = shareUrl();
+    const link = shareUrl("ko"); // 사장님용은 한국어 화면 링크
+    const myLink = shareUrl();
     setStatus("sending");
     // 견적서 사진도 같이 보내요 (실패해도 글 알림은 가요)
     let image = "";
     let imageH = 0;
     try {
-      const blob = await quoteImage("image/jpeg");
+      const blob = await quoteImage("image/jpeg", "ko");
       if (blob.size < 1_500_000) {
         image = await new Promise<string>((ok, no) => {
           const r = new FileReader();
@@ -675,7 +681,11 @@ export function TeamQuote() {
           imageW: 1080,
           imageH,
           headline: `1인 1회 약 ${won(perHead1)} · 합계 ${won(grand)}`,
-          request: [teacherPref ? `강사 ${TEACHER_PREFS[teacherPref]}` : "", note.trim()].filter(Boolean).join(" / "),
+          request: [
+            qloc === "en" ? "🌐 영어 페이지 손님 (영어 답변)" : qloc === "zh" ? "🌐 중국어 페이지 손님 (중국어 답변)" : "",
+            teacherPref ? `강사 ${TEACHER_PREFS[teacherPref]}` : "",
+            note.trim(),
+          ].filter(Boolean).join(" / "),
           pw: pw.trim(),
           name: name.trim(),
           phone: phone.trim(),
@@ -696,7 +706,7 @@ export function TeamQuote() {
         }),
       });
       setStatus(res.ok ? "sent" : "failed");
-      if (res.ok) setSentLink(link);
+      if (res.ok) setSentLink(myLink);
     } catch {
       setStatus("failed");
     }
@@ -704,7 +714,7 @@ export function TeamQuote() {
 
   // ── 화면 ─────────────────────────────
   return (
-    <section className="bg-ice-200 py-10 sm:py-14">
+    <section id="quote-root" className="bg-ice-200 py-10 sm:py-14">
       <Container>
         <div id="quote-top" className="mx-auto max-w-xl">
           {/* 진행 표시 */}
@@ -1361,7 +1371,7 @@ export function TeamQuote() {
                     <div className="text-center">
                       <p className="text-[15px] font-bold text-ink-900">✓ 접수됐어요! 강사 일정을 확인해서 {phone}로 연락드릴게요.</p>
                       {pw.trim().length >= 4 && (
-                        <a href="/ko/quote/my/" className="mt-2 inline-block text-[13.5px] font-semibold text-brand-600 underline underline-offset-2">
+                        <a href={`/${qloc}/quote/my/`} className="mt-2 inline-block text-[13.5px] font-semibold text-brand-600 underline underline-offset-2">
                           답변은 「내 견적 확인」에서 휴대폰 번호 + 비밀번호로 볼 수 있어요 →
                         </a>
                       )}
