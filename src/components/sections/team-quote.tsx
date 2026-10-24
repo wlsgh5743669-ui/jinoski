@@ -734,6 +734,66 @@ export function TeamQuote() {
     }
   }
   const canSend = name.trim().length > 0 && phone.replace(/[^0-9]/g, "").length >= 9;
+  /**
+   * 날짜별·사람별 금액표 — 운영 프로그램(ops) 견적서가 홈페이지 견적서와 같은 숫자로 보여주게 같이 보내요 (한국어)
+   * 날짜별 줄을 모두 더하면 합계(grand)와 같아요.
+   */
+  function buildBreakdown() {
+    type Item = { label: string; qty: number; unit: number; amount: number };
+    const bySize = new Map<number, number>();
+    for (const g of usedSplit) bySize.set(g, (bySize.get(g) ?? 0) + 1);
+    const sizes = [...bySize.entries()].sort((a, b) => b[0] - a[0]);
+    const days = schedule.map((d, i) => {
+      const items: Item[] = [];
+      const n = d.slots.length;
+      if (n) {
+        const fc = isFC(d.len);
+        for (const [size, cnt] of sizes) {
+          const base = prices.table[d.len][size - 1] ?? 0;
+          if (fc)
+            items.push({ label: `${LEN_LABEL[d.len]} 1:${size}${cnt > 1 ? ` · ${cnt}반` : ""} (패찰·식사 포함)`, qty: cnt, unit: base * 2, amount: base * 2 * cnt });
+          else
+            items.push({ label: `${LEN_LABEL[d.len]} 강습 1:${size}${cnt > 1 ? ` · ${cnt}반` : ""}${n > 1 ? ` · ${n}회` : ""}`, qty: cnt * n, unit: base, amount: base * cnt * n });
+        }
+        if (!fc && prices.pass[d.len]) items.push({ label: `패찰 ${LEN_LABEL[d.len]} (1인 1회)`, qty: people * n, unit: prices.pass[d.len], amount: prices.pass[d.len] * people * n });
+        const ebDay = ebFor(d.len) ? usedSplit.reduce((a, size) => a + ebCut(d.len, prices.table[d.len][size - 1] ?? 0), 0) * n : 0;
+        if (ebDay) items.push({ label: "얼리버드 10% 할인 (강습료만)", qty: 0, unit: 0, amount: -ebDay });
+      }
+      const t = ticketOf(i);
+      for (const x of extras) {
+        const sale = x.perDayList[i]?.sale ?? 0;
+        if (!sale || !t) continue;
+        const who = x.key.endsWith("-k") ? "어린이" : "어른";
+        const rental = x.key.startsWith("lr");
+        items.push({ label: `${who} 리프트 ${t}h${rental ? ` + 장비 ${RENTAL_H[t]}h` : ""} (40% 할인)`, qty: x.count, unit: sale, amount: sale * x.count });
+      }
+      if (n && helmet.basic) items.push({ label: "헬멧", qty: helmet.basic, unit: HELMET_PRICE.basic, amount: HELMET_PRICE.basic * helmet.basic });
+      if (n && helmet.visor) items.push({ label: "바이저 헬멧", qty: helmet.visor, unit: HELMET_PRICE.visor, amount: HELMET_PRICE.visor * helmet.visor });
+      return {
+        title: `${d.day}일차${startDate ? ` ${addDays(startDate, i)}` : ""}`,
+        rate: prep[i]?.rateTag ?? "",
+        lesson: n ? dayLine(d) : "수업 없음",
+        slots: d.slots.map((x) => `${x.label} ${x.time}`),
+        items,
+        total: dayTotals[i]?.total ?? 0,
+      };
+    });
+    return {
+      v: 1,
+      title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
+      headline: `1인 1회 약 ${won(perHead1)}`,
+      sub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}${sportSummary ? ` · ${sportSummary}` : ""}`,
+      days,
+      persons: personRows.map((x) => ({ label: x.label, group: x.group, desc: x.desc, lesson: x.lesson, lift: x.lift, helm: x.helm, pay: x.pay })),
+      totals: { lesson: lessonExact, lift: extrasTotal, helmet: helmetTotal, eb: ebSaved, grand },
+      notes: [
+        ...(fcNote ? [fcNote] : []),
+        ebSaved ? `얼리버드 10%는 강습료에만 적용 (-${won(ebSaved)}) · 리프트·장비 40% 할인 · 헬멧 할인 제외` : "리프트·장비 40% 할인 · 헬멧 할인 제외",
+        ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
+        "매 수업 사진·영상 무료 · 의류는 제휴 렌탈샵 안내 드립니다.^^",
+      ],
+    };
+  }
   async function send() {
     if (!canSend) return;
     const isEdit = !!sentLink;
@@ -784,6 +844,7 @@ export function TeamQuote() {
           timeSlot: timeText,
           groupSize: `어른${adults} 어린이${kids} · 반 ${usedSplit.join("+")}`,
           equipment: sportSummary,
+          breakdown: buildBreakdown(),
           level: "",
           total: `${won(grand)} (수업 ${sessions}회)`,
           note: [

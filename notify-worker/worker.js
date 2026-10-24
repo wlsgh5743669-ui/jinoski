@@ -203,6 +203,13 @@ function publicView(r, origin) {
   };
 }
 
+/** 금액표는 모양만 확인해서 저장 (너무 크면 버림) */
+function cleanBreakdown(b) {
+  if (!b || typeof b !== "object" || !Array.isArray(b.days) || !Array.isArray(b.persons)) return null;
+  const json = JSON.stringify(b);
+  return json.length <= 30000 ? JSON.parse(json) : null;
+}
+
 async function saveInquiry(env, d, imageId, link) {
   const cut = (v, n = 300) => (typeof v === "string" ? v.slice(0, n) : "");
   const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
@@ -231,6 +238,8 @@ async function saveInquiry(env, d, imageId, link) {
     reply: "",
     phoneDigits: cut(d.phone, 30).replace(/\D/g, ""),
     pwHash: "",
+    // 날짜별·사람별 금액표 (홈페이지 견적 계산기) — 운영 프로그램 견적서가 같은 숫자로 보여줘요
+    breakdown: cleanBreakdown(d.breakdown),
   };
   const pw = typeof d.pw === "string" ? d.pw.trim().slice(0, 20) : "";
   if (pw.length >= 4) rec.pwHash = await hashPw(id, pw);
