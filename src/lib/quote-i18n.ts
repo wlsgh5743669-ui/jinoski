@@ -17,6 +17,7 @@ const krw = (n: number) => `₩${Math.round(n).toLocaleString("en-US")}`;
 const NUMW_EN = ["", "one", "two", "three", "four", "five"];
 
 const RULES: Rule[] = [
+  [" · 7시간 풀케어(원데이·나이트)는 식사·사진·영상·패찰 포함", " · 7h Full Care (One Day · Night) includes meal, photos, video & permit", " · 7小时Full Care（One Day·Night）含餐·照片·视频·教学许可"],
   [/얼리버드: 2·3시간 강습료·풀케어 (\d+)% 할인 적용 중/g, "Early-bird: $1% off 2–3 hour lessons & Full Care", "早鸟：2·3小时课程和Full Care享$1%优惠"],
   [/얼리버드 ([\d.]+)만원/g, (_: string, n: string) => `Early-bird ₩${Math.round(+n * 10000).toLocaleString("en-US")}`, (_: string, n: string) => `早鸟 ₩${Math.round(+n * 10000).toLocaleString("en-US")}`],
   ["🏆 원데이·나이트 풀케어", "🏆 One Day · Night Full Care", "🏆 One Day · Night Full Care"],
@@ -50,7 +51,7 @@ const RULES: Rule[] = [
   ["대인 = 14세 이상(중학생부터)", "Adult = age 14+ (middle school and up)", "成人票 = 14岁以上（初中生起）"],
   [" · 강습은 만 4세부터 가능해요", " · lessons from age 4", " · 4周岁起可上课"],
   ["이름과 휴대폰 번호를 넣으면 보낼 수 있어요", "Enter your name and phone number to send", "填写姓名和手机号即可发送"],
-  [/^인원$/, "Instructor : students", "教练 : 学员"],
+  [/^인원$/, "Ratio", "师生比"],
   ["날짜마다 수업 1번 또는 2번을 골라주세요", "Choose once or twice for at least one day", "请至少为一天选择1次或2次"],
   ["반 나누는 방법을 골라주세요", "Choose how to split the groups", "请选择分组方式"],
   [/^일 \(당일\)$/, " day", " 天"],
@@ -330,7 +331,8 @@ const RULES: Rule[] = [
   [/(\d+)반/g, "Group $1", "第$1组"],
   [/아이 (\d+)/g, "Child $1", "儿童$1"],
   [/(\d+)세부터/g, "from age $1", "$1岁起"],
-  [/(\d+(?:\.\d+)?)만원?/g, (_: string, n: string) => krw(+n * 10000), (_: string, n: string) => krw(+n * 10000)],
+  [/1인 (\d+(?:\.\d+)?)만/g, (_: string, n: string) => `each ₩${Math.round(+n * 10)}K`, "每人$1万"],
+  [/(\d+(?:\.\d+)?)만원?/g, (_: string, n: string) => `₩${Math.round(+n * 10)}K`, "₩$1万"],
   [/([\d,]+)원/g, "₩$1", "₩$1"],
   [/약 /g, "≈ ", "约 "],
   [/(\d+)년 (\d+)월/g, (_: string, y: string, m: string) => `${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+m - 1]} ${y}`, "$1年$2月"],
