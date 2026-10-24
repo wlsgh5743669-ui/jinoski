@@ -759,8 +759,11 @@ export function TeamQuote() {
 
             {step === 2 && (
               <div className="mt-6 flex flex-col gap-4">
-                <BigCounter label="어른" sub="중학생 이상" value={adults} max={MAX_PEOPLE - kids} onChange={(v) => setPeople(v, kids)} />
-                <BigCounter label="어린이" sub="초등학생 이하(리프트 소인) · 만 4세부터" value={kids} max={MAX_PEOPLE - adults} onChange={(v) => setPeople(adults, v)} />
+                <BigCounter label="어른" sub="14세 이상 (중학생부터)" value={adults} max={MAX_PEOPLE - kids} onChange={(v) => setPeople(v, kids)} />
+                <BigCounter label="어린이" sub="13세 이하 (초등학생까지)" value={kids} max={MAX_PEOPLE - adults} onChange={(v) => setPeople(adults, v)} />
+                <p className="rounded-xl bg-ice-200/70 px-3.5 py-2.5 text-[12.5px] leading-relaxed text-ink-700">
+                  🎫 리프트 요금 나이 기준: <b>소인 = 13세 이하(초등학생까지)</b> · <b>대인 = 14세 이상(중학생부터)</b> · 강습은 만 4세부터 가능해요
+                </p>
                 <p className="text-center text-[13px] text-snow-500">
                   {people ? `모두 ${people}명이 배워요` : "배울 사람 수를 넣어주세요"} · 구경만 하는 분은 빼고 넣어주세요
                 </p>

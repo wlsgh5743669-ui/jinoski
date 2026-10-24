@@ -17,6 +17,12 @@ const krw = (n: number) => `₩${Math.round(n).toLocaleString("en-US")}`;
 const NUMW_EN = ["", "one", "two", "three", "four", "five"];
 
 const RULES: Rule[] = [
+  ["14세 이상 (중학생부터)", "Age 14+ (middle school and up)", "14岁以上（初中生起）"],
+  ["13세 이하 (초등학생까지)", "Age 13 and under (up to elementary school)", "13岁以下（小学生及以下）"],
+  ["🎫 리프트 요금 나이 기준:", "🎫 Lift ticket age rule:", "🎫 缆车票年龄标准："],
+  ["소인 = 13세 이하(초등학생까지)", "Child = age 13 and under (elementary school)", "儿童票 = 13岁以下（小学生及以下）"],
+  ["대인 = 14세 이상(중학생부터)", "Adult = age 14+ (middle school and up)", "成人票 = 14岁以上（初中生起）"],
+  [" · 강습은 만 4세부터 가능해요", " · lessons from age 4", " · 4周岁起可上课"],
   ["이름과 휴대폰 번호를 넣으면 보낼 수 있어요", "Enter your name and phone number to send", "填写姓名和手机号即可发送"],
   [/^인원$/, "Instructor : students", "教练 : 学员"],
   ["날짜마다 수업 1번 또는 2번을 골라주세요", "Choose once or twice for at least one day", "请至少为一天选择1次或2次"],
