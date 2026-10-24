@@ -8,6 +8,7 @@ import { useLocale } from "next-intl";
 import { ArrowLeft, ArrowRight, Check, Copy, MessageCircle, MessageSquare } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { useStepHistory } from "@/lib/use-step-history";
 import { useContent } from "@/lib/use-content";
 import {
   calculateBookingPrice,
@@ -326,6 +327,8 @@ export function BookingWizard() {
   const totalSteps = stepTitles.length;
 
   const [step, setStep] = useState(1);
+  // 휴대폰 뒤로가기 → 이전 단계로 (홈으로 나가지 않게)
+  useStepHistory(step, setStep, "reserveStep");
   const [state, setState] = useState<WizardState>(INITIAL_STATE);
   const [showSummary, setShowSummary] = useState(false);
   const [submitting, setSubmitting] = useState(false);

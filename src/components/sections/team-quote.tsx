@@ -16,6 +16,7 @@ import {
   Send,
 } from "lucide-react";
 import { renderQuoteImage } from "@/lib/quote-image";
+import { useStepHistory } from "@/lib/use-step-history";
 import { useLocale } from "next-intl";
 import { asQLocale, trDeep, trQuote, useQuoteTranslate, type QLocale } from "@/lib/quote-i18n";
 import { Container } from "@/components/shared/container";
@@ -173,6 +174,8 @@ export function TeamQuote() {
   }, [content]);
 
   const [step, setStep] = useState(1);
+  // 휴대폰 뒤로가기 → 이전 단계로
+  useStepHistory(step, setStep, "quoteStep");
   const [startDate, setStartDate] = useState("");
   const [days, setDays] = useState(1);
   const [adults, setAdults] = useState(0);
