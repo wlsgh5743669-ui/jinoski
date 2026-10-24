@@ -1798,9 +1798,41 @@ function PriceGuide({ prices, people, rec: recIn }: { prices: { table: Record<Le
             </tbody>
           </table>
         </div>
+        {/* 원데이·나이트 풀케어 (하루 7시간 · 패찰 포함 금액) */}
+        {prices.table.fc.length > 0 && (
+          <div className="mt-3 rounded-xl bg-rose-50 p-3 ring-1 ring-rose-200">
+            <p className="text-[13.5px] font-bold text-rose-700">
+              🏆 원데이·나이트 풀케어 <span className="ml-0.5 rounded bg-rose-500 px-1.5 py-0.5 text-[10.5px] text-white">강추</span>
+            </p>
+            <p className="mt-0.5 text-[12px] text-rose-900/70">하루 레슨 7시간 · 식사·사진·영상·패찰 포함</p>
+            <table className="mt-1.5 w-full text-center text-[12.5px] tabular-nums">
+              <tbody>
+                {[1, 2, 3].map((n) => {
+                  const v = (prices.table.fc[n - 1] ?? 0) * 2;
+                  if (!v) return null;
+                  return (
+                    <tr key={n} className="border-t border-rose-200/70">
+                      <td className="py-1.5 text-left font-bold text-ink-900">1:{n}</td>
+                      <td className="py-1.5 text-ink-900">
+                        {man(v)}원
+                        {n > 1 && <span className="block text-[11px] text-snow-500">1인 {man(Math.round(v / n / 1000) * 1000)}</span>}
+                      </td>
+                      {eb && (
+                        <td className="py-1.5 font-semibold text-brand-600">
+                          얼리버드 {man(v * (1 - EARLY_BIRD.rate))}원
+                          {n > 1 && <span className="block text-[11px] font-normal text-snow-500">1인 {man(Math.round((v * (1 - EARLY_BIRD.rate)) / n / 1000) * 1000)}</span>}
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
         <p className="mt-2 text-[12.5px] leading-relaxed text-snow-600">
           + 패찰(강습 허가권) 1인 {lens.map((l) => `${LEN_LABEL[l]} ${won(prices.pass[l])}`).join(" · ")} — 견적에 자동으로 포함돼요
-          {eb && <span className="block font-semibold text-brand-600">얼리버드: 2·3시간 강습료 {Math.round(EARLY_BIRD.rate * 100)}% 할인 적용 중</span>}
+          {eb && <span className="block font-semibold text-brand-600">얼리버드: 2·3시간 강습료·풀케어 {Math.round(EARLY_BIRD.rate * 100)}% 할인 적용 중</span>}
         </p>
       </div>
       <div className="border-t border-snow-300/60 pt-3">

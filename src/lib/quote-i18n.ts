@@ -17,6 +17,10 @@ const krw = (n: number) => `₩${Math.round(n).toLocaleString("en-US")}`;
 const NUMW_EN = ["", "one", "two", "three", "four", "five"];
 
 const RULES: Rule[] = [
+  [/얼리버드: 2·3시간 강습료·풀케어 (\d+)% 할인 적용 중/g, "Early-bird: $1% off 2–3 hour lessons & Full Care", "早鸟：2·3小时课程和Full Care享$1%优惠"],
+  [/얼리버드 ([\d.]+)만원/g, (_: string, n: string) => `Early-bird ₩${Math.round(+n * 10000).toLocaleString("en-US")}`, (_: string, n: string) => `早鸟 ₩${Math.round(+n * 10000).toLocaleString("en-US")}`],
+  ["🏆 원데이·나이트 풀케어", "🏆 One Day · Night Full Care", "🏆 One Day · Night Full Care"],
+  ["하루 레슨 7시간 · 식사·사진·영상·패찰 포함", "7 hours of lessons a day · meal, photos, video & permit included", "每天课程7小时 · 含餐·照片·视频·教学许可"],
   [/얼리버드 할인\((\S+)까지 예약\)은 2·3시간 강습료·풀케어\(원데이·나이트\)에만 적용돼요 · 패찰·리프트·장비·헬멧은 제외/g, "Early-bird (book by $1) applies to 2–3 hour lessons & Full Care (One Day · Night) only · not to permits, lift, rental or helmets", "早鸟优惠（$1前预订）仅适用于2·3小时课程和Full Care（One Day·Night）· 不含许可、缆车、装备和头盔"],
   ["💡 하루 2번이면", "💡 Two lessons a day?", "💡 一天两节课？"],
   ["원데이 풀케어 강추!", "One Day Full Care is our top pick!", "强烈推荐One Day Full Care！"],
@@ -189,7 +193,6 @@ const RULES: Rule[] = [
   [/강사 희망: /g, "Instructor preference: ", "教练偏好："],
   [/\(정가 (\S+)\)/g, "(regular $1)", "（原价$1）"],
   // ── 쪼개진 글자 이어 붙인 문장 ──
-  [/얼리버드: 2·3시간 강습료 (\d+)% 할인 적용 중/g, "Early-bird: $1% off 2–3 hour lessons", "早鸟：2·3小时课程享$1%优惠"],
   [/(\d+)일 \(당일\)/g, (_: string, n: string) => `${n} day (single day)`, "$1天（当日）"],
   ["토요일", "Saturdays", "周六"],
   ["크게 보기", "Enlarge", "放大"],
