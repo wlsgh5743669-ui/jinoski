@@ -152,7 +152,7 @@ function ReviewCard({ review, ui }: { review: ReviewItem; ui: ReviewsUi }) {
         <p className="mt-1 line-clamp-2 text-[12px] leading-snug text-white/90 sm:text-[13px]">
           {review.content}
         </p>
-        <p className="mt-1.5 text-[11px] font-semibold text-white/70">{review.lesson}</p>
+        <p className="mt-1.5 text-[12.5px] font-semibold text-white/75">{review.lesson}</p>
       </div>
 
       {/* Open state: full review over the blurred photo */}
@@ -182,11 +182,11 @@ function ReviewMeta({ review, ui, dark }: { review: ReviewItem; ui: ReviewsUi; d
         <span className={cn("text-[12.5px] font-semibold", dark ? "text-white" : "text-ink-900")}>
           {review.name}
         </span>
-        <span className={cn("shrink-0 text-[11px]", dark ? "text-white/60" : "text-snow-500")}>
+        <span className={cn("shrink-0 text-[12.5px]", dark ? "text-white/65" : "text-snow-500")}>
           {review.date}
         </span>
       </div>
-      <p className={cn("mt-0.5 text-[10.5px]", dark ? "text-white/60" : "text-snow-500")}>
+      <p className={cn("mt-0.5 text-[12px]", dark ? "text-white/65" : "text-snow-500")}>
         {review.lesson} · {ui.sourceBadge}
       </p>
     </div>

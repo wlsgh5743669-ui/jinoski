@@ -60,7 +60,7 @@ export const QA_EN: QA[] = [
   },
   {
     q: "When and how do we pay?",
-    a: "After you send your quote, we check instructor availability and contact you. Once the schedule is confirmed, you can pay by bank transfer or via our Smart Store (Naver Pay / card). During the early-bird period (book by Nov 10), 2- and 3-hour lessons and One Day / Night Full Care are 10% off.",
+    a: "After you send your quote, we check instructor availability and contact you. Once confirmed, please pay a 20% deposit (PayPal or bank transfer) — your booking is confirmed when we receive it, and the balance is paid on the lesson day. Lift tickets and rental (40% off) are paid to JinoSki together with the lesson fee, so on the day you just pick them up. During the early-bird period (book by Nov 10), 2- and 3-hour lessons and One Day / Night Full Care are 10% off.",
   },
   {
     q: "What if our plans change or the weather is bad?",
@@ -127,7 +127,7 @@ export const QA_ZH: QA[] = [
   },
   {
     q: "什么时候、怎么付款？",
-    a: "提交报价后，我们会确认教练日程并联系您。日程确定后，可通过银行转账或Smart Store（Naver Pay·信用卡）付款。早鸟期间（11月10日前预约）2·3小时课程及One Day / Night Full Care享9折优惠。",
+    a: "提交报价后，我们会确认教练日程并联系您。确认后请先支付总金额20%的订金（PayPal或银行转账），收到后预约即确认，余款在上课当天支付。缆车票·装备（6折）与课程费一起付给JinoSki，当天现场直接领取即可。早鸟期间（11月10日前预约）2·3小时课程及One Day / Night Full Care享9折优惠。",
   },
   {
     q: "中途行程变化或天气不好怎么办？",

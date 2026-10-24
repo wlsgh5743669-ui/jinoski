@@ -28,6 +28,7 @@ function todayString() {
 export function SeasonPopup() {
   const locale = useLocale();
   const [open, setOpen] = useState(false);
+  const [banner, setBanner] = useState(false);
   const [dontShowToday, setDontShowToday] = useState(false);
   const [index, setIndex] = useState(0);
   const go = (d: number) => setIndex((i) => (i + d + POSTERS.length) % POSTERS.length);
@@ -40,11 +41,24 @@ export function SeasonPopup() {
     // right after, same as the URL-param read in booking-wizard.tsx.
     if (locale !== "ko") return;
     if (!isEarlyBirdActive()) return;
-    if (localStorage.getItem(DISMISS_KEY) !== todayString()) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setOpen(true);
+    let dismissed = false;
+    try {
+      dismissed = localStorage.getItem(DISMISS_KEY) === todayString();
+    } catch {
+      dismissed = false;
     }
+    if (dismissed) return;
+    const t = setTimeout(() => setBanner(true), 3000);
+    return () => clearTimeout(t);
   }, [locale]);
+  const closeBanner = () => {
+    setBanner(false);
+    try {
+      localStorage.setItem(DISMISS_KEY, todayString());
+    } catch {
+      /* 저장 안 돼도 괜찮아요 */
+    }
+  };
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -55,12 +69,37 @@ export function SeasonPopup() {
 
   const handleClose = () => {
     if (dontShowToday) {
-      localStorage.setItem(DISMISS_KEY, todayString());
+      try {
+        localStorage.setItem(DISMISS_KEY, todayString());
+      } catch {
+        /* 저장 안 돼도 괜찮아요 */
+      }
+      setBanner(false);
     }
     setOpen(false);
   };
 
   return (
+    <>
+    <AnimatePresence>
+      {banner && !open && (
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 24 }}
+          transition={{ duration: 0.3 }}
+          className="fixed bottom-[calc(16px+env(safe-area-inset-bottom,0px))] left-3 right-[76px] z-40 flex items-center gap-2 rounded-2xl bg-ink-900 py-2.5 pl-4 pr-2 text-white shadow-[0_12px_30px_-10px_rgba(10,11,13,0.6)] sm:left-auto sm:right-24 sm:max-w-sm"
+        >
+          <button type="button" onClick={() => setOpen(true)} className="min-w-0 flex-1 text-left">
+            <span className="block text-[13.5px] font-bold">🎁 26/27 얼리버드 10% 할인</span>
+            <span className="block text-[12px] text-white/70">11/10까지 예약 · 시즌 8회 패키지 · 눌러서 보기</span>
+          </button>
+          <button type="button" aria-label="닫기" onClick={closeBanner} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10">
+            <X size={16} />
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
     <AnimatePresence>
       {open && (
         <motion.div
@@ -164,5 +203,6 @@ export function SeasonPopup() {
         </motion.div>
       )}
     </AnimatePresence>
+    </>
   );
 }

@@ -324,7 +324,11 @@ export function BookingWizard() {
   const content = useContent();
   const locale = useLocale();
   const stepTitles = content.bookingWizard.stepTitles;
-  const totalSteps = stepTitles.length;
+  /** 화면(page)마다 보여줄 단계들 — 8단계를 5화면으로 줄였어요 */
+  const PAGES = [[1], [2], [3, 4], [5, 6], [7, 8]];
+  /** 화면 제목으로 쓸 단계 (나머지 단계는 작은 제목) */
+  const PAGE_HEAD = [1, 2, 3, 5, 7];
+  const totalSteps = PAGES.length;
 
   const [step, setStep] = useState(1);
   // 휴대폰 뒤로가기 → 이전 단계로 (홈으로 나가지 않게)
@@ -419,8 +423,13 @@ export function BookingWizard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /** 지금 화면에 이 단계가 있나요? */
+  const on = (k: number) => (PAGES[step - 1] ?? []).includes(k);
   function canProceed(): boolean {
-    switch (step) {
+    return (PAGES[step - 1] ?? []).every((k) => stepOk(k));
+  }
+  function stepOk(k: number): boolean {
+    switch (k) {
       case 1:
         return state.date.length > 0;
       case 2:
@@ -528,9 +537,22 @@ export function BookingWizard() {
         />
       </div>
 
-      {!foreign && step === 1 && <PayChoice storeUrl="/ko/store/" />}
+      {!foreign && on(1) && <PayChoice storeUrl="/ko/store/" />}
+      {foreign && on(1) && (
+        <div className="mt-6 flex flex-col gap-1.5 rounded-2xl border-2 border-[#003087]/30 bg-[#E8F0FE] px-4 py-3.5">
+          <span className="text-[14.5px] font-bold text-[#003087]">💳 {locale === "zh" ? "海外客人：用 PayPal 付款" : "Overseas guests: pay with PayPal"}</span>
+          <span className="text-[12.5px] leading-snug text-snow-700">
+            {locale === "zh"
+              ? "先提交预约申请 → 我们确认教练和时间后，用 PayPal 支付20%订金即可确认（余款上课当天支付）。也可以先看看多日报价。"
+              : "Send your booking request → once we confirm your instructor and time, pay a 20% deposit by PayPal to lock it in (balance on the lesson day). Planning several days? Try the multi-day quote."}
+          </span>
+          <a href={`/${locale}/quote/`} className="text-[12.5px] font-bold text-[#003087] underline underline-offset-2">
+            {locale === "zh" ? "多日·家庭报价计算 →" : "Multi-day & family quote →"}
+          </a>
+        </div>
+      )}
 
-      <div className={cn("flex-1", !foreign && step === 1 ? "mt-8" : "mt-10")}>
+      <div className={cn("flex-1", !foreign && on(1) ? "mt-8" : "mt-10")}>
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={step}
@@ -540,18 +562,18 @@ export function BookingWizard() {
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             <h1 className="text-[24px] font-bold tracking-tight text-ink-900 sm:text-[28px]">
-              {stepTitles[step - 1]}
+              {stepTitles[PAGE_HEAD[step - 1] - 1]}
             </h1>
 
             <div className="mt-8">
-              {step === 1 && (
+              {on(1) && (
                 <DatePicker
                   value={state.date}
                   onChange={(date) => update("date", date)}
                 />
               )}
 
-              {step === 2 && !showFullCareChoice && (
+              {on(2) && !showFullCareChoice && (
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {PROGRAM_VALUES.filter(
                     (value) => value !== "one-day" && value !== "night"
@@ -598,7 +620,7 @@ export function BookingWizard() {
                 </div>
               )}
 
-              {step === 2 && showFullCareChoice && (
+              {on(2) && showFullCareChoice && (
                 <div className="flex flex-col gap-3">
                   <button
                     type="button"
@@ -636,7 +658,7 @@ export function BookingWizard() {
                 </div>
               )}
 
-              {step === 3 && state.program && (
+              {on(3) && state.program && (
                 <OptionList
                   options={getTimeSlotValues(state.program, content).map(
                     (v) => ({
@@ -653,11 +675,12 @@ export function BookingWizard() {
                 />
               )}
 
-              {step === 3 && isFullCare && (
+              {on(3) && isFullCare && (
                 <FullCareSchedule program={state.program!} content={content} />
               )}
 
-              {step === 4 && state.program && (
+              {on(4) && PAGE_HEAD[step - 1] !== 4 && <h2 className="mb-4 mt-10 text-[18px] font-bold text-ink-900">{stepTitles[3]}</h2>}
+              {on(4) && state.program && (
                 <OptionList
                   options={getGroupSizeOptions(state.program).map((code) => {
                     const g = content.bookingWizard.guide;
@@ -681,7 +704,7 @@ export function BookingWizard() {
                 />
               )}
 
-              {step === 5 && (
+              {on(5) && (
                 <OptionList
                   options={EQUIPMENT_VALUES.map((value) => ({
                     value,
@@ -691,13 +714,14 @@ export function BookingWizard() {
                   onSelect={(v) => update("equipment", v as EquipmentValue)}
                 />
               )}
-              {step === 5 && (
+              {on(5) && (
                 <p className="mt-4 text-[13px] leading-relaxed text-snow-500">
                   {content.bookingWizard.guide.extrasNotice}
                 </p>
               )}
 
-              {step === 6 && (
+              {on(6) && PAGE_HEAD[step - 1] !== 6 && <h2 className="mb-4 mt-10 text-[18px] font-bold text-ink-900">{stepTitles[5]}</h2>}
+              {on(6) && (
                 <div className="flex flex-col gap-3">
                   {LEVEL_VALUES.map((value) => {
                     const info = getLevelInfo(value, content, state.equipment);
@@ -736,8 +760,9 @@ export function BookingWizard() {
                 </div>
               )}
 
-              {step === 7 && (
-                <div>
+              {on(7) && PAGE_HEAD[step - 1] !== 7 && <h2 className="mb-4 text-[18px] font-bold text-ink-900">{stepTitles[6]}</h2>}
+              {on(7) && (
+                <div className="mb-10">
                   <p className="mb-5 text-[13.5px] leading-relaxed text-snow-500">
                     {content.bookingWizard.liftPassExplainer}
                   </p>
@@ -770,7 +795,8 @@ export function BookingWizard() {
                 </div>
               )}
 
-              {step === 8 && (
+              {on(8) && PAGE_HEAD[step - 1] !== 8 && <h2 className="mb-4 text-[18px] font-bold text-ink-900">{stepTitles[7]}</h2>}
+              {on(8) && (
                 <div className="flex flex-col gap-4">
                   {state.program && (
                     <div className="rounded-2xl border border-snow-300/60 bg-snow-100/70 p-5 text-[13.5px] leading-relaxed text-snow-700">
@@ -929,7 +955,7 @@ export function BookingWizard() {
         </AnimatePresence>
       </div>
 
-      {step === 8 && !canProceed() && (() => {
+      {on(8) && !canProceed() && (() => {
         const g = content.bookingWizard.guide;
         const missing = [
           !state.name.trim() && g.fieldNames.name,
@@ -943,7 +969,7 @@ export function BookingWizard() {
         ) : null;
       })()}
 
-      <div className={cn("flex items-center gap-3", step === 8 && !canProceed() ? "mt-3" : "mt-10")}>
+      <div className={cn("flex items-center gap-3", on(8) && !canProceed() ? "mt-3" : "mt-10")}>
         {step > 1 && (
           <button
             type="button"
@@ -1061,11 +1087,13 @@ function PayChoice({ storeUrl }: { storeUrl: string }) {
         className="flex flex-col rounded-2xl border-2 border-[#03C75A] bg-[#03C75A]/[0.06] px-4 py-3.5 transition-colors hover:bg-[#03C75A]/[0.12]"
       >
         <span className="text-[14.5px] font-bold text-ink-900">💳 카드·네이버페이</span>
-        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">스토어 상품 보고 바로 결제 →</span>
+        <span className="mt-1 text-[12.5px] font-semibold leading-snug text-[#03A94F]">👉 날짜 정했고 바로 결제할 분</span>
+        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">스토어 상품 보고 결제 →</span>
       </a>
       <div className="flex flex-col rounded-2xl border-2 border-brand-500 bg-brand-50 px-4 py-3.5">
         <span className="text-[14.5px] font-bold text-brand-600">📝 예약·상담 문의</span>
-        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">아래에서 신청 · 확정 후 계좌이체</span>
+        <span className="mt-1 text-[12.5px] font-semibold leading-snug text-brand-600">👉 혼자·하루 강습</span>
+        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">아래에서 신청 · 확정 후 예약금 20%</span>
       </div>
       <a
         href="/ko/quote/"
@@ -1074,6 +1102,7 @@ function PayChoice({ storeUrl }: { storeUrl: string }) {
       >
         <span className="flex flex-col">
           <span className="text-[14.5px] font-bold text-ink-900">🏔️ 연박·가족 여러 팀 견적내기</span>
+          <span className="mt-1 text-[12.5px] font-semibold leading-snug text-ink-900">👉 가족·여러 날·여러 팀이면 여기</span>
           <span className="mt-0.5 text-[12px] leading-snug text-snow-600">2박 3일 · 하루 2회 · 리프트·장비 40% 할인까지 한 번에</span>
         </span>
         <span className="shrink-0 text-[18px] font-bold text-ink-900">→</span>

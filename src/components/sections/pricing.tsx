@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { isEarlyBirdActive } from "@/lib/pricing";
+import { EARLY_BIRD, isEarlyBirdActive } from "@/lib/pricing";
 import { Clock, Users, ChevronDown, Check, Repeat, Phone, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useContent } from "@/lib/use-content";
@@ -21,7 +21,7 @@ function InfoCard({
   icon: typeof Clock;
   title: string;
   subtitle?: string;
-  rows: { label: string; value: string }[];
+  rows: { label: string; value: string; strike?: string; sub?: string; hot?: boolean }[];
 }) {
   return (
     <motion.div
@@ -49,9 +49,13 @@ function InfoCard({
             key={row.label}
             className="flex items-center justify-between border-b border-snow-200 py-3 last:border-b-0"
           >
-            <span className="text-[14.5px] text-snow-700">{row.label}</span>
-            <span className="text-[14.5px] font-semibold tabular-nums text-ink-900">
-              {row.value}
+            <span className="text-[14.5px] font-semibold text-snow-700">{row.label}</span>
+            <span className="flex flex-col items-end text-right tabular-nums">
+              <span className="flex flex-wrap items-baseline justify-end gap-x-2">
+                {row.strike && <span className="text-[12.5px] text-snow-400 line-through">{row.strike}</span>}
+                <span className={cn("text-[15px] font-bold", row.hot ? "text-red-500" : "text-ink-900")}>{row.value}</span>
+              </span>
+              {row.sub && <span className="text-[12.5px] font-medium text-snow-500">{row.sub}</span>}
             </span>
           </div>
         ))}
@@ -73,10 +77,15 @@ function FullCareCard({
   activeTab: "one-day" | "night";
   onTabChange: (tab: "one-day" | "night") => void;
 }) {
-  const { groupSizeFullCareLabels, ui, programLabels, bookingWizard } = useContent();
+  const { groupSizeFullCareLabels, ui, programLabels, bookingWizard, seasonProgram } = useContent();
   const usd = useUsd();
   const [open, setOpen] = useState(false);
   const program = programs.find((p) => p.slug === activeTab) ?? programs[0];
+  const [ebOn, setEbOn] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setEbOn(isEarlyBirdActive() && (EARLY_BIRD.programs as string[]).includes(activeTab));
+  }, [activeTab]);
 
   return (
     <motion.div
@@ -132,7 +141,10 @@ function FullCareCard({
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
           {program.rows.map((row) => {
             const peopleCount = parseInt(row.people, 10) || 1;
-            const perPersonPrice = Number(row.price.replace(/[^0-9]/g, "")) / peopleCount;
+            const base = Number(row.price.replace(/[^0-9]/g, ""));
+            const shown = ebOn ? base - Math.round((base * EARLY_BIRD.rate) / 1000) * 1000 : base;
+            const shownStr = row.price.replace(/[\d,]+/, shown.toLocaleString("en-US"));
+            const perPersonPrice = Math.round(shown / peopleCount / 1000) * 1000;
             return (
               <div
                 key={row.people}
@@ -141,11 +153,14 @@ function FullCareCard({
                 <span className="text-[13px] font-medium text-white/60">
                   {groupSizeFullCareLabels[row.people as FullCareGroupSizeCode]}
                 </span>
-                <span className="whitespace-nowrap text-[13px] font-bold tabular-nums sm:text-[18px]">
-                  {row.price}
+                {ebOn && (
+                  <span className="whitespace-nowrap text-[11.5px] text-white/40 line-through">{row.price}</span>
+                )}
+                <span className={cn("whitespace-nowrap text-[13px] font-bold tabular-nums sm:text-[18px]", ebOn && "text-[#FF8A8A]")}>
+                  {shownStr}
                 </span>
-                {usd(row.price) !== row.price && (
-                  <span className="whitespace-nowrap text-[11px] text-white/50">{usd(row.price).slice(row.price.length + 1)}</span>
+                {usd(shownStr) !== shownStr && (
+                  <span className="whitespace-nowrap text-[11px] text-white/50">{usd(shownStr).slice(shownStr.length + 1)}</span>
                 )}
                 {peopleCount > 1 && (
                   <span className="whitespace-nowrap text-[11px] text-white/40">
@@ -158,6 +173,9 @@ function FullCareCard({
         </div>
       )}
 
+      {ebOn && (
+        <p className="text-[12.5px] font-semibold text-[#FF8A8A]">🎁 {seasonProgram.badge ?? "얼리버드 10%"}</p>
+      )}
       {program.priceNote && (
         <p className="text-[12.5px] text-white/45">※ {program.priceNote}</p>
       )}
@@ -398,6 +416,14 @@ export function Pricing() {
   const activeLessonPricing = lessonPricing.find(
     (g) => g.program === activeDuration
   );
+  const [ebOn, setEbOn] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setEbOn(isEarlyBirdActive());
+  }, []);
+  const ebFor = (d: string) => ebOn && (EARLY_BIRD.programs as string[]).includes(d);
+  const money = (sample: string, n: number) => sample.replace(/[\d,]+/, n.toLocaleString("en-US"));
+  const passInfo = content.liftPassPricing.find((p) => p.program === activeDuration);
 
   return (
     <section className="bg-ice-gradient pb-24 pt-16 sm:pb-32 sm:pt-20">
@@ -441,6 +467,26 @@ export function Pricing() {
             stagger={0.08}
             className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2"
           >
+            {activeLessonPricing && (
+              <InfoCard
+                icon={Users}
+                title={content.programLabels[activeDuration]}
+                subtitle={ebFor(activeDuration) ? `${ui.pricing.perPersonPricingSubtitle} · 🎁 ${content.seasonProgram.badge ?? ""}` : ui.pricing.perPersonPricingSubtitle}
+                rows={activeLessonPricing.rows.map((r) => {
+                  const base = Number(r.price.replace(/[^0-9]/g, ""));
+                  const eb = ebFor(activeDuration);
+                  const price = eb ? base - Math.round((base * EARLY_BIRD.rate) / 1000) * 1000 : base;
+                  const n = parseInt(r.people.split(":")[1] ?? "1", 10) || 1;
+                  return {
+                    label: r.people,
+                    value: usd(money(r.price, price)),
+                    strike: eb ? r.price : undefined,
+                    hot: eb,
+                    sub: n > 1 ? `${ui.pricing.perPersonPriceLabel} ${money(r.price, Math.round(price / n / 1000) * 1000)}` : undefined,
+                  };
+                })}
+              />
+            )}
             <InfoCard
               icon={Clock}
               title={scheduleTitleByDuration[activeDuration]}
@@ -449,18 +495,17 @@ export function Pricing() {
                 value: t.time,
               }))}
             />
-            {activeLessonPricing && (
-              <InfoCard
-                icon={Users}
-                title={content.programLabels[activeDuration]}
-                subtitle={ui.pricing.perPersonPricingSubtitle}
-                rows={activeLessonPricing.rows.map((r) => ({
-                  label: r.people,
-                  value: usd(r.price),
-                }))}
-              />
-            )}
           </RevealGroup>
+        )}
+
+        {activeDuration !== "fullcare" && passInfo && (
+          <Reveal delay={0.1}>
+            <div className="mx-auto mt-4 max-w-4xl rounded-2xl bg-white/80 px-5 py-4 text-[13.5px] leading-relaxed text-snow-700 ring-1 ring-snow-300/60">
+              <b className="text-ink-900">+ {ui.pricing.liftPassCardTitle}</b>{" "}
+              {content.liftPassPricing.map((p) => `${p.durationLabel} ${usd(p.price)}`).join(" · ")}
+              <span className="mt-1 block text-[12.5px] text-snow-500">※ {content.bookingWizard.liftPassExplainer}</span>
+            </div>
+          </Reveal>
         )}
 
         <Reveal delay={0.1}>

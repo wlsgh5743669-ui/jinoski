@@ -9,6 +9,7 @@ import { ReviewEventBanner } from "@/components/sections/review-event";
 import { SeasonPopup } from "@/components/sections/season-popup";
 import { Consult } from "@/components/sections/consult";
 import { QuoteBanner } from "@/components/sections/quote-banner";
+import { QuickLinks } from "@/components/sections/quick-links";
 
 export default function HomePage() {
   return (
@@ -16,6 +17,7 @@ export default function HomePage() {
       <SeasonPopup />
       <Hero />
       <Stats />
+      <QuickLinks />
       <WhyJinoSki />
       <MenuCards />
       <YoutubeVideos />

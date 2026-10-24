@@ -86,7 +86,7 @@ export function WhyJinoSki() {
                       {Icon && <Icon size={24} strokeWidth={1.75} className="hidden sm:block" />}
                     </div>
                     {item.highlight && (
-                      <span className="text-[11.5px] font-semibold text-brand-600 sm:hidden">
+                      <span className="text-[13px] font-semibold text-brand-600 sm:hidden">
                         {item.highlight}
                       </span>
                     )}

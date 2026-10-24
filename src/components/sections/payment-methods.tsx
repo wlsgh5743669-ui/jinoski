@@ -7,7 +7,7 @@ const T = {
   ko: {
     eyebrow: "PAYMENT",
     title: "결제 방법",
-    lead: "결제는 강사 일정이 확정된 뒤에 진행해 주세요. 확정 안내와 함께 결제 방법을 다시 알려드려요.",
+    lead: "강사 일정을 확인해 확정 안내를 드리면 예약금(총 금액의 20%)을 입금해 주세요. 입금이 확인되면 예약이 확정되고, 잔금은 강습 당일에 결제해요. 리프트권·장비(40% 할인)도 강습료와 함께 지노스키에 결제하시면 돼요.",
     bank: { title: "계좌이체", body: "국민은행 010-4047-7711\n예금주 박진호(지노컴퍼니)" },
     store: { title: "네이버페이 · 카드", body: "네이버 스마트스토어에서 레슨 상품으로 결제할 수 있어요. 결제 후 네이버 리뷰도 남길 수 있어요.", button: "스마트스토어에서 결제" },
     paypal: null,
@@ -15,7 +15,7 @@ const T = {
   en: {
     eyebrow: "PAYMENT",
     title: "How to pay",
-    lead: "Prices are set in Korean won (KRW); USD amounts shown on this site are approximate. Please pay after we confirm your instructor and time — your confirmation email includes the exact USD amount and payment link.",
+    lead: "After we confirm your instructor and time, pay a 20% deposit — PayPal is easiest for overseas guests. The balance is paid on the lesson day. Lift tickets & rental (40% off) are paid together with the lesson fee. Prices are in KRW; USD amounts are approximate.",
     bank: { title: "Bank transfer (Korea)", body: "KB Kookmin Bank 010-4047-7711\nAccount holder: 박진호 (Jino Company)" },
     store: null,
     paypal: { title: "PayPal / international card", body: "Pay in USD with PayPal or any international card. We send the USD amount with your confirmation.", button: "Pay with PayPal" },
@@ -23,7 +23,7 @@ const T = {
   zh: {
     eyebrow: "PAYMENT",
     title: "付款方式",
-    lead: "价格以韩元(KRW)为准，网站上的美元金额仅供参考。请在我们确认教练与时间后再付款，确认邮件中会附上准确的美元金额和付款链接。",
+    lead: "确认教练与时间后，请先支付20%订金——海外客人用PayPal最方便。余款在上课当天支付。缆车票·装备（6折）与课程费一起支付。价格以韩元为准，美元金额仅供参考。",
     bank: { title: "韩国银行转账", body: "国民银行 (KB) 010-4047-7711\n收款人：박진호 (Jino Company)" },
     store: null,
     paypal: { title: "PayPal / 国际信用卡", body: "可通过PayPal或国际信用卡以美元付款。确认时会告知美元金额。", button: "PayPal付款" },
@@ -36,13 +36,13 @@ export function PaymentMethods({ locale }: { locale: Locale }) {
   const { contact } = getContent(locale);
   // 한국어: 홈페이지 안의 스토어 상품 모음 페이지로
   const storeUrl = locale === "ko" ? "/ko/store/" : paymentConfig.smartStoreLessons || contact.smartStore;
-  const cards: { key: string; icon: React.ReactNode; title: string; body: string; href?: string; button?: string; tone: string }[] = [
-    { key: "bank", icon: <Building2 size={22} />, title: t.bank.title, body: t.bank.body, tone: "bg-brand-50 text-brand-600" },
-  ];
-  if (t.store && storeUrl)
-    cards.push({ key: "store", icon: <CreditCard size={22} />, title: t.store.title, body: t.store.body, href: storeUrl, button: t.store.button, tone: "bg-[#E8F9EE] text-[#03A94F]" });
+  const cards: { key: string; icon: React.ReactNode; title: string; body: string; href?: string; button?: string; tone: string }[] = [];
+  // 영어·중국어: 해외 손님은 PayPal이 제일 편해서 맨 앞에
   if (t.paypal && paymentConfig.paypalMe)
     cards.push({ key: "paypal", icon: <Globe size={22} />, title: t.paypal.title, body: t.paypal.body, href: paymentConfig.paypalMe, button: t.paypal.button, tone: "bg-[#E8F0FE] text-[#003087]" });
+  cards.push({ key: "bank", icon: <Building2 size={22} />, title: t.bank.title, body: t.bank.body, tone: "bg-brand-50 text-brand-600" });
+  if (t.store && storeUrl)
+    cards.push({ key: "store", icon: <CreditCard size={22} />, title: t.store.title, body: t.store.body, href: storeUrl, button: t.store.button, tone: "bg-[#E8F9EE] text-[#03A94F]" });
 
   return (
     <section id="payment" className="bg-white pb-20 pt-4 sm:pb-28">
