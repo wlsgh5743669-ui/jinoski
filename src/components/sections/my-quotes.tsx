@@ -33,8 +33,12 @@ const STATUS_TEXT: Record<MyQuote["status"], { t: string; c: string }> = {
   booked: { t: "예약 확정", c: "bg-emerald-100 text-emerald-700" },
   closed: { t: "종료", c: "bg-snow-100 text-snow-600" },
 };
-const when = (iso: string) =>
-  new Date(iso).toLocaleString("ko-KR", { timeZone: "Asia/Seoul", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+const when = (iso: string, loc = "ko") =>
+  new Date(iso).toLocaleString(loc === "en" ? "en-US" : loc === "zh" ? "zh-CN" : "ko-KR", { timeZone: "Asia/Seoul", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+
+/** 사장님용 표시(🌐 …)는 빼고 손님이 쓴 요청만 */
+const cleanReq = (r: string) =>
+  r.split(" / ").filter((s) => s && !s.startsWith("🌐")).join(" / ");
 
 /** 손님: 휴대폰 번호 + 비밀번호 → 내 견적서·상태·지노스키 답변 */
 export function MyQuotes() {
@@ -115,7 +119,7 @@ export function MyQuotes() {
                   <div className="flex flex-wrap items-center gap-1.5">
                     <b className="text-[16px] text-ink-900"><span data-notr>{qloc === "ko" ? `${x.name}님` : x.name}</span> {x.kind}</b>
                     <span className={cn("rounded-full px-2 py-0.5 text-[12px] font-bold", STATUS_TEXT[x.status]?.c)}>{STATUS_TEXT[x.status]?.t}</span>
-                    <span className="text-[12px] text-snow-500">{when(x.createdAt)}</span>
+                    <span className="text-[12px] text-snow-500">{when(x.createdAt, qloc)}</span>
                   </div>
                   <div className="mt-2 flex gap-3">
                     <div className="min-w-0 flex-1 space-y-0.5 text-[13.5px] leading-relaxed text-ink-800">
@@ -123,7 +127,7 @@ export function MyQuotes() {
                       {x.groupSize && <p>👥 {x.groupSize}</p>}
                       {x.timeSlot && <p className="text-[12.5px] text-snow-600">🕘 {x.timeSlot}</p>}
                       <p className="font-bold text-ink-900">💰 {x.headline || x.total}</p>
-                      {x.request && <p data-notr className="text-[13px] text-snow-600">📝 {x.request}</p>}
+                      {cleanReq(x.request) && <p className="text-[13px] text-snow-600">📝 {cleanReq(x.request)}</p>}
                     </div>
                     {x.image && (
                       <button onClick={() => setBig(x.image)} className="shrink-0" aria-label="견적서 크게 보기">
@@ -144,7 +148,7 @@ export function MyQuotes() {
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-900 text-[11px] font-bold text-white">JINO</div>
                         <div className="min-w-0 flex-1 rounded-2xl rounded-tl-sm bg-brand-50 px-3.5 py-2.5">
                           <p className="text-[12px] font-bold text-brand-600">
-                            지노스키 답변 {x.replyAt && <span className="font-normal text-snow-500">· {when(x.replyAt)}</span>}
+                            지노스키 답변 {x.replyAt && <span className="font-normal text-snow-500">· {when(x.replyAt, qloc)}</span>}
                           </p>
                           <p data-notr className="mt-0.5 whitespace-pre-wrap text-[14px] text-ink-900">{x.reply}</p>
                         </div>
