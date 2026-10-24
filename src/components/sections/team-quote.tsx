@@ -28,8 +28,11 @@ import { HOLIDAYS, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, type Ticket
 const KAKAO_NOTIFY_URL =
   process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-notify.wlsgh5743669.workers.dev";
 
-type Len = "2h" | "3h" | "4h";
-const LEN_LABEL: Record<Len, string> = { "2h": "2시간", "3h": "3시간", "4h": "4시간" };
+type Len = "2h" | "3h" | "4h" | "fc" | "nc";
+const LEN_LABEL: Record<Len, string> = { "2h": "2시간", "3h": "3시간", "4h": "4시간", fc: "원데이 풀케어", nc: "나이트 풀케어" };
+/** 시간제 수업 (풀케어 제외) */
+const BASE_LENS: Len[] = ["2h", "3h", "4h"];
+const isFC = (l?: Len) => l === "fc" || l === "nc";
 /** 하루 1번일 때 고를 수 있는 시간대 / 2번이면 오전+오후 */
 const TIMES: Record<Len, { label: string; time: string }[]> = {
   "2h": [
@@ -48,6 +51,16 @@ const TIMES: Record<Len, { label: string; time: string }[]> = {
     { label: "오전", time: "09:00~13:00" },
     { label: "오후", time: "13:20~17:20" },
     { label: "야간", time: "19:00~23:00" },
+  ],
+  // 원데이 풀케어: 08:40 미팅 · 오전 3시간 30분 + 점심 + 오후 3시간 30분
+  fc: [
+    { label: "오전", time: "09:00~12:30" },
+    { label: "오후", time: "13:00~16:30" },
+  ],
+  // 나이트 풀케어: 13:30 미팅 · 오후 4시간 + 저녁·정설 + 야간 3시간
+  nc: [
+    { label: "오후", time: "13:30~17:30" },
+    { label: "야간", time: "19:00~22:00" },
   ],
 };
 /** 하루 2번 추천 조합 — 2시간은 1+3교시 / 2+4교시, 3·4시간은 오전+오후 */
@@ -68,6 +81,8 @@ const TWICE: Record<Len, { label: string; idx: [number, number]; rec?: boolean }
     { label: "오전+야간", idx: [0, 2] },
     { label: "오후+야간", idx: [1, 2] },
   ],
+  fc: [{ label: "원데이 풀케어", idx: [0, 1], rec: true }],
+  nc: [{ label: "나이트 풀케어", idx: [0, 1] }],
 };
 
 const HELMET_PRICE = { basic: 5000, visor: 15000 };
@@ -86,8 +101,8 @@ const EXTRA_CODE: Record<Extra, string> = { none: "n", lift: "l", liftRental: "r
 const CODE_EXTRA: Record<string, Extra> = { n: "none", l: "lift", r: "liftRental" };
 const EXTRA_LABEL: Record<Extra, string> = { none: "강습만", lift: "+ 리프트", liftRental: "+ 리프트·장비" };
 const HELMET_LABEL: Record<Helmet, string> = { 0: "헬멧 있음", 1: "헬멧 5천", 2: "바이저 1.5만" };
-const LEN_CODE: Record<Len, string> = { "2h": "a", "3h": "b", "4h": "c" };
-const CODE_LEN: Record<string, Len> = { a: "2h", b: "3h", c: "4h" };
+const LEN_CODE: Record<Len, string> = { "2h": "a", "3h": "b", "4h": "c", fc: "d", nc: "e" };
+const CODE_LEN: Record<string, Len> = { a: "2h", b: "3h", c: "4h", d: "fc", e: "nc" };
 const DAY_NAMES = ["첫째", "둘째", "셋째", "넷째", "다섯째", "여섯째", "일곱째", "여덟째", "아홉째", "열째"];
 const MAX_PEOPLE = 15;
 const MAX_DAYS = 10;
@@ -145,9 +160,14 @@ export function TeamQuote() {
   const { contact } = content;
 
   const prices = useMemo(() => {
-    const table: Record<Len, number[]> = { "2h": [], "3h": [], "4h": [] };
+    const table: Record<Len, number[]> = { "2h": [], "3h": [], "4h": [], fc: [], nc: [] };
+    // 풀케어(패찰 포함 하루 금액) → 오전·오후 2번으로 나눠 계산
+    for (const f of content.fullCarePrograms ?? []) {
+      const key: Len | null = f.slug === "one-day" ? "fc" : f.slug === "night" ? "nc" : null;
+      if (key) table[key] = f.rows.map((r) => num(r.price) / 2);
+    }
     for (const g of content.lessonPricing) if (g.program in table) table[g.program as Len] = g.rows.map((r) => num(r.price));
-    const pass: Record<Len, number> = { "2h": 0, "3h": 0, "4h": 0 };
+    const pass: Record<Len, number> = { "2h": 0, "3h": 0, "4h": 0, fc: 0, nc: 0 };
     for (const p of content.liftPassPricing) if (p.program in pass) pass[p.program as Len] = num(p.price);
     return { table, pass };
   }, [content]);
@@ -204,7 +224,7 @@ export function TeamQuote() {
     if (l in TIMES) setLen(l);
     // 날짜별 수업 dp=12-20-10 (1번·3교시 / 2번·1+3교시 / 1번·1교시) — 예전 링크(n·ti·tw)도 읽어요
     const dp = q.get("dp");
-    if (dp && /^[0-2]\d?[abc]?(-[0-2]\d?[abc]?)*$/.test(dp)) {
+    if (dp && /^[0-2]\d?[a-e]?(-[0-2]\d?[a-e]?)*$/.test(dp)) {
       setPlans(
         dp.split("-").map((c) => ({
           n: Number(c[0]) as 0 | 1 | 2,
@@ -288,13 +308,18 @@ export function TeamQuote() {
     setPlans(() => dayPlans.map((p, j) => (j === i ? { ...p, ...patch } : p)));
   }
   function setAllDays(n: 1 | 2) {
-    setPlans(() => dayPlans.map((p) => ({ ...p, n })));
+    setPlans(() => dayPlans.map((p) => (n === 1 && isFC(p.len) ? { ...p, n, len: "2h", two: 0 } : { ...p, n })));
   }
   const maxPerDay = Math.max(0, ...schedule.map((d) => d.slots.length));
   const sameN = dayPlans.every((p) => p.n === dayPlans[0]?.n);
   const dayText = sameN && dayPlans[0]?.n ? `하루 ${dayPlans[0].n}번` : "날짜별 일정";
   const sessions = schedule.reduce((a, d) => a + d.slots.length, 0);
-  const ebFor = (l: Len) => isEarlyBirdActive() && EARLY_BIRD.programs.includes(l);
+  const ebFor = (l: Len) => isEarlyBirdActive() && (EARLY_BIRD.programs as string[]).includes(l === "fc" ? "one-day" : l);
+  /** 얼리버드 할인액 (풀케어는 반나절 단위라 500원 단위) */
+  const ebCut = (l: Len, lesson: number) => {
+    const unit = isFC(l) ? 500 : 1000;
+    return Math.round((lesson * EARLY_BIRD.rate) / unit) * unit;
+  };
   const eb = schedule.some((d) => d.slots.length && ebFor(d.len));
   void maxPerDay;
   /** 그날 수업에 맞는 리프트 추천: 2번 → 7시간, 2시간 1번 → 3시간, 3·4시간 1번 → 5시간, 수업 없는 날 → 안 씀 */
@@ -319,7 +344,7 @@ export function TeamQuote() {
   /** 반(강사 1명) 1회 비용 = 레슨료(얼리버드는 2·3시간 강습료만 10%) + 패찰 × 인원 */
   const groupCost = (size: number, l: Len = len) => {
     const lesson = prices.table[l][size - 1] ?? 0;
-    const discount = ebFor(l) ? Math.round((lesson * EARLY_BIRD.rate) / 1000) * 1000 : 0;
+    const discount = ebFor(l) ? ebCut(l, lesson) : 0;
     return lesson - discount + prices.pass[l] * size;
   };
   /** 반 하나의 전체 강습료 (날짜마다 수업 시간이 달라도 합산) */
@@ -361,7 +386,7 @@ export function TeamQuote() {
     (a, d) =>
       a +
       (ebFor(d.len)
-        ? usedSplit.reduce((b, size) => b + Math.round(((prices.table[d.len][size - 1] ?? 0) * EARLY_BIRD.rate) / 1000) * 1000, 0) *
+        ? usedSplit.reduce((b, size) => b + ebCut(d.len, prices.table[d.len][size - 1] ?? 0), 0) *
           d.slots.length
         : 0),
     0
@@ -925,7 +950,7 @@ export function TeamQuote() {
                               <button
                                 key={n}
                                 type="button"
-                                onClick={() => setPlan(i, { n })}
+                                onClick={() => setPlan(i, n !== 2 && isFC(p.len) ? { n, len: "2h", one: defaultPlan(i, "2h").one, two: 0 } : { n })}
                                 aria-pressed={p.n === n}
                                 className={cn(
                                   "whitespace-nowrap rounded-full px-3 py-1.5 text-[13.5px] font-bold",
@@ -938,9 +963,9 @@ export function TeamQuote() {
                           </div>
                         </div>
                         {p.n > 0 && (
-                          <div className="mt-2.5 flex items-center gap-1.5">
+                          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                             <span className="text-[12px] font-semibold text-snow-500">수업 시간</span>
-                            {(Object.keys(LEN_LABEL) as Len[]).map((l) => (
+                            {BASE_LENS.map((l) => (
                               <button
                                 key={l}
                                 type="button"
@@ -953,6 +978,60 @@ export function TeamQuote() {
                                 {LEN_LABEL[l]}
                               </button>
                             ))}
+                            {p.n === 2 && (
+                              <button
+                                type="button"
+                                onClick={() => setPlan(i, { len: "fc", two: 0 })}
+                                className={cn(
+                                  "rounded-full px-2.5 py-1 text-[12.5px] font-bold",
+                                  isFC(p.len) ? "bg-rose-500 text-white" : "bg-rose-50 text-rose-600 ring-1 ring-rose-200"
+                                )}
+                              >
+                                풀케어 <span className="rounded bg-white/90 px-1 text-[10.5px] text-rose-600">강추</span>
+                              </button>
+                            )}
+                          </div>
+                        )}
+                        {p.n === 2 && !isFC(p.len) && people > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setPlan(i, { len: "fc", two: 0 })}
+                            className="mt-2.5 w-full rounded-xl bg-rose-50 px-3 py-2 text-left text-[12.5px] leading-relaxed text-rose-700 ring-1 ring-rose-200"
+                          >
+                            💡 하루 2번이면 <b>원데이 풀케어 강추!</b> {LEN_LABEL[p.len ?? len]}×2번 ={" "}
+                            {won(usedSplit.reduce((a, size) => a + groupCost(size, p.len ?? len) * 2, 0))} → 풀케어 7시간 ={" "}
+                            <b>{won(usedSplit.reduce((a, size) => a + groupCost(size, "fc") * 2, 0))}</b> (점심 포함) · 눌러서 바꾸기
+                          </button>
+                        )}
+                        {p.n === 2 && isFC(p.len) && (
+                          <div className="mt-2.5 rounded-xl bg-rose-50 px-3 py-2.5 text-[12.5px] leading-relaxed text-rose-800 ring-1 ring-rose-200">
+                            <div className="flex flex-wrap gap-1.5">
+                              {(["fc", "nc"] as Len[]).map((l) => (
+                                <button
+                                  key={l}
+                                  type="button"
+                                  onClick={() => setPlan(i, { len: l, two: 0 })}
+                                  className={cn(
+                                    "rounded-full border px-3 py-1.5 text-[12.5px] font-bold",
+                                    p.len === l ? "border-rose-500 bg-rose-500 text-white" : "border-rose-200 bg-white text-rose-700"
+                                  )}
+                                >
+                                  {LEN_LABEL[l]}
+                                  {l === "fc" ? " 강추" : ""}
+                                </button>
+                              ))}
+                            </div>
+                            <p className="mt-1.5">
+                              {p.len === "nc"
+                                ? "13:30 미팅 · 오후 4시간 + 정설 후 야간 3시간 = 레슨 7시간 · 저녁 식사·사진·영상·패찰 포함"
+                                : "08:40 미팅 · 오전 3시간 30분 + 오후 3시간 30분 = 레슨 7시간 · 점심 식사·사진·영상·패찰 포함"}
+                            </p>
+                            {people > 0 && (
+                              <p className="mt-0.5 font-bold">
+                                이날 {usedSplit.length > 1 ? `${usedSplit.length}팀 ` : ""}합계 {won(usedSplit.reduce((a, size) => a + groupCost(size, p.len as Len) * 2, 0))}
+                                {ebFor(p.len as Len) ? " (얼리버드 10% 반영)" : ""}
+                              </p>
+                            )}
                           </div>
                         )}
                         {p.n === 1 && (
@@ -973,7 +1052,7 @@ export function TeamQuote() {
                             ))}
                           </div>
                         )}
-                        {p.n === 2 && (
+                        {p.n === 2 && !isFC(p.len) && (
                           <div className="mt-2.5 flex flex-wrap gap-1.5">
                             {TWICE[p.len ?? len].map((t, j) => (
                               <button
@@ -1225,7 +1304,7 @@ export function TeamQuote() {
                 </div>
                 {eb && (
                   <p className="mt-2 text-[12px] text-snow-500">
-                    얼리버드 할인({EARLY_BIRD.endDate.slice(5).replace("-", "/")}까지 예약)은 2·3시간 강습료에만 적용돼요 · 패찰·리프트·장비·헬멧은 제외
+                    얼리버드 할인({EARLY_BIRD.endDate.slice(5).replace("-", "/")}까지 예약)은 2·3시간 강습료·원데이 풀케어에만 적용돼요 · 패찰·리프트·장비·헬멧은 제외
                   </p>
                 )}
 
@@ -1658,7 +1737,7 @@ const partOf = (time: string) => {
 /** 140000 → 14만, 125000 → 12.5만 */
 const man = (n: number) => `${Number((n / 10000).toFixed(1))}만`;
 function PriceGuide({ prices, people, rec: recIn }: { prices: { table: Record<Len, number[]>; pass: Record<Len, number> }; people: number; rec?: number[] }) {
-  const lens = Object.keys(LEN_LABEL) as Len[];
+  const lens = BASE_LENS;
   const sizes = Math.max(...lens.map((l) => prices.table[l].length));
   // 인원에 맞는 추천 반 나누기: 4명 → 1:2+1:2, 5명 → 1:3+1:2 …
   const rec = recIn ?? (people > 0 ? even(people, Math.ceil(people / 3)) : []);
