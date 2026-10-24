@@ -17,7 +17,7 @@ const krw = (n: number) => `₩${Math.round(n).toLocaleString("en-US")}`;
 const NUMW_EN = ["", "one", "two", "three", "four", "five"];
 
 const RULES: Rule[] = [
-  [/얼리버드 할인\((\S+)까지 예약\)은 2·3시간 강습료·원데이 풀케어에만 적용돼요 · 패찰·리프트·장비·헬멧은 제외/g, "Early-bird (book by $1) applies to 2–3 hour lessons & One Day Full Care only · not to permits, lift, rental or helmets", "早鸟优惠（$1前预订）仅适用于2·3小时课程和One Day Full Care · 不含许可、缆车、装备和头盔"],
+  [/얼리버드 할인\((\S+)까지 예약\)은 2·3시간 강습료·풀케어\(원데이·나이트\)에만 적용돼요 · 패찰·리프트·장비·헬멧은 제외/g, "Early-bird (book by $1) applies to 2–3 hour lessons & Full Care (One Day · Night) only · not to permits, lift, rental or helmets", "早鸟优惠（$1前预订）仅适用于2·3小时课程和Full Care（One Day·Night）· 不含许可、缆车、装备和头盔"],
   ["💡 하루 2번이면", "💡 Two lessons a day?", "💡 一天两节课？"],
   ["원데이 풀케어 강추!", "One Day Full Care is our top pick!", "强烈推荐One Day Full Care！"],
   ["×2번", "×2", "×2"],

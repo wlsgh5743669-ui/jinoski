@@ -20,13 +20,13 @@ export function getGroupStudentCount(groupSize: string): number {
 }
 
 /**
- * 26/27 얼리버드: 2시간·3시간 강습, 원데이 풀케어 레슨료 10% 할인.
+ * 26/27 얼리버드: 2시간·3시간 강습, 원데이·나이트 풀케어 레슨료 10% 할인.
  * 예약하는 날(한국 시간) 기준 11월 10일까지 적용. 패찰 비용은 할인 대상이 아님.
  */
 export const EARLY_BIRD = {
   endDate: "2026-11-10",
   rate: 0.1,
-  programs: ["2h", "3h", "one-day"] as ProgramValue[],
+  programs: ["2h", "3h", "one-day", "night"] as ProgramValue[],
 };
 
 export function isEarlyBirdActive(now: Date = new Date()): boolean {

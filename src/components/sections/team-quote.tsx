@@ -314,7 +314,7 @@ export function TeamQuote() {
   const sameN = dayPlans.every((p) => p.n === dayPlans[0]?.n);
   const dayText = sameN && dayPlans[0]?.n ? `하루 ${dayPlans[0].n}번` : "날짜별 일정";
   const sessions = schedule.reduce((a, d) => a + d.slots.length, 0);
-  const ebFor = (l: Len) => isEarlyBirdActive() && (EARLY_BIRD.programs as string[]).includes(l === "fc" ? "one-day" : l);
+  const ebFor = (l: Len) => isEarlyBirdActive() && (EARLY_BIRD.programs as string[]).includes(l === "fc" ? "one-day" : l === "nc" ? "night" : l);
   /** 얼리버드 할인액 (풀케어는 반나절 단위라 500원 단위) */
   const ebCut = (l: Len, lesson: number) => {
     const unit = isFC(l) ? 500 : 1000;
@@ -1304,7 +1304,7 @@ export function TeamQuote() {
                 </div>
                 {eb && (
                   <p className="mt-2 text-[12px] text-snow-500">
-                    얼리버드 할인({EARLY_BIRD.endDate.slice(5).replace("-", "/")}까지 예약)은 2·3시간 강습료·원데이 풀케어에만 적용돼요 · 패찰·리프트·장비·헬멧은 제외
+                    얼리버드 할인({EARLY_BIRD.endDate.slice(5).replace("-", "/")}까지 예약)은 2·3시간 강습료·풀케어(원데이·나이트)에만 적용돼요 · 패찰·리프트·장비·헬멧은 제외
                   </p>
                 )}
 
