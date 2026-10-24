@@ -113,7 +113,8 @@ const INITIAL_STATE: WizardState = {
   name: "",
   phone: "",
   requestNote: "",
-  earlyBird: false,
+  // 얼리버드 기간이면 처음부터 할인 적용 (손님이 버튼을 안 눌러도 할인가로 보이게)
+  earlyBird: isEarlyBirdActive(),
   email: "",
   messenger: "",
 };
