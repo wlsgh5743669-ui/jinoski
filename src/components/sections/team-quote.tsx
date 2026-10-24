@@ -553,6 +553,17 @@ export function TeamQuote() {
     setPersons([...fit(oldA, a), ...fit(oldK, k)]);
   }
 
+  // 풀케어 날이 있으면: 패찰·식사 포함 안내
+  const hasOneDay = schedule.some((d) => d.slots.length && d.len === "fc");
+  const hasNight = schedule.some((d) => d.slots.length && d.len === "nc");
+  const fcNote =
+    hasOneDay && hasNight
+      ? "풀케어는 패찰 + 식사 포함 (원데이 점심 · 나이트 저녁) · 따로 낼 돈 없어요"
+      : hasOneDay
+        ? "원데이 풀케어는 패찰 + 점심 식사 포함 · 따로 낼 돈 없어요"
+        : hasNight
+          ? "나이트 풀케어는 패찰 + 저녁 식사 포함 · 따로 낼 돈 없어요"
+          : "";
   // ── 공유·문의 ─────────────────────────
   const summary = [
     `[지노스키 견적] ${trip} · ${lenText} · ${dayText}`,
@@ -606,6 +617,7 @@ export function TeamQuote() {
       ? ["■ 날짜별 합계", ...dayTotals.map((d) => `  ${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}: ${won(d.total)}`)]
       : []),
     `예상 합계: ${won(grand)}${ebSaved ? ` (얼리버드 강습료 10% 할인 -${won(ebSaved)} 반영)` : ""}`,
+    ...(fcNote ? [`※ ${fcNote}`] : []),
     "※ 의류는 제휴 렌탈샵 안내 드립니다.^^ · 강사 일정 확인 후 확정",
   ].join("\n");
 
@@ -683,6 +695,7 @@ export function TeamQuote() {
           ? `얼리버드 10%는 강습료에만 적용 (-${won(ebSaved)}) · 리프트·장비 40% 할인 · 헬멧 할인 제외`
           : "매 수업 사진·영상 무료 · 리프트·장비 40% 할인 · 헬멧 할인 제외",
         ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
+        ...(fcNote ? [fcNote] : []),
         "의류는 제휴 렌탈샵 안내 드립니다.^^",
         "예상 견적이에요. 강사 일정 확인 후 확정 금액을 안내드려요.",
       ],
@@ -1000,7 +1013,7 @@ export function TeamQuote() {
                           >
                             💡 하루 2번이면 <b>원데이 풀케어 강추!</b> {LEN_LABEL[p.len ?? len]}×2번 ={" "}
                             {won(usedSplit.reduce((a, size) => a + groupCost(size, p.len ?? len) * 2, 0))} → 풀케어 7시간 ={" "}
-                            <b>{won(usedSplit.reduce((a, size) => a + groupCost(size, "fc") * 2, 0))}</b> (점심 포함) · 눌러서 바꾸기
+                            <b>{won(usedSplit.reduce((a, size) => a + groupCost(size, "fc") * 2, 0))}</b> (패찰·점심 포함) · 눌러서 바꾸기
                           </button>
                         )}
                         {p.n === 2 && isFC(p.len) && (
@@ -1296,6 +1309,7 @@ export function TeamQuote() {
                   <p className="text-[13px] text-white/60">1인 1회 강습료</p>
                   <p className="whitespace-nowrap text-[30px] font-bold tabular-nums text-brand-300 sm:text-[34px]">약 {won(perHead1)}</p>
                   <p className="text-[12.5px] text-white/50">패찰 포함 · 매 수업 사진·영상 무료</p>
+                  {fcNote && <p className="mt-1.5 rounded-lg bg-rose-500/20 px-2.5 py-1.5 text-[12.5px] font-semibold text-rose-200">🏆 {fcNote}</p>}
                   {eb && ebSaved > 0 && (
                     <p className="mt-2 inline-block rounded-full bg-red-500 px-3 py-1 text-[12.5px] font-bold text-white">
                       🎁 얼리버드 강습료 10% 할인 · {won(ebSaved)} 아꼈어요
@@ -1783,6 +1797,7 @@ function PriceGuide({ prices, people, rec: recIn }: { prices: { table: Record<Le
                   <th className="rounded-t-lg bg-rose-50 py-1 font-semibold text-rose-600">
                     7시간
                     <span className="block text-[10.5px] font-bold">풀케어 강추</span>
+                    <span className="block text-[10px] font-semibold text-rose-500">패찰·점심 포함</span>
                   </th>
                 )}
               </tr>

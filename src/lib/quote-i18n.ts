@@ -17,6 +17,11 @@ const krw = (n: number) => `₩${Math.round(n).toLocaleString("en-US")}`;
 const NUMW_EN = ["", "one", "two", "three", "four", "five"];
 
 const RULES: Rule[] = [
+  ["(패찰·점심 포함) · 눌러서 바꾸기", "(permit & lunch incl.) · tap to switch", "（含教学许可·午餐）· 点击切换"],
+  ["풀케어는 패찰 + 식사 포함 (원데이 점심 · 나이트 저녁) · 따로 낼 돈 없어요", "Full Care includes lesson permit + meal (One Day lunch · Night dinner) · nothing extra to pay", "Full Care含教学许可 + 餐食（One Day午餐 · Night晚餐）· 无需另付"],
+  ["원데이 풀케어는 패찰 + 점심 식사 포함 · 따로 낼 돈 없어요", "One Day Full Care includes lesson permit + lunch · nothing extra to pay", "One Day Full Care含教学许可 + 午餐 · 无需另付"],
+  ["나이트 풀케어는 패찰 + 저녁 식사 포함 · 따로 낼 돈 없어요", "Night Full Care includes lesson permit + dinner · nothing extra to pay", "Night Full Care含教学许可 + 晚餐 · 无需另付"],
+  ["패찰·점심 포함", "permit & lunch incl.", "含许可·午餐"],
   [" · 7시간 풀케어(원데이·나이트)는 식사·사진·영상·패찰 포함", " · 7h Full Care (One Day · Night) includes meal, photos, video & permit", " · 7小时Full Care（One Day·Night）含餐·照片·视频·教学许可"],
   [/얼리버드: 2·3시간 강습료·풀케어 (\d+)% 할인 적용 중/g, "Early-bird: $1% off 2–3 hour lessons & Full Care", "早鸟：2·3小时课程和Full Care享$1%优惠"],
   [/얼리버드 ([\d.]+)만원/g, (_: string, n: string) => `Early-bird ₩${Math.round(+n * 10000).toLocaleString("en-US")}`, (_: string, n: string) => `早鸟 ₩${Math.round(+n * 10000).toLocaleString("en-US")}`],
@@ -26,7 +31,6 @@ const RULES: Rule[] = [
   ["💡 하루 2번이면", "💡 Two lessons a day?", "💡 一天两节课？"],
   ["원데이 풀케어 강추!", "One Day Full Care is our top pick!", "强烈推荐One Day Full Care！"],
   ["×2번", "×2", "×2"],
-  ["(점심 포함) · 눌러서 바꾸기", "(lunch incl.) · tap to switch", "（含午餐）· 点击切换"],
   ["13:30 미팅 · 오후 4시간 + 정설 후 야간 3시간 = 레슨 7시간 · 저녁 식사·사진·영상·패찰 포함", "Meet 13:30 · 4h afternoon + 3h night after grooming = 7 hours · dinner, photos, video & permit included", "13:30见面 · 下午4小时 + 压雪后夜间3小时 = 课程7小时 · 含晚餐·照片·视频·教学许可"],
   ["08:40 미팅 · 오전 3시간 30분 + 오후 3시간 30분 = 레슨 7시간 · 점심 식사·사진·영상·패찰 포함", "Meet 08:40 · 3.5h morning + 3.5h afternoon = 7 hours · lunch, photos, video & permit included", "08:40见面 · 上午3.5小时 + 下午3.5小时 = 课程7小时 · 含午餐·照片·视频·教学许可"],
   [/💡 하루 2번이면 원데이 풀케어 강추! (.+?)×2번 = (\S+) → 풀케어 7시간 = (\S+) \(점심 포함\) · 눌러서 바꾸기/g, "💡 Two lessons a day? One Day Full Care is our top pick! $1 ×2 = $2 → Full Care 7h = $3 (lunch incl.) · tap to switch", "💡 一天两节课？强烈推荐One Day Full Care！$1×2 = $2 → Full Care 7小时 = $3（含午餐）· 点击切换"],
