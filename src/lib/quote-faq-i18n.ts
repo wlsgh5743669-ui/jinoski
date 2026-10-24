@@ -32,7 +32,7 @@ export const QA_EN: QA[] = [
   },
   {
     q: "Up to what age is the child rate?",
-    a: "At Vivaldi Park, the child rate is for ages 13 and under (elementary school, Korean age). Ages 14+ pay the adult rate. Enter adults and children separately in the calculator and adult/child prices are calculated separately. Age may be checked at the ticket office.",
+    a: "At Vivaldi Park, the child rate is for elementary school age or younger (13 and under). Middle school age (14+) pays the adult rate. Enter adults and children separately in the calculator and adult/child prices are calculated separately. Age may be checked at the ticket office.",
   },
   {
     q: "Are weekday and weekend prices different?",
@@ -99,7 +99,7 @@ export const QA_ZH: QA[] = [
   },
   {
     q: "儿童票到几岁？",
-    a: "维瓦尔第公园的儿童票适用于13岁及以下（小学生，韩国年龄），14岁以上为成人票。在计算器中分别填写成人和儿童人数，会分别计算成人·儿童价格。售票处可能会确认年龄。",
+    a: "维瓦尔第公园的儿童票适用于小学生及以下（13岁以下），初中生（14岁）以上为成人票。在计算器中分别填写成人和儿童人数，会分别计算成人·儿童价格。售票处可能会确认年龄。",
   },
   {
     q: "平日和周末价格不一样吗？",

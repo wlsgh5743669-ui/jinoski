@@ -1401,7 +1401,7 @@ export function TeamQuote() {
                         />
                         <input
                           type="tel"
-                          placeholder="연락처"
+                          placeholder="휴대폰 번호"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           className="h-12 rounded-xl border border-snow-300/70 bg-white px-4 text-[15px] outline-none focus:border-brand-500"
@@ -1455,6 +1455,11 @@ export function TeamQuote() {
                       >
                         <Send size={16} /> {status === "sending" ? "보내는 중..." : "견적 문의 보내기"}
                       </button>
+                      {!canSend && status !== "sending" && (
+                        <p className="mt-1.5 text-center text-[12px] text-snow-500">
+                          {name.trim() && phone.trim() ? "휴대폰 번호를 확인해 주세요 (숫자 9자리 이상)" : "이름과 휴대폰 번호를 넣으면 보낼 수 있어요"}
+                        </p>
+                      )}
                       {status === "failed" && (
                         <p className="mt-2 text-center text-[12.5px] text-rose-500">전송이 안 됐어요. 카톡으로 상담해 주세요.</p>
                       )}
@@ -1498,6 +1503,12 @@ export function TeamQuote() {
                 {step === 5 ? "견적 보기" : step === 1 && !startDate ? "날짜 미정으로 다음" : "다음"} <ArrowRight size={17} />
               </button>
             </div>
+          )}
+          {/* 다음 버튼이 안 눌리는 이유 안내 */}
+          {step < 6 && !canNext(step) && (
+            <p className="mt-2 text-center text-[12.5px] font-semibold text-rose-500">
+              {step === 2 ? "배울 사람 수를 넣어주세요" : step === 3 ? "날짜마다 수업 1번 또는 2번을 골라주세요" : "반 나누는 방법을 골라주세요"}
+            </p>
           )}
         </div>
       </Container>
