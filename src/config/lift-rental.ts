@@ -38,3 +38,22 @@ export const HOLIDAYS: string[] = [
   "2027-02-08", // 설 대체공휴일 (월)
   "2027-03-01", // 삼일절 (월)
 ];
+
+/** 공휴일 이름 (달력 표시용) */
+export const HOLIDAY_NAMES: Record<string, { ko: string; en: string; zh: string }> = {
+  "2026-12-25": { ko: "성탄절", en: "Christmas", zh: "圣诞节" },
+  "2027-01-01": { ko: "신정", en: "New Year", zh: "元旦" },
+  "2027-02-05": { ko: "설 연휴", en: "Lunar NY", zh: "春节" },
+  "2027-02-06": { ko: "설날", en: "Lunar NY", zh: "春节" },
+  "2027-02-07": { ko: "설 연휴", en: "Lunar NY", zh: "春节" },
+  "2027-02-08": { ko: "대체공휴일", en: "Holiday", zh: "补休" },
+  "2027-03-01": { ko: "삼일절", en: "Holiday", zh: "节日" },
+};
+
+/** 토·일·공휴일 = 리프트·장비 주말 요금 (dateKey: YYYY-MM-DD) */
+export function isWeekendRate(dateKey: string): boolean {
+  if (!dateKey) return true;
+  const [y, m, d] = dateKey.split("-").map(Number);
+  const w = new Date(y, m - 1, d).getDay();
+  return w === 0 || w === 6 || HOLIDAYS.includes(dateKey);
+}

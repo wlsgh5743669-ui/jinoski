@@ -868,7 +868,7 @@ const reviews: SiteContent["reviews"] = [
     date: "2025.03.01",
     photo: "/images/reviews/r-east-20250301.jpg",
     content:
-      "Great that the lift pass and related costs are all included.\nThey had all the rentals ready in advance, got the kids prepped quickly and started the lesson — they used every minute so the kids could ride one more time.",
+      "Great that the lesson permit and related costs are all included.\nThey had all the rentals ready in advance, got the kids prepped quickly and started the lesson — they used every minute so the kids could ride one more time.",
   },
   {
     name: "east*****",
@@ -1157,14 +1157,14 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     "Choose group size",
     "Choose your sport",
     "Tell us your current level",
-    "Lift pass (lesson permit) fee",
+    "Lesson permit fee",
     "Enter your booking details",
   ],
   fullCareGroupLabel: "Full Care (7-hour full-day lesson)",
   fullCareInfo: {
-    groupDescription: "A 7-hour premium lesson with your instructor all day · meal, photo/video and lift pass included",
-    oneDay: "Meet at 08:40 · 3h30 morning + 3h30 afternoon = 7 hours of lessons (ends 16:30) · lunch, photo/video and lift pass included",
-    night: "Meet at 13:30 · 4h afternoon + 3h night lesson = 7 hours on fresh groomed snow (ends 22:10–22:20) · dinner, photo/video and lift pass included",
+    groupDescription: "A 7-hour premium lesson with your instructor all day · meal, photo/video and lesson permit included",
+    oneDay: "Meet at 08:40 · 3h30 morning + 3h30 afternoon = 7 hours of lessons (ends 16:30) · lunch, photo/video and lesson permit included",
+    night: "Meet at 13:30 · 4h afternoon + 3h night lesson = 7 hours on fresh groomed snow (ends 22:10–22:20) · dinner, photo/video and lesson permit included",
     scheduleTitle: "How your day goes",
     scheduleNote: "Times may shift slightly depending on weather, slope conditions and how you feel.",
   },
@@ -1172,8 +1172,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     groupSizeOption: (count: number) => `${count} ${count > 1 ? "students" : "student"} (1 instructor : ${count})`,
     priceFrom: (price: string) => `From ${price} for 1 person`,
     lessonFee: (price: string) => `Lesson ${price}`,
-    liftPassPlus: (price: string) => `+ lift pass ${price} per person`,
-    liftPassIncluded: "Lift pass included",
+    liftPassPlus: (price: string) => `+ lesson permit ${price} per person`,
+    liftPassIncluded: "Lesson permit included",
     extrasNotice: "Lift tickets and equipment rental can be added at 40% off the ticket-office price and paid to JinoSki together with the lesson fee (you just pick them up on the day). For ski wear we'll recommend our partner rental shop.",
     bookingNoticeTitle: "How booking works",
     bookingNoticeLines: [
@@ -1197,11 +1197,11 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   },
   fixedTimeDisabledNote: "This program starts at a fixed time.",
   liftPassExplainer:
-    "The lift pass is a special permit issued by the resort so instructors and students can use the designated teaching zones and lifts at Vivaldi Park. It's a separate cost from a regular lift ticket, charged per student — so the total scales with your group size.",
+    "The lesson permit is a special permit issued by the resort so instructors and students can use the designated teaching zones and lifts at Vivaldi Park. It's a separate cost from a regular lift ticket, charged per student — so the total scales with your group size.",
   liftPassIncludedNote:
-    "This program already includes the lift pass fee, so there's nothing extra to pay for it.",
+    "This program already includes the lesson permit fee, so there's nothing extra to pay for it.",
   liftPassPayTogetherNote:
-    "The lift pass fee is paid together with the lesson fee in one payment. There's nothing to pay on-site, so your lesson can start right away without waiting.",
+    "The lesson permit fee is paid together with the lesson fee in one payment. There's nothing to pay on-site, so your lesson can start right away without waiting.",
   form: {
     namePlaceholder: "Name",
     phonePlaceholder: "Phone number",
@@ -1244,8 +1244,8 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       equipment: "Equipment",
       level: "Level",
       ageGroup: "Student age group",
-      liftPass: "Lift pass payment",
-      liftPassAmount: "Lift pass fee",
+      liftPass: "Lesson permit payment",
+      liftPassAmount: "Lesson permit fee",
       price: "Estimated price",
       priceOnRequest: "Quote on request",
       note: "Request note",
@@ -1253,7 +1253,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       businessPhone: "Contact",
       booker: "Booked by",
       priceBreakdown: "[Price breakdown]",
-      liftPassIncluded: "Lift pass: included in the lesson fee · no extra payment",
+      liftPassIncluded: "Lesson permit: included in the lesson fee · no extra payment",
       liftPassOnsite: "paid separately on site",
       perPerson: "per person",
       people: (count: number) => `${count} ${count > 1 ? "people" : "person"}`,
@@ -1277,16 +1277,16 @@ const ui: SiteContent["ui"] = {
     eyebrow: "Pricing",
     title: ["Transparent schedules", "& pricing"],
     description:
-      "From lesson schedules to Vivaldi Park's lift pass fee — check everything before you book.",
+      "From lesson schedules to Vivaldi Park's lesson permit fee — check everything before you book.",
     twoHourScheduleTitle: "2-Hour Schedule",
     threeHourScheduleTitle: "3-Hour Schedule",
     fourHourScheduleTitle: "4-Hour Schedule",
     perPersonPricingSubtitle: "Pricing by group size",
     perPersonPriceLabel: "Per person",
-    liftPassCardTitle: "Vivaldi Park Lift Pass Fee",
+    liftPassCardTitle: "Vivaldi Park Lesson Permit Fee",
     liftPassCardSubtitle: "Teaching permit (separate from lesson fee)",
     footerNote:
-      "Hourly lessons charge the lift pass fee separately; One Day / Night Full Care already include it.",
+      "Hourly lessons charge the lesson permit fee separately; One Day / Night Full Care already include it.",
     viewScheduleButton: "View Detailed Schedule",
     recommendedForLabel: "Recommended For",
     fullCareTabLabel: "One Day Full Care",
@@ -1384,7 +1384,7 @@ const pageMeta = {
   pricing: {
     title: "Pricing",
     description:
-      "Check schedules and Vivaldi Park lift pass costs before you book.",
+      "Check schedules and Vivaldi Park lesson permit costs before you book.",
   },
   instructor: {
     title: "Instructor",

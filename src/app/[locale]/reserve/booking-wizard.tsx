@@ -42,6 +42,7 @@ import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
 import { getContent } from "@/config/site";
 import { approxUsd, withUsd } from "@/lib/usd";
+import { HOLIDAYS, HOLIDAY_NAMES, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, isWeekendRate, type TicketHours } from "@/config/lift-rental";
 
 /** 영어·중국어 예약: 문자·카톡 대신 이메일로 접수하고 이메일로 확정 안내 */
 const FOREIGN_TEXT = {
@@ -703,6 +704,7 @@ export function BookingWizard() {
                   onSelect={(v) => update("groupSize", v)}
                 />
               )}
+              {on(4) && state.program && <LiftRentalNote program={state.program} date={state.date} locale={locale} />}
 
               {on(5) && (
                 <OptionList
@@ -1356,6 +1358,117 @@ function FullCareSchedule({
         ))}
       </ol>
       <p className="mt-3 text-[12px] leading-relaxed text-snow-500">{info.scheduleNote}</p>
+    </div>
+  );
+}
+
+/** 강습 길이에 맞는 리프트권 (2시간→3시간권, 3·4시간→5시간권, 풀케어→7시간권) */
+function ticketForProgram(program: string): TicketHours {
+  if (program === "2h") return 3;
+  if (program === "one-day" || program === "night") return 7;
+  return 5;
+}
+
+/** 리프트·장비 40% 할인 안내 — 고른 날짜가 주말·공휴일이면 주말 요금으로 */
+function LiftRentalNote({ program, date, locale }: { program: string; date: string; locale: string }) {
+  const L = locale.startsWith("en") ? "en" : locale.startsWith("zh") ? "zh" : "ko";
+  const t = ticketForProgram(program);
+  const wk = isWeekendRate(date);
+  const w = wk ? 1 : 0;
+  const cut = (n: number) => Math.round((n * (1 - LIFT_RENTAL_DISCOUNT)) / 100) * 100;
+  const lift = LIFT_PRICES[t];
+  const rent = RENTAL_PRICES[t];
+  const fmt = (n: number) =>
+    L === "ko" ? `${n.toLocaleString("ko-KR")}원` : `₩${n.toLocaleString("en-US")} (${approxUsd(n)})`;
+  const fmt0 = (n: number) => (L === "ko" ? `${n.toLocaleString("ko-KR")}원` : `₩${n.toLocaleString("en-US")}`);
+  let dayTag = "";
+  if (date) {
+    const [y, m, d] = date.split("-").map(Number);
+    const wd = new Date(y, m - 1, d).getDay();
+    const hol = HOLIDAYS.includes(date) ? HOLIDAY_NAMES[date]?.[L] : "";
+    const wdName = { ko: "일월화수목금토", en: "", zh: "日一二三四五六" }[L];
+    dayTag =
+      L === "en"
+        ? `${m}/${d} (${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][wd]}${hol ? ` · ${hol}` : ""})`
+        : `${m}/${d}(${wdName[wd]}${hol ? `·${hol}` : ""})`;
+  }
+  const T = {
+    ko: {
+      title: "🎿 리프트권·장비 렌탈 정가 40% 할인",
+      sub: "강습료와 함께 지노스키에 결제 · 현장에서는 받기만 하면 돼요",
+      rate: wk ? "주말·공휴일 요금" : "주중 요금",
+      basis: `리프트 ${t}시간권 · 장비 ${rent.hours}시간 기준 · 1인`,
+      adult: "대인 (14세 이상)",
+      child: "소인 (13세 이하)",
+      liftOnly: "리프트만",
+      both: "리프트+장비",
+      foot: "헬멧·의류는 할인 제외 · 필요 없으면 요청사항에 「리프트 필요 없음」이라고 적어주세요",
+    },
+    en: {
+      title: "🎿 Lift ticket & rental 40% off",
+      sub: "Paid to JinoSki together with the lesson — just pick up on site",
+      rate: wk ? "Weekend/holiday rate" : "Weekday rate",
+      basis: `${t}h lift ticket · ${rent.hours}h equipment · per person`,
+      adult: "Adult (14+)",
+      child: "Child (13 and under)",
+      liftOnly: "Lift only",
+      both: "Lift + equipment",
+      foot: "Helmets & clothing not discounted · If you don't need it, just say so in the request note",
+    },
+    zh: {
+      title: "🎿 缆车票·装备租赁 原价6折（减40%）",
+      sub: "与课程费一起付给JinoSki · 到现场直接领取",
+      rate: wk ? "周末·节假日价格" : "平日价格",
+      basis: `${t}小时缆车票 · ${rent.hours}小时装备 · 每人`,
+      adult: "成人（14岁以上）",
+      child: "儿童（13岁以下）",
+      liftOnly: "仅缆车",
+      both: "缆车+装备",
+      foot: "头盔·滑雪服不参与折扣 · 不需要的话请在备注中说明",
+    },
+  }[L];
+  const rows: [string, "adult" | "child"][] = [
+    [T.adult, "adult"],
+    [T.child, "child"],
+  ];
+  return (
+    <div className="mt-5 rounded-2xl bg-amber-50 px-4 py-3.5 ring-1 ring-amber-200">
+      <p className="text-[15px] font-bold text-ink-900">{T.title}</p>
+      <p className="mt-0.5 text-[12.5px] text-snow-600">{T.sub}</p>
+      <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[12.5px] font-semibold text-ink-700">
+        <span className={cn("rounded-full px-2 py-0.5 text-[11.5px] font-bold text-white", wk ? "bg-rose-500" : "bg-sky-500")}>
+          {dayTag ? `${dayTag} ` : ""}
+          {T.rate}
+        </span>
+        <span>{T.basis}</span>
+      </p>
+      <table className="mt-2 w-full text-[13px]">
+        <thead>
+          <tr className="text-left text-[11.5px] text-snow-500">
+            <th className="py-1 font-semibold" />
+            <th className="py-1 font-semibold">{T.liftOnly}</th>
+            <th className="py-1 font-semibold">{T.both}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(([label, k]) => (
+            <tr key={k} className="border-t border-amber-200/70 align-top">
+              <td className="py-1.5 pr-2 font-semibold text-ink-800">{label}</td>
+              <td className="py-1.5 pr-2">
+                <span className="text-[11px] text-snow-400 line-through">{fmt0(lift[k][w])}</span>
+                <br />
+                <b className="text-rose-600">{fmt(cut(lift[k][w]))}</b>
+              </td>
+              <td className="py-1.5">
+                <span className="text-[11px] text-snow-400 line-through">{fmt0(lift[k][w] + rent[k][w])}</span>
+                <br />
+                <b className="text-rose-600">{fmt(cut(lift[k][w]) + cut(rent[k][w]))}</b>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="mt-1.5 text-[11.5px] leading-relaxed text-snow-500">{T.foot}</p>
     </div>
   );
 }

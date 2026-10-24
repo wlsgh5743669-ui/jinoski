@@ -263,7 +263,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       { people: "2p", price: "700,000韩元" },
       { people: "3p", price: "900,000韩元" },
     ],
-    priceNote: "已包含大明滑雪场教学许可证（雪票）费用。",
+    priceNote: "已包含大明滑雪场教学许可证（挂牌）费用。",
     schedule: [
       {
         time: "08:40",
@@ -313,7 +313,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       { people: "2p", price: "700,000韩元" },
       { people: "3p", price: "900,000韩元" },
     ],
-    priceNote: "已包含大明滑雪场教学许可证（雪票）费用。",
+    priceNote: "已包含大明滑雪场教学许可证（挂牌）费用。",
     schedule: [
       {
         time: "13:30",
@@ -445,7 +445,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "课程费以外还有其他费用吗？",
     answer:
-      "有。\n可能需要缆车票、教学许可证（雪票）费用、装备租赁和雪服租赁等，预约前会说明所有预计费用。",
+      "有。\n可能需要缆车票、教学许可证（挂牌）费用、装备租赁和雪服租赁等，预约前会说明所有预计费用。",
   },
   {
     question: "一个人可以报名吗？",
@@ -503,7 +503,7 @@ const faq: SiteContent["faq"] = [
       "不只是上课，而是最好的冬季体验。\n\n✅ 专业教练的系统课程\n✅ 1:1 高端定制教学\n✅ 双板 · 单板 · 轮滑滑雪专业教学\n✅ 照片与视频拍摄服务\n✅ 课后个性化反馈\n✅ 从初级到高级的系统课程\n✅ 安全第一的教学体系",
   },
   {
-    question: "什么是教学许可证（雪票）费用？",
+    question: "什么是教学许可证（挂牌）费用？",
     answer:
       "教学许可证是在大明维瓦尔第滑雪场进行外部教学所需的官方许可。\n按滑雪场规定，外部教学必须佩戴，费用与课程费分开收取。\n※ 该费用并非JINO SKI & BOARD SCHOOL收取，而是滑雪场规定的官方费用。",
   },
@@ -623,8 +623,8 @@ const seasonProgram: SiteContent["seasonProgram"] = {
         "并非一两次体验，而是通过持续反复的练习，完成自信的滑行与稳定的滑雪。季节结束时，您会明显感受到与之前不同的自己。",
     },
   ],
-  priceNote: "早鸟10%优惠价（11月10日前预约）。教学许可证（雪票）费用另计。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
-  priceNoteRegular: "教学许可证（雪票）费用另计。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
+  priceNote: "早鸟10%优惠价（11月10日前预约）。教学许可证（挂牌）费用另计。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
+  priceNoteRegular: "教学许可证（挂牌）费用另计。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
   phoneButton: "电话咨询",
   kakaoButton: "KakaoTalk咨询",
 };
@@ -1158,10 +1158,10 @@ const bookingWizard: SiteContent["bookingWizard"] = {
   },
   fixedTimeDisabledNote: "该项目将于固定时间开始。",
   liftPassExplainer:
-    "雪票是指在大明滑雪场进行课程教学时，为了使用指定教学区域及缆车而由度假村发放的教学专用许可证。此费用与普通缆车票分开计算，并按学员人数计费，因此总额会随人数增加。",
-  liftPassIncludedNote: "该项目已包含雪票（教学许可证）费用，无需另行支付。",
+    "挂牌是指在大明滑雪场进行课程教学时，为了使用指定教学区域及缆车而由度假村发放的教学专用许可证。此费用与普通缆车票分开计算，并按学员人数计费，因此总额会随人数增加。",
+  liftPassIncludedNote: "该项目已包含挂牌（教学许可证）费用，无需另行支付。",
   liftPassPayTogetherNote:
-    "雪票费用将与课程费用一起一次性支付。现场无需另行付款，可免去等待，直接开始课程。",
+    "挂牌费用将与课程费用一起一次性支付。现场无需另行付款，可免去等待，直接开始课程。",
   form: {
     namePlaceholder: "姓名",
     phonePlaceholder: "联系电话",
@@ -1204,7 +1204,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       level: "水平",
       ageGroup: "学员年龄段",
       liftPass: "缆车通行证付款",
-      liftPassAmount: "雪票费用",
+      liftPassAmount: "挂牌费用",
       price: "预估金额",
       priceOnRequest: "另行咨询",
       note: "备注",
@@ -1212,7 +1212,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       businessPhone: "联系电话",
       booker: "预约人",
       priceBreakdown: "[费用明细]",
-      liftPassIncluded: "教学许可证（雪票）：已包含在课程费中 · 无需另付",
+      liftPassIncluded: "教学许可证（挂牌）：已包含在课程费中 · 无需另付",
       liftPassOnsite: "现场另付",
       perPerson: "每人",
       people: (count: number) => `${count}人`,
@@ -1234,16 +1234,16 @@ const ui: SiteContent["ui"] = {
   pricing: {
     eyebrow: "Pricing",
     title: ["透明公开的", "时间表与价格"],
-    description: "从课程时间表到大明滑雪场雪票费用，预约前请提前确认。",
+    description: "从课程时间表到大明滑雪场教学许可证（挂牌）费用，预约前请提前确认。",
     twoHourScheduleTitle: "2小时时间表",
     threeHourScheduleTitle: "3小时时间表",
     fourHourScheduleTitle: "4小时时间表",
     perPersonPricingSubtitle: "按人数计算的课程费用",
     perPersonPriceLabel: "每人",
-    liftPassCardTitle: "大明滑雪场雪票费用",
+    liftPassCardTitle: "大明滑雪场教学许可证（挂牌）费用",
     liftPassCardSubtitle: "教学许可证（与课程费用分开）",
     footerNote:
-      "时段制课程的雪票费用与课程费用分开计算，One Day / Night Full Care 已包含雪票费用。",
+      "时段制课程的挂牌费用与课程费用分开计算，One Day / Night Full Care 已包含挂牌费用。",
     viewScheduleButton: "查看详细日程",
     recommendedForLabel: "推荐对象",
     fullCareTabLabel: "One Day Full Care",
@@ -1335,7 +1335,7 @@ const pageMeta = {
   },
   pricing: {
     title: "价格说明",
-    description: "预约前请提前确认时间表及大明滑雪场缆车通行证费用。",
+    description: "预约前请提前确认时间表及大明滑雪场教学许可证（挂牌）费用。",
   },
   instructor: {
     title: "教练介绍",
