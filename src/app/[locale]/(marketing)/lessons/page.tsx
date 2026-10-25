@@ -3,6 +3,7 @@ import { getContent, isLocale, defaultLocale } from "@/config/site";
 import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
 import { LessonProgram } from "@/components/sections/lesson-program";
+import { JuniorBanner } from "@/components/sections/junior-banner";
 
 export async function generateMetadata({
   params,
@@ -34,6 +35,11 @@ export default async function LessonsPage({
     <>
       <PageHero eyebrow={eyebrow} title={title} description={description} />
       <LessonProgram />
+      <section className="bg-white pb-14 sm:pb-20">
+        <div className="mx-auto max-w-3xl px-4">
+          <JuniorBanner />
+        </div>
+      </section>
     </>
   );
 }

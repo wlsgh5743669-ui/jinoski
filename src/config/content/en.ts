@@ -461,6 +461,11 @@ const faq: SiteContent["faq"] = [
       "Of course.\nWe start from the very beginning — putting on your gear, basic stance, how to fall and get up, and how to stop safely. First-timers progress safely at their own pace.",
   },
   {
+    question: "Can my child get an official ski grade?",
+    answer:
+      "Yes. We run the official KSIA “Junior Ski Badge” test for skiers aged 7–17, with 10 levels (white to gold badge). In a 2-hour session we check the level, practice and test right away; children who pass receive a badge and certificate. Passing Level 7 gives an automatic KSIA Ski Level 1 instructor license at age 18.\nSee “Junior Badge” in the menu for prices and booking.",
+  },
+  {
     question: "From what age can children take lessons?",
     answer:
       "Ski and snowboard lessons are available from age 4 (international age).\nAnyone from kids to adults can join, with lessons tailored to age and level.",

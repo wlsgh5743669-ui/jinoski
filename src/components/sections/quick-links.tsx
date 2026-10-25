@@ -2,6 +2,7 @@
 
 import { useLocale } from "next-intl";
 import { trackEvent } from "@/components/shared/analytics";
+import { JuniorBanner } from "@/components/sections/junior-banner";
 
 /** 메인 중간 바로가기: 가격 · 후기 · 연박 견적 · 예약 (스크롤이 길어서 바로 갈 수 있게) */
 const T = {
@@ -30,6 +31,7 @@ export function QuickLinks() {
             </a>
           ))}
         </div>
+        <JuniorBanner className="mt-2.5" />
       </div>
     </section>
   );

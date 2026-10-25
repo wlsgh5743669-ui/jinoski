@@ -405,7 +405,9 @@ export function BookingWizard() {
       liftPassPayment: isFull ? "included" : "pay-together",
       // 주니어 등급 심사는 스키만
       juniorGrade: null,
-      ...(isJuniorProgram(program) ? { equipment: "ski" as const, level: null } : {}),
+      ...(isJuniorProgram(program)
+        ? { equipment: "ski" as const, level: null, ageGroup: prev.ageGroup === "elementary" || prev.ageGroup === "teen" ? prev.ageGroup : null }
+        : {}),
     }));
   }
 
@@ -1000,7 +1002,7 @@ export function BookingWizard() {
                       {content.bookingWizard.form.ageGroupLabel}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {AGE_GROUP_VALUES.map((value) => (
+                      {AGE_GROUP_VALUES.filter((v) => !isJuniorProgram(state.program) || v === "elementary" || v === "teen").map((value) => (
                         <button
                           key={value}
                           type="button"
