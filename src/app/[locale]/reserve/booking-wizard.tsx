@@ -98,6 +98,8 @@ type WizardState = {
   name: string;
   phone: string;
   requestNote: string;
+  /** 주니어 기술등급 심사: 도전할 등급 (1~10) */
+  juniorGrade: number | null;
   earlyBird: boolean;
   email: string;
   messenger: string;
@@ -115,6 +117,7 @@ const INITIAL_STATE: WizardState = {
   name: "",
   phone: "",
   requestNote: "",
+  juniorGrade: null,
   // 얼리버드 기간이면 처음부터 할인 적용 (손님이 버튼을 안 눌러도 할인가로 보이게)
   earlyBird: isEarlyBirdActive(),
   email: "",
@@ -226,7 +229,7 @@ async function notifyOwnerKakao(state: WizardState, content: SiteContent, locale
       timeSlot: getTimeSlotLabel(state.program, state.timeSlot, ko),
       groupSize: getGroupSizeLabel(state.groupSize as GroupSizeValue, ko),
       equipment: state.equipment ? getEquipmentLabel(state.equipment, ko) : "",
-      level: state.level ? getLevelInfo(state.level, ko).label : "",
+      level: levelText(state, ko),
       total: breakdown?.total ?? "",
       note,
     }),
@@ -271,6 +274,23 @@ function buildSmsHref(phone: string, body: string): string {
   return `sms:${number}${isIOS ? "&" : "?"}body=${encodeURIComponent(body)}`;
 }
 
+/** 주니어 등급 → 기존 실력 값 (다른 화면·알림 호환용) */
+function levelForGrade(n: number): LevelValue {
+  return n <= 2 ? "beginner" : n <= 4 ? "basic" : n <= 6 ? "intermediate" : "advanced";
+}
+
+/** 실력 표시: 주니어 심사면 「주니어 N등급 도전」 */
+function levelText(state: WizardState, content: SiteContent): string {
+  if (isJuniorProgram(state.program) && state.juniorGrade) {
+    const g = JUNIOR_GRADES[state.juniorGrade - 1];
+    const loc = content.siteConfig.locale.slice(0, 2);
+    if (loc === "en") return `Junior badge Level ${g.no} (${g.en})`;
+    if (loc === "zh") return `青少年${g.no}级考核（${g.zh}）`;
+    return `주니어 ${g.no}등급 도전 (${g.ko})`;
+  }
+  return state.level ? getLevelInfo(state.level, content).label : "";
+}
+
 function buildSummaryMessage(state: WizardState, content: SiteContent): string {
   const { program, groupSize, liftPassPayment } = state;
   if (!program || !groupSize || !state.equipment || !state.level || !state.ageGroup) return "";
@@ -295,7 +315,7 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
     `${labels.timeSlot}: ${getTimeSlotLabel(program, state.timeSlot, content)}`,
     `${labels.groupSize}: ${getGroupSizeLabel(groupSize as GroupSizeValue, content)}`,
     `${labels.equipment}: ${getEquipmentLabel(state.equipment, content)}`,
-    `${labels.level}: ${getLevelInfo(state.level, content).label}`,
+    `${labels.level}: ${levelText(state, content)}`,
     `${labels.ageGroup}: ${getAgeGroupLabel(state.ageGroup, content)}`,
   ];
 
@@ -354,9 +374,9 @@ export function BookingWizard() {
   // 주니어 기술등급 심사: 카드 하나 → 누르면 1~6등급 / 7~10등급 선택
   const [showJuniorChoice, setShowJuniorChoice] = useState(isJuniorProgram(state.program));
   const JR = {
-    ko: { how: "2시간 진행 · 실력 확인 → 심사 종목 연습 → 공인 지도자 심사", inc: ["연맹 응시료 + 발급료 포함", "심사 장면 사진·영상", "합격하면 공식 등급 뱃지 + 인증서"], extra: "패찰 1인 25,000원 별도 · 리프트·장비 40% 할인 · 한 번에 한 등급 심사 · 합격 보장 아님", grade: "등급", more: "주니어 기술등급 자세히 보기", tip: "어느 등급인지 모르겠으면 낮은 등급부터 추천드려요. 예약 후 상담 때 정해도 돼요.", title: "🎖️ 주니어 기술등급 심사", desc: "만 7~17세 · 스키 · 대한스키지도자연맹 공식 뱃지 · 눌러서 등급 선택", pick: "도전할 등급을 골라주세요", a: "처음 ~ 중급 슬로프 실력 (스노우플라우 ~ 다이나믹 롱턴)", b: "상급 슬로프 실력 (다이나믹 숏턴 ~ 종합활강) · Level 3 심사위원" },
-    en: { how: "2 hours · level check → practice test elements → test by a certified instructor", inc: ["KSIA test fee + issuing fee included", "Photos & video of the test", "Official badge + certificate when passed"], extra: "Lesson permit ₩25,000 per person extra · lift & rental 40% off · one level per test · pass not guaranteed", grade: "Level", more: "More about junior badges", tip: "Not sure which level? We recommend starting lower — we can decide together after booking.", title: "🎖️ Junior Ski Badge Test", desc: "Ages 7–17 · ski · official KSIA badge · tap to choose a level", pick: "Choose the level to try", a: "Beginner to red slopes (snowplow – dynamic long turn)", b: "Black slopes (dynamic short turn – all-round run) · Level 3 examiner" },
-    zh: { how: "2小时 · 确认水平 → 练习考核项目 → 认证指导者考核", inc: ["含联盟考试费及发证费", "考核照片·视频", "通过后颁发官方等级徽章 + 证书"], extra: "教学许可证（挂牌）每人₩25,000另计 · 缆车·装备6折 · 每次考核一个等级 · 不保证通过", grade: "级", more: "了解青少年技术等级", tip: "不确定等级时建议从较低等级开始，预约后咨询时再决定也可以。", title: "🎖️ 青少年滑雪技术等级考核", desc: "7~17周岁 · 双板 · KSIA官方徽章 · 点击选择等级", pick: "请选择要挑战的等级", a: "初级~中高级雪道水平（犁式~动态长转）", b: "高级雪道水平（动态短转~综合滑降）· Level 3 考官" },
+    ko: { slope: { easy: "초급~초중급 슬로프", mid: "중상급 슬로프", hard: "상급 슬로프" }, how: "2시간 진행 · 실력 확인 → 심사 종목 연습 → 공인 지도자 심사", inc: ["연맹 응시료 + 발급료 포함", "심사 장면 사진·영상", "합격하면 공식 등급 뱃지 + 인증서"], extra: "패찰 1인 25,000원 별도 · 리프트·장비 40% 할인 · 한 번에 한 등급 심사 · 합격 보장 아님", grade: "등급", more: "주니어 기술등급 자세히 보기", tip: "어느 등급인지 모르겠으면 낮은 등급부터 추천드려요. 예약 후 상담 때 정해도 돼요.", title: "🎖️ 주니어 기술등급 심사", desc: "만 7~17세 · 스키 · 대한스키지도자연맹 공식 뱃지 · 눌러서 등급 선택", pick: "도전할 등급을 골라주세요", a: "처음 ~ 중급 슬로프 실력 (스노우플라우 ~ 다이나믹 롱턴)", b: "상급 슬로프 실력 (다이나믹 숏턴 ~ 종합활강) · Level 3 심사위원" },
+    en: { slope: { easy: "green–blue slopes", mid: "red slopes", hard: "black slopes" }, how: "2 hours · level check → practice test elements → test by a certified instructor", inc: ["KSIA test fee + issuing fee included", "Photos & video of the test", "Official badge + certificate when passed"], extra: "Lesson permit ₩25,000 per person extra · lift & rental 40% off · one level per test · pass not guaranteed", grade: "Level", more: "More about junior badges", tip: "Not sure which level? We recommend starting lower — we can decide together after booking.", title: "🎖️ Junior Ski Badge Test", desc: "Ages 7–17 · ski · official KSIA badge · tap to choose a level", pick: "Choose the level to try", a: "Beginner to red slopes (snowplow – dynamic long turn)", b: "Black slopes (dynamic short turn – all-round run) · Level 3 examiner" },
+    zh: { slope: { easy: "初级~初中级雪道", mid: "中高级雪道", hard: "高级雪道" }, how: "2小时 · 确认水平 → 练习考核项目 → 认证指导者考核", inc: ["含联盟考试费及发证费", "考核照片·视频", "通过后颁发官方等级徽章 + 证书"], extra: "教学许可证（挂牌）每人₩25,000另计 · 缆车·装备6折 · 每次考核一个等级 · 不保证通过", grade: "级", more: "了解青少年技术等级", tip: "不确定等级时建议从较低等级开始，预约后咨询时再决定也可以。", title: "🎖️ 青少年滑雪技术等级考核", desc: "7~17周岁 · 双板 · KSIA官方徽章 · 点击选择等级", pick: "请选择要挑战的等级", a: "初级~中高级雪道水平（犁式~动态长转）", b: "高级雪道水平（动态短转~综合滑降）· Level 3 考官" },
   }[locale === "en" || locale === "zh" ? locale : "ko"];
 
   const price = useMemo(() => {
@@ -384,7 +404,8 @@ export function BookingWizard() {
       timeSlot: isFull ? timeValues[0] : "",
       liftPassPayment: isFull ? "included" : "pay-together",
       // 주니어 등급 심사는 스키만
-      ...(isJuniorProgram(program) ? { equipment: "ski" as const } : {}),
+      juniorGrade: null,
+      ...(isJuniorProgram(program) ? { equipment: "ski" as const, level: null } : {}),
     }));
   }
 
@@ -462,7 +483,7 @@ export function BookingWizard() {
       case 5:
         return state.equipment !== null;
       case 6:
-        return state.level !== null;
+        return isJuniorProgram(state.program) ? state.juniorGrade !== null : state.level !== null;
       case 7:
         return state.liftPassPayment.length > 0;
       case 8:
@@ -797,7 +818,7 @@ export function BookingWizard() {
 
               {on(5) && (
                 <OptionList
-                  options={EQUIPMENT_VALUES.map((value) => ({
+                  options={EQUIPMENT_VALUES.filter((v) => !isJuniorProgram(state.program) || v === "ski").map((value) => ({
                     value,
                     label: getEquipmentLabel(value, content),
                   }))}
@@ -811,8 +832,43 @@ export function BookingWizard() {
                 </p>
               )}
 
-              {on(6) && PAGE_HEAD[step - 1] !== 6 && <h2 className="mb-4 mt-10 text-[18px] font-bold text-ink-900">{stepTitles[5]}</h2>}
-              {on(6) && (
+              {on(6) && PAGE_HEAD[step - 1] !== 6 && (
+                <h2 className="mb-4 mt-10 text-[18px] font-bold text-ink-900">
+                  {isJuniorProgram(state.program) ? JR.pick : stepTitles[5]}
+                </h2>
+              )}
+              {on(6) && isJuniorProgram(state.program) && (
+                <div className="flex flex-col gap-2.5">
+                  {JUNIOR_GRADES.filter((g) => (state.program === "junior-a" ? g.no <= 6 : g.no >= 7)).map((g) => {
+                    const sel = state.juniorGrade === g.no;
+                    const L = locale === "en" || locale === "zh" ? locale : "ko";
+                    return (
+                      <button
+                        key={g.no}
+                        type="button"
+                        onClick={() => setState((prev) => ({ ...prev, juniorGrade: g.no, level: levelForGrade(g.no) }))}
+                        className={cn(
+                          "flex items-center gap-3.5 rounded-2xl border p-4 text-left transition-colors",
+                          sel ? "border-brand-500 bg-brand-50" : "border-snow-300/60 bg-white hover:border-brand-300"
+                        )}
+                      >
+                        <JuniorBadge grade={g} size={40} />
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[15px] font-bold text-ink-900">
+                            {L === "en" ? `Level ${g.no} · ${g.en}` : L === "zh" ? `${g.no}级 · ${g.zh}` : `${g.no}등급 · ${g.ko}`}
+                          </span>
+                          <span className="mt-0.5 block text-[12.5px] text-snow-500">
+                            {g.badge[L]} {L === "en" ? "badge" : L === "zh" ? "徽章" : "뱃지"} · {JR.slope[g.slope]}
+                          </span>
+                        </span>
+                        {sel && <Check size={18} className="shrink-0 text-brand-500" />}
+                      </button>
+                    );
+                  })}
+                  <p className="text-[12.5px] leading-relaxed text-snow-500">💡 {JR.tip}</p>
+                </div>
+              )}
+              {on(6) && !isJuniorProgram(state.program) && (
                 <div className="flex flex-col gap-3">
                   {LEVEL_VALUES.map((value) => {
                     const info = getLevelInfo(value, content, state.equipment);
@@ -901,7 +957,7 @@ export function BookingWizard() {
                       <p>
                         {content.bookingWizard.guide.groupSizeOption(getGroupStudentCount(state.groupSize))}
                         {state.equipment && ` · ${getEquipmentLabel(state.equipment, content)}`}
-                        {state.level && ` · ${getLevelInfo(state.level, content).label}`}
+                        {state.level && ` · ${levelText(state, content)}`}
                       </p>
                     </div>
                   )}
