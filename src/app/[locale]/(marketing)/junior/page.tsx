@@ -7,6 +7,7 @@ import { Container } from "@/components/shared/container";
 import { Link } from "@/i18n/navigation";
 import { JUNIOR_GRADES, JUNIOR_PRICES, type JuniorProgram } from "@/config/junior-grade";
 import { approxUsd } from "@/lib/usd";
+import { JuniorBadge } from "@/components/shared/junior-badge";
 
 type L = "ko" | "en" | "zh";
 
@@ -215,12 +216,7 @@ export default async function JuniorPage({ params }: { params: Promise<{ locale:
             <ol className="mt-6 grid gap-2.5 sm:grid-cols-2">
               {JUNIOR_GRADES.map((g) => (
                 <li key={g.no} className="flex items-center gap-3.5 rounded-2xl bg-white px-4 py-3 ring-1 ring-snow-300/60">
-                  <span
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[15px] font-extrabold"
-                    style={{ background: g.color, boxShadow: `inset 0 0 0 3px ${g.ring}`, color: g.no === 7 ? "#fff" : "#111827" }}
-                  >
-                    {g.no}
-                  </span>
+                  <JuniorBadge grade={g} size={48} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[15px] font-bold text-ink-900">
                       {g.no}

@@ -40,6 +40,7 @@ import {
 } from "@/lib/booking-options";
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
+import { JuniorBadge } from "@/components/shared/junior-badge";
 import { isJuniorProgram, JUNIOR_GRADES, JUNIOR_PASS_PROGRAM, JUNIOR_PRICES } from "@/config/junior-grade";
 import { getContent } from "@/config/site";
 import { approxUsd, withUsd } from "@/lib/usd";
@@ -694,12 +695,7 @@ export function BookingWizard() {
                       <ul className="mt-2.5 flex flex-col gap-1">
                         {JUNIOR_GRADES.filter((g) => (value === "junior-a" ? g.no <= 6 : g.no >= 7)).map((g) => (
                           <li key={g.no} className="flex items-center gap-2 text-[12.5px] text-ink-800">
-                            <span
-                              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10.5px] font-bold"
-                              style={{ background: g.color, boxShadow: `inset 0 0 0 2px ${g.ring}`, color: g.no === 7 ? "#fff" : "#111827" }}
-                            >
-                              {g.no}
-                            </span>
+                            <JuniorBadge grade={g} size={24} />
                             <span>
                               {locale === "en" ? `${JR.grade} ${g.no} · ${g.en}` : locale === "zh" ? `${g.no}${JR.grade} · ${g.zh}` : `${g.no}${JR.grade} · ${g.ko}`}
                               <span className="text-snow-400"> · {g.badge[locale === "en" || locale === "zh" ? locale : "ko"]}</span>
