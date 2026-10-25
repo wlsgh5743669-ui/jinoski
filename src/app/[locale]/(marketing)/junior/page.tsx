@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
 import { Container } from "@/components/shared/container";
 import { Link } from "@/i18n/navigation";
-import { JUNIOR_EXAM_FEE, JUNIOR_GRADES, JUNIOR_PRICES, type JuniorProgram } from "@/config/junior-grade";
+import { JUNIOR_GRADES, JUNIOR_PRICES, type JuniorProgram } from "@/config/junior-grade";
 import { approxUsd } from "@/lib/usd";
 
 type L = "ko" | "en" | "zh";
@@ -25,7 +25,7 @@ const T = {
     gradesSub: "등급마다 뱃지 색이 달라요. 한 번에 한 단계씩 도전해요.",
     slope: { easy: "초급~초중급 슬로프", mid: "중상급 슬로프", hard: "상급 슬로프" },
     priceTitle: "심사 요금",
-    priceSub: "2시간 동안 실력을 확인하고 바로 심사해요 · 연맹 응시료 포함",
+    priceSub: "2시간 동안 실력을 확인하고 바로 심사해요 · 연맹 응시료·발급료 포함",
     tierA: "1~6등급 심사",
     tierB: "7~10등급 심사",
     tierBNote: "Level 3 심사위원이 심사해요",
@@ -41,11 +41,11 @@ const T = {
       ["결과 등록", "연맹에 결과를 등록하면 공식 급증이 나오고, 뱃지·인증서를 전달해 드려요."],
     ],
     incTitle: "포함 사항",
-    inc: ["2시간 1:1~1:3 수업 + 심사", "대한스키지도자연맹 응시료 (1인 20,000원)", "심사 장면 사진·영상", "합격 시 등급 뱃지 · 인증서"],
+    inc: ["2시간 1:1~1:3 수업 + 심사", "대한스키지도자연맹 응시료 + 뱃지·인증서 발급료", "심사 장면 사진·영상", "합격 시 등급 뱃지 · 인증서"],
     noteTitle: "꼭 확인해 주세요",
     notes: [
       "등급 합격을 보장하지는 않아요. 아쉽게 떨어지면 연습 후 다시 도전할 수 있어요.",
-      "한 번에 한 등급씩 심사해요 (응시료는 1단계당 1인 20,000원).",
+      "한 번에 한 등급씩 심사해요.",
       "스키 종목만 해당돼요. 스노보드 등급은 따로 문의해 주세요.",
       "날씨·슬로프 상황에 따라 심사 일정이 바뀔 수 있어요.",
       "실력이 아직 부족하면 일반 레슨이나 시즌 8회 패키지로 먼저 연습하는 걸 추천드려요.",
@@ -91,11 +91,11 @@ const T = {
       ["Registration", "We register the result with KSIA and pass on the badge and certificate."],
     ],
     incTitle: "Included",
-    inc: ["2-hour session (1:1–1:3) + test", "KSIA test fee (₩20,000 per child)", "Photos & video of the test", "Badge & certificate when passed"],
+    inc: ["2-hour session (1:1–1:3) + test", "KSIA test fee + badge & certificate issuing fee", "Photos & video of the test", "Badge & certificate when passed"],
     noteTitle: "Please note",
     notes: [
       "Passing is not guaranteed. Children can retake after more practice.",
-      "One level per test (KSIA fee ₩20,000 per child per level).",
+      "One level per test.",
       "Ski only. Ask us about snowboard grades.",
       "Test dates may change with weather and slope conditions.",
       "If your child isn't ready yet, start with regular lessons or the 8-lesson season pack.",
@@ -125,7 +125,7 @@ const T = {
     gradesSub: "每个等级的徽章颜色不同，每次挑战一个等级。",
     slope: { easy: "初级~初中级雪道", mid: "中高级雪道", hard: "高级雪道" },
     priceTitle: "考核费用",
-    priceSub: "2小时内确认水平并直接考核 · 含联盟考试费",
+    priceSub: "2小时内确认水平并直接考核 · 含联盟考试费及发证费",
     tierA: "1~6级考核",
     tierB: "7~10级考核",
     tierBNote: "由 Level 3 考官考核",
@@ -141,11 +141,11 @@ const T = {
       ["登记结果", "向联盟登记结果后，转交徽章和证书。"],
     ],
     incTitle: "包含内容",
-    inc: ["2小时课程（1:1~1:3）+ 考核", "联盟考试费（每人₩20,000）", "考核照片·视频", "通过后颁发等级徽章·证书"],
+    inc: ["2小时课程（1:1~1:3）+ 考核", "联盟考试费 + 徽章·证书发证费", "考核照片·视频", "通过后颁发等级徽章·证书"],
     noteTitle: "注意事项",
     notes: [
       "不保证通过，未通过可练习后再次挑战。",
-      "每次考核一个等级（考试费每级每人₩20,000）。",
+      "每次考核一个等级。",
       "仅限双板，单板等级请另行咨询。",
       "考核日程可能因天气·雪道情况变更。",
       "水平还不够时，建议先上普通课程或季节8次套餐。",
@@ -278,7 +278,7 @@ export default async function JuniorPage({ params }: { params: Promise<{ locale:
               ))}
             </div>
             <p className="mt-3 text-[12px] text-snow-500">
-              {l === "ko" ? `※ 연맹 응시료 1단계당 1인 ${JUNIOR_EXAM_FEE.toLocaleString("ko-KR")}원 포함` : `※ KSIA fee ₩${JUNIOR_EXAM_FEE.toLocaleString("en-US")} per child per level included`}
+              {l === "ko" ? "※ 위 금액에 연맹 응시료 + 뱃지·인증서 발급료가 포함돼 있어요" : l === "zh" ? "※ 以上费用已含联盟考试费及徽章·证书发证费" : "※ Prices include the KSIA test fee and badge & certificate issuing fee"}
             </p>
           </div>
         </Container>

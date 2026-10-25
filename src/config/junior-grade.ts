@@ -1,13 +1,13 @@
 // 🎖️ 주니어 스키 기술등급 심사 (대한스키지도자연맹 KSIA 공식 제도)
 // - 만 7~17세 · 스키만 · 1~10등급 (뱃지 색 흰색 → 골드)
-// - 「심사 단독」 상품: 2시간 수준 확인 + 심사 · 연맹 응시료 포함 · 패찰 별도
+// - 「심사 단독」 상품: 2시간 수준 확인 + 심사 · 연맹 응시료·발급료 포함 · 패찰 별도
 // 가격이 바뀌면 JUNIOR_PRICES 숫자만 고치면 돼요 (예약하기·주니어 페이지에 같이 반영).
 
 export type JuniorProgram = "junior-a" | "junior-b";
 export const JUNIOR_PROGRAMS: JuniorProgram[] = ["junior-a", "junior-b"];
 export const isJuniorProgram = (p: string | null | undefined): p is JuniorProgram => p === "junior-a" || p === "junior-b";
 
-/** 반(인원)별 총액 — 응시료(1단계당 1인 20,000원) 포함 · 패찰 별도 */
+/** 반(인원)별 총액 — 연맹 응시료 + 발급료 포함 · 패찰 별도 */
 export const JUNIOR_PRICES: Record<JuniorProgram, Record<"1:1" | "1:2" | "1:3", number>> = {
   // 1~6등급
   "junior-a": { "1:1": 250000, "1:2": 300000, "1:3": 360000 },
