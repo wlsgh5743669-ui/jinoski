@@ -40,6 +40,7 @@ import {
 } from "@/lib/booking-options";
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
+import { MessengerButtons } from "@/components/shared/messenger-buttons";
 import { JuniorBadge } from "@/components/shared/junior-badge";
 import { isJuniorProgram, JUNIOR_GRADES, JUNIOR_PASS_PROGRAM, JUNIOR_PRICES } from "@/config/junior-grade";
 import { getContent } from "@/config/site";
@@ -1449,6 +1450,13 @@ function ForeignSummaryView({
         <Copy size={18} />
         {copied ? ft.copied : ft.copyButton}
       </button>
+
+      <div className="mt-4">
+        <p className="mb-2 text-center text-[13.5px] font-semibold text-ink-800">
+          {content.siteConfig.locale.startsWith("zh") ? "有问题？直接发消息给我们" : "Questions? Message us directly"}
+        </p>
+        <MessengerButtons locale={content.siteConfig.locale.slice(0, 2)} place="booking_done" />
+      </div>
 
       <div className="mt-4 rounded-2xl bg-snow-100/70 p-4 text-center text-[13.5px] text-snow-700">
         {ft.emailUs}

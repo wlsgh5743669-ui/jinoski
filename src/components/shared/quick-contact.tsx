@@ -6,6 +6,8 @@ import { useLocale } from "next-intl";
 import { useContent } from "@/lib/use-content";
 import { getConsult } from "@/config/content/consult";
 import { trackEvent } from "@/components/shared/analytics";
+import { hasLine, hasWeChat, LINE_URL, whatsappHref } from "@/config/messengers";
+import { MSG_COLORS, WeChatModal } from "@/components/shared/messenger-buttons";
 
 const LABELS = {
   ko: { kakao: "카톡", email: "메일", insta: "인스타", phone: "전화" },
@@ -24,6 +26,7 @@ export function QuickContact() {
   const l = LABELS[(locale in LABELS ? locale : "ko") as keyof typeof LABELS];
   const ko = locale === "ko";
   const [open, setOpen] = useState(false);
+  const [wc, setWc] = useState(false);
   // 스크롤하는 동안엔 살짝 투명하게 → 글자를 가리지 않게, 멈추면 다시 선명하게
   const [scrolling, setScrolling] = useState(false);
   useEffect(() => {
@@ -40,7 +43,20 @@ export function QuickContact() {
     };
   }, []);
 
-  const items = [
+  // 영어·중국어: 위챗(중국어 먼저) · 왓츠앱 · 라인
+  const msgIcon = <MessageCircle size={18} fill="currentColor" />;
+  const wechatItem = { key: "wechat", href: "#wechat", external: false, label: "WeChat", aria: "WeChat", circle: "text-white", bg: MSG_COLORS.wechat, icon: msgIcon };
+  const messengers = ko
+    ? []
+    : [
+        ...(locale === "zh" && hasWeChat() ? [wechatItem] : []),
+        { key: "whatsapp", href: whatsappHref(locale), external: true, label: "WhatsApp", aria: "WhatsApp", circle: "text-white", bg: MSG_COLORS.whatsapp, icon: msgIcon },
+        ...(hasLine() ? [{ key: "line", href: LINE_URL, external: true, label: "LINE", aria: "LINE", circle: "text-white", bg: MSG_COLORS.line, icon: msgIcon }] : []),
+        ...(locale !== "zh" && hasWeChat() ? [wechatItem] : []),
+      ];
+
+  const items: { key: string; href: string; external: boolean; label: string; aria: string; circle: string; bg?: string; icon: React.ReactNode }[] = [
+    ...messengers,
     // 한국어: 맨 위에 「견적」 — 가족·연박 손님이 바로 계산해 볼 수 있게
     ...(ko
       ? [
@@ -110,12 +126,19 @@ export function QuickContact() {
           href={it.href}
           target={it.external ? "_blank" : undefined}
           rel={it.external ? "noreferrer" : undefined}
-          onClick={() => trackEvent("contact_click", { channel: it.key, place: "float" })}
+          onClick={(e) => {
+            trackEvent("contact_click", { channel: it.key, place: "float" });
+            if (it.key === "wechat") {
+              e.preventDefault();
+              setWc(true);
+            }
+          }}
           aria-label={it.aria}
           className="group flex flex-col items-center gap-0.5"
         >
           <span
             className={`flex h-10 w-10 items-center justify-center rounded-full transition-transform group-hover:scale-110 group-active:scale-95 ${it.circle}`}
+            style={it.bg ? { background: it.bg } : undefined}
           >
             {it.icon}
           </span>
@@ -134,6 +157,7 @@ export function QuickContact() {
         {open ? <X size={20} /> : <MessageCircle size={20} fill="currentColor" />}
         {!open && <span className="mt-0.5 text-[9.5px] font-bold leading-none">{toggleLabel}</span>}
       </button>
+      {wc && <WeChatModal locale={locale} onClose={() => setWc(false)} />}
     </nav>
   );
 }
