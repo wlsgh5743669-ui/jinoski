@@ -5,7 +5,7 @@
 export const WHATSAPP_NUMBER = "821040477711";
 
 /** 라인: 친구추가 링크 (예: https://line.me/ti/p/~아이디 또는 https://line.me/ti/p/xxxxxx) */
-export const LINE_URL = "";
+export const LINE_URL = "https://line.me/ti/p/~jinoski";
 
 /** 위챗: 아이디(微信号)와 QR 사진 (public/images/wechat-qr.png 에 넣고 경로 적기) */
 export const WECHAT_ID = "jino7711";
@@ -13,7 +13,7 @@ export const WECHAT_QR = "";
 
 export const whatsappHref = (locale: string) => {
   const text =
-    locale === "zh" ? "你好 JinoSki，我想咨询滑雪课程。" : "Hi JinoSki! I'd like to ask about ski / snowboard lessons.";
+    locale === "zh" ? "你好 JINO SKI！我想预约课程。" : "Hi JINO SKI! I'd like to book a lesson.";
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 };
 
