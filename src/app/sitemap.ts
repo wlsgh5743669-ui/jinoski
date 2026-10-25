@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/gallery/",
     "/snap/",
     "/junior/",
+    "/notice/",
     "/reviews/",
     "/faq/",
     "/reserve/",

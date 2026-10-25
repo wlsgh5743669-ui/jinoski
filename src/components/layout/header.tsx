@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 const NAV_GROUPS: { key: string; label: Record<"ko" | "en" | "zh", string>; hrefs: string[] }[] = [
   { key: "lesson", label: { ko: "레슨", en: "Lessons", zh: "课程" }, hrefs: ["/lessons", "/junior", "/snap"] },
   { key: "price", label: { ko: "요금·견적", en: "Prices & Quote", zh: "价格·报价" }, hrefs: ["/pricing", "/quote", "/quote/my"] },
-  { key: "about", label: { ko: "지노스키", en: "About", zh: "关于我们" }, hrefs: ["/instructor", "/gallery", "/reviews"] },
+  { key: "about", label: { ko: "지노스키", en: "About", zh: "关于我们" }, hrefs: ["/notice", "/instructor", "/gallery", "/reviews"] },
 ];
 /** 예약하기 버튼이 따로 있어서 메뉴에서는 빼요 */
 const HIDDEN = ["/reserve"];

@@ -47,6 +47,7 @@ const mapLinks = {
 const navLinks = [
   { label: "Lesson Programs", href: "/lessons" },
   { label: "Pricing", href: "/pricing" },
+  { label: "Notices", href: "/notice" },
   { label: "Instructor", href: "/instructor" },
   { label: "Gallery", href: "/gallery" },
   { label: "Photo Snap", href: "/snap" },

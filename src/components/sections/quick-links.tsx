@@ -3,6 +3,7 @@
 import { useLocale } from "next-intl";
 import { trackEvent } from "@/components/shared/analytics";
 import { JuniorBanner } from "@/components/sections/junior-banner";
+import { NoticeStrip } from "@/components/sections/notice-list";
 
 /** 메인 중간 바로가기: 가격 · 후기 · 연박 견적 · 예약 (스크롤이 길어서 바로 갈 수 있게) */
 const T = {
@@ -17,7 +18,8 @@ export function QuickLinks() {
   return (
     <section className="bg-white py-8 sm:py-10">
       <div className="mx-auto max-w-3xl px-4">
-        <p className="text-center text-[14px] font-bold text-snow-600">{t.title}</p>
+        <NoticeStrip />
+        <p className="mt-6 text-center text-[14px] font-bold text-snow-600">{t.title}</p>
         <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
           {t.items.map(([icon, label, href]) => (
             <a

@@ -47,6 +47,7 @@ const mapLinks = {
 const navLinks = [
   { label: "课程项目", href: "/lessons" },
   { label: "价格说明", href: "/pricing" },
+  { label: "公告", href: "/notice" },
   { label: "教练介绍", href: "/instructor" },
   { label: "作品集", href: "/gallery" },
   { label: "人生照", href: "/snap" },

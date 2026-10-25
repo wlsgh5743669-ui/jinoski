@@ -55,6 +55,7 @@ const mapLinks = {
 const navLinks = [
   { label: "레슨 프로그램", href: "/lessons" },
   { label: "요금 안내", href: "/pricing" },
+  { label: "공지사항", href: "/notice" },
   { label: "강사 소개", href: "/instructor" },
   { label: "갤러리", href: "/gallery" },
   { label: "인생사진", href: "/snap" },
