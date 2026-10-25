@@ -101,6 +101,10 @@ type WizardState = {
   requestNote: string;
   /** 주니어 기술등급 심사: 도전할 등급 (1~10) */
   juniorGrade: number | null;
+  /** 리프트권·장비 같이 결제 (정가 40% 할인) */
+  liftOpt: "none" | "lift" | "both";
+  liftAdults: number;
+  liftKids: number;
   earlyBird: boolean;
   email: string;
   messenger: string;
@@ -119,6 +123,9 @@ const INITIAL_STATE: WizardState = {
   phone: "",
   requestNote: "",
   juniorGrade: null,
+  liftOpt: "none",
+  liftAdults: 0,
+  liftKids: 0,
   // 얼리버드 기간이면 처음부터 할인 적용 (손님이 버튼을 안 눌러도 할인가로 보이게)
   earlyBird: isEarlyBirdActive(),
   email: "",
@@ -133,6 +140,35 @@ function formatPrice(value: number, content: SiteContent): string {
 }
 
 type BreakdownLine = { label: string; detail: string; amount: string };
+
+const LIFT_TXT = {
+  ko: { lift: "리프트권", rent: "장비 렌탈", h: (n: number) => `${n}시간`, adult: "대인", child: "소인", off: "정가 40% 할인", wk: "주말·공휴일 요금", wd: "주중 요금" },
+  en: { lift: "Lift ticket", rent: "Rental", h: (n: number) => `${n}h`, adult: "Adult", child: "Child", off: "40% off list price", wk: "weekend/holiday rate", wd: "weekday rate" },
+  zh: { lift: "缆车票", rent: "装备租赁", h: (n: number) => `${n}小时`, adult: "成人", child: "儿童", off: "原价6折", wk: "周末·节假日价格", wd: "平日价格" },
+};
+const liftLoc = (content: SiteContent) => {
+  const l = content.siteConfig.locale.slice(0, 2);
+  return LIFT_TXT[(l === "en" || l === "zh" ? l : "ko") as keyof typeof LIFT_TXT];
+};
+const cut40 = (n: number) => Math.round((n * (1 - LIFT_RENTAL_DISCOUNT)) / 100) * 100;
+
+/** 리프트권·장비 추가 금액 (추천 시간권 · 선택 날짜 주중/주말) */
+function liftExtra(state: WizardState) {
+  if (!state.program || state.liftOpt === "none" || state.liftAdults + state.liftKids === 0) return null;
+  const t = ticketForProgram(state.program);
+  const w = isWeekendRate(state.date) ? 1 : 0;
+  const lift = LIFT_PRICES[t];
+  const rent = RENTAL_PRICES[t];
+  const a = state.liftAdults;
+  const k = state.liftKids;
+  const liftA = cut40(lift.adult[w]);
+  const liftK = cut40(lift.child[w]);
+  const rentA = cut40(rent.adult[w]);
+  const rentK = cut40(rent.child[w]);
+  const liftTotal = liftA * a + liftK * k;
+  const rentTotal = state.liftOpt === "both" ? rentA * a + rentK * k : 0;
+  return { t, rentHours: rent.hours, weekend: w === 1, a, k, liftA, liftK, rentA, rentK, liftTotal, rentTotal, total: liftTotal + rentTotal };
+}
 
 /**
  * Human-readable "how the total is calculated" lines, e.g.
@@ -186,10 +222,31 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
     });
   }
 
+  // 리프트권·장비 (선택했을 때만)
+  const ex = liftExtra(state);
+  if (ex) {
+    const L = liftLoc(content);
+    const who = (pa: number, pk: number) =>
+      [ex.a ? `${L.adult} ${formatPrice(pa, content)} × ${ex.a}` : "", ex.k ? `${L.child} ${formatPrice(pk, content)} × ${ex.k}` : ""].filter(Boolean).join(" + ");
+    lines.push({
+      label: `${L.lift} ${L.h(ex.t)}`,
+      detail: `${L.off} · ${ex.weekend ? L.wk : L.wd} · ${who(ex.liftA, ex.liftK)}`,
+      amount: formatPrice(ex.liftTotal, content),
+    });
+    if (ex.rentTotal) {
+      lines.push({
+        label: `${L.rent} ${L.h(ex.rentHours)}`,
+        detail: `${L.off} · ${who(ex.rentA, ex.rentK)}`,
+        amount: formatPrice(ex.rentTotal, content),
+      });
+    }
+  }
+  const grand = price.totalPrice + (ex?.total ?? 0);
+
   return {
     price,
     lines,
-    total: price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.totalPrice, content),
+    total: price.priceOnRequest ? labels.priceOnRequest : formatPrice(grand, content),
   };
 }
 
@@ -1064,6 +1121,79 @@ export function BookingWizard() {
                     );
                   })()}
 
+                  {price && state.program && (() => {
+                    const L = liftLoc(content);
+                    const lc = content.siteConfig.locale.slice(0, 2);
+                    const T = {
+                      ko: { title: "🎿 리프트권·장비도 같이 할까요?", sub: "정가 40% 할인 · 강습료와 함께 결제 · 현장에서는 받기만 하면 돼요", none: "필요 없음", lift: "리프트권만", both: "리프트권 + 장비", rec: "추천", gear: "장비" },
+                      en: { title: "🎿 Add lift ticket & rental?", sub: "40% off list price · paid with the lesson · just pick up on site", none: "No thanks", lift: "Lift only", both: "Lift + equipment", rec: "Recommended", gear: "equipment" },
+                      zh: { title: "🎿 需要缆车票·装备吗？", sub: "原价6折 · 与课程费一起支付 · 现场直接领取", none: "不需要", lift: "只要缆车票", both: "缆车票 + 装备", rec: "推荐", gear: "装备" },
+                    }[lc === "en" || lc === "zh" ? lc : "ko"];
+                    const t = ticketForProgram(state.program);
+                    const w = isWeekendRate(state.date) ? 1 : 0;
+                    const people = getGroupStudentCount(state.groupSize || "1:1");
+                    const kidFirst = state.ageGroup === "kids" || state.ageGroup === "elementary";
+                    const choose = (opt: WizardState["liftOpt"]) =>
+                      setState((prev) => ({
+                        ...prev,
+                        liftOpt: opt,
+                        ...(opt !== "none" && prev.liftAdults + prev.liftKids === 0
+                          ? kidFirst
+                            ? { liftKids: people, liftAdults: 0 }
+                            : { liftAdults: people, liftKids: 0 }
+                          : {}),
+                      }));
+                    const step = (key: "liftAdults" | "liftKids", d: number) =>
+                      setState((prev) => ({ ...prev, [key]: Math.max(0, Math.min(10, prev[key] + d)) }));
+                    const per = (adult: boolean) =>
+                      cut40(LIFT_PRICES[t][adult ? "adult" : "child"][w]) +
+                      (state.liftOpt === "both" ? cut40(RENTAL_PRICES[t][adult ? "adult" : "child"][w]) : 0);
+                    return (
+                      <div className="mt-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4">
+                        <p className="text-[15px] font-bold text-ink-900">{T.title}</p>
+                        <p className="mt-0.5 text-[12.5px] text-snow-600">{T.sub}</p>
+                        <div className="mt-3 grid grid-cols-3 gap-1.5">
+                          {(["none", "lift", "both"] as const).map((o) => (
+                            <button
+                              key={o}
+                              type="button"
+                              onClick={() => choose(o)}
+                              className={cn(
+                                "rounded-xl border px-2 py-2.5 text-[13px] font-bold leading-tight",
+                                state.liftOpt === o ? "border-brand-500 bg-white text-brand-600 ring-1 ring-brand-500" : "border-snow-300/70 bg-white text-ink-700"
+                              )}
+                            >
+                              {T[o]}
+                            </button>
+                          ))}
+                        </div>
+                        {state.liftOpt !== "none" && (
+                          <>
+                            <p className="mt-3 text-[12.5px] font-semibold text-ink-700">
+                              {T.rec}: {L.lift} {L.h(t)}
+                              {state.liftOpt === "both" ? ` + ${T.gear} ${L.h(RENTAL_PRICES[t].hours)}` : ""} · {w ? L.wk : L.wd}
+                            </p>
+                            <div className="mt-2 flex flex-col gap-2">
+                              {([["liftAdults", true], ["liftKids", false]] as const).map(([key, adult]) => (
+                                <div key={key} className="flex items-center justify-between rounded-xl bg-white px-3 py-2">
+                                  <div>
+                                    <p className="text-[14px] font-bold text-ink-900">{adult ? `${L.adult} (14+)` : `${L.child} (≤13)`}</p>
+                                    <p className="text-[12px] text-rose-600">{formatPrice(per(adult), content)}</p>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <button type="button" aria-label="-" onClick={() => step(key, -1)} className="h-8 w-8 rounded-full bg-snow-100 text-[18px] font-bold text-ink-700">−</button>
+                                    <span className="w-5 text-center text-[15px] font-bold">{state[key]}</span>
+                                    <button type="button" aria-label="+" onClick={() => step(key, 1)} className="h-8 w-8 rounded-full bg-snow-100 text-[18px] font-bold text-ink-700">+</button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })()}
+
                   {price && (() => {
                     const breakdown = buildPriceBreakdown(state, content);
                     if (!breakdown) return null;
@@ -1519,7 +1649,7 @@ function FullCareSchedule({
 
 /** 강습 길이에 맞는 리프트권 (2시간→3시간권, 3·4시간→5시간권, 풀케어→7시간권) */
 function ticketForProgram(program: string): TicketHours {
-  if (program === "2h") return 3;
+  if (program === "2h" || isJuniorProgram(program)) return 3;
   if (program === "one-day" || program === "night") return 7;
   return 5;
 }
