@@ -350,6 +350,13 @@ export function BookingWizard() {
   const isFullCare = state.program === "one-day" || state.program === "night";
 
   const [showFullCareChoice, setShowFullCareChoice] = useState(isFullCare);
+  // 주니어 기술등급 심사: 카드 하나 → 누르면 1~6등급 / 7~10등급 선택
+  const [showJuniorChoice, setShowJuniorChoice] = useState(isJuniorProgram(state.program));
+  const JR = {
+    ko: { title: "🎖️ 주니어 기술등급 심사", desc: "만 7~17세 · 스키 · 대한스키지도자연맹 공식 뱃지 · 눌러서 등급 선택", pick: "도전할 등급을 골라주세요", a: "처음 ~ 중급 슬로프 실력 (스노우플라우 ~ 다이나믹 롱턴)", b: "상급 슬로프 실력 (다이나믹 숏턴 ~ 종합활강) · Level 3 심사위원" },
+    en: { title: "🎖️ Junior Ski Badge Test", desc: "Ages 7–17 · ski · official KSIA badge · tap to choose a level", pick: "Choose the level to try", a: "Beginner to red slopes (snowplow – dynamic long turn)", b: "Black slopes (dynamic short turn – all-round run) · Level 3 examiner" },
+    zh: { title: "🎖️ 青少年滑雪技术等级考核", desc: "7~17周岁 · 双板 · KSIA官方徽章 · 点击选择等级", pick: "请选择要挑战的等级", a: "初级~中高级雪道水平（犁式~动态长转）", b: "高级雪道水平（动态短转~综合滑降）· Level 3 考官" },
+  }[locale === "en" || locale === "zh" ? locale : "ko"];
 
   const price = useMemo(() => {
     if (!state.program || !state.groupSize) return null;
@@ -408,7 +415,10 @@ export function BookingWizard() {
         next.program = program;
         next.timeSlot = isFull ? timeValues[0] : "";
         next.liftPassPayment = isFull ? "included" : "pay-together";
-        if (isJuniorProgram(program)) next.equipment = "ski";
+        if (isJuniorProgram(program)) {
+          next.equipment = "ski";
+          setShowJuniorChoice(true);
+        }
         if (isFull) setShowFullCareChoice(true);
       }
 
@@ -583,10 +593,10 @@ export function BookingWizard() {
                 />
               )}
 
-              {on(2) && !showFullCareChoice && (
+              {on(2) && !showFullCareChoice && !showJuniorChoice && (
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {PROGRAM_VALUES.filter(
-                    (value) => value !== "one-day" && value !== "night"
+                    (value) => value !== "one-day" && value !== "night" && !isJuniorProgram(value)
                   ).map((value) => (
                     <button
                       key={value}
@@ -627,6 +637,51 @@ export function BookingWizard() {
                       {programPriceHint("one-day", content)}
                     </p>
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowJuniorChoice(true)}
+                    className={cn(
+                      "rounded-2xl border p-5 text-left transition-colors",
+                      isJuniorProgram(state.program)
+                        ? "border-brand-500 bg-brand-50"
+                        : "border-snow-300/60 bg-white hover:border-brand-300"
+                    )}
+                  >
+                    <span className="text-[15px] font-bold text-ink-900">{JR.title}</span>
+                    <p className="mt-1.5 text-[13px] leading-relaxed text-snow-500">{JR.desc}</p>
+                    <p className="mt-1 text-[13px] font-medium text-brand-600">{programPriceHint("junior-a", content)}</p>
+                  </button>
+                </div>
+              )}
+
+              {on(2) && showJuniorChoice && (
+                <div className="flex flex-col gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowJuniorChoice(false)}
+                    className="flex items-center gap-1.5 self-start text-[13.5px] font-semibold text-snow-500 transition-colors hover:text-ink-900"
+                  >
+                    <ArrowLeft size={14} />
+                    {content.bookingWizard.buttons.back}
+                  </button>
+                  <p className="text-[15px] font-bold text-ink-900">{JR.pick}</p>
+                  {(["junior-a", "junior-b"] as const).map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => selectProgram(value)}
+                      className={cn(
+                        "rounded-2xl border p-5 text-left transition-colors",
+                        state.program === value
+                          ? "border-brand-500 bg-brand-50"
+                          : "border-snow-300/60 bg-white hover:border-brand-300"
+                      )}
+                    >
+                      <span className="text-[15px] font-bold text-ink-900">{getProgramLabel(value, content)}</span>
+                      <p className="mt-1.5 text-[13px] leading-relaxed text-snow-500">{value === "junior-a" ? JR.a : JR.b}</p>
+                      <p className="mt-1 text-[13px] font-medium text-brand-600">{programPriceHint(value, content)}</p>
+                    </button>
+                  ))}
                 </div>
               )}
 

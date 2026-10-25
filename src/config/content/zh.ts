@@ -1023,8 +1023,8 @@ const programLabels: SiteContent["programLabels"] = {
   "4h": "4小时课程",
   "one-day": "One Day Full Care（7小时）",
   night: "Night Full Care（7小时）",
-  "junior-a": "🎖️ 青少年等级考核（1~6级）",
-  "junior-b": "🎖️ 青少年等级考核（7~10级）",
+  "junior-a": "青少年技术等级 1~6级",
+  "junior-b": "青少年技术等级 7~10级",
 };
 
 const equipmentLabels: SiteContent["equipmentLabels"] = {

@@ -1062,8 +1062,8 @@ const programLabels: SiteContent["programLabels"] = {
   "4h": "4-Hour Lesson",
   "one-day": "One Day Full Care (7h)",
   night: "Night Full Care (7h)",
-  "junior-a": "🎖️ Junior Badge Test (Lv 1–6)",
-  "junior-b": "🎖️ Junior Badge Test (Lv 7–10)",
+  "junior-a": "Junior Badge Test · Levels 1–6",
+  "junior-b": "Junior Badge Test · Levels 7–10",
 };
 
 const equipmentLabels: SiteContent["equipmentLabels"] = {
