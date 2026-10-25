@@ -40,6 +40,7 @@ import {
 } from "@/lib/booking-options";
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
+import { isJuniorProgram, JUNIOR_PASS_PROGRAM, JUNIOR_PRICES } from "@/config/junior-grade";
 import { getContent } from "@/config/site";
 import { approxUsd, withUsd } from "@/lib/usd";
 import { HOLIDAYS, HOLIDAY_NAMES, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, isWeekendRate, type TicketHours } from "@/config/lift-rental";
@@ -233,6 +234,9 @@ async function notifyOwnerKakao(state: WizardState, content: SiteContent, locale
 }
 
 function getPriceRows(program: ProgramValue, content: SiteContent) {
+  if (isJuniorProgram(program)) {
+    return (["1:1", "1:2", "1:3"] as const).map((people) => ({ people, price: formatPrice(JUNIOR_PRICES[program][people], content) }));
+  }
   if (program === "one-day" || program === "night") {
     return content.fullCarePrograms.find((p) => p.slug === program)?.rows ?? [];
   }
@@ -240,7 +244,8 @@ function getPriceRows(program: ProgramValue, content: SiteContent) {
 }
 
 function getLiftPassPrice(program: ProgramValue, content: SiteContent) {
-  return content.liftPassPricing.find((p) => p.program === program)?.price;
+  const p0 = isJuniorProgram(program) ? JUNIOR_PASS_PROGRAM : program;
+  return content.liftPassPricing.find((p) => p.program === p0)?.price;
 }
 
 /** "1명 기준 210,000원부터 · + 패찰 1인 35,000원" shown under each program card. */
@@ -370,6 +375,8 @@ export function BookingWizard() {
       groupSize: "",
       timeSlot: isFull ? timeValues[0] : "",
       liftPassPayment: isFull ? "included" : "pay-together",
+      // 주니어 등급 심사는 스키만
+      ...(isJuniorProgram(program) ? { equipment: "ski" as const } : {}),
     }));
   }
 
@@ -401,6 +408,7 @@ export function BookingWizard() {
         next.program = program;
         next.timeSlot = isFull ? timeValues[0] : "";
         next.liftPassPayment = isFull ? "included" : "pay-together";
+        if (isJuniorProgram(program)) next.equipment = "ski";
         if (isFull) setShowFullCareChoice(true);
       }
 

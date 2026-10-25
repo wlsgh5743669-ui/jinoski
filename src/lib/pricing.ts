@@ -1,5 +1,6 @@
 import type { SiteContent } from "@/config/content/types";
 import { isHourlyProgram, type ProgramValue } from "@/lib/booking-options";
+import { isJuniorProgram, JUNIOR_PASS_PROGRAM, JUNIOR_PRICES } from "@/config/junior-grade";
 
 function parseWon(price: string): number {
   return Number(price.replace(/[^0-9]/g, ""));
@@ -96,8 +97,10 @@ export function calculateBookingPrice({
     };
   }
 
+  // 주니어 등급 심사: 가격은 config/junior-grade.ts
+  const juniorPrice = isJuniorProgram(program) ? JUNIOR_PRICES[program][groupSize as "1:1" | "1:2" | "1:3"] : undefined;
   const lessonGroup = content.lessonPricing.find((g) => g.program === program);
-  const row = lessonGroup?.rows.find((r) => r.people === groupSize);
+  const row = juniorPrice ? { price: String(juniorPrice) } : lessonGroup?.rows.find((r) => r.people === groupSize);
   if (!row)
     return {
       basePrice: 0,
@@ -110,7 +113,8 @@ export function calculateBookingPrice({
     };
   const basePrice = parseWon(row.price);
 
-  const liftPassEntry = content.liftPassPricing.find((p) => p.program === program);
+  const passProgram = isJuniorProgram(program) ? JUNIOR_PASS_PROGRAM : program;
+  const liftPassEntry = content.liftPassPricing.find((p) => p.program === passProgram);
   const liftPassFeePerPerson = liftPassEntry ? parseWon(liftPassEntry.price) : 0;
   const liftPassPersonCount = getGroupStudentCount(groupSize);
   const liftPassFee = liftPassFeePerPerson * liftPassPersonCount;

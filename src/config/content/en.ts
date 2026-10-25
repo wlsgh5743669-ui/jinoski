@@ -50,6 +50,7 @@ const navLinks = [
   { label: "Instructor", href: "/instructor" },
   { label: "Gallery", href: "/gallery" },
   { label: "Photo Snap", href: "/snap" },
+  { label: "Junior Badge", href: "/junior" },
   { label: "Reviews", href: "/reviews" },
   { label: "FAQ", href: "/faq" },
   { label: "Booking", href: "/reserve" },
@@ -1061,6 +1062,8 @@ const programLabels: SiteContent["programLabels"] = {
   "4h": "4-Hour Lesson",
   "one-day": "One Day Full Care (7h)",
   night: "Night Full Care (7h)",
+  "junior-a": "🎖️ Junior Badge Test (Lv 1–6)",
+  "junior-b": "🎖️ Junior Badge Test (Lv 7–10)",
 };
 
 const equipmentLabels: SiteContent["equipmentLabels"] = {

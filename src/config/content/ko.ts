@@ -58,6 +58,7 @@ const navLinks = [
   { label: "강사 소개", href: "/instructor" },
   { label: "갤러리", href: "/gallery" },
   { label: "인생사진", href: "/snap" },
+  { label: "주니어 등급", href: "/junior" },
   { label: "후기", href: "/reviews" },
   { label: "FAQ", href: "/faq" },
   { label: "예약 안내", href: "/reserve" },
@@ -1046,6 +1047,8 @@ const programLabels: SiteContent["programLabels"] = {
   "4h": "4시간 레슨",
   "one-day": "원데이 풀케어 (7시간)",
   night: "나이트 풀케어 (7시간)",
+  "junior-a": "🎖️ 주니어 등급 심사 (1~6등급)",
+  "junior-b": "🎖️ 주니어 등급 심사 (7~10등급)",
 };
 
 const equipmentLabels: SiteContent["equipmentLabels"] = {

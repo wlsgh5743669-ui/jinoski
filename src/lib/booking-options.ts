@@ -1,6 +1,7 @@
 import type { SiteContent } from "@/config/content/types";
+import type { JuniorProgram } from "@/config/junior-grade";
 
-export const PROGRAM_VALUES = ["2h", "3h", "4h", "one-day", "night"] as const;
+export const PROGRAM_VALUES = ["2h", "3h", "4h", "one-day", "night", "junior-a", "junior-b"] as const;
 export type ProgramValue = (typeof PROGRAM_VALUES)[number];
 
 export const EQUIPMENT_VALUES = ["ski", "snowboard", "inline-ski"] as const;
@@ -35,10 +36,11 @@ export const AGE_GROUP_VALUES = [
 ] as const;
 export type AgeGroupValue = (typeof AGE_GROUP_VALUES)[number];
 
+/** 시간제 수업 (주니어 등급 심사는 2시간 시간표로 진행) */
 export function isHourlyProgram(
   program: ProgramValue
-): program is "2h" | "3h" | "4h" {
-  return program === "2h" || program === "3h" || program === "4h";
+): program is "2h" | "3h" | "4h" | JuniorProgram {
+  return program === "2h" || program === "3h" || program === "4h" || program === "junior-a" || program === "junior-b";
 }
 
 export function getGroupSizeOptions(
@@ -53,10 +55,10 @@ export function getGroupSizeOptions(
 const FIXED_TIME_SLOT_VALUE = "fixed";
 
 function getScheduleTimesForProgram(
-  program: "2h" | "3h" | "4h",
+  program: "2h" | "3h" | "4h" | JuniorProgram,
   content: SiteContent
 ): { label: string; time: string }[] {
-  if (program === "2h") return content.scheduleTimes.twoHour;
+  if (program === "2h" || program === "junior-a" || program === "junior-b") return content.scheduleTimes.twoHour;
   if (program === "3h") return content.scheduleTimes.threeHour;
   return content.scheduleTimes.fourHour;
 }

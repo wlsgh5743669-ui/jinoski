@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/instructor/",
     "/gallery/",
     "/snap/",
+    "/junior/",
     "/reviews/",
     "/faq/",
     "/reserve/",

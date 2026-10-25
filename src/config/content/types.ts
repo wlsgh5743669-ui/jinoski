@@ -1,4 +1,4 @@
-export type ProgramCode = "2h" | "3h" | "4h" | "one-day" | "night";
+export type ProgramCode = "2h" | "3h" | "4h" | "one-day" | "night" | "junior-a" | "junior-b";
 export type EquipmentCode = "ski" | "snowboard" | "inline-ski";
 export type LevelCode = "beginner" | "basic" | "intermediate" | "advanced";
 export type FullCareGroupSizeCode = "1p" | "2p" | "3p";
