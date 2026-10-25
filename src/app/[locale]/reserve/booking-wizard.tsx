@@ -40,7 +40,7 @@ import {
 } from "@/lib/booking-options";
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
-import { isJuniorProgram, JUNIOR_PASS_PROGRAM, JUNIOR_PRICES } from "@/config/junior-grade";
+import { isJuniorProgram, JUNIOR_GRADES, JUNIOR_PASS_PROGRAM, JUNIOR_PRICES } from "@/config/junior-grade";
 import { getContent } from "@/config/site";
 import { approxUsd, withUsd } from "@/lib/usd";
 import { HOLIDAYS, HOLIDAY_NAMES, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, isWeekendRate, type TicketHours } from "@/config/lift-rental";
@@ -353,9 +353,9 @@ export function BookingWizard() {
   // 주니어 기술등급 심사: 카드 하나 → 누르면 1~6등급 / 7~10등급 선택
   const [showJuniorChoice, setShowJuniorChoice] = useState(isJuniorProgram(state.program));
   const JR = {
-    ko: { title: "🎖️ 주니어 기술등급 심사", desc: "만 7~17세 · 스키 · 대한스키지도자연맹 공식 뱃지 · 눌러서 등급 선택", pick: "도전할 등급을 골라주세요", a: "처음 ~ 중급 슬로프 실력 (스노우플라우 ~ 다이나믹 롱턴)", b: "상급 슬로프 실력 (다이나믹 숏턴 ~ 종합활강) · Level 3 심사위원" },
-    en: { title: "🎖️ Junior Ski Badge Test", desc: "Ages 7–17 · ski · official KSIA badge · tap to choose a level", pick: "Choose the level to try", a: "Beginner to red slopes (snowplow – dynamic long turn)", b: "Black slopes (dynamic short turn – all-round run) · Level 3 examiner" },
-    zh: { title: "🎖️ 青少年滑雪技术等级考核", desc: "7~17周岁 · 双板 · KSIA官方徽章 · 点击选择等级", pick: "请选择要挑战的等级", a: "初级~中高级雪道水平（犁式~动态长转）", b: "高级雪道水平（动态短转~综合滑降）· Level 3 考官" },
+    ko: { how: "2시간 진행 · 실력 확인 → 심사 종목 연습 → 공인 지도자 심사", inc: ["연맹 응시료 포함 (1인 20,000원)", "심사 장면 사진·영상", "합격하면 공식 등급 뱃지 + 인증서"], extra: "패찰 1인 25,000원 별도 · 리프트·장비 40% 할인 · 한 번에 한 등급 심사 · 합격 보장 아님", grade: "등급", more: "주니어 기술등급 자세히 보기", tip: "어느 등급인지 모르겠으면 낮은 등급부터 추천드려요. 예약 후 상담 때 정해도 돼요.", title: "🎖️ 주니어 기술등급 심사", desc: "만 7~17세 · 스키 · 대한스키지도자연맹 공식 뱃지 · 눌러서 등급 선택", pick: "도전할 등급을 골라주세요", a: "처음 ~ 중급 슬로프 실력 (스노우플라우 ~ 다이나믹 롱턴)", b: "상급 슬로프 실력 (다이나믹 숏턴 ~ 종합활강) · Level 3 심사위원" },
+    en: { how: "2 hours · level check → practice test elements → test by a certified instructor", inc: ["KSIA test fee included (₩20,000 per child)", "Photos & video of the test", "Official badge + certificate when passed"], extra: "Lesson permit ₩25,000 per person extra · lift & rental 40% off · one level per test · pass not guaranteed", grade: "Level", more: "More about junior badges", tip: "Not sure which level? We recommend starting lower — we can decide together after booking.", title: "🎖️ Junior Ski Badge Test", desc: "Ages 7–17 · ski · official KSIA badge · tap to choose a level", pick: "Choose the level to try", a: "Beginner to red slopes (snowplow – dynamic long turn)", b: "Black slopes (dynamic short turn – all-round run) · Level 3 examiner" },
+    zh: { how: "2小时 · 确认水平 → 练习考核项目 → 认证指导者考核", inc: ["含联盟考试费（每人₩20,000）", "考核照片·视频", "通过后颁发官方等级徽章 + 证书"], extra: "教学许可证（挂牌）每人₩25,000另计 · 缆车·装备6折 · 每次考核一个等级 · 不保证通过", grade: "级", more: "了解青少年技术等级", tip: "不确定等级时建议从较低等级开始，预约后咨询时再决定也可以。", title: "🎖️ 青少年滑雪技术等级考核", desc: "7~17周岁 · 双板 · KSIA官方徽章 · 点击选择等级", pick: "请选择要挑战的等级", a: "初级~中高级雪道水平（犁式~动态长转）", b: "高级雪道水平（动态短转~综合滑降）· Level 3 考官" },
   }[locale === "en" || locale === "zh" ? locale : "ko"];
 
   const price = useMemo(() => {
@@ -664,7 +664,19 @@ export function BookingWizard() {
                     <ArrowLeft size={14} />
                     {content.bookingWizard.buttons.back}
                   </button>
-                  <p className="text-[15px] font-bold text-ink-900">{JR.pick}</p>
+                  <div className="rounded-2xl bg-ice-200 px-4 py-3.5 text-[13px] leading-relaxed text-snow-700">
+                    <p className="font-bold text-ink-900">⏱ {JR.how}</p>
+                    <ul className="mt-1.5 flex flex-col gap-0.5">
+                      {JR.inc.map((x) => (
+                        <li key={x}>✓ {x}</li>
+                      ))}
+                    </ul>
+                    <p className="mt-1.5 text-[12px] text-snow-500">{JR.extra}</p>
+                    <Link href="/junior" className="mt-1.5 inline-block text-[12.5px] font-semibold text-brand-600 underline">
+                      {JR.more} →
+                    </Link>
+                  </div>
+                  <p className="mt-1 text-[15px] font-bold text-ink-900">{JR.pick}</p>
                   {(["junior-a", "junior-b"] as const).map((value) => (
                     <button
                       key={value}
@@ -679,9 +691,26 @@ export function BookingWizard() {
                     >
                       <span className="text-[15px] font-bold text-ink-900">{getProgramLabel(value, content)}</span>
                       <p className="mt-1.5 text-[13px] leading-relaxed text-snow-500">{value === "junior-a" ? JR.a : JR.b}</p>
-                      <p className="mt-1 text-[13px] font-medium text-brand-600">{programPriceHint(value, content)}</p>
+                      <ul className="mt-2.5 flex flex-col gap-1">
+                        {JUNIOR_GRADES.filter((g) => (value === "junior-a" ? g.no <= 6 : g.no >= 7)).map((g) => (
+                          <li key={g.no} className="flex items-center gap-2 text-[12.5px] text-ink-800">
+                            <span
+                              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10.5px] font-bold"
+                              style={{ background: g.color, boxShadow: `inset 0 0 0 2px ${g.ring}`, color: g.no === 7 ? "#fff" : "#111827" }}
+                            >
+                              {g.no}
+                            </span>
+                            <span>
+                              {locale === "en" ? `${JR.grade} ${g.no} · ${g.en}` : locale === "zh" ? `${g.no}${JR.grade} · ${g.zh}` : `${g.no}${JR.grade} · ${g.ko}`}
+                              <span className="text-snow-400"> · {g.badge[locale === "en" || locale === "zh" ? locale : "ko"]}</span>
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="mt-2.5 text-[13px] font-medium text-brand-600">{programPriceHint(value, content)}</p>
                     </button>
                   ))}
+                  <p className="text-[12.5px] leading-relaxed text-snow-500">💡 {JR.tip}</p>
                 </div>
               )}
 
