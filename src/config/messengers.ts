@@ -8,7 +8,7 @@ export const WHATSAPP_NUMBER = "821040477711";
 export const LINE_URL = "";
 
 /** 위챗: 아이디(微信号)와 QR 사진 (public/images/wechat-qr.png 에 넣고 경로 적기) */
-export const WECHAT_ID = "";
+export const WECHAT_ID = "jino7711";
 export const WECHAT_QR = "";
 
 export const whatsappHref = (locale: string) => {
