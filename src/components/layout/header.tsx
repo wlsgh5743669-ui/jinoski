@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, ShoppingBag } from "lucide-react";
+import { ChevronDown, Menu, X, ShoppingBag } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
 import { useContent } from "@/lib/use-content";
@@ -10,10 +10,38 @@ import { Container } from "@/components/shared/container";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { cn } from "@/lib/utils";
 
+/** 상단 메뉴 묶음 (메뉴 이름은 언어별 navLinks에서 가져와요) */
+const NAV_GROUPS: { key: string; label: Record<"ko" | "en" | "zh", string>; hrefs: string[] }[] = [
+  { key: "lesson", label: { ko: "레슨", en: "Lessons", zh: "课程" }, hrefs: ["/lessons", "/junior", "/snap"] },
+  { key: "price", label: { ko: "요금·견적", en: "Prices & Quote", zh: "价格·报价" }, hrefs: ["/pricing", "/quote", "/quote/my"] },
+  { key: "about", label: { ko: "지노스키", en: "About", zh: "关于我们" }, hrefs: ["/instructor", "/gallery", "/reviews"] },
+];
+/** 예약하기 버튼이 따로 있어서 메뉴에서는 빼요 */
+const HIDDEN = ["/reserve"];
+
+type NavLink = { label: string; href: string };
+type NavItem = { kind: "group"; key: string; label: string; links: NavLink[] } | { kind: "link"; link: NavLink };
+
+function buildNav(navLinks: NavLink[], loc: "ko" | "en" | "zh"): NavItem[] {
+  const by = new Map(navLinks.map((l) => [l.href.replace(/\/$/, ""), l]));
+  const used = new Set<string>(HIDDEN);
+  const items: NavItem[] = [];
+  for (const g of NAV_GROUPS) {
+    const links = g.hrefs.map((h) => by.get(h)).filter((x): x is NavLink => !!x);
+    g.hrefs.forEach((h) => used.add(h));
+    if (links.length) items.push({ kind: "group", key: g.key, label: g.label[loc], links });
+  }
+  for (const l of navLinks) if (!used.has(l.href.replace(/\/$/, ""))) items.push({ kind: "link", link: l });
+  return items;
+}
+
 export function Header() {
   const { navLinks, contact, ui } = useContent();
   // 한국어: 스토어 버튼 → 홈페이지 안의 상품 모음 페이지(/ko/store), 그 외 언어는 스마트스토어로
-  const isKo = useLocale() === "ko";
+  const locale = useLocale();
+  const isKo = locale === "ko";
+  const nav = buildNav(navLinks, (locale === "en" || locale === "zh" ? locale : "ko") as "ko" | "en" | "zh");
+  const [drop, setDrop] = useState<string | null>(null);
   const storeLink = isKo
     ? { href: "/ko/store/" }
     : { href: contact.smartStore, target: "_blank", rel: "noreferrer" };
@@ -56,19 +84,57 @@ export function Header() {
             JINO<span className="text-brand-500">SKI</span>
           </Link>
 
-          <nav className="hidden items-center gap-3 lg:flex xl:gap-[18px] 2xl:gap-9">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "whitespace-nowrap text-[13px] font-medium tracking-tight transition-colors hover:text-brand-500 xl:text-[14px]",
-                  scrolled ? "text-ink-700" : "text-white/90"
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <nav className="hidden items-center gap-5 lg:flex xl:gap-8">
+            {nav.map((item) =>
+              item.kind === "link" ? (
+                <Link
+                  key={item.link.href}
+                  href={item.link.href}
+                  className={cn(
+                    "whitespace-nowrap text-[14px] font-semibold tracking-tight transition-colors hover:text-brand-500 xl:text-[15px]",
+                    scrolled ? "text-ink-800" : "text-white/90"
+                  )}
+                >
+                  {item.link.label}
+                </Link>
+              ) : (
+                <div
+                  key={item.key}
+                  className="relative"
+                  onMouseEnter={() => setDrop(item.key)}
+                  onMouseLeave={() => setDrop((d) => (d === item.key ? null : d))}
+                >
+                  <button
+                    type="button"
+                    aria-expanded={drop === item.key}
+                    onClick={() => setDrop((d) => (d === item.key ? null : item.key))}
+                    className={cn(
+                      "flex items-center gap-1 whitespace-nowrap py-3 text-[14px] font-semibold tracking-tight transition-colors hover:text-brand-500 xl:text-[15px]",
+                      scrolled ? "text-ink-800" : "text-white/90"
+                    )}
+                  >
+                    {item.label}
+                    <ChevronDown size={15} className={cn("transition-transform", drop === item.key && "rotate-180")} />
+                  </button>
+                  {drop === item.key && (
+                    <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-1">
+                      <div className="min-w-[190px] rounded-2xl bg-white p-2 shadow-[0_16px_40px_-12px_rgba(10,11,13,0.35)] ring-1 ring-snow-300/60">
+                        {item.links.map((l) => (
+                          <Link
+                            key={l.href}
+                            href={l.href}
+                            onClick={() => setDrop(null)}
+                            className="block whitespace-nowrap rounded-xl px-4 py-2.5 text-[14.5px] font-medium text-ink-800 transition-colors hover:bg-ice-200 hover:text-brand-600"
+                          >
+                            {l.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            )}
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
@@ -139,21 +205,40 @@ export function Header() {
                 visible: { transition: { staggerChildren: 0.06 } },
               }}
             >
-              {navLinks.map((link) => (
+              {nav.map((item) => (
                 <motion.div
-                  key={link.href}
+                  key={item.kind === "link" ? item.link.href : item.key}
                   variants={{
                     hidden: { opacity: 0, y: 16 },
                     visible: { opacity: 1, y: 0 },
                   }}
+                  className="border-b border-white/10 py-4"
                 >
-                  <Link
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className="block border-b border-white/10 py-5 text-[26px] font-semibold tracking-tightest text-white"
-                  >
-                    {link.label}
-                  </Link>
+                  {item.kind === "link" ? (
+                    <Link
+                      href={item.link.href}
+                      onClick={() => setOpen(false)}
+                      className="block text-[22px] font-semibold tracking-tightest text-white"
+                    >
+                      {item.link.label}
+                    </Link>
+                  ) : (
+                    <>
+                      <p className="text-[13px] font-bold uppercase tracking-wide text-brand-400">{item.label}</p>
+                      <div className="mt-2 flex flex-col">
+                        {item.links.map((l) => (
+                          <Link
+                            key={l.href}
+                            href={l.href}
+                            onClick={() => setOpen(false)}
+                            className="py-2 text-[21px] font-semibold tracking-tightest text-white"
+                          >
+                            {l.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </motion.div>
               ))}
               <motion.div
