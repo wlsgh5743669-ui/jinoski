@@ -201,7 +201,7 @@ const lessonPrograms = [
     level: "幼儿",
     title: "幼儿课程",
     duration: "2小时",
-    description: "以游戏方式让儿童轻松适应雪地的专属课程。",
+    description: "4周岁起 · 以游戏方式让儿童轻松适应雪地的专属课程（双板·单板）。",
     image: "/images/lesson-kids.jpg",
   },
 ];

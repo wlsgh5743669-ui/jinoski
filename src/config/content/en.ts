@@ -205,7 +205,7 @@ const lessonPrograms = [
     level: "Kids",
     title: "Kids Lesson",
     duration: "2 hours",
-    description: "A playful, kid-only program for getting comfortable in the snow.",
+    description: "From age 4 · a playful, kid-only program for getting comfortable in the snow (ski or snowboard).",
     image: "/images/lesson-kids.jpg",
   },
 ];

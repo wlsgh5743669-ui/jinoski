@@ -211,7 +211,7 @@ const lessonPrograms = [
     level: "유아",
     title: "유아 레슨",
     duration: "2시간",
-    description: "놀이처럼 즐겁게 배우는 어린이 전용 눈 적응 프로그램.",
+    description: "만 4세부터 · 놀이처럼 즐겁게 배우는 어린이 전용 눈 적응 프로그램 (스키·스노보드).",
     image: "/images/lesson-kids.jpg",
   },
 ];
