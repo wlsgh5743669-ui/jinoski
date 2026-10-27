@@ -36,12 +36,14 @@ const ko: PrivacyContent = {
         "레슨·촬영 진행, 사진·영상 및 인화물·액자 전달",
         "결제 안내, 환불·일정 변경 처리",
         "고객 문의 응대 및 불만 처리",
+        "(선택 동의한 경우) 다음 시즌 할인·이벤트 안내 문자·카카오톡 발송",
       ],
     },
     {
       title: "3. 보유 및 이용 기간",
       body: [
-        "원칙적으로 예약·서비스 제공이 끝나면 지체 없이 파기합니다.",
+        "예약·견적·상담 정보는 강습(서비스) 종료 후 1년간 보관한 뒤 지체 없이 파기합니다. (재예약·문의 응대 목적)",
+        "시즌 할인·이벤트 안내 수신에 동의한 경우: 동의를 철회할 때까지 이름·연락처를 보관합니다.",
         "다만 「전자상거래 등에서의 소비자보호에 관한 법률」에 따라 아래 기록은 정해진 기간 동안 보관합니다.",
         "· 계약 또는 청약철회 등에 관한 기록: 5년",
         "· 대금결제 및 재화 등의 공급에 관한 기록: 5년",
@@ -127,7 +129,7 @@ const en: PrivacyContent = {
   sections: [
     { title: "1. Information we collect", body: ["Lesson / photo-session requests: name, email address, mobile number (optional), messenger ID such as WhatsApp, LINE or WeChat (optional), preferred date and time, program or package, options, delivery method, requests (plus sport, level and age group for lessons).", "If you choose courier delivery: recipient name, address and phone (requested after confirmation).", "Server security logs: IP address, browser type, access time."] },
     { title: "2. Purpose of use", body: ["Handling and confirming bookings, running lessons and shoots, delivering photos, prints and frames, payment / refund / rescheduling guidance, and customer support."] },
-    { title: "3. Retention", body: ["Deleted without delay once the service is complete, except records kept as required by Korean e-commerce law: contract and payment records 5 years, complaint records 3 years, access logs 3 months."] },
+    { title: "3. Retention", body: ["Booking, quote and inquiry information is kept for 1 year after the lesson and then deleted. If you opt in to season news, your name and contact are kept until you withdraw consent. Exceptions: records kept as required by Korean e-commerce law: contract and payment records 5 years, complaint records 3 years, access logs 3 months."] },
     { title: "4. Sharing with third parties", body: ["We do not provide your information to third parties except where required by law."] },
     { title: "5. Processors and overseas transfer", body: ["Cloudflare, Inc. (USA): relays booking requests to the owner's KakaoTalk without storing them.", "Kakao Corp.: booking notifications and KakaoTalk channel chat.", "GitHub, Inc. (USA): website hosting (access logs).", "PayPal: payment processing when you pay by PayPal or card. The name, email and payment details you enter on the PayPal page go directly to PayPal and are handled under PayPal's privacy policy.", "If you do not want overseas transfer, please book by phone (+82-10-4047-7711)."] },
     { title: "6. Your rights", body: ["You may request access, correction, deletion or suspension of processing at any time via the contact below. Bookings for children under 14 should be made by a parent or guardian."] },
@@ -145,7 +147,7 @@ const zh: PrivacyContent = {
   sections: [
     { title: "1. 收集的信息", body: ["课程/拍摄预约：姓名、电子邮箱、手机号码（选填）、WeChat/WhatsApp/LINE ID（选填）、希望日期与时段、项目或套餐、选项、领取方式、需求（课程另含项目、水平、年龄段）。", "选择快递时：收件人姓名、地址、电话（确认后另行收集）。", "服务器安全日志：IP地址、浏览器类型、访问时间。"] },
     { title: "2. 使用目的", body: ["受理及确认预约、进行课程与拍摄、交付照片与装裱作品、付款/退款/改期说明及客户咨询。"] },
-    { title: "3. 保存期限", body: ["服务结束后立即销毁；但依韩国电子商务法保存：合同及付款记录5年，投诉记录3年，访问日志3个月。"] },
+    { title: "3. 保存期限", body: ["预约·报价·咨询信息在课程结束后保存1年后销毁；同意接收雪季通知的，保存至撤回同意为止。但依韩国电子商务法保存：合同及付款记录5年，投诉记录3年，访问日志3个月。"] },
     { title: "4. 向第三方提供", body: ["除法律规定外，不向第三方提供您的个人信息。"] },
     { title: "5. 委托处理及境外转移", body: ["Cloudflare, Inc.（美国）：将预约内容转发至负责人KakaoTalk，不作保存。", "Kakao Corp.：预约通知及KakaoTalk频道咨询。", "GitHub, Inc.（美国）：网站托管（访问日志）。", "PayPal：通过PayPal或信用卡付款时的支付处理。您在PayPal页面输入的姓名、邮箱及付款信息直接发送至PayPal，并依PayPal隐私政策处理。", "如不希望境外转移，请电话预约（+82-10-4047-7711）。"] },
     { title: "6. 您的权利", body: ["您可随时通过以下联系方式要求查阅、更正、删除或停止处理。未满14岁儿童请由监护人预约。"] },

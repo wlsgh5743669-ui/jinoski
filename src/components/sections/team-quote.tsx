@@ -1,5 +1,6 @@
 "use client";
 
+import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -193,6 +194,8 @@ export function TeamQuote() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [marketing, setMarketing] = useState(false);
   /** 손님이 정하는 비밀번호 — 나중에 「내 견적 확인」에서 답변 볼 때 사용 */
   const [pw, setPw] = useState("");
   const [teacherPref, setTeacherPref] = useState(0);
@@ -733,7 +736,7 @@ export function TeamQuote() {
       setImgState("");
     }
   }
-  const canSend = name.trim().length > 0 && phone.replace(/[^0-9]/g, "").length >= 9;
+  const canSend = name.trim().length > 0 && phone.replace(/[^0-9]/g, "").length >= 9 && consent;
   /**
    * 날짜별·사람별 금액표 — 운영 프로그램(ops) 견적서가 홈페이지 견적서와 같은 숫자로 보여주게 같이 보내요 (한국어)
    * 날짜별 줄을 모두 더하면 합계(grand)와 같아요.
@@ -851,6 +854,7 @@ export function TeamQuote() {
             anyPrep ? prep.filter((d) => d.sum).map((d) => `${d.day}일 ${d.sum}`).join(" | ") : "",
             teacherPref ? `강사 ${TEACHER_PREFS[teacherPref]}` : "",
             note.trim(),
+            marketingTag(marketing),
           ]
             .filter(Boolean)
             .join(" / "),
@@ -1719,6 +1723,9 @@ export function TeamQuote() {
                         onChange={(e) => setNote(e.target.value)}
                         className="mt-2 h-12 w-full rounded-xl border border-snow-300/70 bg-white px-4 text-[15px] outline-none focus:border-brand-500"
                       />
+                      <div data-notr className="mt-2">
+                        <ConsentBox locale={qloc} agree={consent} onAgree={setConsent} marketing={marketing} onMarketing={setMarketing} />
+                      </div>
                       <button
                         type="button"
                         onClick={send}
@@ -1729,7 +1736,7 @@ export function TeamQuote() {
                       </button>
                       {!canSend && status !== "sending" && (
                         <p className="mt-1.5 text-center text-[12px] text-snow-500">
-                          {name.trim() && phone.trim() ? "휴대폰 번호를 확인해 주세요 (숫자 9자리 이상)" : "이름과 휴대폰 번호를 넣으면 보낼 수 있어요"}
+                          {!(name.trim() && phone.trim()) ? "이름과 휴대폰 번호를 넣으면 보낼 수 있어요" : phone.replace(/[^0-9]/g, "").length < 9 ? "휴대폰 번호를 확인해 주세요 (숫자 9자리 이상)" : "개인정보 수집·이용 동의(필수)에 체크해 주세요"}
                         </p>
                       )}
                       {status === "failed" && (

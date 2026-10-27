@@ -40,6 +40,7 @@ import {
 } from "@/lib/booking-options";
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
+import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
 import { MessengerButtons } from "@/components/shared/messenger-buttons";
 import { JuniorBadge } from "@/components/shared/junior-badge";
 import { isJuniorProgram, JUNIOR_GRADES, JUNIOR_PASS_PROGRAM, JUNIOR_PRICES } from "@/config/junior-grade";
@@ -103,6 +104,9 @@ type WizardState = {
   juniorGrade: number | null;
   /** 리프트권·장비 같이 결제 (정가 40% 할인) */
   liftOpt: "none" | "lift" | "both";
+  /** 개인정보 동의(필수) · 시즌 안내 수신(선택) */
+  consent: boolean;
+  marketing: boolean;
   liftAdults: number;
   liftKids: number;
   earlyBird: boolean;
@@ -124,6 +128,8 @@ const INITIAL_STATE: WizardState = {
   requestNote: "",
   juniorGrade: null,
   liftOpt: "none",
+  consent: false,
+  marketing: false,
   liftAdults: 0,
   liftKids: 0,
   // 얼리버드 기간이면 처음부터 할인 적용 (손님이 버튼을 안 눌러도 할인가로 보이게)
@@ -269,11 +275,14 @@ async function notifyOwnerKakao(state: WizardState, content: SiteContent, locale
   const contact = foreign
     ? [state.email.trim(), state.phone.trim()].filter(Boolean).join(" / ")
     : state.phone.trim();
-  const note = foreign
-    ? [`${locale === "zh" ? "중국어" : "영어"} 예약·이메일 회신`, state.messenger.trim(), state.requestNote.trim()]
-        .filter(Boolean)
-        .join(" / ")
-    : state.requestNote.trim();
+  const note = (
+    foreign
+      ? [`${locale === "zh" ? "중국어" : "영어"} 예약·이메일 회신`, state.messenger.trim(), state.requestNote.trim()]
+      : [state.requestNote.trim()]
+  )
+    .concat(marketingTag(state.marketing))
+    .filter(Boolean)
+    .join(" / ");
   const res = await fetch(KAKAO_NOTIFY_URL, {
     method: "POST",
     keepalive: true,
@@ -550,7 +559,8 @@ export function BookingWizard() {
         return (
           state.name.trim().length > 0 &&
           (foreign ? isValidEmail(state.email) : state.phone.trim().length >= 9) &&
-          state.ageGroup !== null
+          state.ageGroup !== null &&
+          state.consent
         );
       default:
         return false;
@@ -1249,6 +1259,18 @@ export function BookingWizard() {
         ) : null;
       })()}
 
+      {on(8) && (
+        <div className="mt-8">
+          <ConsentBox
+            locale={locale}
+            agree={state.consent}
+            onAgree={(v) => update("consent", v)}
+            marketing={state.marketing}
+            onMarketing={(v) => update("marketing", v)}
+          />
+        </div>
+      )}
+
       <div className={cn("flex items-center gap-3", on(8) && !canProceed() ? "mt-3" : "mt-10")}>
         {step > 1 && (
           <button
@@ -1281,7 +1303,6 @@ export function BookingWizard() {
           </button>
         )}
       </div>
-      {step === totalSteps && <PrivacyNotice />}
     </div>
   );
 }

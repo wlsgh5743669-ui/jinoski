@@ -1,5 +1,6 @@
 "use client";
 
+import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
 import { useState } from "react";
 import { Check, Copy, Mail, Send } from "lucide-react";
 import { useLocale } from "next-intl";
@@ -78,6 +79,8 @@ export function InquiryForm() {
   const t = T[(locale === "zh" ? "zh" : "en") as "en" | "zh"];
 
   const [name, setName] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [marketing, setMarketing] = useState(false);
   const [email, setEmail] = useState("");
   const [dates, setDates] = useState("");
   const [people, setPeople] = useState("");
@@ -103,6 +106,7 @@ export function InquiryForm() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!consent) return;
     if (!name.trim() || !isEmail(email)) {
       setError(t.required);
       return;
@@ -125,7 +129,7 @@ export function InquiryForm() {
           equipment: sport >= 0 ? SPORT_KO[sport] : "",
           level: level >= 0 ? LEVEL_KO[level] : "",
           total: "",
-          note: message.trim(),
+          note: [message.trim(), marketingTag(marketing)].filter(Boolean).join(" / "),
         }),
       });
       setState(res.ok ? "done" : "fail");
@@ -238,16 +242,16 @@ export function InquiryForm() {
           onChange={(e) => setMessage(e.target.value)}
         />
       </label>
+      <ConsentBox locale={locale} agree={consent} onAgree={setConsent} marketing={marketing} onMarketing={setMarketing} />
       {error && <p className="text-[13.5px] font-medium text-rose-500">{error}</p>}
       <button
         type="submit"
-        disabled={state === "sending"}
+        disabled={state === "sending" || !consent}
         className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-brand-500 text-[15px] font-bold text-white transition-colors hover:bg-brand-600 disabled:opacity-60"
         style={{ height: 52 }}
       >
         <Send size={17} /> {state === "sending" ? t.sending : t.send}
       </button>
-      <p className="text-center text-[12.5px] text-snow-500">{t.privacy}</p>
     </form>
   );
 }
