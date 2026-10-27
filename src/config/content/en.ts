@@ -269,7 +269,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       { people: "2p", price: "700,000 KRW" },
       { people: "3p", price: "900,000 KRW" },
     ],
-    priceNote: "Includes the Vivaldi Park lift/teaching pass fee.",
+    priceNote: "Includes the Vivaldi Park lesson permit fee.",
     schedule: [
       {
         time: "08:40",
@@ -339,7 +339,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
       { people: "2p", price: "700,000 KRW" },
       { people: "3p", price: "900,000 KRW" },
     ],
-    priceNote: "Includes the Vivaldi Park lift/teaching pass fee.",
+    priceNote: "Includes the Vivaldi Park lesson permit fee.",
     schedule: [
       {
         time: "13:30",
@@ -489,7 +489,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "Are there any costs besides the lesson fee?",
     answer:
-      "Yes.\nYou may need a lift ticket, the teaching pass fee, equipment rental and clothing rental. We explain all expected costs before you book.",
+      "Yes.\nYou may need a lift ticket, the lesson permit fee, equipment rental and clothing rental. We explain all expected costs before you book.",
   },
   {
     question: "Can I sign up alone?",
@@ -547,24 +547,24 @@ const faq: SiteContent["faq"] = [
       "Not just a lesson — the best winter experience.\n\n✅ Structured lessons by professional instructors\n✅ Personalized 1:1 premium coaching\n✅ Ski · snowboard · inline ski expertise\n✅ Photo and video service\n✅ Personalized feedback after each lesson\n✅ A curriculum from beginner to advanced\n✅ Safety-first teaching",
   },
   {
-    question: "What is the teaching pass (패찰) fee?",
+    question: "What is the lesson permit fee?",
     answer:
-      "A teaching pass is the official permit required to give outside lessons at Vivaldi Park.\nPark rules require it for all outside lessons, and it is charged separately from the lesson fee.\n※ This fee is not charged by JINO SKI & BOARD SCHOOL — it is an official Vivaldi Park fee.",
+      "A lesson permit is the official permit required to give outside lessons at Vivaldi Park.\nPark rules require it for all outside lessons, and it is charged separately from the lesson fee.\n※ This fee is not charged by JINO SKI & BOARD SCHOOL — it is an official Vivaldi Park fee.",
   },
   {
-    question: "Where do I buy the teaching pass?",
+    question: "Where do I buy the lesson permit?",
     answer:
       "You don't need to buy it yourself.\nOnce your booking is confirmed, we'll guide you through the issuing process.",
   },
   {
     question: "Does the instructor need a lift ticket too?",
     answer:
-      "No.\nThe instructor's lift access is included in the teaching pass, so you only need your own lift ticket.",
+      "No.\nThe instructor's lift access is included in the lesson permit, so you only need your own lift ticket.",
   },
   {
     question: "What is included in the lesson fee?",
     answer:
-      "Included\n· 🎿 Personalized lesson by a professional instructor\n· 📚 Level-based curriculum\n· ✅ Posture correction and real-time feedback\n· 📸 Photos and videos (when provided)\n· 📝 Feedback after the lesson\n\nNot included\n· 🎫 Lift ticket\n· 🦺 Teaching pass fee\n· 🎿 Equipment rental\n· 👕 Clothing rental\n· 🍽️ Meals and personal expenses",
+      "Included\n· 🎿 Personalized lesson by a professional instructor\n· 📚 Level-based curriculum\n· ✅ Posture correction and real-time feedback\n· 📸 Photos and videos (when provided)\n· 📝 Feedback after the lesson\n\nNot included\n· 🎫 Lift ticket\n· 🦺 Lesson permit fee\n· 🎿 Equipment rental\n· 👕 Clothing rental\n· 🍽️ Meals and personal expenses",
   },
   {
     question: "Can foreigners take lessons?",
@@ -579,7 +579,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "What should I prepare for the lesson?",
     answer:
-      "Please check the list below.\n\nRequired\n· 🎿 Ski or snowboard equipment (rental available)\n· 🎫 Lift ticket\n· 🦺 Teaching pass (for outside lessons)\n\nRecommended\n· 🧥 Waterproof ski wear\n· 🧤 Gloves\n· 🥽 Goggles\n· 🪖 Helmet\n· 🧦 Spare socks\n· 💧 Water or drinks\n\nIf you don't have equipment or clothing, rentals are available — we'll guide you when you book.",
+      "Please check the list below.\n\nRequired\n· 🎿 Ski or snowboard equipment (rental available)\n· 🎫 Lift ticket\n· 🦺 Lesson permit (for outside lessons)\n\nRecommended\n· 🧥 Waterproof ski wear\n· 🧤 Gloves\n· 🥽 Goggles\n· 🪖 Helmet\n· 🧦 Spare socks\n· 💧 Water or drinks\n\nIf you don't have equipment or clothing, rentals are available — we'll guide you when you book.",
   },
   {
     question: "How do I pay?",
@@ -669,8 +669,8 @@ const seasonProgram: SiteContent["seasonProgram"] = {
         "Consistent, repeated practice — not just one or two tries — builds confident riding and stable skiing. By the end of the season you'll notice a clear difference in yourself.",
     },
   ],
-  priceNote: "Early-bird price (10% off, book by Nov 10). Lift/teaching pass fee is separate. Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
-  priceNoteRegular: "Lift/teaching pass fee is separate. Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
+  priceNote: "Early-bird price (10% off, book by Nov 10). Lesson permit fee is separate. Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
+  priceNoteRegular: "Lesson permit fee is separate. Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
   phoneButton: "Call Us",
   kakaoButton: "KakaoTalk",
 };
