@@ -656,44 +656,42 @@ export function TeamQuote() {
       // clipboard unavailable
     }
   }
-  /** 💰 1인 금액 풀어보기 (견적서 이미지): 강습 몇 시간 · 패찰 · 리프트 · 장비 · 헬멧 */
-  const mins = (t: string) => {
-    const m = /(\d{1,2}):(\d{2})\s*~\s*(\d{1,2}):(\d{2})/.exec(t);
-    return m ? (+m[3] * 60 + +m[4]) - (+m[1] * 60 + +m[2]) : 0;
-  };
-  const hText = (m: number) => `${Math.floor(m / 60)}시간${m % 60 ? ` ${m % 60}분` : ""}`;
+  /** 💰 1인 금액을 날짜별로 (견적서 이미지): 날짜 · 강습(패찰 포함) · 리프트 · 장비 · 헬멧 · 그날 합계 */
   const personBreakdown = (x: (typeof personRows)[number]) => {
     const size = usedSplit[x.group - 1] ?? 1;
-    const lessonMin = schedule.reduce((a, d) => a + d.slots.reduce((b, sl) => b + mins(sl.time), 0), 0);
-    const passDays = schedule.filter((d) => d.slots.length && prices.pass[d.len]);
-    const pass = passDays.reduce((a, d) => a + prices.pass[d.len] * d.slots.length, 0);
-    const passCnt = passDays.reduce((a, d) => a + d.slots.length, 0);
-    const passUnits = [...new Set(passDays.map((d) => prices.pass[d.len]))].map((v) => won(v)).join("·");
-    const fcDays = schedule.filter((d) => d.slots.length && (d.len === "fc" || d.len === "nc")).length;
     const who = x.child ? "child" : "adult";
-    let liftSale = 0, rentSale = 0;
-    const liftH: number[] = [], rentH: number[] = [];
-    if (x.extra !== "none") {
-      schedule.forEach((_, i) => {
-        const t = ticketOf(i);
-        if (!t) return;
-        const w = isWeekend(startDate, i) ? 1 : 0;
-        const l = roundUp100(LIFT_PRICES[t][who][w] * (1 - LIFT_RENTAL_DISCOUNT));
-        liftSale += l; liftH.push(t);
-        if (x.extra === "liftRental") { rentH.push(RENTAL_H[t]); }
-      });
-      rentSale = x.lift - liftSale; // 합계는 기존 계산과 똑같이 (반올림 차이는 장비 쪽에)
-      if (x.extra !== "liftRental") { liftSale = x.lift; rentSale = 0; }
-    }
-    const rows = [
-      { k: "강습료", d: `총 ${hText(lessonMin)} · 수업 ${sessions}회 · 1:${size}${ebSaved ? " · 얼리버드 10%" : ""}`, v: x.lesson - pass },
-      ...(pass ? [{ k: "패찰", d: `${passCnt}회 × ${passUnits} (강습 허가권)`, v: pass }] : []),
-      ...(fcDays ? [{ k: "풀케어", d: "패찰 + 식사 포함 (강습료에 들어 있어요)", v: 0 }] : []),
-      ...(liftSale ? [{ k: "리프트", d: `${liftH.map((h) => `${h}시간`).join(" + ")} · 40% 할인`, v: liftSale }] : []),
-      ...(rentSale ? [{ k: "장비", d: `${rentH.map((h) => `${h}시간`).join(" + ")} · 40% 할인`, v: rentSale }] : []),
-      ...(x.helm ? [{ k: "헬멧", d: `${x.helmet === 2 ? "바이저" : "기본"} ${won(x.helmet === 2 ? HELMET_PRICE.visor : HELMET_PRICE.basic)} × ${lessonDays}일`, v: x.helm }] : []),
-    ];
-    return { label: x.label, sub: `${x.group}반 · ${SPORT_LABEL[x.sport]} ${LEVEL_LABEL[x.level]}`, pay: x.pay, rows };
+    const lessonDays = schedule.filter((d) => d.slots.length > 0);
+    const helmUnit = x.helmet === 2 ? HELMET_PRICE.visor : x.helmet === 1 ? HELMET_PRICE.basic : 0;
+    let lessonLeft = x.lesson, liftLeft = x.lift;
+    const rows = schedule.map((d, i) => {
+      const lastLesson = lessonDays[lessonDays.length - 1] === d;
+      const lesson = !d.slots.length ? 0 : lastLesson ? lessonLeft : Math.round((groupCost(size, d.len) * d.slots.length) / size / 100) * 100;
+      lessonLeft -= lesson;
+      const t = x.extra !== "none" ? ticketOf(i) : 0;
+      const w = isWeekend(startDate, i) ? 1 : 0;
+      let lift = 0, rent = 0;
+      if (t) {
+        lift = roundUp100(LIFT_PRICES[t][who][w] * (1 - LIFT_RENTAL_DISCOUNT));
+        const both = roundUp100((LIFT_PRICES[t][who][w] + (x.extra === "liftRental" ? RENTAL_PRICES[t][who][w] : 0)) * (1 - LIFT_RENTAL_DISCOUNT));
+        rent = x.extra === "liftRental" ? both - lift : 0;
+        if (x.extra !== "liftRental") lift = both;
+      }
+      liftLeft -= lift + rent;
+      const helm = d.slots.length ? helmUnit : 0;
+      const fc = d.len === "fc" || d.len === "nc";
+      return {
+        date: `${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}`,
+        lessonLabel: !d.slots.length ? "" : fc ? `${LEN_LABEL[d.len]} 7시간` : `${LEN_LABEL[d.len]}${d.slots.length > 1 ? ` ×${d.slots.length}` : ""}`,
+        lesson, lift, liftLabel: t ? `${t}시간` : "", rent, rentLabel: t && rent ? `${RENTAL_H[t]}시간` : "",
+        helm, helmLabel: helm ? (x.helmet === 2 ? "바이저" : "기본") : "",
+        total: 0,
+      };
+    });
+    // 반올림 차이는 마지막 날 리프트·장비에 (합계는 기존 계산과 똑같이)
+    const lastT = [...rows].reverse().find((r) => r.lift || r.rent);
+    if (lastT && liftLeft) { if (lastT.rent) lastT.rent += liftLeft; else lastT.lift += liftLeft; }
+    rows.forEach((r) => { r.total = r.lesson + r.lift + r.rent + r.helm; });
+    return { label: x.label, sub: `${x.group}반 · 1:${size} · ${SPORT_LABEL[x.sport]} ${LEVEL_LABEL[x.level]}`, pay: x.pay, rows };
   };
   /** 견적서 이미지 (사진 저장 · 카톡 알림에 같이 사용) */
   const quoteImage = (type: "image/png" | "image/jpeg" = "image/png", loc: QLocale = qloc) =>
@@ -703,34 +701,30 @@ export function TeamQuote() {
       totalSub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}${ebSaved ? " · 얼리버드 강습료 10% 반영" : ""}`,
       grand: won(grand),
       grandLabel: `총 합계 (${adults + kids}명)`,
-      persons: personRows.map(personBreakdown),
+      // 금액·시간이 똑같은 사람(예: 아이 둘)은 표 하나로 묶어요
+      persons: (() => {
+        const out: (ReturnType<typeof personBreakdown> & { count: number })[] = [];
+        for (const b of personRows.map(personBreakdown)) {
+          const sub = b.sub.replace(/^\d+반 · /, "");
+          const key = JSON.stringify([sub, b.pay, b.rows]);
+          const same = out.find((o) => JSON.stringify([o.sub, o.pay, o.rows]) === key);
+          if (same) { same.label += `, ${b.label}`; same.count += 1; }
+          else out.push({ ...b, sub, count: 1 });
+        }
+        return out;
+      })(),
       schedule: schedule.map((d) => ({
         left: `${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}${d.tag ? ` ${d.tag}` : ""}`,
         right: d.slots.map((x) => x.time).join("  ·  ") || "-",
       })),
-      teams: [
-        ...(anyPrep
-          ? [
-              {
-                name: "날짜별 준비표",
-                amount: "",
-                lines: prep.flatMap((d) =>
-                  d.rows.length
-                    ? [`${d.day}일차${d.date ? ` ${d.date}` : ""} (${d.rateTag}) · ${d.sum}`, ...d.rows.map((r) => `   ${r.label}: ${r.items.join(" + ")}`)]
-                    : []
-                ),
-              },
-            ]
-          : []),
-        {
-          name: "포함 내역",
-          amount: "",
-          lines: [
-            `강습료 1인 ${won(lessonAvgPP)} (패찰 포함 · 강사 ${usedSplit.length}명)`,
-            ...extras.map((x) => `${x.label} 40% 할인 · 1인 ${won(x.sale)} (정가 ${won(x.regular)})`),
-          ],
-        },
-      ],
+      // 날짜별 금액·시간은 위 「1인당 금액」 표에 다 있어서 여기는 할인 전후만 한 줄씩
+      teams: extras.length
+        ? [{
+            name: "리프트·장비 40% 할인",
+            amount: "",
+            lines: extras.map((x) => `${x.label.replace(" · ", " ")} 정가 ${won(x.regular)} → ${won(x.sale)} (1인)`),
+          }]
+        : [],
       notes: [
         ...(sportSummary ? [`종목·실력: ${sportSummary}`] : []),
         ebSaved
@@ -741,6 +735,8 @@ export function TeamQuote() {
         "의류는 제휴 렌탈샵 안내 드립니다.^^",
         "예상 견적이에요. 강사 일정 확인 후 확정 금액을 안내드려요.",
       ],
+      payNote: "강사 일정 확정 연락을 받은 뒤 입금해주세요",
+      refund: "환불: 3일 전 100% · 1~2일 전 50% · 당일·노쇼 환불 불가 · 날짜 변경 1회 무료(2일 전까지)",
       phone: contact.phone,
     }, loc), type, loc);
   async function saveImage() {

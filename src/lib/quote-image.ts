@@ -8,10 +8,15 @@ export type QuoteImageData = {
   grand?: string; // 총 합계 금액 (크게 · 파란 상자)
   grandLabel?: string;
   /** 1인당 금액 풀어보기: 사람마다 강습료(몇 시간) · 패찰 · 리프트 · 장비 · 헬멧 → 합계 */
-  persons?: { label: string; sub: string; pay: number; rows: { k: string; d: string; v: number }[] }[];
+  persons?: {
+    label: string; sub: string; pay: number; count?: number; // count: 금액이 같은 사람 수 (표 하나로 묶음)
+    rows: { date: string; lessonLabel: string; lesson: number; lift: number; liftLabel: string; rent: number; rentLabel: string; helm: number; helmLabel: string; total: number }[];
+  }[];
   schedule: { left: string; right: string }[];
   teams: { name: string; amount: string; lines: string[] }[];
   notes: string[];
+  payNote?: string; // 계좌 위: 언제 입금하는지
+  refund?: string; // 계좌 아래: 환불 규정 한 줄
   phone: string;
 };
 
@@ -173,56 +178,89 @@ export async function renderQuoteImage(
     }
     y += 34;
 
-    // 💰 1인당 금액: 사람마다 카드 (항목 · 내용 · 금액 → 합계)
+    // 💰 1인당 금액: 사람마다 날짜별 표 (강습 · 리프트 · 장비 · 헬멧 · 그날 합계) + 총합
     if (d.persons?.length) {
-      section(tr("1인당 금액"));
-      const n = (v: number) => (v ? `${v.toLocaleString("ko-KR")}${tr("원")}` : tr("포함"));
+      section(tr("1인당 금액 (날짜별)"));
+      const n = (v: number) => (v ? v.toLocaleString(loc === "ko" ? "ko-KR" : "en-US") : "-");
+      const C = [ // 오른쪽 끝 x
+        { h: tr("강습"), s: tr("패찰 포함"), x: PAD + 400 },
+        { h: tr("리프트"), s: "40%↓", x: PAD + 530 },
+        { h: tr("장비"), s: "40%↓", x: PAD + 645 },
+        { h: tr("헬멧"), s: "", x: PAD + 750 },
+        { h: tr("합계"), s: loc === "ko" ? "(원)" : "(KRW)", x: W - PAD - 20 },
+      ];
       for (const p of d.persons) {
-        y += 26;
+        y += 30;
         const top = y;
-        const h = 92 + p.rows.length * 48 + 24;
+        const h = 76 + 70 + p.rows.length * 74 + 72;
         if (!dry) {
           ctx.fillStyle = "#F8FAFC";
           if (typeof ctx.roundRect === "function") { ctx.beginPath(); ctx.roundRect(PAD, top, inner, h, 18); ctx.fill(); }
           else ctx.fillRect(PAD, top, inner, h);
-          // 머리: 이름 · 반/종목 ………… 합계
-          ctx.fillStyle = INK;
-          ctx.font = font(30, 800);
-          ctx.fillText(p.label, PAD + 28, top + 56);
-          const lw = ctx.measureText(p.label).width;
-          ctx.fillStyle = GRAY;
-          ctx.font = font(22, 500);
-          ctx.fillText(p.sub, PAD + 28 + lw + 14, top + 56);
-          ctx.textAlign = "right";
-          ctx.fillStyle = "#0B6BCB";
-          ctx.font = font(34, 800);
-          ctx.fillText(n(p.pay), W - PAD - 28, top + 58);
-          ctx.textAlign = "left";
-          ctx.fillStyle = LINE;
-          ctx.fillRect(PAD + 28, top + 82, inner - 56, 2);
-          p.rows.forEach((r, i) => {
-            const ry = top + 92 + i * 48 + 34;
-            ctx.fillStyle = INK;
-            ctx.font = font(25, 700);
-            ctx.fillText(r.k, PAD + 28, ry);
-            ctx.fillStyle = GRAY;
-            ctx.font = font(22, 500);
-            let dt = r.d;
-            while (dt.length > 4 && ctx.measureText(dt).width > inner - 56 - 120 - 190) dt = dt.slice(0, -2) + "…";
-            ctx.fillText(dt, PAD + 28 + 120, ry);
-            ctx.textAlign = "right";
-            ctx.fillStyle = r.v ? INK : GREEN;
-            ctx.font = font(25, 700);
-            ctx.fillText(n(r.v), W - PAD - 28, ry);
+          // 이름
+          const cnt = p.count ?? 1;
+          ctx.fillStyle = INK; ctx.font = font(30, 800);
+          let lab = p.label;
+          while (lab.length > 4 && ctx.measureText(lab).width > inner - 380) lab = lab.slice(0, -2) + "…";
+          ctx.fillText(lab, PAD + 20, top + 52);
+          const lw = ctx.measureText(lab).width;
+          ctx.fillStyle = GRAY; ctx.font = font(22, 500);
+          ctx.fillText(p.sub, PAD + 20 + lw + 14, top + 52);
+          if (cnt > 1) {
+            ctx.textAlign = "right"; ctx.fillStyle = "#0B6BCB"; ctx.font = font(22, 700);
+            ctx.fillText(loc === "ko" ? `1인 금액 · ${cnt}명 = ${(p.pay * cnt).toLocaleString("ko-KR")}원` : `per person · ×${cnt} = ₩${(p.pay * cnt).toLocaleString("en-US")}`, W - PAD - 20, top + 52);
             ctx.textAlign = "left";
+          }
+          // 머리줄
+          const hy = top + 76;
+          ctx.fillStyle = "#E2E8F0"; ctx.fillRect(PAD, hy, inner, 62);
+          ctx.fillStyle = GRAY; ctx.font = font(22, 700);
+          ctx.fillText(tr("날짜"), PAD + 20, hy + 38);
+          ctx.textAlign = "right";
+          C.forEach((c, i) => {
+            ctx.fillStyle = i === C.length - 1 ? NAVY : GRAY; ctx.font = font(22, 700);
+            ctx.fillText(c.h, c.x, hy + (c.s ? 28 : 38));
+            if (c.s) { ctx.fillStyle = "#94A3B8"; ctx.font = font(16, 500); ctx.fillText(c.s, c.x, hy + 52); }
           });
+          ctx.textAlign = "left";
+          // 날짜별 줄
+          p.rows.forEach((r, i) => {
+            const ry = hy + 62 + i * 74;
+            ctx.fillStyle = INK; ctx.font = font(23, 700);
+            const [dd, ...rest] = r.date.split(" ");
+            ctx.fillText(rest.join(" ") || dd, PAD + 20, ry + 34);
+            ctx.fillStyle = GRAY; ctx.font = font(18, 500);
+            ctx.fillText(rest.length ? dd : "", PAD + 20, ry + 60);
+            const cells: [number, string][] = [[r.lesson, r.lessonLabel], [r.lift, r.liftLabel], [r.rent, r.rentLabel], [r.helm, r.helmLabel], [r.total, ""]];
+            ctx.textAlign = "right";
+            cells.forEach(([v, lab], k) => {
+              const last = k === cells.length - 1;
+              ctx.fillStyle = last ? "#0B6BCB" : INK; ctx.font = font(last ? 24 : 22, last ? 800 : 600);
+              ctx.fillText(n(v), C[k].x, ry + 34);
+              if (lab) { ctx.fillStyle = GRAY; ctx.font = font(17, 500); ctx.fillText(lab, C[k].x, ry + 60); }
+            });
+            ctx.textAlign = "left";
+            ctx.fillStyle = LINE; ctx.fillRect(PAD + 16, ry + 73, inner - 32, 1);
+          });
+          // 총합 줄
+          const ty = hy + 62 + p.rows.length * 74;
+          const sum = (f: (r: (typeof p.rows)[number]) => number) => p.rows.reduce((a, r) => a + f(r), 0);
+          ctx.fillStyle = NAVY; ctx.font = font(24, 800);
+          ctx.fillText(tr("총합"), PAD + 20, ty + 46);
+          ctx.textAlign = "right";
+          [sum((r) => r.lesson), sum((r) => r.lift), sum((r) => r.rent), sum((r) => r.helm)].forEach((v, k) => {
+            ctx.fillStyle = INK; ctx.font = font(22, 800); ctx.fillText(n(v), C[k].x, ty + 46);
+          });
+          ctx.fillStyle = "#0B6BCB"; ctx.font = font(27, 800);
+          ctx.fillText(n(p.pay), C[4].x, ty + 47);
+          ctx.textAlign = "left";
         }
         y = top + h;
       }
       y += 40;
     }
 
-    section(tr("금액 내역"));
+    if (d.teams.length) section(tr("금액 내역"));
     for (const t of d.teams) {
       y += 52;
       ctx.font = font(32, 700);
@@ -268,7 +306,8 @@ export async function renderQuoteImage(
     // 💳 맨 아래: 총 합계 + 입금 계좌
     if (d.grand) {
       const bank = loc === "ko";
-      const h = bank ? 236 : 120;
+      const extra = (bank && d.payNote ? 1 : 0) + (d.refund ? 1 : 0);
+      const h = (bank ? 236 : 120) + extra * 44 + (extra ? 16 : 0);
       if (!dry) {
         ctx.fillStyle = "#F8FAFC";
         if (typeof ctx.roundRect === "function") { ctx.beginPath(); ctx.roundRect(PAD, y, inner, h, 20); ctx.fill(); }
@@ -297,6 +336,20 @@ export async function renderQuoteImage(
           ctx.font = font(26, 600);
           ctx.fillText(`예금주 ${BANK.holder}`, W - PAD - 36, y + 214);
           ctx.textAlign = "left";
+        }
+        // 입금 시점 · 환불 규정
+        let ny = y + (bank ? 236 : 120) + 18;
+        ctx.fillStyle = LINE; ctx.fillRect(PAD + 36, ny - 22, inner - 72, 2);
+        if (bank && d.payNote) {
+          ctx.fillStyle = "#B45309"; ctx.font = font(24, 700);
+          ctx.fillText(`💳 ${d.payNote}`, PAD + 36, ny + 16);
+          ny += 44;
+        }
+        if (d.refund) {
+          ctx.fillStyle = GRAY; ctx.font = font(21, 500);
+          let rt = d.refund;
+          while (rt.length > 4 && ctx.measureText(rt).width > inner - 72) rt = rt.slice(0, -2) + "…";
+          ctx.fillText(rt, PAD + 36, ny + 16);
         }
       }
       y += h + 56;
