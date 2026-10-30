@@ -15,6 +15,7 @@ export type QuoteImageData = {
   schedule: { left: string; right: string }[];
   teams: { name: string; amount: string; lines: string[] }[];
   notes: string[];
+  grandTop?: boolean; // 위쪽 총 합계 상자 (기본 보임)
   payNote?: string; // 계좌 위: 언제 입금하는지
   refund?: string; // 계좌 아래: 환불 규정 한 줄
   phone: string;
@@ -63,8 +64,11 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, max: number): string[
 export async function renderQuoteImage(
   d: QuoteImageData,
   type: "image/png" | "image/jpeg" = "image/png",
-  loc: QLocale = "ko"
+  loc: QLocale = "ko",
+  /** simple: 총 합계 · 시간표 · 계좌만 (카톡 미리보기용 한 장) / detail: 날짜별 1인 금액표까지 */
+  mode: "simple" | "detail" = "detail"
 ): Promise<Blob> {
+  if (mode === "simple") d = { ...d, persons: [], teams: [], notes: d.notes.slice(-1), grandTop: false } as QuoteImageData;
   const tr = (s: string) => trQuote(s, loc);
   if (document.fonts?.ready) await document.fonts.ready;
   const inner = W - PAD * 2;
@@ -124,8 +128,8 @@ export async function renderQuoteImage(
       ctx.fillText(d.totalSub, PAD, y);
     }
     y += 50;
-    // 💙 총 합계: 한눈에 보이게 파란 상자 + 큰 글씨
-    if (d.grand) {
+    // 💙 총 합계: 한눈에 보이게 파란 상자 + 큰 글씨 (간단 보기는 맨 아래 상자에만)
+    if (d.grand && d.grandTop !== false) {
       const top = y - 10, h = 112;
       if (!dry) {
         ctx.fillStyle = "#EAF5FF";

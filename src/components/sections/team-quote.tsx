@@ -204,7 +204,7 @@ export function TeamQuote() {
   const [sentLink, setSentLink] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
   const [copied, setCopied] = useState<"" | "text" | "link">("");
-  const [imgState, setImgState] = useState<"" | "making" | "done">("");
+  const [imgState, setImgState] = useState(""); // "simple:making" · "detail:done" …
   const [showTotal, setShowTotal] = useState(false);
   const [totalTab, setTotalTab] = useState(0); // 0 = 전체, 1 = 1일차 …
 
@@ -694,7 +694,7 @@ export function TeamQuote() {
     return { label: x.label, sub: `${x.group}반 · 1:${size} · ${SPORT_LABEL[x.sport]} ${LEVEL_LABEL[x.level]}`, pay: x.pay, rows };
   };
   /** 견적서 이미지 (사진 저장 · 카톡 알림에 같이 사용) */
-  const quoteImage = (type: "image/png" | "image/jpeg" = "image/png", loc: QLocale = qloc) =>
+  const quoteImage = (type: "image/png" | "image/jpeg" = "image/png", loc: QLocale = qloc, mode: "simple" | "detail" = "detail") =>
     renderQuoteImage(trDeep({
       title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
       total: `1인 1회 약 ${won(perHead1)}`,
@@ -738,13 +738,14 @@ export function TeamQuote() {
       payNote: "강사 일정 확정 연락을 받은 뒤 입금해주세요",
       refund: "환불: 3일 전 100% · 1~2일 전 50% · 당일·노쇼 환불 불가 · 날짜 변경 1회 무료(2일 전까지)",
       phone: contact.phone,
-    }, loc), type, loc);
-  async function saveImage() {
-    setImgState("making");
-    trackEvent("quote_image", { people, days });
+    }, loc), type, loc, mode);
+  /** 견적서 사진 저장: simple(간단 한 장) · detail(날짜별 금액표까지) */
+  async function saveImage(mode: "simple" | "detail" = "detail") {
+    setImgState(`${mode}:making`);
+    trackEvent("quote_image", { people, days, mode });
     try {
-      const blob = await quoteImage();
-      const file = new File([blob], `${qloc === "ko" ? "지노스키_견적" : "JinoSki_quote"}_${trQuote(trip, qloc).replace(/\s/g, "")}.png`, { type: "image/png" });
+      const blob = await quoteImage("image/png", qloc, mode);
+      const file = new File([blob], `${qloc === "ko" ? "지노스키_견적" : "JinoSki_quote"}${mode === "simple" ? (qloc === "ko" ? "_간단" : "_simple") : ""}_${trQuote(trip, qloc).replace(/\s/g, "")}.png`, { type: "image/png" });
       const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
       if (nav.canShare?.({ files: [file] }) && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         try {
@@ -762,7 +763,7 @@ export function TeamQuote() {
         a.remove();
         setTimeout(() => URL.revokeObjectURL(url), 2000);
       }
-      setImgState("done");
+      setImgState(`${mode}:done`);
       setTimeout(() => setImgState(""), 3000);
     } catch {
       setImgState("");
@@ -1649,15 +1650,28 @@ export function TeamQuote() {
                   </button>
                 )}
 
-                <button
-                  type="button"
-                  onClick={saveImage}
-                  disabled={imgState === "making"}
-                  className="mt-3 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ink-900 text-[15.5px] font-bold text-white disabled:opacity-50"
-                >
-                  {imgState === "done" ? <Check size={18} /> : <ImageDown size={18} />}
-                  {imgState === "making" ? "이미지 만드는 중..." : imgState === "done" ? "저장 완료! 카톡으로 보내주세요" : "견적서 사진으로 저장"}
-                </button>
+                {/* 견적서 사진 두 가지: 간단(총액·일정·계좌 한 장) / 자세히(날짜별 1인 금액표) */}
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {([
+                    ["simple", "간단 견적서", "총액·일정·계좌"],
+                    ["detail", "자세한 견적서", "날짜별 금액표"],
+                  ] as const).map(([m, label, sub]) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => void saveImage(m)}
+                      disabled={imgState.endsWith("making")}
+                      className={`inline-flex h-16 flex-col items-center justify-center rounded-2xl text-[15px] font-bold disabled:opacity-50 ${m === "simple" ? "bg-ink-900 text-white" : "border-2 border-ink-900 text-ink-900"}`}
+                    >
+                      <span className="inline-flex items-center gap-1.5">
+                        {imgState === `${m}:done` ? <Check size={17} /> : <ImageDown size={17} />}
+                        {imgState === `${m}:making` ? "만드는 중..." : imgState === `${m}:done` ? "저장 완료!" : label}
+                      </span>
+                      <span className={`text-[11.5px] font-medium ${m === "simple" ? "text-white/60" : "text-snow-500"}`}>{sub}</span>
+                    </button>
+                  ))}
+                </div>
+                {imgState.endsWith("done") && <p className="mt-1.5 text-center text-[12.5px] font-semibold text-brand-600">사진으로 저장했어요 · 카톡으로 보내주세요</p>}
                 <a
                   href={contact.kakaoChannel}
                   target="_blank"
