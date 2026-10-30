@@ -4,6 +4,7 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { locales, isLocale, getContent } from "@/config/site";
 import { Analytics } from "@/components/shared/analytics";
+import { AttributionTracker } from "@/components/shared/attribution";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -97,6 +98,7 @@ export default async function LocaleLayout({
         {children}
       </div>
       <Analytics />
+      <AttributionTracker />
     </NextIntlClientProvider>
   );
 }

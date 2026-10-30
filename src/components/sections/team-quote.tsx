@@ -1,6 +1,7 @@
 "use client";
 
 import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
+import { attributionText } from "@/components/shared/attribution";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -655,24 +656,59 @@ export function TeamQuote() {
       // clipboard unavailable
     }
   }
+  /** 💰 1인 금액 풀어보기 (견적서 이미지): 강습 몇 시간 · 패찰 · 리프트 · 장비 · 헬멧 */
+  const mins = (t: string) => {
+    const m = /(\d{1,2}):(\d{2})\s*~\s*(\d{1,2}):(\d{2})/.exec(t);
+    return m ? (+m[3] * 60 + +m[4]) - (+m[1] * 60 + +m[2]) : 0;
+  };
+  const hText = (m: number) => `${Math.floor(m / 60)}시간${m % 60 ? ` ${m % 60}분` : ""}`;
+  const personBreakdown = (x: (typeof personRows)[number]) => {
+    const size = usedSplit[x.group - 1] ?? 1;
+    const lessonMin = schedule.reduce((a, d) => a + d.slots.reduce((b, sl) => b + mins(sl.time), 0), 0);
+    const passDays = schedule.filter((d) => d.slots.length && prices.pass[d.len]);
+    const pass = passDays.reduce((a, d) => a + prices.pass[d.len] * d.slots.length, 0);
+    const passCnt = passDays.reduce((a, d) => a + d.slots.length, 0);
+    const passUnits = [...new Set(passDays.map((d) => prices.pass[d.len]))].map((v) => won(v)).join("·");
+    const fcDays = schedule.filter((d) => d.slots.length && (d.len === "fc" || d.len === "nc")).length;
+    const who = x.child ? "child" : "adult";
+    let liftSale = 0, rentSale = 0;
+    const liftH: number[] = [], rentH: number[] = [];
+    if (x.extra !== "none") {
+      schedule.forEach((_, i) => {
+        const t = ticketOf(i);
+        if (!t) return;
+        const w = isWeekend(startDate, i) ? 1 : 0;
+        const l = roundUp100(LIFT_PRICES[t][who][w] * (1 - LIFT_RENTAL_DISCOUNT));
+        liftSale += l; liftH.push(t);
+        if (x.extra === "liftRental") { rentH.push(RENTAL_H[t]); }
+      });
+      rentSale = x.lift - liftSale; // 합계는 기존 계산과 똑같이 (반올림 차이는 장비 쪽에)
+      if (x.extra !== "liftRental") { liftSale = x.lift; rentSale = 0; }
+    }
+    const rows = [
+      { k: "강습료", d: `총 ${hText(lessonMin)} · 수업 ${sessions}회 · 1:${size}${ebSaved ? " · 얼리버드 10%" : ""}`, v: x.lesson - pass },
+      ...(pass ? [{ k: "패찰", d: `${passCnt}회 × ${passUnits} (강습 허가권)`, v: pass }] : []),
+      ...(fcDays ? [{ k: "풀케어", d: "패찰 + 식사 포함 (강습료에 들어 있어요)", v: 0 }] : []),
+      ...(liftSale ? [{ k: "리프트", d: `${liftH.map((h) => `${h}시간`).join(" + ")} · 40% 할인`, v: liftSale }] : []),
+      ...(rentSale ? [{ k: "장비", d: `${rentH.map((h) => `${h}시간`).join(" + ")} · 40% 할인`, v: rentSale }] : []),
+      ...(x.helm ? [{ k: "헬멧", d: `${x.helmet === 2 ? "바이저" : "기본"} ${won(x.helmet === 2 ? HELMET_PRICE.visor : HELMET_PRICE.basic)} × ${lessonDays}일`, v: x.helm }] : []),
+    ];
+    return { label: x.label, sub: `${x.group}반 · ${SPORT_LABEL[x.sport]} ${LEVEL_LABEL[x.level]}`, pay: x.pay, rows };
+  };
   /** 견적서 이미지 (사진 저장 · 카톡 알림에 같이 사용) */
   const quoteImage = (type: "image/png" | "image/jpeg" = "image/png", loc: QLocale = qloc) =>
     renderQuoteImage(trDeep({
       title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
       total: `1인 1회 약 ${won(perHead1)}`,
-      totalSub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")} · 합계 ${won(grand)}${ebSaved ? " · 얼리버드 강습료 10% 반영" : ""}`,
+      totalSub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}${ebSaved ? " · 얼리버드 강습료 10% 반영" : ""}`,
+      grand: won(grand),
+      grandLabel: `총 합계 (${adults + kids}명)`,
+      persons: personRows.map(personBreakdown),
       schedule: schedule.map((d) => ({
         left: `${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}${d.tag ? ` ${d.tag}` : ""}`,
         right: d.slots.map((x) => x.time).join("  ·  ") || "-",
       })),
       teams: [
-        {
-          name: "개인별 금액",
-          amount: "",
-          lines: [
-            ...personRows.map((x) => `${x.label} (${x.group}반 · ${x.desc}) → ${won(x.pay)}`),
-          ],
-        },
         ...(anyPrep
           ? [
               {
@@ -855,6 +891,7 @@ export function TeamQuote() {
             teacherPref ? `강사 ${TEACHER_PREFS[teacherPref]}` : "",
             note.trim(),
             marketingTag(marketing),
+            attributionText(),
           ]
             .filter(Boolean)
             .join(" / "),

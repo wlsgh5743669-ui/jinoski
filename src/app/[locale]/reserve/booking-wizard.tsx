@@ -41,6 +41,7 @@ import {
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
 import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
+import { attributionText } from "@/components/shared/attribution";
 import { MessengerButtons } from "@/components/shared/messenger-buttons";
 import { JuniorBadge } from "@/components/shared/junior-badge";
 import { isJuniorProgram, JUNIOR_GRADES, JUNIOR_PASS_PROGRAM, JUNIOR_PRICES } from "@/config/junior-grade";
@@ -280,7 +281,7 @@ async function notifyOwnerKakao(state: WizardState, content: SiteContent, locale
       ? [`${locale === "zh" ? "중국어" : "영어"} 예약·이메일 회신`, state.messenger.trim(), state.requestNote.trim()]
       : [state.requestNote.trim()]
   )
-    .concat(marketingTag(state.marketing))
+    .concat(marketingTag(state.marketing), attributionText())
     .filter(Boolean)
     .join(" / ");
   const res = await fetch(KAKAO_NOTIFY_URL, {

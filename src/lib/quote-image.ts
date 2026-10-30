@@ -5,6 +5,10 @@ export type QuoteImageData = {
   title: string; // 2박 3일 · 2시간 · 하루 2회 · 수업 6회
   total: string;
   totalSub: string; // 2팀 6명 · 1인 평균 …
+  grand?: string; // 총 합계 금액 (크게 · 파란 상자)
+  grandLabel?: string;
+  /** 1인당 금액 풀어보기: 사람마다 강습료(몇 시간) · 패찰 · 리프트 · 장비 · 헬멧 → 합계 */
+  persons?: { label: string; sub: string; pay: number; rows: { k: string; d: string; v: number }[] }[];
   schedule: { left: string; right: string }[];
   teams: { name: string; amount: string; lines: string[] }[];
   notes: string[];
@@ -19,6 +23,8 @@ const INK = "#0A0B0D";
 const GRAY = "#6B7280";
 const LINE = "#E5E7EB";
 const GREEN = "#03A94F";
+/** 💳 입금 계좌 (견적서 맨 아래 · 한국어 견적서에만) */
+const BANK = { name: "국민은행", account: "01040477711", holder: "박진호(지노컴퍼니)" };
 
 function font(size: number, weight = 500) {
   return `${weight} ${size}px "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif`;
@@ -113,6 +119,30 @@ export async function renderQuoteImage(
       ctx.fillText(d.totalSub, PAD, y);
     }
     y += 50;
+    // 💙 총 합계: 한눈에 보이게 파란 상자 + 큰 글씨
+    if (d.grand) {
+      const top = y - 10, h = 112;
+      if (!dry) {
+        ctx.fillStyle = "#EAF5FF";
+        if (typeof ctx.roundRect === "function") { ctx.beginPath(); ctx.roundRect(PAD, top, inner, h, 20); ctx.fill(); }
+        else ctx.fillRect(PAD, top, inner, h);
+        ctx.fillStyle = BLUE;
+        ctx.fillRect(PAD, top + 18, 6, h - 36);
+        ctx.fillStyle = NAVY;
+        ctx.font = font(32, 800);
+        ctx.fillText(d.grandLabel ?? "총 합계", PAD + 32, top + h / 2 + 12);
+        let gs = 56;
+        for (; gs >= 36; gs -= 2) {
+          ctx.font = font(gs, 800);
+          if (ctx.measureText(d.grand).width <= inner - 260) break;
+        }
+        ctx.fillStyle = "#0B6BCB";
+        ctx.textAlign = "right";
+        ctx.fillText(d.grand, W - PAD - 32, top + h / 2 + gs * 0.36);
+        ctx.textAlign = "left";
+      }
+      y = top + h + 46;
+    }
 
     const section = (title: string) => {
       if (!dry) {
@@ -142,6 +172,55 @@ export async function renderQuoteImage(
       }
     }
     y += 34;
+
+    // 💰 1인당 금액: 사람마다 카드 (항목 · 내용 · 금액 → 합계)
+    if (d.persons?.length) {
+      section(tr("1인당 금액"));
+      const n = (v: number) => (v ? `${v.toLocaleString("ko-KR")}${tr("원")}` : tr("포함"));
+      for (const p of d.persons) {
+        y += 26;
+        const top = y;
+        const h = 92 + p.rows.length * 48 + 24;
+        if (!dry) {
+          ctx.fillStyle = "#F8FAFC";
+          if (typeof ctx.roundRect === "function") { ctx.beginPath(); ctx.roundRect(PAD, top, inner, h, 18); ctx.fill(); }
+          else ctx.fillRect(PAD, top, inner, h);
+          // 머리: 이름 · 반/종목 ………… 합계
+          ctx.fillStyle = INK;
+          ctx.font = font(30, 800);
+          ctx.fillText(p.label, PAD + 28, top + 56);
+          const lw = ctx.measureText(p.label).width;
+          ctx.fillStyle = GRAY;
+          ctx.font = font(22, 500);
+          ctx.fillText(p.sub, PAD + 28 + lw + 14, top + 56);
+          ctx.textAlign = "right";
+          ctx.fillStyle = "#0B6BCB";
+          ctx.font = font(34, 800);
+          ctx.fillText(n(p.pay), W - PAD - 28, top + 58);
+          ctx.textAlign = "left";
+          ctx.fillStyle = LINE;
+          ctx.fillRect(PAD + 28, top + 82, inner - 56, 2);
+          p.rows.forEach((r, i) => {
+            const ry = top + 92 + i * 48 + 34;
+            ctx.fillStyle = INK;
+            ctx.font = font(25, 700);
+            ctx.fillText(r.k, PAD + 28, ry);
+            ctx.fillStyle = GRAY;
+            ctx.font = font(22, 500);
+            let dt = r.d;
+            while (dt.length > 4 && ctx.measureText(dt).width > inner - 56 - 120 - 190) dt = dt.slice(0, -2) + "…";
+            ctx.fillText(dt, PAD + 28 + 120, ry);
+            ctx.textAlign = "right";
+            ctx.fillStyle = r.v ? INK : GREEN;
+            ctx.font = font(25, 700);
+            ctx.fillText(n(r.v), W - PAD - 28, ry);
+            ctx.textAlign = "left";
+          });
+        }
+        y = top + h;
+      }
+      y += 40;
+    }
 
     section(tr("금액 내역"));
     for (const t of d.teams) {
@@ -185,6 +264,43 @@ export async function renderQuoteImage(
       }
     }
     y += 60;
+
+    // 💳 맨 아래: 총 합계 + 입금 계좌
+    if (d.grand) {
+      const bank = loc === "ko";
+      const h = bank ? 236 : 120;
+      if (!dry) {
+        ctx.fillStyle = "#F8FAFC";
+        if (typeof ctx.roundRect === "function") { ctx.beginPath(); ctx.roundRect(PAD, y, inner, h, 20); ctx.fill(); }
+        else ctx.fillRect(PAD, y, inner, h);
+        ctx.strokeStyle = "#CBD5E1"; ctx.lineWidth = 2;
+        if (typeof ctx.roundRect === "function") { ctx.beginPath(); ctx.roundRect(PAD, y, inner, h, 20); ctx.stroke(); }
+        ctx.fillStyle = NAVY;
+        ctx.font = font(32, 800);
+        ctx.fillText(d.grandLabel ?? tr("총 합계"), PAD + 36, y + 74);
+        ctx.fillStyle = "#0B6BCB";
+        ctx.font = font(48, 800);
+        ctx.textAlign = "right";
+        ctx.fillText(d.grand, W - PAD - 36, y + 80);
+        ctx.textAlign = "left";
+        if (bank) {
+          ctx.fillStyle = LINE;
+          ctx.fillRect(PAD + 36, y + 116, inner - 72, 2);
+          ctx.fillStyle = GRAY;
+          ctx.font = font(26, 600);
+          ctx.fillText("입금 계좌", PAD + 36, y + 170);
+          ctx.fillStyle = INK;
+          ctx.font = font(34, 800);
+          ctx.textAlign = "right";
+          ctx.fillText(`${BANK.name} ${BANK.account}`, W - PAD - 36, y + 172);
+          ctx.fillStyle = GRAY;
+          ctx.font = font(26, 600);
+          ctx.fillText(`예금주 ${BANK.holder}`, W - PAD - 36, y + 214);
+          ctx.textAlign = "left";
+        }
+      }
+      y += h + 56;
+    }
 
     // 하단 연락처
     if (!dry) {

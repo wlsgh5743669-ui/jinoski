@@ -1,6 +1,7 @@
 "use client";
 
 import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
+import { attributionText } from "@/components/shared/attribution";
 import { useState } from "react";
 import { Check, Copy, Mail, Send } from "lucide-react";
 import { useLocale } from "next-intl";
@@ -129,7 +130,7 @@ export function InquiryForm() {
           equipment: sport >= 0 ? SPORT_KO[sport] : "",
           level: level >= 0 ? LEVEL_KO[level] : "",
           total: "",
-          note: [message.trim(), marketingTag(marketing)].filter(Boolean).join(" / "),
+          note: [message.trim(), marketingTag(marketing), attributionText()].filter(Boolean).join(" / "),
         }),
       });
       setState(res.ok ? "done" : "fail");
