@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, Send } from "lucide-react";
+import { ArrowLeft, Send } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
 import { trackEvent } from "@/components/shared/analytics";
 import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
@@ -10,21 +11,45 @@ import { cn } from "@/lib/utils";
 
 const NOTIFY_URL = process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-notify.wlsgh5743669.workers.dev";
 
-/** 🗓️ 예약하기 첫 화면: 시즌 강습(8회) — 목적·의미 설명 + 날짜 협의 상담 신청 */
+/** 예약하기 첫 화면의 작은 카드 → 시즌 강습 화면으로 */
 export function SeasonCard() {
+  const { seasonProgram: sp } = useContent();
+  return (
+    <Link
+      href="/reserve/season"
+      onClick={() => trackEvent("season_card_open", { from: "reserve_top" })}
+      className="col-span-2 flex items-center justify-between gap-3 rounded-2xl border-2 border-violet-500 bg-violet-50/60 px-4 py-3.5 transition-colors hover:bg-violet-50"
+    >
+      <span className="flex flex-col">
+        <span className="text-[14.5px] font-bold text-ink-900">🗓️ 시즌 강습 (2시간 × 8회)</span>
+        <span className="mt-1 text-[12.5px] font-semibold leading-snug text-violet-700">👉 한 시즌 꾸준히 배울 분 · 날짜는 협의</span>
+        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">1:1 {sp?.priceRows?.[0]?.price ?? ""}부터</span>
+      </span>
+      <span className="shrink-0 text-[18px] font-bold text-ink-900">→</span>
+    </Link>
+  );
+}
+
+/** 시즌 강습 화면: ① 추천 ② 가격 ③ 패찰·결제 → [상담 신청] → 신청서 */
+export function SeasonView() {
   const { seasonProgram: sp, contact } = useContent();
   const rows = sp?.priceRows ?? [];
-  const benefits = sp?.benefits ?? [];
-  const [open, setOpen] = useState(false);
+  const [page, setPage] = useState<"info" | "form">("info");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [group, setGroup] = useState("1:1");
   const [sport, setSport] = useState("스키");
   const [when, setWhen] = useState("");
   const [note, setNote] = useState("");
+  const [payPass, setPayPass] = useState(true);
   const [consent, setConsent] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
+  const PASS = 25000;
+  const people = Number(group.slice(2)) || 1;
+  const passAll = PASS * 8 * people;
+  const won = (n: number) => `${n.toLocaleString("ko-KR")}원`;
+  const lessonPrice = Number((rows.find((r) => r.people === group)?.price ?? "0").replace(/[^0-9]/g, ""));
   const ok = name.trim() && phone.replace(/[^0-9]/g, "").length >= 9 && consent;
 
   async function send() {
@@ -44,8 +69,8 @@ export function SeasonCard() {
           groupSize: group,
           equipment: sport,
           level: "",
-          total: rows.find((r) => r.people === group)?.price ?? "",
-          note: [note.trim(), marketingTag(marketing), attributionText()].filter(Boolean).join(" / "),
+          total: payPass ? `${won(lessonPrice + passAll)} (강습 ${won(lessonPrice)} + 패찰 8회 ${won(passAll)})` : `${won(lessonPrice)} (패찰 별도)`,
+          note: [payPass ? `🎫 패찰 8회분 한 번에 결제 (${people}명 × 8회 = ${won(passAll)})` : "패찰은 회차마다 결제", note.trim(), marketingTag(marketing), attributionText()].filter(Boolean).join(" / "),
         }),
       });
       setStatus(res.ok ? "sent" : "failed");
@@ -54,111 +79,138 @@ export function SeasonCard() {
     }
   }
 
+  const h2 = "text-[13px] font-bold tracking-wide text-violet-600";
+  const card = "rounded-2xl bg-white px-4 py-3.5 ring-1 ring-snow-300/60";
   const input = "h-12 w-full rounded-xl border border-snow-300/70 bg-white px-4 text-[15px] outline-none focus:border-brand-500";
   const chip = (on: boolean) =>
     cn("rounded-full border px-3.5 py-2 text-[13.5px] font-semibold", on ? "border-brand-500 bg-brand-50 text-brand-600" : "border-snow-300/70 bg-white text-ink-700");
 
   return (
-    <div className="col-span-2 rounded-2xl border-2 border-violet-500 bg-violet-50/60">
-      <button
-        type="button"
-        onClick={() => {
-          setOpen((o) => !o);
-          if (!open) trackEvent("season_card_open", { from: "reserve_top" });
-        }}
-        className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left"
-      >
-        <span className="flex flex-col">
-          <span className="text-[14.5px] font-bold text-ink-900">🗓️ 시즌 강습 (2시간 × 8회)</span>
-          <span className="mt-1 text-[12.5px] font-semibold leading-snug text-violet-700">👉 한 시즌 꾸준히 실력 키울 분 · 날짜는 협의</span>
-          <span className="mt-0.5 text-[12px] leading-snug text-snow-600">
-            1:1 {rows[0]?.price} 부터 · {sp?.badge}
-          </span>
-        </span>
-        <ChevronDown size={20} className={cn("shrink-0 text-ink-900 transition-transform", open && "rotate-180")} />
-      </button>
+    <div className="mx-auto min-h-[100svh] max-w-lg px-5 pb-16 pt-6">
+      <div className="flex items-center justify-between">
+        <Link href="/" className="text-[18px] font-bold tracking-tightest text-ink-900">
+          JINO<span className="text-brand-500">SKI</span>
+        </Link>
+        {page === "form" ? (
+          <button type="button" onClick={() => setPage("info")} className="flex items-center gap-1 text-[13.5px] font-semibold text-snow-500">
+            <ArrowLeft size={15} /> 이전
+          </button>
+        ) : (
+          <Link href="/reserve" className="flex items-center gap-1 text-[13.5px] font-semibold text-snow-500">
+            <ArrowLeft size={15} /> 예약하기
+          </Link>
+        )}
+      </div>
 
-      {open && (
-        <div className="border-t border-violet-200 px-4 pb-5 pt-4">
-          {/* 목적·의미 */}
-          <p className="text-[15px] font-bold text-ink-900">시즌 강습은 이런 분께 좋아요</p>
-          <ul className="mt-2 flex flex-col gap-1.5 text-[13.5px] leading-relaxed text-snow-700">
-            <li>🎯 <b>목표가 있는 분</b> — 「올해는 중급 슬로프」, 「카빙·숏턴 완성」, 「주니어 기술등급 도전」처럼 한 시즌 목표를 정하고 단계별로 올라가요.</li>
-            <li>🔁 <b>한 번 배우고 잊어버리는 게 아쉬운 분</b> — 하루 강습은 다음 해에 처음부터 다시 시작하기 쉬워요. 8회를 이어서 배우면 자세가 몸에 남아요.</li>
-            <li>👨‍🏫 <b>같은 강사가 끝까지</b> — 전담 강사가 매회 기록하고 다음 수업으로 이어서 가르쳐요.</li>
-            <li>📅 <b>날짜·시간은 협의</b> — 원하는 날에 맞춰 시즌 동안 나눠서 사용해요. 주말·방학 위주도 괜찮아요.</li>
-          </ul>
+      <h1 className="mt-6 text-[26px] font-bold tracking-tight text-ink-900">🗓️ 시즌 강습</h1>
+      <p className="mt-1 text-[14px] text-snow-600">2시간 × 8회 · 같은 강사 · 날짜는 협의</p>
 
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {benefits.slice(0, 4).map((b) => (
-              <div key={b.title} className="rounded-xl bg-white px-3 py-2.5 ring-1 ring-violet-100">
-                <p className="text-[13.5px] font-bold text-ink-900">
-                  {b.icon} {b.title}
-                </p>
-              </div>
-            ))}
-          </div>
+      {page === "info" ? (
+        <div className="mt-6 flex flex-col gap-5">
+          {/* ① 추천 */}
+          <section>
+            <p className={h2}>이런 분께 추천해요</p>
+            <ul className={cn(card, "mt-2 flex flex-col gap-1.5 text-[14px] text-ink-800")}>
+              <li>🎯 올해 목표가 있는 분 (중급 슬로프·카빙·주니어 등급)</li>
+              <li>🔁 하루 강습 후 다음 해에 다시 처음부터 하는 분</li>
+              <li>👨‍🏫 한 강사에게 꾸준히 배우고 싶은 분</li>
+            </ul>
+          </section>
 
-          {/* 가격 */}
-          <div className="mt-4 rounded-xl bg-white px-4 py-3 ring-1 ring-violet-100">
-            <p className="text-[13.5px] font-bold text-ink-900">
-              {sp?.title} <span className="ml-1 rounded-full bg-rose-500 px-2 py-0.5 text-[11px] text-white">{sp?.badge}</span>
+          {/* ② 가격 */}
+          <section>
+            <p className={h2}>
+              가격 (8회 합계){sp?.badge ? <span className="ml-1.5 rounded-full bg-rose-500 px-2 py-0.5 text-[11px] text-white">{sp.badge}</span> : null}
             </p>
-            <ul className="mt-2 flex flex-col divide-y divide-snow-300/50">
+            <ul className={cn(card, "mt-2 flex flex-col divide-y divide-snow-300/50 py-1.5")}>
               {rows.map((r) => (
-                <li key={r.people} className="flex items-baseline justify-between py-1.5 text-[14px]">
+                <li key={r.people} className="flex items-baseline justify-between py-2 text-[14.5px]">
                   <span className="font-semibold text-ink-800">{r.people}</span>
                   <span>
-                    <span className="mr-1.5 text-[12px] text-snow-400 line-through">{r.original}</span>
+                    {r.original && <span className="mr-1.5 text-[12px] text-snow-400 line-through">{r.original}</span>}
                     <b className="text-rose-600">{r.price}</b>
                   </span>
                 </li>
               ))}
             </ul>
-            <p className="mt-1.5 text-[12px] text-snow-500">패찰 회당 1인 25,000원 별도 · 리프트·장비 정가 40% 할인 · 확정 후 예약금 20%</p>
-          </div>
+          </section>
 
-          {/* 상담 신청 */}
-          {status === "sent" ? (
-            <div className="mt-4 rounded-xl bg-white px-4 py-4 text-center ring-1 ring-violet-200">
-              <p className="text-[15px] font-bold text-ink-900">✅ 시즌 강습 상담 신청이 접수됐어요</p>
-              <p className="mt-1 text-[13px] text-snow-600">원하시는 날짜·목표를 듣고 일정을 같이 짜드릴게요. 곧 연락드려요!</p>
-            </div>
-          ) : (
-            <div className="mt-4 flex flex-col gap-2">
-              <p className="text-[14px] font-bold text-ink-900">상담 신청 (날짜는 연락드려서 같이 정해요)</p>
-              <input className={input} placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} />
-              <input className={input} placeholder="연락처 (010-0000-0000)" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
-              <div className="flex flex-wrap gap-1.5">
-                {["1:1", "1:2", "1:3"].map((g) => (
-                  <button key={g} type="button" className={chip(group === g)} onClick={() => setGroup(g)}>
-                    {g}
-                  </button>
-                ))}
-                <span className="mx-1 self-center text-snow-300">|</span>
-                {["스키", "스노보드"].map((s) => (
-                  <button key={s} type="button" className={chip(sport === s)} onClick={() => setSport(s)}>
-                    {s}
-                  </button>
-                ))}
-              </div>
-              <input className={input} placeholder="희망 시기 (예: 12월 주말, 1월 방학 평일)" value={when} onChange={(e) => setWhen(e.target.value)} />
-              <input className={input} placeholder="목표·요청 (예: 초등 2학년, 중급 슬로프 목표)" value={note} onChange={(e) => setNote(e.target.value)} />
-              <ConsentBox locale="ko" agree={consent} onAgree={setConsent} marketing={marketing} onMarketing={setMarketing} />
-              <button
-                type="button"
-                onClick={send}
-                disabled={!ok || status === "sending"}
-                className="inline-flex h-12 items-center justify-center gap-1.5 rounded-full bg-violet-600 text-[15px] font-bold text-white disabled:opacity-40"
-              >
-                <Send size={16} /> {status === "sending" ? "보내는 중..." : "시즌 강습 상담 신청"}
+          {/* ③ 패찰·결제 */}
+          <section>
+            <p className={h2}>패찰 · 결제</p>
+            <ul className={cn(card, "mt-2 flex flex-col gap-1.5 text-[14px] text-ink-800")}>
+              <li>🎫 패찰: 1회 1인 25,000원 · <b>8회분(1인 200,000원)을 강습료와 한 번에 결제</b>할 수 있어요</li>
+              <li>🎿 리프트·장비: 정가 40% 할인으로 같이 결제 가능</li>
+              <li>💳 일정 확정 후 예약금 20% · 나머지는 첫 강습 날</li>
+              <li>📅 날짜·시간은 상담 후 시즌 동안 나눠서 정해요</li>
+            </ul>
+          </section>
+
+          <button
+            type="button"
+            onClick={() => {
+              setPage("form");
+              window.scrollTo({ top: 0 });
+            }}
+            className="mt-1 inline-flex h-14 items-center justify-center rounded-full bg-violet-600 text-[16px] font-bold text-white"
+          >
+            시즌 강습 상담 신청 →
+          </button>
+          <a href={contact.kakaoChannel} target="_blank" rel="noreferrer" className="text-center text-[13px] font-semibold text-snow-600 underline underline-offset-2">
+            카톡으로 바로 물어보기
+          </a>
+        </div>
+      ) : status === "sent" ? (
+        <div className="mt-8 rounded-2xl bg-violet-50 px-5 py-6 text-center ring-1 ring-violet-200">
+          <p className="text-[17px] font-bold text-ink-900">✅ 상담 신청이 접수됐어요</p>
+          <p className="mt-1.5 text-[14px] text-snow-600">목표와 원하는 날짜를 듣고 일정을 같이 짜드릴게요. 곧 연락드려요!</p>
+          <Link href="/" className="mt-4 inline-block text-[13.5px] font-semibold text-snow-500 underline">
+            홈으로
+          </Link>
+        </div>
+      ) : (
+        <div className="mt-6 flex flex-col gap-2.5">
+          <p className="text-[15px] font-bold text-ink-900">상담 신청 · 날짜는 연락드려서 같이 정해요</p>
+          <input className={input} placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} />
+          <input className={input} placeholder="연락처 (010-0000-0000)" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <div className="flex flex-wrap gap-1.5">
+            {["1:1", "1:2", "1:3"].map((g) => (
+              <button key={g} type="button" className={chip(group === g)} onClick={() => setGroup(g)}>
+                {g}
               </button>
-              {status === "failed" && <p className="text-center text-[12.5px] text-rose-500">전송이 안 됐어요. 카톡으로 상담해 주세요.</p>}
-              <a href={contact.kakaoChannel} target="_blank" rel="noreferrer" className="text-center text-[13px] font-semibold text-snow-600 underline underline-offset-2">
-                카톡으로 바로 상담하기
-              </a>
-            </div>
-          )}
+            ))}
+            <span className="mx-1 self-center text-snow-300">|</span>
+            {["스키", "스노보드"].map((s) => (
+              <button key={s} type="button" className={chip(sport === s)} onClick={() => setSport(s)}>
+                {s}
+              </button>
+            ))}
+          </div>
+          <input className={input} placeholder="희망 시기 (예: 12월 주말, 1월 방학 평일)" value={when} onChange={(e) => setWhen(e.target.value)} />
+          <input className={input} placeholder="목표·요청 (예: 초등 2학년, 중급 슬로프 목표)" value={note} onChange={(e) => setNote(e.target.value)} />
+          <label className="flex items-start gap-2.5 rounded-2xl bg-violet-50 px-4 py-3 ring-1 ring-violet-200">
+            <input type="checkbox" className="mt-0.5 h-5 w-5 accent-[#7c3aed]" checked={payPass} onChange={(e) => setPayPass(e.target.checked)} />
+            <span className="flex-1">
+              <span className="block text-[14px] font-bold text-ink-900">🎫 패찰 8회분 한 번에 결제</span>
+              <span className="block text-[12.5px] text-snow-600">
+                {people}명 × 8회 × 25,000원 = {won(passAll)} · 매번 따로 낼 필요 없어요
+              </span>
+              <span className="mt-1 block text-[13px] font-bold text-violet-700">
+                예상 합계 {won(lessonPrice + (payPass ? passAll : 0))}
+                {payPass ? ` (강습 ${won(lessonPrice)} + 패찰 ${won(passAll)})` : " (패찰은 회차마다 결제)"}
+              </span>
+            </span>
+          </label>
+          <ConsentBox locale="ko" agree={consent} onAgree={setConsent} marketing={marketing} onMarketing={setMarketing} />
+          <button
+            type="button"
+            onClick={send}
+            disabled={!ok || status === "sending"}
+            className="mt-1 inline-flex h-14 items-center justify-center gap-1.5 rounded-full bg-violet-600 text-[16px] font-bold text-white disabled:opacity-40"
+          >
+            <Send size={17} /> {status === "sending" ? "보내는 중..." : "상담 신청 보내기"}
+          </button>
+          {status === "failed" && <p className="text-center text-[12.5px] text-rose-500">전송이 안 됐어요. 카톡으로 상담해 주세요.</p>}
         </div>
       )}
     </div>
