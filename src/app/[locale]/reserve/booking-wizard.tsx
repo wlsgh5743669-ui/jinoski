@@ -40,6 +40,7 @@ import {
 } from "@/lib/booking-options";
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
+import { SeasonCard } from "@/components/sections/season-card";
 import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
 import { attributionText } from "@/components/shared/attribution";
 import { MessengerButtons } from "@/components/shared/messenger-buttons";
@@ -1409,6 +1410,7 @@ function PayChoice({ storeUrl }: { storeUrl: string }) {
         </span>
         <span className="shrink-0 text-[18px] font-bold text-ink-900">→</span>
       </a>
+      <SeasonCard />
     </div>
   );
 }
