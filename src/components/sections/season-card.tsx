@@ -22,6 +22,8 @@ function seasonRows(lessonPricing: { program: string; rows: { people: string; pr
   });
 }
 
+const STORE_URL = "https://smartstore.naver.com/jinoski/products/11057867556";
+
 const NOTIFY_URL = process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-notify.wlsgh5743669.workers.dev";
 
 /** 예약하기 첫 화면의 작은 카드 → 시즌 강습 화면으로 */
@@ -170,16 +172,28 @@ export function SeasonView() {
             </ul>
           </section>
 
-          <button
-            type="button"
-            onClick={() => {
-              setPage("form");
-              window.scrollTo({ top: 0 });
-            }}
-            className="mt-1 inline-flex h-14 items-center justify-center rounded-full bg-violet-600 text-[16px] font-bold text-white"
-          >
-            시즌 강습 상담 신청 →
-          </button>
+          <div className="mt-1 flex flex-col gap-2">
+            <a
+              href={STORE_URL}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => trackEvent("season_store_click", { from: "season_info" })}
+              className="flex flex-col items-center justify-center rounded-2xl bg-[#03C75A] px-4 py-3 text-white"
+            >
+              <span className="text-[16px] font-bold">💳 바로 결제하기 (네이버페이·카드)</span>
+              <span className="mt-0.5 text-[12px] text-white/85">스마트스토어 · 옵션에서 시간·인원 선택 → 결제 후 카톡으로 희망 날짜 알려주세요</span>
+            </a>
+            <button
+              type="button"
+              onClick={() => {
+                setPage("form");
+                window.scrollTo({ top: 0 });
+              }}
+              className="inline-flex h-14 items-center justify-center rounded-2xl bg-violet-600 text-[16px] font-bold text-white"
+            >
+              📝 상담 먼저 하기 →
+            </button>
+          </div>
           <a href={contact.kakaoChannel} target="_blank" rel="noreferrer" className="text-center text-[13px] font-semibold text-snow-600 underline underline-offset-2">
             카톡으로 바로 물어보기
           </a>
@@ -232,6 +246,16 @@ export function SeasonView() {
               </span>
             </span>
           </label>
+          <a
+            href={STORE_URL}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => trackEvent("season_store_click", { from: "season_form" })}
+            className="flex items-center justify-between rounded-2xl border border-[#03C75A] bg-[#03C75A]/[0.06] px-4 py-3"
+          >
+            <span className="text-[13.5px] font-bold text-ink-900">상담 없이 바로 결제하고 싶다면</span>
+            <span className="text-[13px] font-bold text-[#03A94F]">스마트스토어 →</span>
+          </a>
           <ConsentBox locale="ko" agree={consent} onAgree={setConsent} marketing={marketing} onMarketing={setMarketing} />
           <button
             type="button"
