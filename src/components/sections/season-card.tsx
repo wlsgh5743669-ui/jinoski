@@ -8,12 +8,26 @@ import { trackEvent } from "@/components/shared/analytics";
 import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
 import { attributionText } from "@/components/shared/attribution";
 import { cn } from "@/lib/utils";
+import { isEarlyBirdActive } from "@/lib/pricing";
+
+type Hrs = "2h" | "3h";
+const PASS: Record<Hrs, number> = { "2h": 25000, "3h": 35000 };
+const won = (n: number) => `${n.toLocaleString("ko-KR")}원`;
+/** 8회 가격 = 레슨 1회 가격 × 8 (얼리버드 기간엔 10% 할인) */
+function seasonRows(lessonPricing: { program: string; rows: { people: string; price: string }[] }[], h: Hrs) {
+  const eb = isEarlyBirdActive();
+  return (lessonPricing.find((g) => g.program === h)?.rows ?? []).map((r) => {
+    const full = Number(r.price.replace(/[^0-9]/g, "")) * 8;
+    return { people: r.people, full, price: eb ? Math.round((full * 0.9) / 1000) * 1000 : full, eb };
+  });
+}
 
 const NOTIFY_URL = process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-notify.wlsgh5743669.workers.dev";
 
 /** 예약하기 첫 화면의 작은 카드 → 시즌 강습 화면으로 */
 export function SeasonCard() {
-  const { seasonProgram: sp } = useContent();
+  const { lessonPricing } = useContent();
+  const r0 = seasonRows(lessonPricing, "2h")[0];
   return (
     <Link
       href="/reserve/season"
@@ -21,9 +35,9 @@ export function SeasonCard() {
       className="col-span-2 flex items-center justify-between gap-3 rounded-2xl border-2 border-violet-500 bg-violet-50/60 px-4 py-3.5 transition-colors hover:bg-violet-50"
     >
       <span className="flex flex-col">
-        <span className="text-[14.5px] font-bold text-ink-900">🗓️ 시즌 강습 (2시간 × 8회)</span>
+        <span className="text-[14.5px] font-bold text-ink-900">🗓️ 시즌 강습 (2·3시간 × 8회)</span>
         <span className="mt-1 text-[12.5px] font-semibold leading-snug text-violet-700">👉 한 시즌 꾸준히 배울 분 · 날짜는 협의</span>
-        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">1:1 {sp?.priceRows?.[0]?.price ?? ""}부터</span>
+        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">2시간 1:1 {r0 ? won(r0.price) : ""}부터{r0?.eb ? " · 얼리버드 10%" : ""}</span>
       </span>
       <span className="shrink-0 text-[18px] font-bold text-ink-900">→</span>
     </Link>
@@ -32,8 +46,12 @@ export function SeasonCard() {
 
 /** 시즌 강습 화면: ① 추천 ② 가격 ③ 패찰·결제 → [상담 신청] → 신청서 */
 export function SeasonView() {
-  const { seasonProgram: sp, contact } = useContent();
-  const rows = sp?.priceRows ?? [];
+  const { lessonPricing, contact } = useContent();
+  const [hrs, setHrs] = useState<Hrs>("2h");
+  const rows2 = seasonRows(lessonPricing, "2h");
+  const rows3 = seasonRows(lessonPricing, "3h");
+  const rows = hrs === "2h" ? rows2 : rows3;
+  const eb = rows2[0]?.eb;
   const [page, setPage] = useState<"info" | "form">("info");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -45,11 +63,10 @@ export function SeasonView() {
   const [consent, setConsent] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
-  const PASS = 25000;
   const people = Number(group.slice(2)) || 1;
-  const passAll = PASS * 8 * people;
-  const won = (n: number) => `${n.toLocaleString("ko-KR")}원`;
-  const lessonPrice = Number((rows.find((r) => r.people === group)?.price ?? "0").replace(/[^0-9]/g, ""));
+  const passOne = PASS[hrs];
+  const passAll = passOne * 8 * people;
+  const lessonPrice = rows.find((r) => r.people === group)?.price ?? 0;
   const ok = name.trim() && phone.replace(/[^0-9]/g, "").length >= 9 && consent;
 
   async function send() {
@@ -64,7 +81,7 @@ export function SeasonView() {
           name: name.trim(),
           phone: phone.trim(),
           date: when.trim() ? `희망 시기: ${when.trim()} (날짜 협의)` : "날짜 협의",
-          program: "🗓️ 시즌 강습 8회 (2시간×8) 상담",
+          program: `🗓️ 시즌 강습 8회 (${hrs === "2h" ? "2시간" : "3시간"}×8) 상담`,
           timeSlot: "협의",
           groupSize: group,
           equipment: sport,
@@ -103,7 +120,7 @@ export function SeasonView() {
       </div>
 
       <h1 className="mt-6 text-[26px] font-bold tracking-tight text-ink-900">🗓️ 시즌 강습</h1>
-      <p className="mt-1 text-[14px] text-snow-600">2시간 × 8회 · 같은 강사 · 날짜는 협의</p>
+      <p className="mt-1 text-[14px] text-snow-600">2시간 또는 3시간 × 8회 · 같은 강사 · 날짜는 협의</p>
 
       {page === "info" ? (
         <div className="mt-6 flex flex-col gap-5">
@@ -120,26 +137,33 @@ export function SeasonView() {
           {/* ② 가격 */}
           <section>
             <p className={h2}>
-              가격 (8회 합계){sp?.badge ? <span className="ml-1.5 rounded-full bg-rose-500 px-2 py-0.5 text-[11px] text-white">{sp.badge}</span> : null}
+              가격 (8회 합계){eb ? <span className="ml-1.5 rounded-full bg-rose-500 px-2 py-0.5 text-[11px] text-white">얼리버드 10% 할인</span> : null}
             </p>
-            <ul className={cn(card, "mt-2 flex flex-col divide-y divide-snow-300/50 py-1.5")}>
-              {rows.map((r) => (
-                <li key={r.people} className="flex items-baseline justify-between py-2 text-[14.5px]">
-                  <span className="font-semibold text-ink-800">{r.people}</span>
-                  <span>
-                    {r.original && <span className="mr-1.5 text-[12px] text-snow-400 line-through">{r.original}</span>}
-                    <b className="text-rose-600">{r.price}</b>
-                  </span>
-                </li>
+            <div className={cn(card, "mt-2 py-2")}>
+              <div className="grid grid-cols-[48px_1fr_1fr] gap-x-2 border-b border-snow-300/50 pb-1.5 text-[12px] font-bold text-snow-500">
+                <span />
+                <span className="text-right">2시간 × 8회</span>
+                <span className="text-right">3시간 × 8회</span>
+              </div>
+              {rows2.map((r, i) => (
+                <div key={r.people} className="grid grid-cols-[48px_1fr_1fr] items-baseline gap-x-2 border-b border-snow-300/40 py-2 last:border-0">
+                  <span className="text-[14px] font-semibold text-ink-800">{r.people}</span>
+                  {[r, rows3[i]].map((x, j) => (
+                    <span key={j} className="text-right">
+                      {x?.eb && <span className="block text-[11px] text-snow-400 line-through">{won(x.full)}</span>}
+                      <b className="text-[14.5px] text-rose-600">{x ? won(x.price) : "-"}</b>
+                    </span>
+                  ))}
+                </div>
               ))}
-            </ul>
+            </div>
           </section>
 
           {/* ③ 패찰·결제 */}
           <section>
             <p className={h2}>패찰 · 결제</p>
             <ul className={cn(card, "mt-2 flex flex-col gap-1.5 text-[14px] text-ink-800")}>
-              <li>🎫 패찰: 1회 1인 25,000원 · <b>8회분(1인 200,000원)을 강습료와 한 번에 결제</b>할 수 있어요</li>
+              <li>🎫 패찰: 2시간 1회 25,000원 · 3시간 1회 35,000원 (1인) · <b>8회분을 강습료와 한 번에 결제</b>할 수 있어요</li>
               <li>🎿 리프트·장비: 정가 40% 할인으로 같이 결제 가능</li>
               <li>💳 일정 확정 후 예약금 20% · 나머지는 첫 강습 날</li>
               <li>📅 날짜·시간은 상담 후 시즌 동안 나눠서 정해요</li>
@@ -173,6 +197,13 @@ export function SeasonView() {
           <p className="text-[15px] font-bold text-ink-900">상담 신청 · 날짜는 연락드려서 같이 정해요</p>
           <input className={input} placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} />
           <input className={input} placeholder="연락처 (010-0000-0000)" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <div className="flex gap-1.5">
+            {(["2h", "3h"] as const).map((h) => (
+              <button key={h} type="button" className={cn(chip(hrs === h), "flex-1")} onClick={() => setHrs(h)}>
+                {h === "2h" ? "2시간 × 8회" : "3시간 × 8회"}
+              </button>
+            ))}
+          </div>
           <div className="flex flex-wrap gap-1.5">
             {["1:1", "1:2", "1:3"].map((g) => (
               <button key={g} type="button" className={chip(group === g)} onClick={() => setGroup(g)}>
@@ -193,7 +224,7 @@ export function SeasonView() {
             <span className="flex-1">
               <span className="block text-[14px] font-bold text-ink-900">🎫 패찰 8회분 한 번에 결제</span>
               <span className="block text-[12.5px] text-snow-600">
-                {people}명 × 8회 × 25,000원 = {won(passAll)} · 매번 따로 낼 필요 없어요
+                {people}명 × 8회 × {won(passOne)} = {won(passAll)} · 매번 따로 낼 필요 없어요
               </span>
               <span className="mt-1 block text-[13px] font-bold text-violet-700">
                 예상 합계 {won(lessonPrice + (payPass ? passAll : 0))}
