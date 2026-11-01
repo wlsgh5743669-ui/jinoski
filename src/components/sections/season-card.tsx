@@ -172,6 +172,61 @@ export function SeasonView() {
             </ul>
           </section>
 
+          {/* ④ 포함·불포함·혜택 (눌러서 보기) */}
+          <section className="flex flex-col gap-2">
+            {[
+              {
+                key: "inc",
+                title: "✅ 포함 사항",
+                tone: "bg-emerald-50 ring-emerald-200",
+                items: [
+                  "2시간 또는 3시간 × 8회 레슨 (같은 전담 강사)",
+                  "수준별 커리큘럼 · 자세 교정 · 실시간 피드백",
+                  "매회 사진·영상 촬영 + 수업 후 피드백",
+                  "무선 헤드셋 코칭 (슬로프에서도 바로 들려요)",
+                  "영업배상책임보험 가입",
+                ],
+              },
+              {
+                key: "exc",
+                title: "➖ 불포함 사항",
+                tone: "bg-snow-100 ring-snow-300/70",
+                items: [
+                  "패찰(강습 허가증) — 1회 1인 2시간 25,000원 · 3시간 35,000원 (8회분 한 번에 결제 가능)",
+                  "리프트권 · 장비 렌탈 (정가 40% 할인으로 같이 결제 가능)",
+                  "스키복·헬멧 등 의류 (제휴 렌탈샵 안내)",
+                  "식사",
+                ],
+              },
+              {
+                key: "perk",
+                title: "🎁 지노스키만의 혜택",
+                tone: "bg-violet-50 ring-violet-200",
+                items: [
+                  "🎿 리프트권·장비 정가 40% 할인 (시즌 내내 매번)",
+                  "👨‍🏫 8회 내내 같은 강사 — 지난 수업을 기억하고 이어서 가르쳐요",
+                  "📸 사진·영상 무료 — 첫 수업과 마지막 수업 영상으로 달라진 실력 비교",
+                  "🎖️ 주니어 기술등급 심사 연계 (만 7~17세 · 연맹 공식 뱃지 도전)",
+                  "📅 날짜·시간은 시즌 동안 자유롭게 협의 · 레슨 2일 전까지 무료 일정 변경",
+                  "🌨️ 기상 악화로 슬로프가 닫히면 무료 일정 변경",
+                ],
+              },
+            ].map((g) => (
+              <details key={g.key} className={cn("group rounded-2xl px-4 py-3 ring-1", g.tone)}>
+                <summary className="flex cursor-pointer list-none items-center justify-between text-[14.5px] font-bold text-ink-900">
+                  {g.title}
+                  <span className="text-[12.5px] font-semibold text-snow-500 group-open:hidden">눌러서 보기 ▾</span>
+                  <span className="hidden text-[12.5px] font-semibold text-snow-500 group-open:inline">접기 ▴</span>
+                </summary>
+                <ul className="mt-2 flex flex-col gap-1.5 text-[13.5px] leading-relaxed text-ink-800">
+                  {g.items.map((it) => (
+                    <li key={it}>· {it}</li>
+                  ))}
+                </ul>
+              </details>
+            ))}
+          </section>
+
           <div className="mt-1 flex flex-col gap-2">
             <a
               href={STORE_URL}
