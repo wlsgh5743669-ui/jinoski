@@ -135,6 +135,13 @@ export function QuoteInbox() {
             <p className="text-[13px] font-bold tracking-widest text-brand-500">JINOSKI 문의함</p>
             <h1 className="mt-1 text-[24px] font-bold text-ink-900">비밀번호를 넣어주세요</h1>
             <p className="mt-1 text-[13px] text-snow-500">홈페이지 견적·예약 문의를 모아서 볼 수 있어요.</p>
+            <a
+              href="https://ops.jinoski.com/admin/quotes?tab=home"
+              className="mt-4 flex h-12 w-full items-center justify-center rounded-full bg-ink-900 text-[15px] font-bold text-white"
+            >
+              📱 운영 앱에서 바로 보기
+            </a>
+            <p className="mt-1.5 text-center text-[12px] text-snow-500">운영 앱에 로그인돼 있으면 비밀번호 없이 열려요 · 아래는 문의함 비밀번호로 보기</p>
             <input
               type="password"
               value={input}
