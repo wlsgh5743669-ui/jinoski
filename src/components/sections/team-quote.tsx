@@ -1533,7 +1533,7 @@ export function TeamQuote() {
                           return { label: `${d.day}일차${startDate ? (hol ? " 공휴일" : wk ? " 주말" : " 주중") : ""}`, i: d.day, tone: startDate ? (wk ? "red" : "blue") : "" };
                         }),
                         { label: "강습료만", i: -1, tone: "" },
-                        ...(extrasTotal + helmetTotal > 0 ? [{ label: "장비료만", i: -2, tone: "" }] : []),
+                        ...(extrasTotal + helmetTotal > 0 ? [{ label: "리프트+장비", i: -2, tone: "" }] : []),
                         { label: "전체", i: 0, tone: "" },
                       ].map((t) => (
                         <button
@@ -1563,7 +1563,7 @@ export function TeamQuote() {
                     {totalTab < 0 && (
                       <div className="mt-3">
                         <p className="text-[13px] text-snow-600">
-                          {totalTab === -1 ? "강습료만 (패찰 포함 · 얼리버드 반영)" : "장비료만 (리프트·장비 40% 할인 + 헬멧)"}
+                          {totalTab === -1 ? "강습료만 (패찰 포함 · 얼리버드 반영)" : "리프트+장비 (비발디파크 정가에서 40% 할인 + 헬멧)"}
                         </p>
                         <p className="mt-2 text-[12px] font-semibold text-snow-500">날짜별</p>
                         <div className="mt-1 flex flex-col gap-1 text-[14px]">
@@ -1587,8 +1587,51 @@ export function TeamQuote() {
                               </div>
                             ))}
                         </div>
+                        {totalTab === -2 && (
+                          <div className="mt-3 rounded-xl bg-snow-100/70 px-3 py-2.5">
+                            <p className="text-[12px] font-semibold text-snow-500">🧮 이렇게 계산했어요</p>
+                            <div className="mt-1.5 flex flex-col gap-2">
+                              {schedule.map((d, i) => {
+                                const t = ticketOf(i);
+                                const items = extras.filter((x) => x.perDayList[i]?.sale);
+                                if (!t || !items.length) return null;
+                                const wk = isWeekend(startDate, i);
+                                const hol = !!startDate && isHoliday(startDate, i);
+                                return (
+                                  <div key={d.day}>
+                                    <p className="text-[12.5px] font-bold text-ink-900">
+                                      {d.day}일차{startDate && ` ${addDays(startDate, i)}`}{" "}
+                                      <span className={wk ? "text-rose-500" : "text-brand-600"}>{!startDate ? "주말" : hol ? "공휴일" : wk ? "주말" : "주중"}</span>
+                                    </p>
+                                    {items.map((x) => {
+                                      const p = x.perDayList[i];
+                                      const child = x.key.endsWith("-k");
+                                      const rental = x.key.startsWith("lr");
+                                      return (
+                                        <div key={x.key} className="mt-0.5 text-[12.5px] leading-snug text-snow-700">
+                                          <span>{child ? "어린이" : "어른"} · 리프트 {t}h{rental ? ` + 장비 ${RENTAL_H[t]}h` : ""}</span>
+                                          <span className="block tabular-nums text-ink-800">
+                                            정가 <s className="text-snow-400">{won(p.regular)}</s> → <b>{won(p.sale)}</b> × {x.count}명 = {won(p.sale * x.count)}
+                                          </span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                );
+                              })}
+                              {helmets.map((h) => (
+                                <p key={h.key} className="text-[12.5px] leading-snug text-snow-700">
+                                  ⛑️ {h.label} {won(h.key === "visor" ? HELMET_PRICE.visor : HELMET_PRICE.basic)} × {lessonDays}일 × {h.count}명 = {won(h.pp * h.count)}
+                                </p>
+                              ))}
+                            </div>
+                            <p className="mt-2 text-[11.5px] leading-snug text-snow-500">
+                              정가 = 비발디파크 매표소 요금 · 40% 할인 후 100원 단위 올림 · 주말·공휴일은 주말 요금 · 장비는 리프트보다 1시간 길게 · 헬멧은 할인 제외
+                            </p>
+                          </div>
+                        )}
                         <div className="mt-2 flex items-end justify-between border-t border-snow-300/60 pt-2">
-                          <span className="text-[14px] font-semibold text-ink-900">{totalTab === -1 ? "강습료 합계" : "장비료 합계"}</span>
+                          <span className="text-[14px] font-semibold text-ink-900">{totalTab === -1 ? "강습료 합계" : "리프트+장비 합계"}</span>
                           <span className="text-[24px] font-bold tabular-nums text-ink-900">
                             {won(totalTab === -1 ? lessonExact : extrasTotal + helmetTotal)}
                           </span>
@@ -1970,7 +2013,11 @@ function PriceGuide({ prices, people, rec: recIn }: { prices: { table: Record<Le
                     return ts.length ? (
                       <li key={l} className="flex gap-2">
                         <span className="w-11 shrink-0 font-semibold text-snow-500">{LEN_LABEL[l]}</span>
-                        <span>{ts.map((t) => (l === "2h" ? `${t.label} ${t.time}` : t.time)).join(" · ")}</span>
+                        <span className="flex flex-col">
+                          {ts.map((t) => (
+                            <span key={t.time} className="tabular-nums">{l === "2h" ? `${t.label} ${t.time}` : t.time}</span>
+                          ))}
+                        </span>
                       </li>
                     ) : null;
                   })}
