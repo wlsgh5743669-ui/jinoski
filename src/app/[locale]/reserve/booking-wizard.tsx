@@ -653,7 +653,25 @@ export function BookingWizard() {
 
       {!foreign && on(1) && <PayChoice storeUrl="/ko/store/" />}
       {foreign && on(1) && (
-        <div className="mt-6 flex flex-col gap-1.5 rounded-2xl border-2 border-[#003087]/30 bg-[#E8F0FE] px-4 py-3.5">
+        <a
+          href={`/${locale}/quote/`}
+          onClick={() => trackEvent("quote_open", { from: "reserve_top_foreign" })}
+          className="mt-6 flex items-center justify-between gap-3 rounded-2xl border-2 border-ink-900 bg-white px-4 py-3.5 transition-colors hover:bg-snow-100"
+        >
+          <span className="flex flex-col">
+            <span className="text-[15px] font-bold text-ink-900">🏔️ {locale === "zh" ? "多日·家庭报价计算" : "Multi-day & family quote"}</span>
+            <span className="mt-1 text-[12.5px] font-semibold leading-snug text-ink-900">
+              👉 {locale === "zh" ? "住几晚·每天上课·多个家庭一起？点这里" : "Staying a few nights, lessons every day or several families? Start here"}
+            </span>
+            <span className="mt-0.5 text-[12px] leading-snug text-snow-600">
+              {locale === "zh" ? "例：3天2夜 · 每天2次 · 缆车·装备6折 · 一次算好总价" : "e.g. 3 days · 2 lessons a day · lift & rental 40% off · see the total at once"}
+            </span>
+          </span>
+          <span className="shrink-0 text-[18px] font-bold text-ink-900">→</span>
+        </a>
+      )}
+      {foreign && on(1) && (
+        <div className="mt-2.5 flex flex-col gap-1.5 rounded-2xl border-2 border-[#003087]/30 bg-[#E8F0FE] px-4 py-3.5">
           <span className="text-[14.5px] font-bold text-[#003087]">💳 {locale === "zh" ? "海外客人：用 PayPal 付款" : "Overseas guests: pay with PayPal"}</span>
           <span className="text-[12.5px] leading-snug text-snow-700">
             {locale === "zh"
