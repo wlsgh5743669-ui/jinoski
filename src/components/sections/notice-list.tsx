@@ -83,6 +83,13 @@ export function NoticeStrip() {
   return (
     <Link href={`/notice#${n.id}`} className="flex items-center gap-2.5 rounded-2xl bg-ink-900 px-4 py-3 text-white transition-opacity hover:opacity-90">
       <Megaphone size={17} className="shrink-0 text-brand-300" />
+      {n.endDate && now && (() => {
+        const kst = new Date(now.getTime() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+        const d = Math.round((Date.parse(n.endDate) - Date.parse(kst)) / 86400000);
+        return d >= 0 && d <= 14 ? (
+          <span className="shrink-0 rounded-full bg-rose-500 px-2 py-0.5 text-[11.5px] font-bold text-white">{d === 0 ? (l === "ko" ? "오늘 마감" : l === "zh" ? "今天截止" : "Ends today") : `D-${d}`}</span>
+        ) : null;
+      })()}
       <span className="min-w-0 flex-1 truncate text-[13.5px] font-semibold">{n.title[l]}</span>
       <span className="shrink-0 text-[12.5px] font-bold text-brand-300">{l === "ko" ? "공지 →" : l === "zh" ? "公告 →" : "News →"}</span>
     </Link>

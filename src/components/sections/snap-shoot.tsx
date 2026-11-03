@@ -12,6 +12,8 @@ import { Lightbox } from "@/components/shared/lightbox";
 import { RevealGroup, revealItem } from "@/components/shared/reveal";
 import { getPrivacy } from "@/config/content/privacy";
 import { Link } from "@/i18n/navigation";
+import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
+import { attributionText } from "@/components/shared/attribution";
 import { getSnapContent, optionCost, type SnapPackage } from "@/config/content/snap";
 
 const KAKAO_NOTIFY_URL =
@@ -50,6 +52,8 @@ export function SnapShoot() {
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
   const [msg, setMsg] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [marketing, setMarketing] = useState(false);
 
   const selected = s.packages.find((p) => p.id === pkg)!;
   const lines = useMemo(() => {
@@ -97,7 +101,7 @@ export function SnapShoot() {
           equipment: "",
           level: "",
           total: b.won(total),
-          note: [`${b.delivery}: ${delivery}`, lines.slice(1).map((l) => l.label).join(", "), note.trim()].filter(Boolean).join(" / "),
+          note: [`${b.delivery}: ${delivery}`, lines.slice(1).map((l) => l.label).join(", "), note.trim(), marketingTag(marketing), attributionText()].filter(Boolean).join(" / "),
         }),
       });
     } catch {
@@ -107,12 +111,14 @@ export function SnapShoot() {
 
   async function onSms() {
     if (!valid) return setMsg(b.required);
+    if (!consent) return;
     notify();
     setMsg(b.sentNotice);
     window.location.href = smsHref(contact.phone, message);
   }
   async function onKakao() {
     if (!valid) return setMsg(b.required);
+    if (!consent) return;
     notify();
     try {
       await navigator.clipboard.writeText(message);
@@ -394,7 +400,8 @@ export function SnapShoot() {
                 </div>
               </div>
 
-              <div className="grid gap-2 sm:grid-cols-2">
+              <ConsentBox locale={locale} agree={consent} onAgree={setConsent} marketing={marketing} onMarketing={setMarketing} />
+              <div className={`grid gap-2 sm:grid-cols-2 ${consent ? "" : "pointer-events-none opacity-40"}`}>
                 <button type="button" onClick={onSms} className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-500 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-brand-600">
                   <Smartphone size={17} /> {b.smsButton}
                 </button>
@@ -403,12 +410,6 @@ export function SnapShoot() {
                 </button>
               </div>
               {msg && <p className="text-center text-[13.5px] font-medium text-brand-600">{msg}</p>}
-              <p className="text-center text-[12px] leading-relaxed text-snow-500">
-                {privacy.formNotice}{" "}
-                <Link href="/privacy" className="font-semibold underline underline-offset-2">
-                  {privacy.footerLink}
-                </Link>
-              </p>
             </div>
           </div>
         </Container>

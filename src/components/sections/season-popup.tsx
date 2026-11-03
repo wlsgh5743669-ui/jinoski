@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useLocale } from "next-intl";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { isEarlyBirdActive } from "@/lib/pricing";
+import { EARLY_BIRD, isEarlyBirdActive } from "@/lib/pricing";
 
 const DISMISS_KEY = "jinoski-earlybird-popup-dismissed-date";
 
@@ -92,7 +92,13 @@ export function SeasonPopup() {
         >
           <button type="button" onClick={() => setOpen(true)} className="min-w-0 flex-1 text-left">
             <span className="block text-[13.5px] font-bold">🎁 26/27 얼리버드 10% 할인</span>
-            <span className="block text-[12px] text-white/70">11/10까지 예약 · 시즌 8회 패키지 · 눌러서 보기</span>
+            <span className="block text-[12px] text-white/70">
+              {(() => {
+                const kst = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+                const d = Math.round((Date.parse(EARLY_BIRD.endDate) - Date.parse(kst)) / 86400000);
+                return d === 0 ? "오늘 마감!" : d > 0 && d <= 14 ? `마감 D-${d} · 11/10까지 예약` : "11/10까지 예약";
+              })()} · 시즌 8회 패키지 · 눌러서 보기
+            </span>
           </button>
           <button type="button" aria-label="닫기" onClick={closeBanner} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10">
             <X size={16} />

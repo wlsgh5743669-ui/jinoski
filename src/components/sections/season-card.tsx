@@ -236,7 +236,7 @@ export function SeasonView() {
               className="flex flex-col items-center justify-center rounded-2xl bg-[#03C75A] px-4 py-3 text-white"
             >
               <span className="text-[16px] font-bold">💳 바로 결제하기 (네이버페이·카드)</span>
-              <span className="mt-0.5 text-[12px] text-white/85">스마트스토어 · 옵션에서 시간·인원 선택 → 결제 후 카톡으로 희망 날짜 알려주세요</span>
+              <span className="mt-0.5 text-[12px] text-white/85">스마트스토어 · 옵션에서 시간·인원 선택 · 패찰은 별도 → 결제 후 카톡으로 희망 날짜 알려주세요</span>
             </a>
             <button
               type="button"
