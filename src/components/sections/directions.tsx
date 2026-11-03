@@ -63,7 +63,7 @@ export function Directions() {
               href={btn.href}
               target="_blank"
               rel="noreferrer"
-              className="flex h-14 flex-1 items-center justify-center rounded-full border border-snow-300 text-[15px] font-semibold text-ink-900 transition-all hover:border-brand-500 hover:text-brand-600 active:scale-[0.98]"
+              className="flex h-14 shrink-0 sm:flex-1 items-center justify-center rounded-full border border-snow-300 text-[15px] font-semibold text-ink-900 transition-all hover:border-brand-500 hover:text-brand-600 active:scale-[0.98]"
             >
               {btn.label}
             </motion.a>

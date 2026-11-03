@@ -375,7 +375,7 @@ function SeasonProgramCard() {
       <div className="mt-auto flex flex-col gap-3 sm:flex-row">
         <a
           href={contact.phoneHref}
-          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-brand-500 text-[14px] font-semibold text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
+          className="inline-flex h-12 shrink-0 sm:flex-1 items-center justify-center gap-2 rounded-full bg-brand-500 text-[14px] font-semibold text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
         >
           <Phone size={16} />
           {seasonProgram.phoneButton}
@@ -384,7 +384,7 @@ function SeasonProgramCard() {
           href={contact.kakaoChannel}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full border border-snow-300 text-[14px] font-semibold text-ink-900 transition-colors hover:border-brand-500"
+          className="inline-flex h-12 shrink-0 sm:flex-1 items-center justify-center gap-2 rounded-full border border-snow-300 text-[14px] font-semibold text-ink-900 transition-colors hover:border-brand-500"
         >
           <MessageCircle size={16} />
           {seasonProgram.kakaoButton}
