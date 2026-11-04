@@ -81,6 +81,7 @@ const RULES: Rule[] = [
   ["중학생 이상", "Age 14+", "14岁以上"],
   ["날짜마다 순서대로 골라주세요", "Choose for each day", "请按日期依次选择"],
   ["몇 번 → 몇 시간 → 몇 교시 (날마다 달라도 돼요)", "How many → how long → which time (can differ each day)", "几次 → 几小时 → 哪个时段（每天可以不同）"],
+  [" · 4시간 수업은 하루 1번만 돼요", " · 4-hour lessons are once a day only", " · 4小时课程每天仅限1节"],
   ["하루 2번이면 중간에 점심 먹고 쉬어요 · 2시간 수업은 1+3교시 또는 2+4교시를 추천드려요", "Two lessons a day include a lunch break · for 2-hour lessons we recommend periods 1+3 or 2+4", "一天两节课中间有午休 · 2小时课程推荐第1+3节或第2+4节"],
   ["강사 1명이 최대 3명까지 가르쳐요. 실력·나이가 비슷한 분끼리 묶어드려요.", "One instructor teaches up to 3 students. We group people of similar level and age.", "每位教练最多教3人，我们会把水平和年龄相近的人分在一组。"],
   ["다른 방법으로 나누기", "Other ways to split", "其他分组方式"],

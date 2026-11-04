@@ -296,7 +296,9 @@ export function TeamQuote() {
   for (let i = 0; i < days; i++) {
     const prevLen = dayPlans[i - 1]?.len ?? len;
     const p = plans[i] ?? defaultPlan(i, prevLen);
-    dayPlans.push({ ...p, len: p.len ?? prevLen });
+    const l0 = p.len ?? prevLen;
+    // 4시간 수업은 하루 1번만 (2번이면 2시간 2번으로 — 2+2를 4+4로 잘못 고르는 손님이 많아서)
+    dayPlans.push(p.n === 2 && l0 === "4h" ? { ...p, len: "2h", two: 0 } : { ...p, len: l0 });
   }
   const planIdx = (p: Plan) => {
     const l = p.len ?? len;
@@ -1080,7 +1082,7 @@ export function TeamQuote() {
                         {p.n > 0 && (
                           <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                             <span className="text-[12px] font-semibold text-snow-500">수업 시간</span>
-                            {BASE_LENS.map((l) => (
+                            {BASE_LENS.filter((l) => !(p.n === 2 && l === "4h")).map((l) => (
                               <button
                                 key={l}
                                 type="button"
@@ -1192,7 +1194,7 @@ export function TeamQuote() {
                     ))}
                   </ul>
                   <p className="mt-3 text-[12.5px] text-snow-500">
-                    하루 2번이면 중간에 점심 먹고 쉬어요 · 2시간 수업은 1+3교시 또는 2+4교시를 추천드려요
+                    하루 2번이면 중간에 점심 먹고 쉬어요 · 2시간 수업은 1+3교시 또는 2+4교시를 추천드려요 · 4시간 수업은 하루 1번만 돼요
                   </p>
                   <p className="mt-1 text-right text-[14px] font-bold text-brand-600">총 수업 {sessions}회</p>
                 </div>
