@@ -4,6 +4,7 @@ import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
 import { Pricing } from "@/components/sections/pricing";
 import { PaymentMethods } from "@/components/sections/payment-methods";
+import { LiftDiscountCard } from "@/components/sections/lift-discount-card";
 
 export async function generateMetadata({
   params,
@@ -42,6 +43,7 @@ export default async function PricingPage({
         </a>
       </PageHero>
       <Pricing />
+      <LiftDiscountCard />
       <PaymentMethods locale={isLocale(locale) ? locale : defaultLocale} />
     </>
   );
