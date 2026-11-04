@@ -5,6 +5,7 @@ import { PageHero } from "@/components/shared/page-hero";
 import { Pricing } from "@/components/sections/pricing";
 import { PaymentMethods } from "@/components/sections/payment-methods";
 import { LiftDiscountCard } from "@/components/sections/lift-discount-card";
+import { MessengerCard } from "@/components/shared/messenger-buttons";
 
 export async function generateMetadata({
   params,
@@ -44,6 +45,11 @@ export default async function PricingPage({
       </PageHero>
       <Pricing />
       <LiftDiscountCard />
+      {locale !== "ko" && (
+        <div className="-mt-6 bg-white px-5 pb-14">
+          <MessengerCard locale={locale} place="pricing" />
+        </div>
+      )}
       <PaymentMethods locale={isLocale(locale) ? locale : defaultLocale} />
     </>
   );

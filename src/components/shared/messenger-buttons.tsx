@@ -5,7 +5,8 @@ import { MessageCircle, X } from "lucide-react";
 import { trackEvent } from "@/components/shared/analytics";
 import { hasLine, hasWeChat, LINE_URL, WECHAT_ID, WECHAT_QR, whatsappHref } from "@/config/messengers";
 
-export const MSG_COLORS = { whatsapp: "#25D366", line: "#06C755", wechat: "#07C160" } as const;
+export const MSG_COLORS = { whatsapp: "#25D366", line: "#06C755", wechat: "#07C160", kakao: "#FEE500" } as const;
+export const KAKAO_CHAT_URL = "https://pf.kakao.com/_RCzHn/chat";
 
 /** 위챗은 링크가 없어서 아이디·QR을 보여주는 창 */
 export function WeChatModal({ onClose, locale }: { onClose: () => void; locale: string }) {
@@ -56,16 +57,17 @@ export function WeChatModal({ onClose, locale }: { onClose: () => void; locale: 
 export function MessengerButtons({ locale, place }: { locale: string; place: string }) {
   const [wc, setWc] = useState(false);
   const zh = locale === "zh";
-  const btn = "inline-flex h-12 flex-1 items-center justify-center gap-1.5 rounded-full text-[14.5px] font-bold text-white transition-transform active:scale-[0.98]";
+  const btn = "inline-flex h-12 items-center justify-center gap-1.5 rounded-full text-[14.5px] font-bold text-white transition-transform active:scale-[0.98]";
   const items = [
     ...(zh && hasWeChat() ? [{ key: "wechat", label: "WeChat", onClick: () => setWc(true) }] : []),
     { key: "whatsapp", label: "WhatsApp", href: whatsappHref(locale) },
     ...(hasLine() ? [{ key: "line", label: "LINE", href: LINE_URL }] : []),
     ...(!zh && hasWeChat() ? [{ key: "wechat", label: "WeChat", onClick: () => setWc(true) }] : []),
+    { key: "kakao", label: "KakaoTalk", href: KAKAO_CHAT_URL },
   ] as { key: keyof typeof MSG_COLORS; label: string; href?: string; onClick?: () => void }[];
   return (
     <>
-      <div className="flex gap-2">
+      <div className="grid grid-cols-2 gap-2">
         {items.map((it) =>
           it.href ? (
             <a
@@ -75,7 +77,7 @@ export function MessengerButtons({ locale, place }: { locale: string; place: str
               rel="noreferrer"
               onClick={() => trackEvent("contact_click", { channel: it.key, place })}
               className={btn}
-              style={{ background: MSG_COLORS[it.key] }}
+              style={{ background: MSG_COLORS[it.key], color: it.key === "kakao" ? "#191919" : undefined }}
             >
               <MessageCircle size={17} fill="currentColor" /> {it.label}
             </a>
@@ -88,7 +90,7 @@ export function MessengerButtons({ locale, place }: { locale: string; place: str
                 it.onClick?.();
               }}
               className={btn}
-              style={{ background: MSG_COLORS[it.key] }}
+              style={{ background: MSG_COLORS[it.key], color: it.key === "kakao" ? "#191919" : undefined }}
             >
               <MessageCircle size={17} fill="currentColor" /> {it.label}
             </button>
@@ -97,5 +99,24 @@ export function MessengerButtons({ locale, place }: { locale: string; place: str
       </div>
       {wc && <WeChatModal locale={locale} onClose={() => setWc(false)} />}
     </>
+  );
+}
+
+/** 영어·중국어 페이지 「메신저로 문의하기」 카드 (홈 상담 구간 · 요금 안내) */
+export function MessengerCard({ locale, place }: { locale: string; place: string }) {
+  if (locale !== "en" && locale !== "zh") return null;
+  const zh = locale === "zh";
+  return (
+    <div className="mx-auto max-w-2xl rounded-3xl bg-white p-6 ring-1 ring-snow-300/60 sm:p-7">
+      <p className="text-[18px] font-bold text-ink-900">💬 {zh ? "用聊天软件联系我们" : "Chat with us"}</p>
+      <p className="mt-1 text-[13.5px] leading-snug text-snow-700">
+        {zh
+          ? "WhatsApp · 微信 · LINE · KakaoTalk 都可以 · 24小时内回复"
+          : "WhatsApp, WeChat, LINE or KakaoTalk — whatever you use. We reply within 24 hours (English OK)."}
+      </p>
+      <div className="mt-4">
+        <MessengerButtons locale={locale} place={place} />
+      </div>
+    </div>
   );
 }

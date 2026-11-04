@@ -8,6 +8,7 @@ import { useContent } from "@/lib/use-content";
 import { displayPhone, getConsult, kakaoAddFriendUrl } from "@/config/content/consult";
 import { trackEvent } from "@/components/shared/analytics";
 import { InquiryForm } from "@/components/sections/inquiry-form";
+import { MessengerCard } from "@/components/shared/messenger-buttons";
 
 /** 홈 '상담 안내' 구간: 카카오톡 채널(외국어는 이메일) + 24시간 유선 상담 */
 export function Consult() {
@@ -29,6 +30,11 @@ export function Consult() {
           </div>
         </Reveal>
 
+        {!ko && (
+          <div className="mt-8">
+            <MessengerCard locale={locale} place="home_consult" />
+          </div>
+        )}
         <div className="mx-auto mt-10 grid max-w-4xl gap-4 md:grid-cols-2">
           {/* 카카오톡 채널 / 이메일 */}
           <Reveal delay={0.05}>

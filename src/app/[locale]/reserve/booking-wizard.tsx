@@ -53,7 +53,10 @@ import { HOLIDAYS, HOLIDAY_NAMES, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRIC
 /** 영어·중국어 예약: 문자·카톡 대신 이메일로 접수하고 이메일로 확정 안내 */
 const FOREIGN_TEXT = {
   en: {
-    emailPlaceholder: "Email (we'll send your confirmation here)",
+    emailPlaceholder: "Email (or leave a messenger below)",
+    msgTitle: "How should we contact you?",
+    msgHint: "Email or messenger — either one is fine",
+    msgId: { WhatsApp: "WhatsApp number with country code (e.g. +65 9123 4567)", WeChat: "WeChat ID", LINE: "LINE ID", KakaoTalk: "KakaoTalk ID" },
     phonePlaceholder: "Phone with country code (optional)",
     messengerPlaceholder: "WhatsApp / LINE / WeChat ID (optional)",
     emailField: "email",
@@ -70,7 +73,10 @@ const FOREIGN_TEXT = {
     copied: "Copied",
   },
   zh: {
-    emailPlaceholder: "电子邮箱（确认信息将发送至此）",
+    emailPlaceholder: "电子邮箱（或在下方留聊天软件）",
+    msgTitle: "我们怎么联系您？",
+    msgHint: "邮箱或聊天软件，留一个即可",
+    msgId: { WhatsApp: "WhatsApp号码（含国家区号，如 +86 138 0000 0000）", WeChat: "微信号", LINE: "LINE ID", KakaoTalk: "KakaoTalk ID" },
     phonePlaceholder: "手机号码（含国家区号，选填）",
     messengerPlaceholder: "WeChat / WhatsApp / LINE ID（选填）",
     emailField: "电子邮箱",
@@ -89,6 +95,11 @@ const FOREIGN_TEXT = {
 type ForeignLocale = keyof typeof FOREIGN_TEXT;
 const isForeignLocale = (l: string): l is ForeignLocale => l === "en" || l === "zh";
 const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+/** 외국 손님 연락처: 이메일 또는 (메신저 종류 + 아이디) 중 하나면 OK */
+const foreignContactOk = (s: { email: string; msgApp: string; messenger: string }) =>
+  isValidEmail(s.email) || (!!s.msgApp && s.messenger.trim().length >= 3);
+const msgLine = (s: { msgApp: string; messenger: string }) =>
+  s.messenger.trim() ? `${s.msgApp || "Messenger"}: ${s.messenger.trim()}` : "";
 
 type WizardState = {
   date: string;
@@ -114,6 +125,7 @@ type WizardState = {
   earlyBird: boolean;
   email: string;
   messenger: string;
+  msgApp: "" | "WhatsApp" | "WeChat" | "LINE" | "KakaoTalk";
 };
 
 const INITIAL_STATE: WizardState = {
@@ -138,6 +150,7 @@ const INITIAL_STATE: WizardState = {
   earlyBird: isEarlyBirdActive(),
   email: "",
   messenger: "",
+  msgApp: "",
 };
 
 function formatPrice(value: number, content: SiteContent): string {
@@ -275,11 +288,11 @@ async function notifyOwnerKakao(state: WizardState, content: SiteContent, locale
   const ko = foreign ? getContent("ko") : content;
   const breakdown = buildPriceBreakdown(state, ko);
   const contact = foreign
-    ? [state.email.trim(), state.phone.trim()].filter(Boolean).join(" / ")
+    ? [state.email.trim(), state.phone.trim(), msgLine(state)].filter(Boolean).join(" / ")
     : state.phone.trim();
   const note = (
     foreign
-      ? [`${locale === "zh" ? "중국어" : "영어"} 예약·이메일 회신`, state.messenger.trim(), state.requestNote.trim()]
+      ? [`${locale === "zh" ? "중국어" : "영어"} 예약·${isValidEmail(state.email) ? "이메일" : state.msgApp || "메신저"} 회신`, msgLine(state), state.requestNote.trim()]
       : [state.requestNote.trim()]
   )
     .concat(marketingTag(state.marketing), attributionText())
@@ -376,7 +389,7 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
       ? [
           state.email.trim() ? `Email: ${state.email.trim()}` : "",
           state.phone.trim() ? `${labels.phone}: ${state.phone.trim()}` : "",
-          state.messenger.trim() ? `WhatsApp/LINE/WeChat: ${state.messenger.trim()}` : "",
+          msgLine(state),
         ].filter(Boolean)
       : [`${labels.phone}: ${state.phone.trim()}`]),
     `${labels.date}: ${state.date}`,
@@ -560,7 +573,7 @@ export function BookingWizard() {
       case 8:
         return (
           state.name.trim().length > 0 &&
-          (foreign ? isValidEmail(state.email) : state.phone.trim().length >= 9) &&
+          (foreign ? foreignContactOk(state) : state.phone.trim().length >= 9) &&
           state.ageGroup !== null &&
           state.consent
         );
@@ -1077,13 +1090,39 @@ export function BookingWizard() {
                     className="h-14 rounded-2xl border border-snow-300/60 px-5 text-[15px] outline-none transition-colors focus:border-brand-500"
                   />
                   {ft && (
-                    <input
-                      type="text"
-                      placeholder={ft.messengerPlaceholder}
-                      value={state.messenger}
-                      onChange={(e) => update("messenger", e.target.value)}
-                      className="h-14 rounded-2xl border border-snow-300/60 px-5 text-[15px] outline-none transition-colors focus:border-brand-500"
-                    />
+                    <div className="rounded-2xl border border-snow-300/60 bg-snow-100/50 px-4 py-3.5">
+                      <p className="text-[14px] font-bold text-ink-900">💬 {ft.msgTitle}</p>
+                      <p className="mt-0.5 text-[12.5px] text-snow-700">{ft.msgHint}</p>
+                      <div className="mt-2.5 grid grid-cols-2 gap-1.5">
+                        {(["WhatsApp", "WeChat", "LINE", "KakaoTalk"] as const).map((app) => {
+                          const on = state.msgApp === app;
+                          const col = { WhatsApp: "#25D366", WeChat: "#07C160", LINE: "#06C755", KakaoTalk: "#FEE500" }[app];
+                          return (
+                            <button
+                              key={app}
+                              type="button"
+                              onClick={() => update("msgApp", on ? "" : app)}
+                              className={cn(
+                                "flex h-11 items-center justify-center gap-1.5 rounded-xl border text-[14px] font-bold transition-colors",
+                                on ? "border-ink-900 bg-white text-ink-900 ring-1 ring-ink-900" : "border-snow-300/70 bg-white text-ink-700"
+                              )}
+                            >
+                              <span className="h-2.5 w-2.5 rounded-full" style={{ background: col }} />
+                              {app}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {state.msgApp && (
+                        <input
+                          type={state.msgApp === "WhatsApp" ? "tel" : "text"}
+                          placeholder={ft.msgId[state.msgApp]}
+                          value={state.messenger}
+                          onChange={(e) => update("messenger", e.target.value)}
+                          className="mt-2 h-12 w-full rounded-xl border border-snow-300/60 bg-white px-4 text-[15px] outline-none transition-colors focus:border-brand-500"
+                        />
+                      )}
+                    </div>
                   )}
                   <div>
                     <p className="mb-2.5 text-[13.5px] font-semibold text-ink-900">
@@ -1269,7 +1308,7 @@ export function BookingWizard() {
         const g = content.bookingWizard.guide;
         const missing = [
           !state.name.trim() && g.fieldNames.name,
-          (ft ? !isValidEmail(state.email) && ft.emailField : state.phone.trim().length < 9 && g.fieldNames.phone),
+          (ft ? !foreignContactOk(state) && ft.msgHint : state.phone.trim().length < 9 && g.fieldNames.phone),
           !state.ageGroup && g.fieldNames.ageGroup,
         ].filter(Boolean) as string[];
         return missing.length ? (
@@ -1598,7 +1637,7 @@ function ForeignSummaryView({
         {sent ? ft.heading : ft.failedHeading}
       </h1>
       <p className="mt-3 text-[14.5px] leading-relaxed text-snow-700">
-        {sent ? ft.description(state.email.trim()) : ft.failedDescription}
+        {sent ? ft.description(state.email.trim() || msgLine(state)) : ft.failedDescription}
       </p>
 
       <pre className="mt-6 whitespace-pre-wrap rounded-2xl border border-snow-300/60 bg-white p-6 text-[14px] leading-relaxed text-ink-800">
