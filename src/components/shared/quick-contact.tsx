@@ -1,6 +1,6 @@
 "use client";
 
-import { Calculator, Instagram, Mail, MessageCircle, Phone, X } from "lucide-react";
+import { Calculator, Instagram, Mail, MessageCircle, MessageSquareText, Phone, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { useContent } from "@/lib/use-content";
@@ -10,9 +10,9 @@ import { hasLine, hasWeChat, LINE_URL, whatsappHref } from "@/config/messengers"
 import { MSG_COLORS, WeChatModal } from "@/components/shared/messenger-buttons";
 
 const LABELS = {
-  ko: { kakao: "카톡", email: "메일", insta: "인스타", phone: "전화" },
-  en: { kakao: "Kakao", email: "Email", insta: "Insta", phone: "Call" },
-  zh: { kakao: "Kakao", email: "邮件", insta: "Insta", phone: "电话" },
+  ko: { chat: "문의", chatAria: "채팅으로 문의하기", kakao: "카톡", email: "메일", insta: "인스타", phone: "전화" },
+  en: { chat: "Chat", chatAria: "Chat with us", kakao: "Kakao", email: "Email", insta: "Insta", phone: "Call" },
+  zh: { chat: "留言", chatAria: "在线留言咨询", kakao: "Kakao", email: "邮件", insta: "Insta", phone: "电话" },
 } as const;
 
 /**
@@ -55,7 +55,20 @@ export function QuickContact() {
         ...(locale !== "zh" && hasWeChat() ? [wechatItem] : []),
       ];
 
+  // 맨 위 「문의」: inbox.jinoski.com 채팅창을 연다 (위젯 자체 버튼은 globals.css에서 숨김).
+  // 위젯이 아직 안 불러와졌으면 한국어는 카톡 채널, 영어·중국어는 홈 문의 칸으로.
+  const chatItem = {
+    key: "chat",
+    href: ko ? contact.kakaoChannel : `/${locale}/#inquiry`,
+    external: ko,
+    label: l.chat,
+    aria: l.chatAria,
+    circle: "bg-[#2DA8FF] text-white",
+    icon: <MessageSquareText size={18} />,
+  };
+
   const items: { key: string; href: string; external: boolean; label: string; aria: string; circle: string; bg?: string; icon: React.ReactNode }[] = [
+    chatItem,
     ...messengers,
     // 한국어: 맨 위에 「견적」 — 가족·연박 손님이 바로 계산해 볼 수 있게
     ...(ko
@@ -131,6 +144,14 @@ export function QuickContact() {
             if (it.key === "wechat") {
               e.preventDefault();
               setWc(true);
+            }
+            if (it.key === "chat") {
+              const b = document.getElementById("jk-chat-btn");
+              if (b) {
+                e.preventDefault();
+                setOpen(false);
+                b.click();
+              }
             }
           }}
           aria-label={it.aria}

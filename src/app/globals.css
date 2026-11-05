@@ -121,19 +121,14 @@ body {
   .text-\[11\.5px\] { font-size: 12px; }
 }
 
-/* inbox.jinoski.com 채팅 위젯: 오른쪽 아래 「상담」 버튼 묶음과 겹치지 않게 왼쪽 아래로 */
-#jk-chat-btn,
+/* inbox.jinoski.com 채팅 위젯: 자체 「문의하기」 버튼은 숨기고, 오른쪽 아래 「상담」 묶음의 「문의」로 연다 (quick-contact.tsx).
+   채팅창은 「상담」 버튼 바로 위, 오른쪽에 뜬다. */
+#jk-chat-btn { display: none !important; }
 #jk-chat {
-  right: auto !important;
-  left: 16px !important;
+  right: 12px !important;
+  left: auto !important;
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
 }
-#jk-chat-btn { bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important; }
-#jk-chat { bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important; }
-/* 모바일: 아래쪽 시즌 안내 배너(season-popup, 높이 약 58px)가 떠 있는 동안만 그 위로 올려서 겹치지 않게 */
-@media (max-width: 639px) {
-  body:has([data-season-banner]) #jk-chat-btn { bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important; }
-  body:has([data-season-banner]) #jk-chat {
-    bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
-    height: min(520px, calc(100vh - 150px)) !important;
-  }
+@media (min-width: 640px) {
+  #jk-chat { right: 20px !important; bottom: 92px !important; }
 }

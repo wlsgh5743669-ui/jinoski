@@ -95,7 +95,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         {children}
-        {/* 손님 채팅창(왼쪽 아래 「문의하기」) — 메시지는 inbox.jinoski.com 수신함으로 모이고 AI 초안을 대표가 확인 후 답장 */}
+        {/* 손님 채팅창(오른쪽 아래 「상담」 → 「문의」로 열림) — 메시지는 inbox.jinoski.com 수신함으로 모이고 AI 초안을 대표가 확인 후 답장 */}
         <Script src="https://inbox.jinoski.com/widget.js" strategy="lazyOnload" />
       </body>
     </html>
