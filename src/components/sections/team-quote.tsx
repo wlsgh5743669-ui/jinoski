@@ -1211,6 +1211,15 @@ export function TeamQuote() {
                     🎿 스키 {skiN}명 · 🏂 보드 {boardN}명 — 스키와 보드는 반을 따로 나눠요
                   </p>
                 )}
+                {people === 1 ? (
+                  <div className="rounded-2xl border-2 border-brand-500 bg-brand-50 px-4 py-3.5">
+                    <p className="text-[17px] font-bold text-brand-600">✓ 1:1 전담 레슨</p>
+                    <p className="mt-1 text-[13.5px] leading-snug text-snow-700">
+                      1명이라 강사 1명이 처음부터 끝까지 전담해요. 고를 것 없이 <b>다음</b>을 눌러주세요.
+                    </p>
+                    <p className="mt-1.5 text-right text-[15px] font-bold tabular-nums text-ink-900">1인 1회 약 {won(perHead1)}</p>
+                  </div>
+                ) : <>
                 {[
                   { title: "알뜰하게", sp: splitCheapest, desc: "강사 1명당 3명까지" },
                   { title: "소수정예", sp: splitSmall, desc: "강사 1명당 2명까지" },
@@ -1224,7 +1233,7 @@ export function TeamQuote() {
                       desc={o.desc}
                       sp={o.sp}
                       on={usedSplit.join() === o.sp.join()}
-                      pp={sessions ? Math.round(o.sp.reduce((a, g) => a + groupCost(g), 0) / people / 1000) * 1000 : 0}
+                      pp={sessions ? Math.round(o.sp.reduce((a, g) => a + Math.round(groupTotal(g) / g / 100) * 100 * g, 0) / people / sessions / 1000) * 1000 : 0}
                       onClick={() => setSplit(o.sp)}
                     />
                   ))}
@@ -1244,12 +1253,13 @@ export function TeamQuote() {
                           usedSplit.join() === sp.join() ? "border-brand-500 bg-brand-50 text-brand-600" : "border-snow-300/70 text-ink-900"
                         )}
                       >
-                        {sp.join(" + ")}
+                        {splitText(sp)}
                         <span className="block text-[11.5px] font-medium text-snow-500">강사 {sp.length}명</span>
                       </button>
                     ))}
                   </div>
                 )}
+                </>}
               </div>
             )}
 
@@ -2160,11 +2170,11 @@ function BigCounter({ label, sub, value, max, onChange }: { label: string; sub: 
 
 /** 2+2+1 / 인원이 많으면 3명×4 + 2명 */
 function splitText(sp: number[]) {
-  if (sp.length <= 4) return sp.join("+");
+  if (sp.length <= 4) return sp.map((n) => `1:${n}`).join(" + ");
   return [3, 2, 1]
     .map((n) => ({ n, c: sp.filter((x) => x === n).length }))
     .filter((x) => x.c)
-    .map((x) => (x.c > 1 ? `${x.n}명×${x.c}` : `${x.n}명`))
+    .map((x) => (x.c > 1 ? `1:${x.n}×${x.c}반` : `1:${x.n}`))
     .join(" + ");
 }
 function SplitButton({
