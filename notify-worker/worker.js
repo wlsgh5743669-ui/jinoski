@@ -62,6 +62,28 @@ export default {
         return text("ok", 200, cors);
       }
 
+      // ── 통합 상담 수신함(inbox.jinoski.com)용: 대표 확인이 필요한 문의를 카톡 「나와의 채팅」으로 알림 ──
+      // NOTIFY_KEY 변수가 있으면 Authorization: Bearer NOTIFY_KEY 로 확인, 없으면 POST / 와 같이 허용된 Origin(inbox.jinoski.com)만 받음.
+      // 문의함(KV)에는 저장하지 않음.
+      if (request.method === "POST" && url.pathname === "/notify") {
+        const authed = env.NOTIFY_KEY
+          ? request.headers.get("Authorization") === `Bearer ${env.NOTIFY_KEY}`
+          : !!cors["Access-Control-Allow-Origin"];
+        if (!authed) return text("forbidden", 403);
+        const b = await request.json().catch(() => ({}));
+        const msg = typeof b.text === "string" ? b.text.trim().slice(0, 1200) : "";
+        if (!msg) return text("missing text", 400);
+        const link = typeof b.link === "string" && /^https:\/\/inbox\.jinoski\.com\//.test(b.link) ? b.link : "";
+        try {
+          await sendMemo(env, msg, link, "수신함 열기");
+        } catch (e) {
+          // 카카오 앱에 inbox.jinoski.com 도메인이 등록돼 있지 않으면 링크 버튼이 거부될 수 있음 → 주소를 글에 넣어 다시 보냄
+          console.error("notify with link failed", e);
+          await sendMemo(env, link ? `${msg}\n${link}` : msg);
+        }
+        return text("ok");
+      }
+
       // ── 운영 프로그램용: 문의 목록 / 상태 변경 ──
       if (url.pathname === "/inquiries" || url.pathname === "/inquiries/update") {
         if (!env.QUOTES_KEY || request.headers.get("Authorization") !== `Bearer ${env.QUOTES_KEY}`) return text("forbidden", 403, cors);
@@ -343,8 +365,8 @@ function splitMessage(message, max = 190) {
   return parts.slice(0, 6);
 }
 
-async function sendMemo(env, message, link = "") {
-  // 견적은 「견적 보기」(손님 견적 화면), 예약 문의는 「문의함 보기」(jinoski.com 문의함)
+async function sendMemo(env, message, link = "", buttonTitle = "") {
+  // 견적은 「견적 보기」(손님 견적 화면), 예약 문의는 「문의함 보기」(jinoski.com 문의함), 수신함 알림은 「수신함 열기」
   const url = link || `${SITE_URL}/ko/quote/inbox/`;
   const parts = splitMessage(message);
   for (let i = 0; i < parts.length; i++) {
@@ -353,7 +375,7 @@ async function sendMemo(env, message, link = "") {
       object_type: "text",
       text,
       link: { web_url: url, mobile_web_url: url },
-      button_title: link ? "견적 보기" : "문의함 보기",
+      button_title: buttonTitle || (link ? "견적 보기" : "문의함 보기"),
     });
   }
 }

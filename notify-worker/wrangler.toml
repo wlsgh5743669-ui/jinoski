@@ -1,13 +1,15 @@
 name = "jinoski-notify"
 main = "worker.js"
-compatibility_date = "2026-09-01"
+compatibility_date = "2026-09-25"
+# 대시보드에서 직접 넣은 변수(KAKAO_REST_KEY 등)를 배포할 때 지우지 않음
+keep_vars = true
 
 [vars]
-ALLOWED_ORIGINS = "https://jinoski.com,https://www.jinoski.com,http://localhost:3000"
+ALLOWED_ORIGINS = "https://jinoski.com,https://www.jinoski.com,https://inbox.jinoski.com,http://localhost:3000"
 
 [[kv_namespaces]]
 binding = "TOKENS"
-id = "여기에_KV_ID_입력"   # npx wrangler kv namespace create TOKENS 결과의 id
+id = "2b7e64297a8e4885915d259f52ae7236"   # jinoski-notify-tokens
 
 [triggers]
 crons = ["0 3 * * 1"]   # 매주 월요일 토큰 갱신
