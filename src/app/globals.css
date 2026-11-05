@@ -129,3 +129,11 @@ body {
 }
 #jk-chat-btn { bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important; }
 #jk-chat { bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important; }
+/* 모바일: 아래쪽 시즌 안내 배너(season-popup, 높이 약 58px)가 떠 있는 동안만 그 위로 올려서 겹치지 않게 */
+@media (max-width: 639px) {
+  body:has([data-season-banner]) #jk-chat-btn { bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important; }
+  body:has([data-season-banner]) #jk-chat {
+    bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
+    height: min(520px, calc(100vh - 150px)) !important;
+  }
+}

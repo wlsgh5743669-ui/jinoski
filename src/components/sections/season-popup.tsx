@@ -88,6 +88,7 @@ export function SeasonPopup() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 24 }}
           transition={{ duration: 0.3 }}
+          data-season-banner=""
           className="fixed bottom-[calc(16px+env(safe-area-inset-bottom,0px))] left-3 right-[76px] z-40 flex items-center gap-2 rounded-2xl bg-ink-900 py-2.5 pl-4 pr-2 text-white shadow-[0_12px_30px_-10px_rgba(10,11,13,0.6)] sm:left-auto sm:right-24 sm:max-w-sm"
         >
           <button type="button" onClick={() => setOpen(true)} className="min-w-0 flex-1 text-left">
