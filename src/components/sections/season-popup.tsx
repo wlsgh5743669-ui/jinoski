@@ -48,8 +48,24 @@ export function SeasonPopup() {
       dismissed = false;
     }
     if (dismissed) return;
-    const t = setTimeout(() => setBanner(true), 3000);
-    return () => clearTimeout(t);
+    // 첫 화면의 「예약하기·레슨 보기」 버튼을 가리지 않도록,
+    // 3초가 지나고 + 첫 화면을 어느 정도 내린 뒤에만 띄워요.
+    let waited = false;
+    const check = () => {
+      if (waited && window.scrollY > window.innerHeight * 0.7) {
+        setBanner(true);
+        window.removeEventListener("scroll", check);
+      }
+    };
+    const t = setTimeout(() => {
+      waited = true;
+      check();
+    }, 3000);
+    window.addEventListener("scroll", check, { passive: true });
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("scroll", check);
+    };
   }, [locale]);
   const closeBanner = () => {
     setBanner(false);

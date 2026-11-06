@@ -38,7 +38,31 @@ export function ReviewEventBanner() {
   );
 }
 
-/** 후기 페이지 상단 이벤트 섹션 */
+/** 후기 페이지 맨 위 한 줄 띠 — 후기를 먼저 보여주고, 이벤트는 페이지 아래 섹션으로 내려가요 */
+export function ReviewEventStrip() {
+  const e = getReviewEvent(useLocale());
+  return (
+    <div className="bg-white pt-6 sm:pt-8">
+      <Container>
+        <a
+          href="#review-event"
+          className="group flex items-center gap-3 rounded-2xl bg-gradient-to-r from-[#833AB4] via-[#E1306C] to-[#F77737] py-2.5 pl-3 pr-4 text-white"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/20">
+            <Instagram size={18} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[13.5px] font-bold leading-snug">{e.banner.title}</span>
+            <span className="hidden truncate text-[12px] text-white/85 sm:block">{e.banner.description}</span>
+          </span>
+          <span className="shrink-0 text-[12.5px] font-bold underline-offset-2 group-hover:underline">{e.banner.cta} ↓</span>
+        </a>
+      </Container>
+    </div>
+  );
+}
+
+/** 후기 페이지 이벤트 섹션 (후기 목록 아래) */
 export function ReviewEvent() {
   const e = getReviewEvent(useLocale());
   const { contact } = useContent();

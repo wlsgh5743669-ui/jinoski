@@ -15,6 +15,7 @@ import { Link } from "@/i18n/navigation";
 import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
 import { attributionText } from "@/components/shared/attribution";
 import { getSnapContent, optionCost, type SnapPackage } from "@/config/content/snap";
+import { SEASON_OPEN } from "@/config/lift-rental";
 
 const KAKAO_NOTIFY_URL =
   process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-notify.wlsgh5743669.workers.dev";
@@ -307,7 +308,7 @@ export function SnapShoot() {
             <div className="mt-7 grid gap-5">
               <label className="grid gap-2">
                 <span className="text-[14px] font-semibold text-ink-900">{b.date}</span>
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} />
+                <input type="date" min={SEASON_OPEN} value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} />
               </label>
 
               <div className="grid gap-2">

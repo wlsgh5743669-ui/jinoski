@@ -5,7 +5,6 @@ import { Star, Quote, X, Hand } from "lucide-react";
 import { useContent } from "@/lib/use-content";
 import { cn } from "@/lib/utils";
 import { Container } from "@/components/shared/container";
-import { Reveal } from "@/components/shared/reveal";
 import { ReserveCta } from "@/components/shared/reserve-cta";
 
 type Content = ReturnType<typeof useContent>;
@@ -57,13 +56,12 @@ export function Reviews() {
           <Hand size={14} /> {ui.reviews.tapHint}
         </p>
 
-        <Reveal delay={0.1}>
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {list.slice(0, visible).map((review, i) => (
-              <ReviewCard key={`${review.name}-${review.date}-${i}`} review={review} ui={ui.reviews} />
-            ))}
-          </div>
-        </Reveal>
+        {/* 그리드가 길어서 등장 애니메이션(30% 보일 때)을 쓰면 첫 화면이 비어 보여요 → 바로 보여줘요 */}
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+          {list.slice(0, visible).map((review, i) => (
+            <ReviewCard key={`${review.name}-${review.date}-${i}`} review={review} ui={ui.reviews} />
+          ))}
+        </div>
 
         {visible < list.length && (
           <div className="mt-8 flex justify-center">

@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useContent } from "@/lib/use-content";
 import { useLocale } from "next-intl";
-import { HOLIDAYS, HOLIDAY_NAMES } from "@/config/lift-rental";
+import { HOLIDAYS, HOLIDAY_NAMES, SEASON_OPEN_DATE } from "@/config/lift-rental";
 
 function toDateKey(date: Date): string {
   const y = date.getFullYear();
@@ -17,6 +17,8 @@ function toDateKey(date: Date): string {
 // 4월~10월(비시즌)에는 다가오는 12월(시즌 시작)을 기본으로 보여주고,
 // 11월~3월(시즌 중)에는 실제 이번 달을 그대로 보여줍니다.
 function getDefaultViewDate(today: Date): Date {
+  // 개장 전이면 개장하는 달부터 보여줘요
+  if (today < SEASON_OPEN_DATE) return SEASON_OPEN_DATE;
   const month = today.getMonth();
   const isOffSeason = month >= 3 && month <= 9;
   if (isOffSeason) {
@@ -98,7 +100,7 @@ export function DatePicker({
         {cells.map((date, i) => {
           if (!date) return <div key={`empty-${i}`} />;
           const key = toDateKey(date);
-          const isPast = date < today;
+          const isPast = date < today || date < SEASON_OPEN_DATE;
           const isSelected = key === value;
           const hol = HOLIDAYS.includes(key);
           const red = date.getDay() === 0 || hol;
@@ -127,6 +129,15 @@ export function DatePicker({
           );
         })}
       </div>
+      {firstOfMonth <= SEASON_OPEN_DATE && today < SEASON_OPEN_DATE && (
+        <p className="mt-4 rounded-xl bg-ice-100 px-3 py-2 text-center text-[12.5px] font-semibold text-brand-700">
+          {L === "en"
+            ? `The season opens on Dec ${SEASON_OPEN_DATE.getDate()} — earlier dates can't be booked`
+            : L === "zh"
+              ? `雪季${SEASON_OPEN_DATE.getMonth() + 1}月${SEASON_OPEN_DATE.getDate()}日开放，之前的日期无法预约`
+              : `${SEASON_OPEN_DATE.getMonth() + 1}월 ${SEASON_OPEN_DATE.getDate()}일 개장 — 그 전 날짜는 예약할 수 없어요`}
+        </p>
+      )}
       <p className="mt-4 text-center text-[12px] leading-relaxed text-snow-500">
         {L === "en" ? (
           <>

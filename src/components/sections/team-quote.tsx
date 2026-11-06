@@ -26,7 +26,7 @@ import { trackEvent } from "@/components/shared/analytics";
 import { useContent } from "@/lib/use-content";
 import { EARLY_BIRD, isEarlyBirdActive } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
-import { HOLIDAYS, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, type TicketHours } from "@/config/lift-rental";
+import { HOLIDAYS, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, SEASON_OPEN_DATE, type TicketHours } from "@/config/lift-rental";
 
 const KAKAO_NOTIFY_URL =
   process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-notify.wlsgh5743669.workers.dev";
@@ -2279,7 +2279,9 @@ function RangeCalendar({
   // 비시즌(4~10월)엔 12월부터 보여줘요
   const init = start
     ? new Date(`${start}T00:00:00`)
-    : today.getMonth() >= 3 && today.getMonth() <= 9
+    : today < SEASON_OPEN_DATE
+      ? SEASON_OPEN_DATE
+      : today.getMonth() >= 3 && today.getMonth() <= 9
       ? new Date(today.getFullYear(), 11, 1)
       : today;
   const [view, setView] = useState({ y: init.getFullYear(), m: init.getMonth() });
@@ -2344,7 +2346,7 @@ function RangeCalendar({
       <div className="mt-1.5 grid grid-cols-7 gap-y-1">
         {cells.map((d, i) => {
           if (!d) return <div key={`e${i}`} />;
-          const past = d < today;
+          const past = d < today || d < SEASON_OPEN_DATE;
           const isStart = !!startD && d.getTime() === startD.getTime();
           const isEnd = !!endD && days > 1 && d.getTime() === endD.getTime();
           const inRange = !!startD && !!endD && d > startD && d < endD;
@@ -2378,6 +2380,11 @@ function RangeCalendar({
           );
         })}
       </div>
+      {first <= SEASON_OPEN_DATE && today < SEASON_OPEN_DATE && (
+        <p className="mt-2 rounded-xl bg-ice-100 px-3 py-2 text-center text-[12.5px] font-semibold text-brand-700">
+          {SEASON_OPEN_DATE.getMonth() + 1}월 {SEASON_OPEN_DATE.getDate()}일 개장 — 그 전 날짜는 고를 수 없어요
+        </p>
+      )}
       <p className="mt-2 text-center text-[12px] text-snow-500">
         <span className="font-semibold text-rose-500">빨간 날(일·공휴일)</span>과 <span className="font-semibold text-brand-600">토요일</span>은 리프트·장비 주말 요금이에요
       </p>
