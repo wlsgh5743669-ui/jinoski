@@ -41,7 +41,7 @@ import {
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
 import { SeasonCard } from "@/components/sections/season-card";
-import { GuideCards, DAY_LESSON_CARDS } from "@/components/shared/guide-cards";
+import { GuideCards, DAY_LESSON_CARDS, BOOKING_CARDS } from "@/components/shared/guide-cards";
 import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
 import { attributionText } from "@/components/shared/attribution";
 import { MessengerButtons } from "@/components/shared/messenger-buttons";
@@ -1490,16 +1490,34 @@ function PayChoice({ storeUrl }: { storeUrl: string }) {
 
 function BookingNotice({ content }: { content: SiteContent }) {
   const g = content.bookingWizard.guide;
+  const lines = (
+    <ul className="mt-2 flex flex-col gap-1.5">
+      {g.bookingNoticeLines.map((line) => (
+        <li key={line} className="whitespace-pre-line text-[13px] leading-relaxed text-snow-700">
+          {line}
+        </li>
+      ))}
+    </ul>
+  );
+  // 한국어: 진행 순서·취소 규정을 카드 이미지 2장으로 보여주고, 같은 내용의 글은 접어 둬요
+  if (content.siteConfig.locale.startsWith("ko")) {
+    return (
+      <div className="overflow-hidden rounded-2xl border border-brand-500/20 bg-brand-50/50 p-5">
+        <p className="text-[14px] font-bold text-ink-900">
+          {g.bookingNoticeTitle} <span className="text-[12px] font-semibold text-snow-500">· 눌러서 크게 보기</span>
+        </p>
+        <GuideCards cards={BOOKING_CARDS} event="booking_notice_card_open" className="mt-3" />
+        <details className="mt-3">
+          <summary className="cursor-pointer text-[13px] font-semibold text-brand-600">글로 자세히 보기</summary>
+          {lines}
+        </details>
+      </div>
+    );
+  }
   return (
     <div className="rounded-2xl border border-brand-500/20 bg-brand-50/50 p-5">
       <p className="text-[14px] font-bold text-ink-900">{g.bookingNoticeTitle}</p>
-      <ul className="mt-2 flex flex-col gap-1.5">
-        {g.bookingNoticeLines.map((line) => (
-          <li key={line} className="whitespace-pre-line text-[13px] leading-relaxed text-snow-700">
-            {line}
-          </li>
-        ))}
-      </ul>
+      {lines}
     </div>
   );
 }
