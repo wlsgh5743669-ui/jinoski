@@ -502,6 +502,7 @@ export function BookingWizard() {
     const programParam = params.get("program");
     const levelParam = params.get("level");
     const ageGroupParam = params.get("ageGroup");
+    const equipmentParam = params.get("equipment");
 
     // Deliberately deferred to after mount: the static export has no access to
     // the URL at build time, so applying this during render would make the
@@ -541,6 +542,14 @@ export function BookingWizard() {
         (AGE_GROUP_VALUES as readonly string[]).includes(ageGroupParam)
       ) {
         next.ageGroup = ageGroupParam as AgeGroupValue;
+      }
+
+      if (
+        equipmentParam &&
+        !next.equipment &&
+        (EQUIPMENT_VALUES as readonly string[]).includes(equipmentParam)
+      ) {
+        next.equipment = equipmentParam as EquipmentValue;
       }
 
       return next;

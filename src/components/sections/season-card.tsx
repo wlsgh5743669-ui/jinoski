@@ -8,15 +8,14 @@ import { trackEvent } from "@/components/shared/analytics";
 import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
 import { attributionText } from "@/components/shared/attribution";
 import { cn } from "@/lib/utils";
-import { isEarlyBirdActive } from "@/lib/pricing";
+import { useEarlyBird } from "@/lib/use-early-bird";
 import { GuideCards, SEASON_LINK_CARDS } from "@/components/shared/guide-cards";
 
 type Hrs = "2h" | "3h";
 const PASS: Record<Hrs, number> = { "2h": 25000, "3h": 35000 };
 const won = (n: number) => `${n.toLocaleString("ko-KR")}원`;
 /** 8회 가격 = 레슨 1회 가격 × 8 (얼리버드 기간엔 10% 할인) */
-function seasonRows(lessonPricing: { program: string; rows: { people: string; price: string }[] }[], h: Hrs) {
-  const eb = isEarlyBirdActive();
+function seasonRows(lessonPricing: { program: string; rows: { people: string; price: string }[] }[], h: Hrs, eb: boolean) {
   return (lessonPricing.find((g) => g.program === h)?.rows ?? []).map((r) => {
     const full = Number(r.price.replace(/[^0-9]/g, "")) * 8;
     return { people: r.people, full, price: eb ? Math.round((full * 0.9) / 1000) * 1000 : full, eb };
@@ -30,7 +29,8 @@ const NOTIFY_URL = process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-
 /** 예약하기 첫 화면의 작은 카드 → 시즌 강습 화면으로 */
 export function SeasonCard() {
   const { lessonPricing } = useContent();
-  const r0 = seasonRows(lessonPricing, "2h")[0];
+  const eb = useEarlyBird();
+  const r0 = seasonRows(lessonPricing, "2h", eb)[0];
   return (
     <Link
       href="/reserve/season"
@@ -51,10 +51,10 @@ export function SeasonCard() {
 export function SeasonView() {
   const { lessonPricing, contact } = useContent();
   const [hrs, setHrs] = useState<Hrs>("2h");
-  const rows2 = seasonRows(lessonPricing, "2h");
-  const rows3 = seasonRows(lessonPricing, "3h");
+  const eb = useEarlyBird();
+  const rows2 = seasonRows(lessonPricing, "2h", eb);
+  const rows3 = seasonRows(lessonPricing, "3h", eb);
   const rows = hrs === "2h" ? rows2 : rows3;
-  const eb = rows2[0]?.eb;
   const [page, setPage] = useState<"info" | "form">("info");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");

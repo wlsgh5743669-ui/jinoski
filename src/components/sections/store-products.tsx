@@ -7,7 +7,7 @@ import { Reveal } from "@/components/shared/reveal";
 import { trackEvent } from "@/components/shared/analytics";
 import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
-import { isEarlyBirdActive } from "@/lib/pricing";
+import { useEarlyBird } from "@/lib/use-early-bird";
 import { storeProducts } from "@/config/store";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +19,7 @@ const STEPS = [
 
 export function StoreProducts() {
   const { contact } = useContent();
-  const eb = isEarlyBirdActive();
+  const eb = useEarlyBird();
 
   return (
     <section className="bg-ice-200 py-14 sm:py-20">

@@ -18,7 +18,13 @@ export function Stats() {
               <Star key={i} size={20} fill="currentColor" strokeWidth={0} />
             ))}
           </div>
-          <span className="text-[13px] font-semibold uppercase tracking-[0.2em] text-brand-600">
+          <span
+            className={
+              /[가-힣]/.test(statsEyebrow)
+                ? "text-[15px] font-bold text-brand-600"
+                : "text-[13px] font-semibold uppercase tracking-[0.2em] text-brand-600"
+            }
+          >
             {statsEyebrow}
           </span>
         </div>
@@ -40,7 +46,13 @@ export function Stats() {
                   suffix={stat.suffix}
                 />
               </span>
-              <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-ink-800 sm:text-[14px]">
+              <span
+                className={
+                  /[가-힣]/.test(stat.label)
+                    ? "text-[15px] font-bold text-ink-800 sm:text-[16px]"
+                    : "text-[13px] font-semibold uppercase tracking-[0.12em] text-ink-800 sm:text-[14px]"
+                }
+              >
                 {stat.label}
               </span>
               <span className="text-[12.5px] text-snow-500 sm:text-[13px]">

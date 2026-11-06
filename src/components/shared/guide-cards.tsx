@@ -34,18 +34,49 @@ export function GuideCards({
   const [open, setOpen] = useState<number | null>(null);
   // 크게 보기에서 손가락으로 옆으로 밀어 넘기기
   const [drag, setDrag] = useState(0);
+  const [dir, setDir] = useState(0);
   const touch = useRef<{ x: number; y: number } | null>(null);
   const swiped = useRef(false);
   const show = (i: number) => {
+    setDir(0);
     setOpen(i);
     trackEvent(event, { card: String(i + 1) });
   };
-  const move = (d: number) => setOpen((i) => (i === null ? i : (i + d + cards.length) % cards.length));
+  // 넘긴 방향 (새 카드가 그쪽에서 미끄러져 들어와요 — 카드들이 비슷하게 생겨서 넘어간 게 보이도록)
+  const move = (d: number) => {
+    setDir(d);
+    setOpen((i) => (i === null ? i : (i + d + cards.length) % cards.length));
+  };
+  // 페이지 안 가로 스크롤에서 지금 몇 번째 카드인지 (점 표시)
+  const scroller = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+  const onScroll = () => {
+    const el = scroller.current;
+    const first = el?.firstElementChild as HTMLElement | null;
+    if (!el || !first) return;
+    setActive(Math.min(cards.length - 1, Math.round(el.scrollLeft / (first.offsetWidth + 12))));
+  };
+  const dots = (current: number, dark?: boolean) => (
+    <div className="flex items-center justify-center gap-1.5">
+      {cards.map((c, i) => (
+        <span
+          key={c.src}
+          className={cn(
+            "h-2 rounded-full transition-all duration-300",
+            i === current ? (dark ? "w-6 bg-white" : "w-6 bg-brand-500") : dark ? "w-2 bg-white/40" : "w-2 bg-snow-300"
+          )}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <>
       {variant !== "thumbs" ? (
+        <>
         <div
+          ref={scroller}
+          onScroll={onScroll}
           className={cn(
             "-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none]",
             variant === "responsive" && "sm:mx-0 sm:grid sm:overflow-visible sm:px-0",
@@ -65,6 +96,12 @@ export function GuideCards({
             </button>
           ))}
         </div>
+        {cards.length > 1 && (
+          <div className={cn("mt-3", variant === "responsive" && "sm:hidden")}>
+            {dots(active)}
+          </div>
+        )}
+        </>
       ) : (
         <div className={cn("grid grid-cols-3 gap-2", className)}>
           {cards.map((c, i) => (
@@ -107,14 +144,19 @@ export function GuideCards({
           }}
           className="fixed inset-0 z-[60] flex touch-pan-y items-center justify-center bg-black/80 p-3"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={cards[open].src}
-            alt={cards[open].alt}
-            draggable={false}
-            style={{ transform: `translateX(${drag}px)`, opacity: 1 - Math.min(Math.abs(drag) / 600, 0.4) }}
-            className={cn("max-h-[88svh] w-auto max-w-full select-none rounded-xl", drag === 0 && "transition-transform duration-200")}
-          />
+          <div
+            key={open}
+            className={cn(dir > 0 && "animate-guide-in-right", dir < 0 && "animate-guide-in-left")}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={cards[open].src}
+              alt={cards[open].alt}
+              draggable={false}
+              style={{ transform: `translateX(${drag}px)`, opacity: 1 - Math.min(Math.abs(drag) / 600, 0.4) }}
+              className={cn("max-h-[80svh] w-auto max-w-full select-none rounded-xl", drag === 0 && "transition-transform duration-200")}
+            />
+          </div>
           <span className="absolute right-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[13px] font-bold text-ink-900">닫기 ✕</span>
           {cards.length > 1 && (
             <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-3">
@@ -129,9 +171,12 @@ export function GuideCards({
               >
                 ‹
               </button>
-              <span className="text-[13px] font-bold text-white">
-                {open + 1} / {cards.length}
-              </span>
+              <div className="flex min-w-[88px] flex-col items-center gap-1.5">
+                {dots(open, true)}
+                <span className="text-[12.5px] font-bold text-white">
+                  {open + 1} / {cards.length}
+                </span>
+              </div>
               <button
                 type="button"
                 aria-label="다음"

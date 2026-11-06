@@ -116,7 +116,8 @@ export type SiteContent = {
     ) => string;
     reminderClosing: string;
   };
-  faq: { question: string; answer: string }[];
+  /** category 가 있으면 FAQ 페이지에서 묶어서 보여줘요 (ko) */
+  faq: { question: string; answer: string; category?: string }[];
   faqCta: {
     eyebrow: string;
     title: string;

@@ -20,7 +20,7 @@ const RESERVE_QUERY: Record<string, string> = {
 export function LessonProgram() {
   const { lessonPrograms } = useContent();
   return (
-    <section className="bg-white pb-24 pt-16 sm:pb-32 sm:pt-20">
+    <section className="bg-white pb-16 pt-16 sm:pb-20 sm:pt-20">
       <Container>
         <RevealGroup
           stagger={0.08}

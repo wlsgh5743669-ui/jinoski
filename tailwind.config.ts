@@ -80,10 +80,21 @@ const config: Config = {
           "0%": { transform: "translateX(0%)" },
           "100%": { transform: "translateX(-50%)" },
         },
+        // 안내 카드 크게 보기: 넘긴 쪽에서 새 카드가 미끄러져 들어와요
+        "guide-in-right": {
+          "0%": { opacity: "0", transform: "translateX(55%) scale(0.94)" },
+          "100%": { opacity: "1", transform: "translateX(0) scale(1)" },
+        },
+        "guide-in-left": {
+          "0%": { opacity: "0", transform: "translateX(-55%) scale(0.94)" },
+          "100%": { opacity: "1", transform: "translateX(0) scale(1)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         marquee: "marquee 30s linear infinite",
+        "guide-in-right": "guide-in-right 0.38s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "guide-in-left": "guide-in-left 0.38s cubic-bezier(0.16, 1, 0.3, 1) both",
       },
       backgroundImage: {
         "ice-gradient":

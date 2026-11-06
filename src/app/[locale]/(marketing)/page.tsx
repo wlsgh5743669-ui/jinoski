@@ -23,9 +23,10 @@ export default function HomePage() {
       <YoutubeVideos />
       <ReviewEventBanner />
       <QuoteBanner />
+      {/* 예약 순서 → (못 정했으면) 상담 → 오시는 길. 카톡·전화 버튼은 상담 칸에만 둬요 */}
+      <Reservation hideContact />
       <Consult />
       <Directions />
-      <Reservation />
     </>
   );
 }

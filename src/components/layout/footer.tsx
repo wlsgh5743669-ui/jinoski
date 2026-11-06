@@ -24,7 +24,7 @@ export function Footer() {
   return (
     <footer className="bg-ink-900 pt-20 text-white/70">
       <Container>
-        <div className="grid gap-14 pb-16 lg:grid-cols-[1.2fr_1fr_1fr]">
+        <div className="grid gap-12 pb-12 sm:gap-14 sm:pb-16 lg:grid-cols-[1.2fr_1fr_1fr]">
           <div>
             <span className="text-[22px] font-bold tracking-tightest text-white">
               JINO<span className="text-brand-500">SKI</span>
@@ -76,7 +76,7 @@ export function Footer() {
             <h3 className="text-[13px] font-semibold uppercase tracking-[0.2em] text-white/40">
               {ui.footer.menuHeading}
             </h3>
-            <ul className="mt-5 flex flex-col gap-3">
+            <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 lg:grid-cols-2">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link
