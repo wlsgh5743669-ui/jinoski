@@ -119,6 +119,7 @@ const whyJinoSki = [
     title: "풍부한 현장 경험",
     description: "8년 이상의 강습 경험을 바탕으로 실력과 목표에 맞는 레슨을 제공합니다.",
     icon: "Award",
+    proof: "대한스키지도자연맹 공인 자격 강사진",
   },
   {
     number: "02",
@@ -128,6 +129,7 @@ const whyJinoSki = [
     description:
       "초급부터 상급까지 개인의 실력과 목표에 맞춘 1:1 맞춤 커리큘럼으로 빠른 성장을 돕습니다.",
     icon: "UserCheck",
+    proof: "강사 1명당 최대 3명까지만",
   },
   {
     number: "03",
@@ -136,6 +138,7 @@ const whyJinoSki = [
     title: "비발디파크 전문",
     description: "비발디파크 슬로프와 지형을 고려해 효율적이고 만족도 높은 레슨을 제공합니다.",
     icon: "Mountain",
+    proof: "집합은 스키월드 광장 스키하우스 입구",
   },
   {
     number: "04",
@@ -145,6 +148,7 @@ const whyJinoSki = [
     description:
       "레슨의 소중한 순간을 사진과 영상으로 기록하여 겨울의 추억을 오래 간직할 수 있도록 도와드립니다.",
     icon: "Camera",
+    proof: "매 수업 사진·영상 무료로 보내드려요",
   },
   {
     number: "05",
@@ -154,14 +158,17 @@ const whyJinoSki = [
     description:
       "무선 헤드셋(무전기)으로 슬로프 위에서도 설명과 피드백을 실시간으로 전달해 더 빠르고 정확하게 배웁니다.",
     icon: "Radio",
+    proof: "멀리 떨어져도 귀로 바로 듣는 코칭",
   },
   {
     number: "06",
+    image: "/images/why-safety.jpg",
     highlight: "보험 · EFR 자격",
     title: "안전 최우선",
     description:
       "영업배상책임보험에 가입되어 레슨 중 사고에 대비하고, 응급처치(EFR) 강사 자격을 갖춘 강사가 준비운동부터 안전 수칙까지 꼼꼼히 챙깁니다.",
     icon: "ShieldCheck",
+    proof: "영업배상책임보험 가입 · EFR 응급처치 강사",
   },
 ];
 

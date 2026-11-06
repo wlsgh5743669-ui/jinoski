@@ -57,6 +57,8 @@ export type SiteContent = {
     icon: string;
     image?: string;
     highlight?: string;
+    /** 카드 아래 한 줄 근거 (예: 강사 1명당 최대 3명) */
+    proof?: string;
   }[];
   lessonPrograms: {
     slug: string;
