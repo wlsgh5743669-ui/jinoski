@@ -22,7 +22,14 @@ function seasonRows(lessonPricing: { program: string; rows: { people: string; pr
   });
 }
 
-const STORE_URL = "https://smartstore.naver.com/jinoski/products/11057867556";
+/** 시즌 강습생 전용 링크 안내 카드 (상담자료/시즌링크_안내에서 만든 이미지) */
+const SEASON_LINK_CARDS = [
+  { src: "/images/season-link/1.jpg", alt: "링크 하나로 시즌 전체를 한눈에 — 다음 강습 D-day, 남은 횟수, 담당 강사, 날씨·준비물" },
+  { src: "/images/season-link/2.jpg", alt: "강습 날짜는 직접 골라요 — 달력에서 날짜 고르기, 바로 확정, 2일 전까지 무료 변경 3회, 전날 문자 안내" },
+  { src: "/images/season-link/3.jpg", alt: "매회 알림장으로 성장 확인 — 오늘 배운 것, 성장 그래프, 다음 목표, 실력 별점" },
+];
+
+const STORE_URL ="https://smartstore.naver.com/jinoski/products/11057867556";
 
 const NOTIFY_URL = process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-notify.wlsgh5743669.workers.dev";
 
@@ -65,6 +72,7 @@ export function SeasonView() {
   const [consent, setConsent] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
+  const [zoom, setZoom] = useState<string | null>(null);
   const people = Number(group.slice(2)) || 1;
   const passOne = PASS[hrs];
   const passAll = passOne * 8 * people;
@@ -227,6 +235,28 @@ export function SeasonView() {
             ))}
           </section>
 
+          {/* ⑤ 등록 후 관리 (시즌 전용 링크 안내 3장, 옆으로 넘기기 · 누르면 크게) */}
+          <section>
+            <p className={h2}>등록하면 이렇게 관리돼요</p>
+            <p className="mt-1 text-[13px] text-snow-600">아이 이름으로 된 전용 링크 하나로 일정·알림장을 다 봐요 👉 옆으로 넘겨보세요</p>
+            <div className="-mx-5 mt-2 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
+              {SEASON_LINK_CARDS.map((c) => (
+                <button
+                  key={c.src}
+                  type="button"
+                  onClick={() => {
+                    setZoom(c.src);
+                    trackEvent("season_link_card_open", { card: c.src });
+                  }}
+                  className="w-[78%] shrink-0 snap-center overflow-hidden rounded-2xl bg-white ring-1 ring-snow-300/60"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={c.src} alt={c.alt} loading="lazy" width={1080} height={1350} className="block h-auto w-full" />
+                </button>
+              ))}
+            </div>
+          </section>
+
           <div className="mt-1 flex flex-col gap-2">
             <a
               href={STORE_URL}
@@ -321,6 +351,24 @@ export function SeasonView() {
             <Send size={17} /> {status === "sending" ? "보내는 중..." : "상담 신청 보내기"}
           </button>
           {status === "failed" && <p className="text-center text-[12.5px] text-rose-500">전송이 안 됐어요. 카톡으로 상담해 주세요.</p>}
+        </div>
+      )}
+
+      {/* 안내 카드 크게 보기 (아무 데나 누르면 닫힘) */}
+      {zoom && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setZoom(null)}
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-3"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={zoom}
+            alt={SEASON_LINK_CARDS.find((c) => c.src === zoom)?.alt ?? ""}
+            className="max-h-[92svh] w-auto max-w-full rounded-xl"
+          />
+          <span className="absolute right-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[13px] font-bold text-ink-900">닫기 ✕</span>
         </div>
       )}
     </div>
