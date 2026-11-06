@@ -4,6 +4,7 @@ import { getContent, isLocale } from "@/config/site";
 import { PageHero } from "@/components/shared/page-hero";
 import { TeamQuote } from "@/components/sections/team-quote";
 import { QuoteFaq } from "@/components/sections/quote-faq";
+import { StayGuide } from "@/components/sections/stay-guide";
 
 const TEXT = {
   ko: {
@@ -66,6 +67,7 @@ export default async function QuotePage({ params }: { params: Promise<{ locale: 
     <>
       <PageHero eyebrow="TEAM · FAMILY QUOTE" title={[...t.hero]} description={t.heroDesc} />
       <TeamQuote />
+      {loc === "ko" && <StayGuide />}
       <QuoteFaq locale={loc} />
     </>
   );

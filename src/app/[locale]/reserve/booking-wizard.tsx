@@ -41,6 +41,7 @@ import {
 import type { SiteContent } from "@/config/content/types";
 import { DatePicker } from "./date-picker";
 import { SeasonCard } from "@/components/sections/season-card";
+import { GuideCards, DAY_LESSON_CARDS } from "@/components/shared/guide-cards";
 import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
 import { attributionText } from "@/components/shared/attribution";
 import { MessengerButtons } from "@/components/shared/messenger-buttons";
@@ -1468,6 +1469,12 @@ function PayChoice({ storeUrl }: { storeUrl: string }) {
         <span className="shrink-0 text-[18px] font-bold text-ink-900">→</span>
       </a>
       <SeasonCard />
+      <div className="col-span-2 mt-1 rounded-2xl bg-white px-3.5 pb-3.5 pt-3 ring-1 ring-snow-300/60">
+        <p className="text-[13.5px] font-bold text-ink-900">
+          📷 하루 강습 한눈에 보기 <span className="text-[12px] font-semibold text-snow-500">· 요금 · 시간표 · 예약 순서 (눌러서 크게)</span>
+        </p>
+        <GuideCards cards={DAY_LESSON_CARDS} event="day_guide_card_open" variant="thumbs" className="mt-2.5" />
+      </div>
     </div>
   );
 }
