@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { trackEvent } from "@/components/shared/analytics";
 import { isEarlyBirdActive } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
@@ -15,7 +15,7 @@ const noSubscribe = () => () => {};
  * - swipe: 옆으로 넘기기 (좁은 페이지용).
  * - responsive: 휴대폰에선 옆으로 넘기고, 넓은 화면에선 한 줄에 3장.
  * - thumbs: 작은 썸네일 한 줄 (예약하기 첫 화면처럼 자리가 좁을 때).
- * 누르면 화면 가득 크게 보고 ‹ › 로 넘겨요.
+ * 누르면 화면 가득 크게 보고 옆으로 밀거나 ‹ › 로 넘겨요.
  */
 export function GuideCards({
   cards: input,
@@ -32,6 +32,10 @@ export function GuideCards({
   const earlyBird = useSyncExternalStore(noSubscribe, isEarlyBirdActive, () => true);
   const cards = earlyBird ? input : input.map((c) => (c.regular ? { ...c, src: c.regular } : c));
   const [open, setOpen] = useState<number | null>(null);
+  // 크게 보기에서 손가락으로 옆으로 밀어 넘기기
+  const [drag, setDrag] = useState(0);
+  const touch = useRef<{ x: number; y: number } | null>(null);
+  const swiped = useRef(false);
   const show = (i: number) => {
     setOpen(i);
     trackEvent(event, { card: String(i + 1) });
@@ -73,9 +77,44 @@ export function GuideCards({
       )}
 
       {open !== null && (
-        <div role="dialog" aria-modal="true" onClick={() => setOpen(null)} className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-3">
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => {
+            if (swiped.current) {
+              swiped.current = false;
+              return;
+            }
+            setOpen(null);
+          }}
+          onTouchStart={(e) => {
+            touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            swiped.current = false;
+          }}
+          onTouchMove={(e) => {
+            if (!touch.current) return;
+            const dx = e.touches[0].clientX - touch.current.x;
+            const dy = e.touches[0].clientY - touch.current.y;
+            if (Math.abs(dx) > Math.abs(dy)) setDrag(dx);
+          }}
+          onTouchEnd={() => {
+            if (Math.abs(drag) > 50 && cards.length > 1) {
+              move(drag < 0 ? 1 : -1);
+              swiped.current = true;
+            } else if (Math.abs(drag) > 10) swiped.current = true;
+            touch.current = null;
+            setDrag(0);
+          }}
+          className="fixed inset-0 z-[60] flex touch-pan-y items-center justify-center bg-black/80 p-3"
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={cards[open].src} alt={cards[open].alt} className="max-h-[88svh] w-auto max-w-full rounded-xl" />
+          <img
+            src={cards[open].src}
+            alt={cards[open].alt}
+            draggable={false}
+            style={{ transform: `translateX(${drag}px)`, opacity: 1 - Math.min(Math.abs(drag) / 600, 0.4) }}
+            className={cn("max-h-[88svh] w-auto max-w-full select-none rounded-xl", drag === 0 && "transition-transform duration-200")}
+          />
           <span className="absolute right-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[13px] font-bold text-ink-900">닫기 ✕</span>
           {cards.length > 1 && (
             <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-3">
