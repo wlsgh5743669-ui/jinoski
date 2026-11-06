@@ -4,6 +4,8 @@ import { getContent, isLocale, defaultLocale } from "@/config/site";
 import { getGuide, type GuideSection } from "@/config/content/guide";
 import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
+import { ImageGuide } from "@/components/sections/image-guide";
+import { VIVALDI_CARDS } from "@/components/shared/guide-cards";
 import { Container } from "@/components/shared/container";
 import { Link } from "@/i18n/navigation";
 
@@ -43,6 +45,15 @@ export default async function GuidePage({ params }: { params: Promise<{ locale: 
   return (
     <>
       <PageHero eyebrow={g.eyebrow} title={g.title} description={g.description} />
+      {l === "ko" && (
+        <ImageGuide
+          title="비발디파크 이용 한눈에 보기"
+          desc="집합 장소·렌탈·준비물을 3장으로 정리했어요. 눌러서 크게 보세요."
+          cards={VIVALDI_CARDS}
+          event="vivaldi_guide_card_open"
+          className="bg-white py-14 sm:py-20"
+        />
+      )}
       <section className="bg-ice-200 py-14 sm:py-20">
         <Container>
           <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-2">

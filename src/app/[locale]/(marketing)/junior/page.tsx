@@ -3,6 +3,8 @@ import { Award, CalendarCheck, ClipboardCheck, Medal, ShieldCheck, Video } from 
 import { isLocale, defaultLocale } from "@/config/site";
 import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
+import { ImageGuide } from "@/components/sections/image-guide";
+import { JUNIOR_CARDS } from "@/components/shared/guide-cards";
 import { Container } from "@/components/shared/container";
 import { Link } from "@/i18n/navigation";
 import { JUNIOR_GRADES, JUNIOR_PRICES, type JuniorProgram } from "@/config/junior-grade";
@@ -192,6 +194,14 @@ export default async function JuniorPage({ params }: { params: Promise<{ locale:
   return (
     <>
       <PageHero eyebrow={t.eyebrow} title={[...t.title]} description={t.desc} />
+      {l === "ko" && (
+        <ImageGuide
+          title="주니어 등급 심사 한눈에 보기"
+          desc="등급표·심사 요금·진행 순서를 3장으로 정리했어요. 눌러서 크게 보세요."
+          cards={JUNIOR_CARDS}
+          event="junior_card_open"
+        />
+      )}
 
       {/* 핵심 4개 */}
       <section className="bg-white py-10 sm:py-14">

@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { trackEvent } from "@/components/shared/analytics";
+import { isEarlyBirdActive } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
-export type GuideCard = { src: string; alt: string };
+/** regular: 얼리버드가 끝나면(11/11부터, 한국 시간) 대신 보여줄 정가판 이미지 */
+export type GuideCard = { src: string; alt: string; regular?: string };
+
+const noSubscribe = () => () => {};
 
 /**
  * 안내 이미지 카드 묶음 (1080×1350 세로 카드 3장 등).
@@ -14,7 +18,7 @@ export type GuideCard = { src: string; alt: string };
  * 누르면 화면 가득 크게 보고 ‹ › 로 넘겨요.
  */
 export function GuideCards({
-  cards,
+  cards: input,
   event,
   variant = "swipe",
   className,
@@ -24,6 +28,9 @@ export function GuideCards({
   variant?: "swipe" | "responsive" | "thumbs";
   className?: string;
 }) {
+  // 빌드된 HTML은 얼리버드판, 브라우저에선 오늘 날짜(한국 시간)로 판단
+  const earlyBird = useSyncExternalStore(noSubscribe, isEarlyBirdActive, () => true);
+  const cards = earlyBird ? input : input.map((c) => (c.regular ? { ...c, src: c.regular } : c));
   const [open, setOpen] = useState<number | null>(null);
   const show = (i: number) => {
     setOpen(i);
@@ -37,7 +44,8 @@ export function GuideCards({
         <div
           className={cn(
             "-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none]",
-            variant === "responsive" && "sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0",
+            variant === "responsive" && "sm:mx-0 sm:grid sm:overflow-visible sm:px-0",
+            variant === "responsive" && (cards.length === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3"),
             className
           )}
         >
@@ -111,7 +119,7 @@ export const SEASON_LINK_CARDS: GuideCard[] = [
 ];
 
 export const DAY_LESSON_CARDS: GuideCard[] = [
-  { src: "/images/guide/day-1.jpg", alt: "하루 강습 요금 — 2·3·4시간과 7시간 풀케어, 1:1·1:2·1:3 금액, 패찰 별도, 리프트·장비 40% 할인" },
+  { src: "/images/guide/day-1.jpg", regular: "/images/guide/day-1-regular.jpg", alt: "하루 강습 요금 — 2·3·4시간과 7시간 풀케어, 1:1·1:2·1:3 금액, 패찰 별도, 리프트·장비 40% 할인" },
   { src: "/images/guide/day-2.jpg", alt: "수업 시간표 — 2시간 1~5교시, 3·4시간 오전·오후·야간, 원데이·나이트 풀케어" },
   { src: "/images/guide/day-3.jpg", alt: "예약은 이렇게 — 홈페이지 신청, 강사 일정 확인 후 확정, 예약금 20%, 스키월드 광장 집합, 환불·변경 규정" },
 ];
@@ -120,4 +128,23 @@ export const STAY_CARDS: GuideCard[] = [
   { src: "/images/guide/stay-1.jpg", alt: "연박 강습, 견적 한 번에 — 2박 3일·하루 2회·가족 여러 팀, 6단계 견적 계산기" },
   { src: "/images/guide/stay-2.jpg", alt: "이렇게 배워요 — 하루 2회 수업 조합, 반 나누기·강사 배정, 첫날·둘째 날·마지막 날" },
   { src: "/images/guide/stay-3.jpg", alt: "견적에 다 들어가요 — 패찰 포함, 사진·영상 무료, 리프트·장비 40% 할인, 예약금 20%" },
+];
+
+export const PRICING_CARDS: GuideCard[] = [
+  { src: "/images/guide/pricing-1.jpg", regular: "/images/guide/pricing-1-regular.jpg", alt: "시간제 강습 요금 — 2·3·4시간과 7시간 풀케어, 1:1·1:2·1:3 금액, 패찰 별도, 시즌 8회 패키지" },
+  { src: "/images/guide/pricing-2.jpg", alt: "수업 시간표 — 2시간 1~5교시, 3·4시간 오전·오후·야간, 원데이·나이트 풀케어" },
+  { src: "/images/guide/pricing-3.jpg", alt: "리프트·장비 40% 할인 — 3·5·7시간권, 대인·소인, 주중·주말 할인가" },
+  { src: "/images/guide/pricing-4.jpg", alt: "결제는 이렇게 — 확정 안내 후 예약금 20%, 잔금은 강습 당일, 계좌이체·네이버페이, 환불·변경 규정" },
+];
+
+export const JUNIOR_CARDS: GuideCard[] = [
+  { src: "/images/guide/junior-1.jpg", alt: "주니어 스키 10단계 등급 — 1등급 스노우플라우부터 10등급 종합활강까지 뱃지 색, 7등급 특전" },
+  { src: "/images/guide/junior-2.jpg", alt: "등급 심사 요금 — 1~6등급 25만원부터, 7~10등급 35만원부터, 연맹 응시료·발급료 포함, 패찰 별도" },
+  { src: "/images/guide/junior-3.jpg", alt: "심사 진행 — 상담, 워밍업·연습, 심사, 결과 등록·뱃지 전달, 꼭 확인할 점" },
+];
+
+export const VIVALDI_CARDS: GuideCard[] = [
+  { src: "/images/guide/vivaldi-1.jpg", alt: "스키월드 광장에서 만나요 — 집합 장소, 20~30분 전 도착, 자가용·셔틀버스 오는 법" },
+  { src: "/images/guide/vivaldi-2.jpg", alt: "패찰·리프트권·장비 렌탈 — 패찰 요금, 렌탈 안내, 리프트·장비 40% 할인" },
+  { src: "/images/guide/vivaldi-3.jpg", alt: "준비물·날씨 — 스키복, 장갑, 고글, 넥워머, 여벌 양말, 간식, 방수팩, 날씨와 슬로프 운영" },
 ];

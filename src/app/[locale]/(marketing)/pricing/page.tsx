@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getContent, isLocale, defaultLocale } from "@/config/site";
 import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
+import { ImageGuide } from "@/components/sections/image-guide";
+import { PRICING_CARDS } from "@/components/shared/guide-cards";
 import { Pricing } from "@/components/sections/pricing";
 import { PaymentMethods } from "@/components/sections/payment-methods";
 import { LiftDiscountCard } from "@/components/sections/lift-discount-card";
@@ -43,6 +45,14 @@ export default async function PricingPage({
           {locale === "en" ? "👨‍👩‍👧‍👦 Family & multi-day quote calculator →" : locale === "zh" ? "👨‍👩‍👧‍👦 家庭·多日报价计算 →" : "👨‍👩‍👧‍👦 가족 여러 팀·연박 견적 계산하기 →"}
         </a>
       </PageHero>
+      {locale === "ko" && (
+        <ImageGuide
+          title="요금 한눈에 보기"
+          desc="강습료·시간표·리프트 할인·결제 방법을 4장으로 정리했어요. 눌러서 크게 보세요."
+          cards={PRICING_CARDS}
+          event="pricing_card_open"
+        />
+      )}
       <Pricing />
       <LiftDiscountCard />
       {locale !== "ko" && (
