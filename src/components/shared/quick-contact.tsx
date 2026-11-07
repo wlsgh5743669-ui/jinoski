@@ -1,6 +1,6 @@
 "use client";
 
-import { Calculator, Instagram, Mail, MessageCircle, MessageSquareText, Phone, X } from "lucide-react";
+import { CalendarCheck, Instagram, Mail, MessageCircle, MessageSquareText, Phone, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { useContent } from "@/lib/use-content";
@@ -70,17 +70,17 @@ export function QuickContact() {
   const items: { key: string; href: string; external: boolean; label: string; aria: string; circle: string; bg?: string; icon: React.ReactNode }[] = [
     chatItem,
     ...messengers,
-    // 한국어: 맨 위에 「견적」 — 가족·연박 손님이 바로 계산해 볼 수 있게
+    // 한국어: 「예약하기」 — 바로 예약 화면으로 (견적 계산기는 요금·견적 메뉴에 있어요)
     ...(ko
       ? [
           {
-            key: "quote",
-            href: "/ko/quote/",
+            key: "reserve",
+            href: "/ko/reserve/",
             external: false,
-            label: "견적",
-            aria: "가족·단체·연박 견적 계산",
+            label: "예약하기",
+            aria: "강습 예약하기",
             circle: "bg-[#03C75A] text-white",
-            icon: <Calculator size={17} />,
+            icon: <CalendarCheck size={17} />,
           },
         ]
       : []),
