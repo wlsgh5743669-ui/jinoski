@@ -168,7 +168,7 @@ export function SeasonView() {
             <ul className={cn(card, "mt-2 flex flex-col gap-1.5 text-[14px] text-ink-800")}>
               <li>🎫 패찰: 2시간 1회 25,000원 · 3시간 1회 35,000원 (1인) · <b>8회분을 강습료와 한 번에 결제</b>할 수 있어요</li>
               <li>🎿 리프트·장비: 정가 40% 할인으로 같이 결제 가능</li>
-              <li>💳 일정 확정 후 예약금 20% · 나머지는 첫 강습 날</li>
+              <li>💳 일정 확정 후 예약금 30만원 · 나머지는 첫 강습 날</li>
               <li>📅 날짜·시간은 상담 후 시즌 동안 나눠서 정해요</li>
             </ul>
           </section>

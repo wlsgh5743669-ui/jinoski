@@ -698,8 +698,8 @@ export function BookingWizard() {
           <span className="text-[14.5px] font-bold text-[#003087]">💳 {locale === "zh" ? "海外客人：用 PayPal 付款" : "Overseas guests: pay with PayPal"}</span>
           <span className="text-[12.5px] leading-snug text-snow-700">
             {locale === "zh"
-              ? "先提交预约申请 → 我们确认教练和时间后，用 PayPal 支付20%订金即可确认（余款上课当天支付）。也可以先看看多日报价。"
-              : "Send your booking request → once we confirm your instructor and time, pay a 20% deposit by PayPal to lock it in (balance on the lesson day). Planning several days? Try the multi-day quote."}
+              ? "先提交预约申请 → 我们确认教练和时间后，用 PayPal 支付30万韩元订金（约220美元）即可确认（余款上课当天支付）。也可以先看看多日报价。"
+              : "Send your booking request → once we confirm your instructor and time, pay a KRW 300,000 deposit (about USD 220) by PayPal to lock it in (balance on the lesson day). Planning several days? Try the multi-day quote."}
           </span>
           <a href={`/${locale}/quote/`} className="text-[12.5px] font-bold text-[#003087] underline underline-offset-2">
             {locale === "zh" ? "多日·家庭报价计算 →" : "Multi-day & family quote →"}
@@ -1463,7 +1463,7 @@ function PayChoice({ storeUrl }: { storeUrl: string }) {
       <div className="flex flex-col rounded-2xl border-2 border-brand-500 bg-brand-50 px-4 py-3.5">
         <span className="text-[14.5px] font-bold text-brand-600">📝 예약·상담 문의</span>
         <span className="mt-1 text-[12.5px] font-semibold leading-snug text-brand-600">👉 혼자·하루 강습</span>
-        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">아래에서 신청 · 확정 후 예약금 20%</span>
+        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">아래에서 신청 · 확정 후 예약금 30만원</span>
       </div>
       <a
         href="/ko/quote/"

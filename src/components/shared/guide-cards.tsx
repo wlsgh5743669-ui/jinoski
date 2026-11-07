@@ -205,26 +205,26 @@ export const SEASON_LINK_CARDS: GuideCard[] = [
 export const DAY_LESSON_CARDS: GuideCard[] = [
   { src: "/images/guide/day-1.jpg", regular: "/images/guide/day-1-regular.jpg", alt: "하루 강습 요금 — 2·3·4시간과 7시간 풀케어, 1:1·1:2·1:3 금액, 패찰 별도, 리프트·장비 40% 할인" },
   { src: "/images/guide/day-2.jpg", alt: "수업 시간표 — 2시간 1~5교시, 3·4시간 오전·오후·야간, 원데이·나이트 풀케어" },
-  { src: "/images/guide/day-3.jpg", alt: "예약은 이렇게 — 홈페이지 신청, 강사 일정 확인 후 확정, 예약금 20%, 스키월드 광장 집합, 환불·변경 규정" },
+  { src: "/images/guide/day-3.jpg", alt: "예약은 이렇게 — 홈페이지 신청, 강사 일정 확인 후 확정, 예약금 30만원, 스키월드 광장 집합, 환불·변경 규정" },
 ];
 
 /** 예약하기 마지막 단계·접수 화면 「예약은 이렇게 진행돼요」 */
 export const BOOKING_CARDS: GuideCard[] = [
-  { src: "/images/guide/booking-1.jpg", alt: "예약은 이렇게 진행돼요 — 예약 신청, 강사 일정 확인 후 확정 연락, 예약금 20% 입금(잔금은 당일), 스키월드 광장 집합, 입금 계좌·네이버페이" },
+  { src: "/images/guide/booking-1.jpg", alt: "예약은 이렇게 진행돼요 — 예약 신청, 강사 일정 확인 후 확정 연락, 예약금 30만원 입금(잔금은 당일), 스키월드 광장 집합, 입금 계좌·네이버페이" },
   { src: "/images/guide/booking-2.jpg", alt: "취소·변경 규정 — 3일 전까지 100%, 1~2일 전 50%, 당일·노쇼 환불 불가, 2일 전까지 1회 무료 변경, 기상 악화 시 무료 변경 또는 전액 환불" },
 ];
 
 export const STAY_CARDS: GuideCard[] = [
   { src: "/images/guide/stay-1.jpg", alt: "연박 강습, 견적 한 번에 — 2박 3일·하루 2회·가족 여러 팀, 6단계 견적 계산기" },
   { src: "/images/guide/stay-2.jpg", alt: "이렇게 배워요 — 하루 2회 수업 조합, 반 나누기·강사 배정, 첫날·둘째 날·마지막 날" },
-  { src: "/images/guide/stay-3.jpg", alt: "견적에 다 들어가요 — 패찰 포함, 사진·영상 무료, 리프트·장비 40% 할인, 예약금 20%" },
+  { src: "/images/guide/stay-3.jpg", alt: "견적에 다 들어가요 — 패찰 포함, 사진·영상 무료, 리프트·장비 40% 할인, 예약금 30만원" },
 ];
 
 export const PRICING_CARDS: GuideCard[] = [
   { src: "/images/guide/pricing-1.jpg", regular: "/images/guide/pricing-1-regular.jpg", alt: "시간제 강습 요금 — 2·3·4시간과 7시간 풀케어, 1:1·1:2·1:3 금액, 패찰 별도, 시즌 8회 패키지" },
   { src: "/images/guide/pricing-2.jpg", alt: "수업 시간표 — 2시간 1~5교시, 3·4시간 오전·오후·야간, 원데이·나이트 풀케어" },
   { src: "/images/guide/pricing-3.jpg", alt: "리프트·장비 40% 할인 — 3·5·7시간권, 대인·소인, 주중·주말 할인가" },
-  { src: "/images/guide/pricing-4.jpg", alt: "결제는 이렇게 — 확정 안내 후 예약금 20%, 잔금은 강습 당일, 계좌이체·네이버페이, 환불·변경 규정" },
+  { src: "/images/guide/pricing-4.jpg", alt: "결제는 이렇게 — 확정 안내 후 예약금 30만원, 잔금은 강습 당일, 계좌이체·네이버페이, 환불·변경 규정" },
 ];
 
 export const JUNIOR_CARDS: GuideCard[] = [

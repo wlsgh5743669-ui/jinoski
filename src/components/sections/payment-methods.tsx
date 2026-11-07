@@ -7,7 +7,7 @@ const T = {
   ko: {
     eyebrow: "PAYMENT",
     title: "결제 방법",
-    lead: "강사 일정을 확인해 확정 안내를 드리면 예약금(총 금액의 20%)을 입금해 주세요. 입금이 확인되면 예약이 확정되고, 잔금은 강습 당일에 결제해요. 리프트권·장비(40% 할인)도 강습료와 함께 지노스키에 결제하시면 돼요.",
+    lead: "강사 일정을 확인해 확정 안내를 드리면 예약금 30만원을 입금해 주세요(총 금액이 30만원보다 적으면 전액). 입금이 확인되면 예약이 확정되고, 잔금은 강습 당일에 결제해요. 리프트권·장비(40% 할인)도 강습료와 함께 지노스키에 결제하시면 돼요.",
     bank: { title: "계좌이체", body: "국민은행 010-4047-7711\n예금주 박진호(지노컴퍼니)" },
     store: { title: "네이버페이 · 카드", body: "네이버 스마트스토어에서 레슨 상품으로 결제할 수 있어요. 결제 후 네이버 리뷰도 남길 수 있어요.", button: "스마트스토어에서 결제" },
     paypal: null,
@@ -15,7 +15,7 @@ const T = {
   en: {
     eyebrow: "PAYMENT",
     title: "How to pay",
-    lead: "After we confirm your instructor and time, pay a 20% deposit — PayPal is easiest for overseas guests. The balance is paid on the lesson day. Lift tickets & rental (40% off) are paid together with the lesson fee. Prices are in KRW; USD amounts are approximate.",
+    lead: "After we confirm your instructor and time, pay a KRW 300,000 deposit (about USD 220; the full amount if your total is less) — PayPal is easiest for overseas guests. The balance is paid on the lesson day. Lift tickets & rental (40% off) are paid together with the lesson fee. Prices are in KRW; USD amounts are approximate.",
     bank: { title: "Bank transfer (Korea)", body: "KB Kookmin Bank 010-4047-7711\nAccount holder: 박진호 (Jino Company)" },
     store: null,
     paypal: { title: "PayPal / international card", body: "Pay in USD with PayPal or any international card. We send the USD amount with your confirmation.", button: "Pay with PayPal" },
@@ -23,7 +23,7 @@ const T = {
   zh: {
     eyebrow: "PAYMENT",
     title: "付款方式",
-    lead: "确认教练与时间后，请先支付20%订金——海外客人用PayPal最方便。余款在上课当天支付。缆车票·装备（6折）与课程费一起支付。价格以韩元为准，美元金额仅供参考。",
+    lead: "确认教练与时间后，请先支付30万韩元订金（约220美元，总额不足则付全款）——海外客人用PayPal最方便。余款在上课当天支付。缆车票·装备（6折）与课程费一起支付。价格以韩元为准，美元金额仅供参考。",
     bank: { title: "韩国银行转账", body: "国民银行 (KB) 010-4047-7711\n收款人：박진호 (Jino Company)" },
     store: null,
     paypal: { title: "PayPal / 国际信用卡", body: "可通过PayPal或国际信用卡以美元付款。确认时会告知美元金额。", button: "PayPal付款" },
