@@ -7,6 +7,11 @@ export const analyticsConfig = {
   gtmId: "GTM-PF3J6D9X",
   /** (선택) 구글 애널리틱스 4 측정 ID를 직접 넣을 때 (G-XXXXXXXXXX) */
   gaId: "G-GCPSL83GR0",
+  /**
+   * 네이버 광고 전환 추적 「네이버 공통키」(s_로 시작) — 광고 계정 1668080 도구 → 전환 추적 관리에 보이는 값.
+   * 애널리틱스 ID와 다른 값이에요. 비우면 광고 전환 신호를 안 보내요.
+   */
+  naverAdKey: "s_10de18443cdf8",
 };
 
 export const analyticsEnabled = Boolean(analyticsConfig.naverId || analyticsConfig.gaId || analyticsConfig.gtmId);
