@@ -4,6 +4,7 @@ import Script from "next/script";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { analyticsConfig } from "@/config/analytics";
+import { markAdAction } from "@/components/shared/ad-click-log";
 
 type W = Window & {
   dataLayer?: Record<string, unknown>[];
@@ -16,6 +17,7 @@ type W = Window & {
 /** 예약 신청 같은 주요 행동을 집계해요 (분석 ID가 없으면 아무 일도 하지 않아요). */
 export function trackEvent(name: string, params: Record<string, string | number> = {}) {
   if (typeof window === "undefined") return;
+  markAdAction(name);
   const w = window as W;
   try {
     if (w.gtag) w.gtag("event", name, params);

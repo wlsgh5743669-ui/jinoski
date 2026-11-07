@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { locales, isLocale, getContent } from "@/config/site";
 import { Analytics } from "@/components/shared/analytics";
 import { AttributionTracker } from "@/components/shared/attribution";
+import { AdClickLog } from "@/components/shared/ad-click-log";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -99,6 +100,7 @@ export default async function LocaleLayout({
       </div>
       <Analytics />
       <AttributionTracker />
+      <AdClickLog />
     </NextIntlClientProvider>
   );
 }

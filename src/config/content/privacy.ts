@@ -27,6 +27,7 @@ const ko: PrivacyContent = {
         "택배 수령을 선택한 경우(예약 확정 후 별도 안내): 받는 분 이름, 주소, 연락처",
         "카카오톡 채널·문자·이메일 상담 시: 상담 과정에서 고객님이 직접 알려주신 정보",
         "홈페이지 이용 과정에서 자동 수집될 수 있는 정보: 접속 IP, 브라우저 종류, 접속 일시 (호스팅 서버의 보안 로그)",
+        "광고(네이버·구글·메타·카카오)를 눌러 들어온 경우: 광고 부정클릭을 막기 위해 접속 IP, 기기·브라우저 종류, 광고 검색어, 머문 시간, 예약·상담 버튼을 눌렀는지를 기록하고 90일 뒤 지웁니다. 이름·연락처는 기록하지 않습니다.",
       ],
     },
     {
@@ -127,7 +128,7 @@ const en: PrivacyContent = {
     "Jino Company ('JinoSki') protects your personal information in accordance with the Korean Personal Information Protection Act. This English version is provided for convenience; the Korean version prevails.",
   effectiveDate: "Effective: October 4, 2026",
   sections: [
-    { title: "1. Information we collect", body: ["Lesson / photo-session requests: name, email address, mobile number (optional), messenger ID such as WhatsApp, LINE or WeChat (optional), preferred date and time, program or package, options, delivery method, requests (plus sport, level and age group for lessons).", "If you choose courier delivery: recipient name, address and phone (requested after confirmation).", "Server security logs: IP address, browser type, access time."] },
+    { title: "1. Information we collect", body: ["Lesson / photo-session requests: name, email address, mobile number (optional), messenger ID such as WhatsApp, LINE or WeChat (optional), preferred date and time, program or package, options, delivery method, requests (plus sport, level and age group for lessons).", "If you choose courier delivery: recipient name, address and phone (requested after confirmation).", "Server security logs: IP address, browser type, access time.", "If you arrive by clicking an ad (Naver, Google, Meta, Kakao): to prevent ad click fraud we record your IP address, device/browser type, the ad search term, time on site and whether you pressed a booking or contact button, and delete it after 90 days. No name or contact details are recorded."] },
     { title: "2. Purpose of use", body: ["Handling and confirming bookings, running lessons and shoots, delivering photos, prints and frames, payment / refund / rescheduling guidance, and customer support."] },
     { title: "3. Retention", body: ["Booking, quote and inquiry information is kept for 1 year after the lesson and then deleted. If you opt in to season news, your name and contact are kept until you withdraw consent. Exceptions: records kept as required by Korean e-commerce law: contract and payment records 5 years, complaint records 3 years, access logs 3 months."] },
     { title: "4. Sharing with third parties", body: ["We do not provide your information to third parties except where required by law."] },
@@ -145,7 +146,7 @@ const zh: PrivacyContent = {
   intro: "Jino Company（JinoSki）依据韩国《个人信息保护法》保护您的个人信息。本中文版本仅供参考，以韩文版本为准。",
   effectiveDate: "施行日期：2026年10月4日",
   sections: [
-    { title: "1. 收集的信息", body: ["课程/拍摄预约：姓名、电子邮箱、手机号码（选填）、WeChat/WhatsApp/LINE ID（选填）、希望日期与时段、项目或套餐、选项、领取方式、需求（课程另含项目、水平、年龄段）。", "选择快递时：收件人姓名、地址、电话（确认后另行收集）。", "服务器安全日志：IP地址、浏览器类型、访问时间。"] },
+    { title: "1. 收集的信息", body: ["课程/拍摄预约：姓名、电子邮箱、手机号码（选填）、WeChat/WhatsApp/LINE ID（选填）、希望日期与时段、项目或套餐、选项、领取方式、需求（课程另含项目、水平、年龄段）。", "选择快递时：收件人姓名、地址、电话（确认后另行收集）。", "服务器安全日志：IP地址、浏览器类型、访问时间。", "通过广告（Naver、Google、Meta、Kakao）进入时：为防止广告恶意点击，记录IP地址、设备及浏览器类型、广告搜索词、停留时间以及是否点击预约或咨询按钮，90天后删除。不记录姓名及联系方式。"] },
     { title: "2. 使用目的", body: ["受理及确认预约、进行课程与拍摄、交付照片与装裱作品、付款/退款/改期说明及客户咨询。"] },
     { title: "3. 保存期限", body: ["预约·报价·咨询信息在课程结束后保存1年后销毁；同意接收雪季通知的，保存至撤回同意为止。但依韩国电子商务法保存：合同及付款记录5年，投诉记录3年，访问日志3个月。"] },
     { title: "4. 向第三方提供", body: ["除法律规定外，不向第三方提供您的个人信息。"] },
