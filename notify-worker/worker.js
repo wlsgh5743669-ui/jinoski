@@ -6,8 +6,10 @@
  *
  *   POST /                → 예약 알림 전송 (홈페이지가 호출) · 견적서 사진이 오면 사진 카드 + 글
  *   GET  /img/<id>.jpg    → 견적서 사진 (카톡 사진 카드용, KV에 90일 보관)
+ *   POST /notify          → 통합 상담 수신함(inbox.jinoski.com) 알림 → 카톡 「나와의 채팅」. body.inquiry가 있으면 문의 목록(q:)에 「채팅 상담」으로도 저장
  *   GET  /inquiries       → 홈페이지 문의 목록 (운영 프로그램용, Authorization: Bearer QUOTES_KEY)
  *   POST /inquiries/update → 문의 상태·메모·답변 변경 (운영 프로그램용)
+ *   GET/POST /blocklist   → 🚫 차단 번호·IP (운영 프로그램용) — 차단된 번호·IP의 문의는 보관만 하고 카톡 알림을 안 보냄 (손님 화면은 똑같이 「접수됨」)
  *   POST /my-quotes       → 손님이 휴대폰 번호 + 비밀번호로 내 견적·사장님 답변 확인
  *   GET  /setup?key=...   → 최초 1회: 카카오 로그인 → 토큰 저장
  *   GET  /callback        → 카카오 로그인 리다이렉트 처리
@@ -36,6 +38,9 @@ export default {
         if (!cors["Access-Control-Allow-Origin"]) return text("forbidden origin", 403);
         const data = JSON.parse(await request.text());
         if (!data || !data.name || !data.phone) return text("missing fields", 400, cors);
+        // 🚫 차단한 번호·IP(경쟁사 가짜 문의 등)면 보관만 하고 알림은 안 보냄 — 응답은 똑같이 "ok" (막힌 걸 모르게)
+        const ip = (request.headers.get("cf-connecting-ip") || "").slice(0, 45);
+        const blocked = blockedBy(await loadBlocklist(env), phoneKey(data.phone), ip);
         // 견적 계산기는 손님이 만든 견적 링크(link)를 같이 보내요 → 카톡 「견적 보기」 버튼으로 바로 열기
         const link = typeof data.link === "string" && /^https:\/\/(www\.)?jinoski\.com\//.test(data.link) ? data.link : "";
         // 견적서 사진(data:image/jpeg;base64,...)이 있으면 KV에 저장 → 사진 카드로 먼저 보내요
@@ -47,24 +52,24 @@ export default {
             const bytes = Uint8Array.from(atob(m[2]), (c) => c.charCodeAt(0));
             await env.TOKENS.put(`img:${id}`, bytes, { expirationTtl: 60 * 60 * 24 * 90, metadata: { type: `image/${m[1]}` } });
             imageId = id;
-            await sendImageCard(env, data, `${url.origin}/img/${id}.jpg`, link, `${SITE_URL}/ko/quote/photo/?id=${id}`);
+            if (!blocked) await sendImageCard(env, data, `${url.origin}/img/${id}.jpg`, link, `${SITE_URL}/ko/quote/photo/?id=${id}`);
           } catch (e) {
             console.error("image card failed", e);
           }
         }
         // 운영 프로그램(ops.jinoski.com)에서 볼 수 있게 문의 내용도 보관 (실패해도 알림은 계속)
         try {
-          await saveInquiry(env, data, imageId, link);
+          await saveInquiry(env, data, imageId, link, { ip, blocked });
         } catch (e) {
           console.error("save inquiry failed", e);
         }
-        await sendMemo(env, formatBooking(data), link);
+        if (!blocked) await sendMemo(env, formatBooking(data), link);
         return text("ok", 200, cors);
       }
 
       // ── 통합 상담 수신함(inbox.jinoski.com)용: 대표 확인이 필요한 문의를 카톡 「나와의 채팅」으로 알림 ──
       // NOTIFY_KEY 변수가 있으면 Authorization: Bearer NOTIFY_KEY 로 확인, 없으면 POST / 와 같이 허용된 Origin(inbox.jinoski.com)만 받음.
-      // 문의함(KV)에는 저장하지 않음.
+      // body.inquiry(수신함 0.1.11+)가 있으면 운영 프로그램 「견적 문의」에 「채팅 상담」 한 줄로 저장(같은 대화는 한 건을 갱신).
       if (request.method === "POST" && url.pathname === "/notify") {
         const authed = env.NOTIFY_KEY
           ? request.headers.get("Authorization") === `Bearer ${env.NOTIFY_KEY}`
@@ -74,6 +79,13 @@ export default {
         const msg = typeof b.text === "string" ? b.text.trim().slice(0, 1200) : "";
         if (!msg) return text("missing text", 400);
         const link = typeof b.link === "string" && /^https:\/\/inbox\.jinoski\.com\//.test(b.link) ? b.link : "";
+        if (b.inquiry && typeof b.inquiry === "object") {
+          try {
+            await upsertChatInquiry(env, b.inquiry, link);
+          } catch (e) {
+            console.error("chat inquiry failed", e);
+          }
+        }
         try {
           await sendMemo(env, msg, link, "수신함 열기");
         } catch (e) {
@@ -85,9 +97,30 @@ export default {
       }
 
       // ── 운영 프로그램용: 문의 목록 / 상태 변경 ──
-      if (url.pathname === "/inquiries" || url.pathname === "/inquiries/update") {
+      if (url.pathname === "/inquiries" || url.pathname === "/inquiries/update" || url.pathname === "/blocklist") {
         if (!env.QUOTES_KEY || request.headers.get("Authorization") !== `Bearer ${env.QUOTES_KEY}`) return text("forbidden", 403, cors);
         const jsonRes = (o) => new Response(JSON.stringify(o), { headers: { "Content-Type": "application/json; charset=utf-8", ...cors } });
+        if (url.pathname === "/blocklist") {
+          if (request.method === "GET") return jsonRes(await loadBlocklist(env));
+          if (request.method !== "POST") return text("method not allowed", 405, cors);
+          const b = await request.json();
+          const bl = await loadBlocklist(env);
+          const phone = typeof b.phone === "string" ? phoneKey(b.phone) : "";
+          const ipv = typeof b.ip === "string" ? b.ip.trim().slice(0, 45) : "";
+          if (!phone && !ipv) return text("phone or ip required", 400, cors);
+          if (ipv && !/^[0-9a-fA-F:.*]{3,45}$/.test(ipv)) return text("bad ip", 400, cors);
+          const memo = typeof b.memo === "string" ? b.memo.slice(0, 60) : "";
+          const at = new Date().toISOString();
+          if (b.op === "add") {
+            if (phone) bl.phones[phone] = { memo, at };
+            if (ipv) bl.ips[ipv] = { memo, at };
+          } else if (b.op === "remove") {
+            if (phone) delete bl.phones[phone];
+            if (ipv) delete bl.ips[ipv];
+          } else return text("bad op", 400, cors);
+          await env.TOKENS.put("blocklist", JSON.stringify(bl));
+          return jsonRes(bl);
+        }
         if (request.method === "GET" && url.pathname === "/inquiries") {
           const list = await env.TOKENS.list({ prefix: "q:", limit: 300 });
           const items = (await Promise.all(list.keys.map((k) => env.TOKENS.get(k.name, "json"))))
@@ -101,6 +134,7 @@ export default {
           const rec = await env.TOKENS.get(b.key, "json");
           if (!rec) return text("not found", 404, cors);
           if (["new", "contacted", "booked", "closed"].includes(b.status)) rec.status = b.status;
+          if (typeof b.blocked === "string") rec.blocked = b.blocked.slice(0, 20); // "" = 차단 풀기, "manual" = 운영 프로그램에서 차단
           if (typeof b.memo === "string") rec.memo = b.memo.slice(-4000);
           // 손님에게 보이는 답변 (내 견적 확인 화면)
           if (typeof b.reply === "string") {
@@ -232,7 +266,7 @@ function cleanBreakdown(b) {
   return json.length <= 30000 ? JSON.parse(json) : null;
 }
 
-async function saveInquiry(env, d, imageId, link) {
+async function saveInquiry(env, d, imageId, link, extra = {}) {
   const cut = (v, n = 300) => (typeof v === "string" ? v.slice(0, n) : "");
   const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
   const key = `q:${String(9_000_000_000_000 - Date.now()).padStart(13, "0")}:${id}`;
@@ -262,10 +296,57 @@ async function saveInquiry(env, d, imageId, link) {
     pwHash: "",
     // 날짜별·사람별 금액표 (홈페이지 견적 계산기) — 운영 프로그램 견적서가 같은 숫자로 보여줘요
     breakdown: cleanBreakdown(d.breakdown),
+    // 🚫 접속 IP(차단용) · 차단된 번호/IP로 들어와 알림 안 보낸 문의면 blocked = "phone" | "ip"
+    ip: extra.ip || "",
+    blocked: extra.blocked || "",
   };
   const pw = typeof d.pw === "string" ? d.pw.trim().slice(0, 20) : "";
   if (pw.length >= 4) rec.pwHash = await hashPw(id, pw);
   await env.TOKENS.put(key, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 365 });
+}
+
+// 통합 상담 수신함의 대화 → 운영 프로그램 「견적 문의」 목록에 「채팅 상담」으로.
+// 같은 대화(convId)는 inbox:<convId> → q:키 매핑으로 한 건을 계속 갱신 (대화 내용은 note 위에 쌓임).
+const CHAT_KIND = "채팅 상담";
+async function upsertChatInquiry(env, q, link) {
+  const cut = (v, n = 300) => (typeof v === "string" ? v.trim().slice(0, n) : "");
+  const convId = cut(q.convId, 40).replace(/[^0-9A-Za-z_-]/g, "");
+  if (!convId) return;
+  const ttl = { expirationTtl: 60 * 60 * 24 * 365 };
+  const mapKey = `inbox:${convId}`;
+  const now = new Date().toISOString();
+  const stamp = new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+  const lines = [
+    `[${stamp}] ${cut(q.category, 20)}${q.handoff ? ` · 확인 필요: ${cut(q.handoff, 200)}` : ""}`,
+    `손님: ${cut(q.customer, 500)}`,
+    q.reply ? `${cut(q.replyLabel, 20) || "답"}: ${cut(q.reply, 500)}` : "",
+  ].filter(Boolean);
+  const noteLine = lines.join("\n");
+  const existingKey = await env.TOKENS.get(mapKey);
+  if (existingKey) {
+    const rec = await env.TOKENS.get(existingKey, "json");
+    if (rec) {
+      rec.updatedAt = now;
+      rec.request = cut(q.customer, 500);
+      rec.headline = cut(q.headline, 120) || rec.headline;
+      rec.note = `${noteLine}\n\n${rec.note || ""}`.slice(0, 4000);
+      if (rec.status === "closed") rec.status = "new"; // 끝난 손님이 다시 말하면 새 문의로
+      await env.TOKENS.put(existingKey, JSON.stringify(rec), ttl);
+      return;
+    }
+  }
+  const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+  const key = `q:${String(9_000_000_000_000 - Date.now()).padStart(13, "0")}:${id}`;
+  const rec = {
+    key, id, createdAt: now, kind: CHAT_KIND,
+    name: cut(q.name, 40) || "손님", phone: cut(q.phone, 30),
+    date: "", program: cut(q.channel, 40), timeSlot: "", groupSize: "", equipment: "", level: "", total: "",
+    headline: cut(q.headline, 120), request: cut(q.customer, 500), note: noteLine.slice(0, 4000),
+    link: link || "", image: "", status: "new", memo: "", reply: "",
+    phoneDigits: cut(q.phone, 30).replace(/\D/g, ""), pwHash: "",
+  };
+  await env.TOKENS.put(key, JSON.stringify(rec), ttl);
+  await env.TOKENS.put(mapKey, key, ttl);
 }
 
 // 카카오 "나에게 보내기" 텍스트는 최대 200자
@@ -416,6 +497,26 @@ async function saveTokens(env, tok) {
       expires_at: Date.now() + (tok.expires_in || 0) * 1000,
     })
   );
+}
+
+// ── 🚫 차단 목록 (KV "blocklist") ── { phones: { "01012345678": {memo, at} }, ips: { "1.2.3.4" | "1.2.3.*": {memo, at} } }
+async function loadBlocklist(env) {
+  const v = await env.TOKENS.get("blocklist", "json").catch(() => null);
+  return { phones: (v && v.phones) || {}, ips: (v && v.ips) || {} };
+}
+/** 번호 비교용: 숫자만 · +82 10… → 010… */
+function phoneKey(raw) {
+  let d = String(raw || "").replace(/\D/g, "");
+  if (d.startsWith("82") && d.length >= 11) d = "0" + d.slice(2);
+  return d.length >= 8 ? d.slice(0, 20) : "";
+}
+function blockedBy(bl, phone, ip) {
+  if (phone && bl.phones[phone]) return "phone";
+  if (ip) {
+    if (bl.ips[ip]) return "ip";
+    for (const k of Object.keys(bl.ips)) if (k.endsWith(".*") && ip.startsWith(k.slice(0, -1))) return "ip";
+  }
+  return "";
 }
 
 function corsHeaders(request, env) {
