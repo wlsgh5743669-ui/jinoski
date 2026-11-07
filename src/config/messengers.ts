@@ -11,6 +11,10 @@ export const LINE_URL = "https://line.me/ti/p/~jinoski";
 export const WECHAT_ID = "jino7711";
 export const WECHAT_QR = "";
 
+/** 왓츠앱 QR (PC로 보는 손님이 휴대폰으로 찍으면 대표 번호 대화창이 열려요, 인사말 포함) */
+export const whatsappQr = (locale: string) =>
+  locale === "zh" ? "/images/qr/whatsapp-zh.svg" : "/images/qr/whatsapp-en.svg";
+
 export const whatsappHref = (locale: string) => {
   const text =
     locale === "zh" ? "你好 JINO SKI！我想预约课程。" : "Hi JINO SKI! I'd like to book a lesson.";

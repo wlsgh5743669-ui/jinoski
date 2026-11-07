@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { trackEvent } from "@/components/shared/analytics";
-import { hasLine, hasWeChat, LINE_URL, WECHAT_ID, WECHAT_QR, whatsappHref } from "@/config/messengers";
+import { hasLine, hasWeChat, LINE_URL, WECHAT_ID, WECHAT_QR, whatsappHref, whatsappQr } from "@/config/messengers";
 
 export const MSG_COLORS = { whatsapp: "#25D366", line: "#06C755", wechat: "#07C160", kakao: "#FEE500" } as const;
 export const KAKAO_CHAT_URL = "https://pf.kakao.com/_RCzHn/chat";
@@ -116,6 +116,36 @@ export function MessengerCard({ locale, place }: { locale: string; place: string
       </p>
       <div className="mt-4">
         <MessengerButtons locale={locale} place={place} />
+      </div>
+      <ScanQrRow locale={locale} />
+    </div>
+  );
+}
+
+/** PC 화면에서만: 휴대폰으로 찍는 QR (휴대폰에선 버튼을 누르면 되니까 숨김) */
+function ScanQrRow({ locale }: { locale: string }) {
+  const zh = locale === "zh";
+  const qrs = [
+    ...(zh && WECHAT_QR ? [{ key: "wechat", label: "微信 WeChat", src: WECHAT_QR }] : []),
+    { key: "whatsapp", label: "WhatsApp", src: whatsappQr(locale) },
+    ...(!zh && WECHAT_QR ? [{ key: "wechat", label: "WeChat", src: WECHAT_QR }] : []),
+  ] as { key: keyof typeof MSG_COLORS; label: string; src: string }[];
+  return (
+    <div className="mt-5 hidden border-t border-snow-300/60 pt-5 sm:block">
+      <p className="text-[13.5px] font-semibold text-ink-800">
+        {zh ? "用电脑浏览？用手机扫码，直接开始聊天" : "On a computer? Scan with your phone to start chatting"}
+      </p>
+      <div className="mt-3 flex flex-wrap gap-4">
+        {qrs.map((q) => (
+          <figure key={q.key} className="w-[140px] rounded-2xl p-2 ring-1 ring-snow-300/60">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={q.src} alt={`${q.label} QR`} width={124} height={124} className="h-[124px] w-[124px]" />
+            <figcaption className="mt-1.5 flex items-center justify-center gap-1.5 text-[12.5px] font-bold text-ink-900">
+              <span className="h-2 w-2 rounded-full" style={{ background: MSG_COLORS[q.key] }} />
+              {q.label}
+            </figcaption>
+          </figure>
+        ))}
       </div>
     </div>
   );
