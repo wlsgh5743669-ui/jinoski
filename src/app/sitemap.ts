@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getContent, defaultLocale, locales } from "@/config/site";
+import { ANSWERS } from "@/config/content/answers";
 
 export const dynamic = "force-static";
 
@@ -55,6 +56,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
       images: [`${siteConfig.url}/images/season-link/1.jpg`, `${siteConfig.url}/images/season-link/2.jpg`, `${siteConfig.url}/images/season-link/3.jpg`],
     },
+    // 「강사가 답해요」 질문 답변 글 (한국어만)
+    {
+      url: `${siteConfig.url}/ko/answers/`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    },
+    ...ANSWERS.map((a) => ({
+      url: `${siteConfig.url}/ko/answers/${a.slug}/`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+      images: [`${siteConfig.url}${a.image.src}`],
+    })),
     ...["ko", "en", "zh"].map((l) => ({
       url: `${siteConfig.url}/${l}/quote/`,
       lastModified,

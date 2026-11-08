@@ -87,6 +87,13 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              {locale === "ko" && (
+                <li>
+                  <Link href="/answers" className="text-[15px] transition-colors hover:text-white">
+                    강사가 답해요
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 
