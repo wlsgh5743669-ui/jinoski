@@ -113,7 +113,7 @@ export function SeasonPopup() {
               {(() => {
                 const kst = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
                 const d = Math.round((Date.parse(EARLY_BIRD.endDate) - Date.parse(kst)) / 86400000);
-                return d === 0 ? "오늘 마감!" : d > 0 && d <= 14 ? `마감 D-${d} · 11/10까지 예약` : "11/10까지 예약";
+                return d === 0 ? "오늘 마감!" : d > 0 && d <= 14 ? `마감 D-${d} · 11/20까지 예약` : "11/20까지 예약";
               })()} · 시즌 8회 패키지 · 눌러서 보기
             </span>
           </button>

@@ -5,7 +5,7 @@ import { trackEvent } from "@/components/shared/analytics";
 import { isEarlyBirdActive } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
-/** regular: 얼리버드가 끝나면(11/11부터, 한국 시간) 대신 보여줄 정가판 이미지 */
+/** regular: 얼리버드가 끝나면(11/21부터, 한국 시간) 대신 보여줄 정가판 이미지 */
 export type GuideCard = { src: string; alt: string; regular?: string };
 
 const noSubscribe = () => () => {};

@@ -12,7 +12,7 @@ export type StoreProduct = {
   image: string;
   imagePosition?: string;
   badge?: string;
-  /** 얼리버드 기간(11/10까지)에만 보여줄 배지·가격 */
+  /** 얼리버드 기간(11/20까지)에만 보여줄 배지·가격 */
   earlyBird?: { badge: string; price: string };
   /** 아직 스토어에 안 올라간 상품: 구매 버튼 대신 상담 버튼 */
   comingSoon?: boolean;
@@ -49,7 +49,7 @@ export const storeProducts: StoreProduct[] = [
     price: "1,120,000원~",
     priceNote: "1:1 기준",
     image: "/images/store/season8.jpg",
-    earlyBird: { badge: "얼리버드 · 11/10까지", price: "1,008,000원~" },
+    earlyBird: { badge: "얼리버드 · 11/20까지", price: "1,008,000원~" },
     url: "https://smartstore.naver.com/jinoski/products/11057867556",
   },
   {

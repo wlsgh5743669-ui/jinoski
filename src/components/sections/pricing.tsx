@@ -259,7 +259,7 @@ function FullCareCard({
 function SeasonProgramCard() {
   const usd = useUsd();
   const { seasonProgram, contact } = useContent();
-  // 얼리버드 기간(11/10까지)이 지나면 할인 표시를 숨기고 정상가로 보여줌
+  // 얼리버드 기간(11/20까지)이 지나면 할인 표시를 숨기고 정상가로 보여줌
   const [eb, setEb] = useState(true);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
