@@ -36,7 +36,7 @@ export default async function ReviewsPage({
       <PageHero
         eyebrow={eyebrow}
         title={title}
-        description={content.pageMeta.reviews.description}
+        description={content.pageMeta.reviews.hero ?? content.pageMeta.reviews.description}
       />
       <ReviewEventStrip />
       <Reviews />

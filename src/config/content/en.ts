@@ -2,9 +2,9 @@ import type { SiteContent } from "./types";
 
 const siteConfig = {
   name: "JinoSki",
-  title: "JinoSki | Vivaldi Park Premium Ski & Snowboard School",
+  title: "JinoSki (지노스키) | Ski & Snowboard Lessons at Vivaldi Park, Korea",
   description:
-    "JinoSki is a premium 1:1 ski and snowboard lesson brand based at Vivaldi Park. Safe, structured lessons that turn your first winter into an unforgettable memory.",
+    "JinoSki (지노스키) is a ski and snowboard school at Vivaldi Park in Hongcheon, Gangwon, about 1.5 hours from Seoul. One instructor teaches up to 3 people; a 2-hour private lesson starts at ₩140,000. Kids from age 4, adults, English and Chinese guests welcome, with free photos and video every lesson.",
   url: "https://jinoski.com",
   ogImage: "/images/og-image-2627.jpg",
   locale: "en_US",
@@ -734,35 +734,35 @@ const shootSamples: SiteContent["shootSamples"] = {
 };
 
 const galleryItems = [
-  { type: "image", src: "/images/gallery-1.jpg", alt: "Night snowboarding", tall: true },
-  { type: "image", src: "/images/gallery-2.jpg", alt: "Carving turn" },
-  { type: "image", src: "/images/gallery-3.jpg", alt: "Kids snowboard lesson", tall: true },
-  { type: "image", src: "/images/gallery-4.jpg", alt: "Night session", tall: true },
-  { type: "image", src: "/images/gallery-5.jpg", alt: "Group lesson in progress" },
-  { type: "image", src: "/images/gallery-6.jpg", alt: "Instructor coaching a run", tall: true },
-  { type: "image", src: "/images/gallery-7.jpg", alt: "Vivaldi Park Ski World" },
-  { type: "image", src: "/images/gallery-8.jpg", alt: "Snowboard riding", tall: true },
-  { type: "image", src: "/images/gallery-9.jpg", alt: "Kids ski lesson", tall: true },
-  { type: "image", src: "/images/gallery-10.jpg", alt: "Kids ski lesson" },
-  { type: "image", src: "/images/gallery-11.jpg", alt: "Junior ski lesson", tall: true },
-  { type: "image", src: "/images/gallery-12.jpg", alt: "Junior ski lesson", tall: true },
-  { type: "image", src: "/images/gallery-13.jpg", alt: "Ski lesson on the slope", tall: true },
-  { type: "image", src: "/images/gallery-14.jpg", alt: "Ski lesson on the slope", tall: true },
-  { type: "image", src: "/images/gallery-15.jpg", alt: "Ski lesson on the slope", tall: true },
-  { type: "image", src: "/images/gallery-16.jpg", alt: "Ski lesson in the snow", tall: true },
-  { type: "image", src: "/images/gallery-17.jpg", alt: "Instructor with filming gear", tall: true },
-  { type: "image", src: "/images/gallery-18.jpg", alt: "Selfie with the instructor", tall: true },
-  { type: "image", src: "/images/gallery-19.jpg", alt: "Instructor and student", tall: true },
-  { type: "image", src: "/images/gallery-20.jpg", alt: "Photo after the lesson", tall: true },
-  { type: "image", src: "/images/gallery-21.jpg", alt: "Instructor filming the lesson", tall: true },
-  { type: "image", src: "/images/gallery-22.jpg", alt: "Group ski lesson", tall: true },
-  { type: "image", src: "/images/gallery-23.jpg", alt: "Group ski lesson" },
-  { type: "image", src: "/images/gallery-24.jpg", alt: "Group ski lesson" },
-  { type: "image", src: "/images/gallery-25.jpg", alt: "Group ski lesson", tall: true },
-  { type: "image", src: "/images/gallery-26.jpg", alt: "Family ski lesson", tall: true },
-  { type: "image", src: "/images/gallery-27.jpg", alt: "Family ski lesson", tall: true },
-  { type: "image", src: "/images/gallery-28.jpg", alt: "Carving turn practice" },
-  { type: "image", src: "/images/gallery-29.jpg", alt: "Junior ski lesson", tall: true },
+  { type: "image", src: "/images/gallery-1.jpg", alt: "Snowboard student striking a pose on the Vivaldi Park slope", tall: true },
+  { type: "image", src: "/images/gallery-2.jpg", alt: "Child skier carving a turn beside the orange safety fence" },
+  { type: "image", src: "/images/gallery-3.jpg", alt: "JinoSki instructor kneeling to guide a young child's snowboard stance", tall: true },
+  { type: "image", src: "/images/gallery-4.jpg", alt: "Instructor and child skiing side by side along the fence", tall: true },
+  { type: "image", src: "/images/gallery-5.jpg", alt: "JinoSki group ski lesson at the base of Vivaldi Park Ski World" },
+  { type: "image", src: "/images/gallery-6.jpg", alt: "JinoSki founder and instructor Jinho Park giving a thumbs-up", tall: true },
+  { type: "image", src: "/images/gallery-7.jpg", alt: "Instructor skiing with a child on the beginner slope by the Vivaldi Park fence" },
+  { type: "image", src: "/images/gallery-8.jpg", alt: "Instructor skiing right next to a child to check posture", tall: true },
+  { type: "image", src: "/images/gallery-9.jpg", alt: "Young ski student raising both arms in the sunshine", tall: true },
+  { type: "image", src: "/images/gallery-10.jpg", alt: "Smiling young ski student in helmet and goggles" },
+  { type: "image", src: "/images/gallery-11.jpg", alt: "Junior ski student making a V sign on the slope", tall: true },
+  { type: "image", src: "/images/gallery-12.jpg", alt: "Junior ski student looking back and smiling", tall: true },
+  { type: "image", src: "/images/gallery-13.jpg", alt: "Ski student listening to the instructor with poles planted", tall: true },
+  { type: "image", src: "/images/gallery-14.jpg", alt: "Ski student with a green armband waiting on the slope", tall: true },
+  { type: "image", src: "/images/gallery-15.jpg", alt: "Skier standing on the slope between frosted trees", tall: true },
+  { type: "image", src: "/images/gallery-16.jpg", alt: "Skier in a snowy landscape under a clear sky", tall: true },
+  { type: "image", src: "/images/gallery-17.jpg", alt: "JinoSki instructor reviewing lesson footage on a camera", tall: true },
+  { type: "image", src: "/images/gallery-18.jpg", alt: "Selfie of a JinoSki instructor and a child student", tall: true },
+  { type: "image", src: "/images/gallery-19.jpg", alt: "Instructor and child posing together after the lesson", tall: true },
+  { type: "image", src: "/images/gallery-20.jpg", alt: "Instructor and student posing with poles under a blue sky", tall: true },
+  { type: "image", src: "/images/gallery-21.jpg", alt: "JinoSki instructor photographing students with a telephoto lens", tall: true },
+  { type: "image", src: "/images/gallery-22.jpg", alt: "Group ski lesson practicing in a line at Vivaldi Park", tall: true },
+  { type: "image", src: "/images/gallery-23.jpg", alt: "Group ski lesson practicing turns on a wide beginner slope" },
+  { type: "image", src: "/images/gallery-24.jpg", alt: "Group following the instructor down in a single line" },
+  { type: "image", src: "/images/gallery-25.jpg", alt: "Group ski lesson on the slope against the sun", tall: true },
+  { type: "image", src: "/images/gallery-26.jpg", alt: "JinoSki instructor demonstrating for a family group", tall: true },
+  { type: "image", src: "/images/gallery-27.jpg", alt: "Family learning to ski together", tall: true },
+  { type: "image", src: "/images/gallery-28.jpg", alt: "Ski student practicing a low carving turn" },
+  { type: "image", src: "/images/gallery-29.jpg", alt: "Junior ski student talking with the instructor on the slope", tall: true },
 ];
 
 // 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기: 24/25·25/26 시즌)
@@ -1379,38 +1379,43 @@ const datePicker = {
 };
 
 const reservePage = {
-  title: "Book Now",
+  title: "Book a Lesson",
   description:
-    "Book your premium ski or snowboard lesson at Vivaldi Park with JinoSki online.",
+    "Book a JinoSki ski or snowboard lesson at Vivaldi Park — pick a date, time and group size and we confirm once an instructor is free. International guests pay a USD 220 deposit by PayPal; the rest is paid on lesson day.",
 };
 
+// Search / AI summary text per page — brand once + facts unique to that page (2026-11-08)
 const pageMeta = {
   lessons: {
-    title: "Lesson Programs",
+    title: "Ski & Snowboard Lesson Programs at Vivaldi Park",
     description:
-      "From beginner to advanced, one-day and kids lessons — choose the course that fits your goal.",
+      "JinoSki lesson types — 2-hour beginner to advanced classes, 7-hour One Day and Night Full Care days, and kids ski or snowboard lessons from age 4 at Vivaldi Park, Korea.",
   },
   pricing: {
-    title: "Pricing",
+    title: "Ski & Snowboard Lesson Prices",
     description:
-      "Check schedules and Vivaldi Park lesson permit costs before you book.",
+      "JinoSki prices — 2-hour lesson ₩140,000 for 1 person, ₩200,000 for 2, ₩240,000 for 3; 3-hour, 4-hour and 7-hour Full Care rates; lesson permit ₩25,000 per 2 hours; lift and rental 40% off.",
   },
   instructor: {
-    title: "Instructor",
-    description: "Meet Jinho Park, the instructor behind JinoSki.",
+    title: "Instructor Jinho Park",
+    description:
+      "Jinho Park, founder of JinoSki — KSIA Ski Level 2 and Snowboard Level 1, EFR first-aid instructor and certified photographer, teaching at Vivaldi Park for 8+ seasons.",
   },
   gallery: {
-    title: "Gallery",
+    title: "Lesson Photo Gallery",
     description:
-      "From skiing and snowboarding to under the sea — moments captured through the JinoSki lens.",
+      "JinoSki on the slopes — kids, junior, family and group ski lessons, carving turns and night snowboarding photographed at Vivaldi Park.",
   },
   reviews: {
-    title: "Reviews",
-    description: "Read real reviews from JinoSki students.",
+    title: "Student Reviews",
+    description:
+      "JinoSki reviews — 670+ students, 4.8 average rating. Families, kids and couples share how their Vivaldi Park lessons went.",
+    hero: "Read real reviews from JinoSki students.",
   },
   faq: {
     title: "FAQ",
-    description: "Check answers to common questions before you book.",
+    description:
+      "JinoSki FAQ — first-timers, minimum age, deposit and cancellation, lesson permit and lift tickets, meeting point, what to bring and bad weather.",
   },
 };
 

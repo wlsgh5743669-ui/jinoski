@@ -53,8 +53,9 @@ export function NoticeList() {
               </div>
               <ChevronDown size={18} className={cn("mt-1 shrink-0 text-snow-500 transition-transform", isOpen && "rotate-180")} />
             </button>
-            {isOpen && (
-              <div className="border-t border-snow-300/50 px-5 pb-5 pt-3">
+            {/* 닫힌 공지도 HTML엔 본문이 남게 (검색엔진·AI용), 화면에서만 숨김 */}
+            {(
+              <div hidden={!isOpen} className="border-t border-snow-300/50 px-5 pb-5 pt-3">
                 {n.body[l].split("\n").map((p, i) => (
                   <p key={i} className="mt-1.5 text-[14.5px] leading-relaxed text-snow-700">
                     {p}

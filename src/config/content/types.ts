@@ -312,7 +312,8 @@ export type SiteContent = {
     pricing: { title: string; description: string };
     instructor: { title: string; description: string };
     gallery: { title: string; description: string };
-    reviews: { title: string; description: string };
+    /** hero: 후기 페이지 맨 위에 보이는 짧은 문장 (description은 검색·AI용) */
+    reviews: { title: string; description: string; hero?: string };
     faq: { title: string; description: string };
   };
   ui: {

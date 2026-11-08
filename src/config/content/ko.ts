@@ -2,28 +2,21 @@ import type { SiteContent } from "./types";
 
 const siteConfig = {
   name: "지노스키 JinoSki",
-  title: "지노스키(JinoSki) | 비발디파크 스키·보드 강습 프리미엄 1:1 레슨",
+  title: "지노스키(JinoSki) | 비발디파크 스키·스노보드 강습",
+  // 검색 결과·AI 요약에 그대로 쓰이는 한 단락 — 키워드 나열 대신 사실 위주로 (2026-11-08)
   description:
-    "지노스키(JinoSki, 지노 스키앤보드스쿨)는 비발디파크 스키강습 전문 스키·보드 스쿨입니다. 비발디파크스키강습, 비발디스키강습, 어린이 스키강습, 유아 스키강습까지 프리미엄 1:1 스키·스노보드 레슨으로 완벽한 겨울을 만듭니다.",
+    "지노스키(JinoSki)는 강원 홍천 비발디파크에서 스키·스노보드를 가르치는 강습 스쿨이에요. 강사 1명이 최대 3명까지 맡고, 2시간 1:1 14만원부터. 만 4세 유아부터 성인, 시즌 8회 패키지까지 수업마다 사진·영상을 보내드려요.",
   url: "https://jinoski.com",
   ogImage: "/images/og-image-2627.jpg",
   locale: "ko_KR",
   keywords: [
+    "지노스키",
+    "JinoSki",
+    "지노스키 비발디파크",
     "비발디파크 스키강습",
-    "비발디파크스키강습",
-    "비발디스키강습",
-    "비발디파크 스키 레슨",
     "비발디파크 스노보드 강습",
     "어린이 스키강습",
-    "유아 스키강습",
-    "프리미엄 스키레슨",
-    "1:1 스키 강습",
     "박진호 스키강사",
-    "지노스키",
-    "지노 스키",
-    "지노스키앤보드스쿨",
-    "지노스키 비발디",
-    "JinoSki",
   ],
 };
 
@@ -163,12 +156,12 @@ const whyJinoSki = [
   {
     number: "06",
     image: "/images/why-safety.jpg",
-    highlight: "보험 · EFR 자격",
+    highlight: "응급처치 강사 자격",
     title: "안전 최우선",
     description:
-      "영업배상책임보험에 가입되어 레슨 중 사고에 대비하고, 응급처치(EFR) 강사 자격을 갖춘 강사가 준비운동부터 안전 수칙까지 꼼꼼히 챙깁니다.",
+      "응급처치(EFR) 강사 자격을 갖춘 강사가 준비운동부터 안전 수칙까지 꼼꼼히 챙기고, 영업배상책임보험에도 가입돼 있어요.",
     icon: "ShieldCheck",
-    proof: "영업배상책임보험 가입 · EFR 응급처치 강사",
+    proof: "EFR 응급처치 강사 · 준비운동부터 함께",
   },
 ];
 
@@ -357,7 +350,7 @@ const fullCarePrograms: SiteContent["fullCarePrograms"] = [
           "개인 맞춤형 레슨",
           "턴 및 기술 교정",
           "슬로프 적응 훈련",
-          "수준별 맞춤 코칭",
+          "실력에 맞춘 코칭",
           "사진·영상 촬영",
         ],
       },
@@ -572,7 +565,7 @@ const faq: SiteContent["faq"] = [
     question: "강습료에는 무엇이 포함되어 있나요?",
     category: "패찰·리프트·장비",
     answer:
-      "아래 서비스가 포함됩니다.\n\n포함 사항\n· 🎿 전문 강사의 맞춤형 레슨\n· 📚 수준별 커리큘럼\n· ✅ 자세 교정 및 실시간 피드백\n· 📸 사진 및 영상 촬영(서비스 제공 시)\n· 📝 레슨 종료 후 피드백\n\n별도 비용\n· 🎫 리프트권\n· 🦺 패찰 비용\n· 🎿 장비 렌탈\n· 👕 의류 렌탈\n· 🍽️ 식사 및 개인 비용",
+      "아래 서비스가 포함됩니다.\n\n포함 사항\n· 🎿 전문 강사의 맞춤형 레슨\n· 📚 실력에 맞춘 커리큘럼\n· ✅ 자세 교정 및 실시간 피드백\n· 📸 사진 및 영상 촬영(서비스 제공 시)\n· 📝 레슨 종료 후 피드백\n\n별도 비용\n· 🎫 리프트권\n· 🦺 패찰 비용\n· 🎿 장비 렌탈\n· 👕 의류 렌탈\n· 🍽️ 식사 및 개인 비용",
   },
   {
     question: "외국인도 강습을 받을 수 있나요?",
@@ -747,35 +740,35 @@ const shootSamples: SiteContent["shootSamples"] = {
 };
 
 const galleryItems = [
-  { type: "image", src: "/images/gallery-1.jpg", alt: "나이트 스노보드", tall: true },
-  { type: "image", src: "/images/gallery-2.jpg", alt: "카빙 턴" },
-  { type: "image", src: "/images/gallery-3.jpg", alt: "유아 스노보드 레슨", tall: true },
-  { type: "image", src: "/images/gallery-4.jpg", alt: "나이트 세션", tall: true },
-  { type: "image", src: "/images/gallery-5.jpg", alt: "그룹 레슨 현장" },
-  { type: "image", src: "/images/gallery-6.jpg", alt: "강사의 라이딩 코칭", tall: true },
-  { type: "image", src: "/images/gallery-7.jpg", alt: "비발디파크 스키월드" },
-  { type: "image", src: "/images/gallery-8.jpg", alt: "스노보드 라이딩", tall: true },
-  { type: "image", src: "/images/gallery-9.jpg", alt: "유아 스키 레슨", tall: true },
-  { type: "image", src: "/images/gallery-10.jpg", alt: "유아 스키 레슨" },
-  { type: "image", src: "/images/gallery-11.jpg", alt: "주니어 스키 레슨", tall: true },
-  { type: "image", src: "/images/gallery-12.jpg", alt: "주니어 스키 레슨", tall: true },
-  { type: "image", src: "/images/gallery-13.jpg", alt: "스키 레슨 현장", tall: true },
-  { type: "image", src: "/images/gallery-14.jpg", alt: "스키 레슨 현장", tall: true },
-  { type: "image", src: "/images/gallery-15.jpg", alt: "슬로프 위 스키 레슨", tall: true },
-  { type: "image", src: "/images/gallery-16.jpg", alt: "설경 속 스키 레슨", tall: true },
-  { type: "image", src: "/images/gallery-17.jpg", alt: "레슨 촬영 장비를 든 강사", tall: true },
-  { type: "image", src: "/images/gallery-18.jpg", alt: "강사와 함께한 기념 셀카", tall: true },
-  { type: "image", src: "/images/gallery-19.jpg", alt: "강사와 교육생", tall: true },
-  { type: "image", src: "/images/gallery-20.jpg", alt: "레슨 후 기념 사진", tall: true },
-  { type: "image", src: "/images/gallery-21.jpg", alt: "레슨을 촬영하는 강사", tall: true },
-  { type: "image", src: "/images/gallery-22.jpg", alt: "그룹 스키 레슨", tall: true },
-  { type: "image", src: "/images/gallery-23.jpg", alt: "그룹 스키 레슨" },
-  { type: "image", src: "/images/gallery-24.jpg", alt: "그룹 스키 레슨" },
-  { type: "image", src: "/images/gallery-25.jpg", alt: "그룹 스키 레슨", tall: true },
-  { type: "image", src: "/images/gallery-26.jpg", alt: "가족 스키 레슨", tall: true },
-  { type: "image", src: "/images/gallery-27.jpg", alt: "가족 스키 레슨", tall: true },
-  { type: "image", src: "/images/gallery-28.jpg", alt: "카빙 턴 연습" },
-  { type: "image", src: "/images/gallery-29.jpg", alt: "주니어 스키 레슨", tall: true },
+  { type: "image", src: "/images/gallery-1.jpg", alt: "비발디파크 슬로프에서 한 팔을 들고 포즈를 취한 스노보드 수강생", tall: true },
+  { type: "image", src: "/images/gallery-2.jpg", alt: "주황 펜스 옆 슬로프를 카빙 턴으로 내려오는 어린이 스키어" },
+  { type: "image", src: "/images/gallery-3.jpg", alt: "지노스키 강사가 무릎을 꿇고 아이의 스노보드 자세를 잡아 주는 유아 레슨", tall: true },
+  { type: "image", src: "/images/gallery-4.jpg", alt: "강사와 아이가 펜스 옆을 나란히 내려오는 어린이 스키 레슨", tall: true },
+  { type: "image", src: "/images/gallery-5.jpg", alt: "비발디파크 스키월드 슬로프 아래에서 진행되는 지노스키 그룹 스키 레슨" },
+  { type: "image", src: "/images/gallery-6.jpg", alt: "고글을 쓰고 엄지를 든 지노스키 대표 박진호 강사", tall: true },
+  { type: "image", src: "/images/gallery-7.jpg", alt: "VIVALDI PARK 펜스 앞 초급 슬로프에서 아이와 함께 스키를 타는 강사" },
+  { type: "image", src: "/images/gallery-8.jpg", alt: "강사가 바로 옆에서 함께 내려오며 자세를 봐 주는 어린이 스키 레슨", tall: true },
+  { type: "image", src: "/images/gallery-9.jpg", alt: "햇살 아래 두 팔을 번쩍 든 유아 스키 수강생", tall: true },
+  { type: "image", src: "/images/gallery-10.jpg", alt: "헬멧과 고글을 쓰고 웃는 유아 스키 수강생" },
+  { type: "image", src: "/images/gallery-11.jpg", alt: "슬로프에서 브이 포즈를 한 주니어 스키 수강생", tall: true },
+  { type: "image", src: "/images/gallery-12.jpg", alt: "뒤돌아 웃는 주니어 스키 수강생", tall: true },
+  { type: "image", src: "/images/gallery-13.jpg", alt: "폴을 짚고 강사의 설명을 듣는 스키 수강생", tall: true },
+  { type: "image", src: "/images/gallery-14.jpg", alt: "녹색 완장을 차고 슬로프에서 대기하는 스키 수강생", tall: true },
+  { type: "image", src: "/images/gallery-15.jpg", alt: "눈꽃 핀 나무 사이 슬로프 위에 선 스키어", tall: true },
+  { type: "image", src: "/images/gallery-16.jpg", alt: "맑은 하늘 아래 설경 속에 선 스키어", tall: true },
+  { type: "image", src: "/images/gallery-17.jpg", alt: "카메라로 레슨 영상을 확인하는 지노스키 강사", tall: true },
+  { type: "image", src: "/images/gallery-18.jpg", alt: "지노스키 강사와 아이 수강생의 기념 셀카", tall: true },
+  { type: "image", src: "/images/gallery-19.jpg", alt: "레슨을 마치고 강사와 아이가 함께 찍은 사진", tall: true },
+  { type: "image", src: "/images/gallery-20.jpg", alt: "파란 하늘 아래 폴을 들고 기념 사진을 찍은 강사와 수강생", tall: true },
+  { type: "image", src: "/images/gallery-21.jpg", alt: "망원 렌즈 카메라로 수강생을 촬영하는 지노스키 강사", tall: true },
+  { type: "image", src: "/images/gallery-22.jpg", alt: "비발디파크 슬로프에서 줄지어 연습하는 그룹 스키 레슨", tall: true },
+  { type: "image", src: "/images/gallery-23.jpg", alt: "넓은 초급 슬로프에서 턴을 연습하는 그룹 스키 레슨" },
+  { type: "image", src: "/images/gallery-24.jpg", alt: "강사를 따라 한 줄로 내려오는 그룹 스키 레슨" },
+  { type: "image", src: "/images/gallery-25.jpg", alt: "역광 속 슬로프에서 진행되는 그룹 스키 레슨", tall: true },
+  { type: "image", src: "/images/gallery-26.jpg", alt: "가족 수강생들에게 시범을 보이는 지노스키 강사", tall: true },
+  { type: "image", src: "/images/gallery-27.jpg", alt: "가족 단위로 함께 배우는 스키 레슨", tall: true },
+  { type: "image", src: "/images/gallery-28.jpg", alt: "낮은 자세로 카빙 턴을 연습하는 스키 수강생" },
+  { type: "image", src: "/images/gallery-29.jpg", alt: "슬로프에서 강사와 이야기하는 주니어 스키 수강생", tall: true },
 ];
 
 // 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기: 24/25·25/26 시즌)
@@ -1389,34 +1382,43 @@ const datePicker = {
 };
 
 const reservePage = {
-  title: "예약하기",
-  description: "JinoSki 비발디파크 프리미엄 스키·스노보드 레슨을 온라인으로 신청하세요.",
+  title: "강습 예약",
+  description:
+    "지노스키 비발디파크 스키·스노보드 강습 예약 — 날짜·시간·인원을 고르면 강사 일정을 확인해 연락드려요. 예약금 30만원, 잔금은 강습 당일에 내시면 돼요.",
 };
 
+// 페이지마다 검색 결과·AI 요약에 쓰이는 설명 — 지노스키 이름 1번 + 그 페이지만의 사실 (2026-11-08)
 const pageMeta = {
   lessons: {
-    title: "레슨 프로그램",
-    description: "입문부터 상급, 원데이와 유아 레슨까지 — 목표에 맞는 코스를 선택하세요.",
+    title: "비발디파크 스키·스노보드 레슨 프로그램",
+    description:
+      "지노스키 레슨 종류 — 입문·초급·중급·상급 2시간 수업, 하루를 다 쓰는 7시간 원데이·나이트 풀케어, 만 4세부터 받는 유아 스키·스노보드 레슨을 비발디파크에서 진행해요.",
   },
   pricing: {
-    title: "요금 안내",
-    description: "시간표부터 비발디파크 패찰 비용까지, 예약 전에 미리 확인하세요.",
+    title: "스키·스노보드 강습 요금",
+    description:
+      "지노스키 강습료 — 2시간 1:1 14만원·1:2 20만원·1:3 24만원, 3·4시간과 7시간 풀케어 요금, 패찰 2시간 25,000원, 리프트·장비 40% 할인가를 한 페이지에 정리했어요.",
   },
   instructor: {
-    title: "강사 소개",
-    description: "JinoSki를 이끄는 박진호 강사를 소개합니다.",
+    title: "박진호 강사 소개",
+    description:
+      "지노스키 대표 박진호 강사 — 대한스키지도자연맹 스키 Level 2·스노보드 Level 1, EFR 응급처치 강사, 사진기능사. 비발디파크에서 8시즌 넘게 가르쳤어요.",
   },
   gallery: {
-    title: "갤러리",
-    description: "스키, 스노보드 그리고 바닷속까지 — 렌즈에 담긴 JinoSki의 장면들.",
+    title: "강습 현장 사진",
+    description:
+      "지노스키 강습 현장 — 비발디파크 슬로프에서 찍은 유아·주니어·가족·그룹 스키 레슨, 카빙 턴, 나이트 스노보드 사진을 모았어요.",
   },
   reviews: {
-    title: "후기",
-    description: "학생들이 남긴 진짜 후기를 확인해보세요.",
+    title: "수강생 후기",
+    description:
+      "지노스키 수강생 후기 — 누적 수강생 670명 넘게, 평균 만족도 4.8점. 아이·가족·커플이 비발디파크 강습 뒤 직접 남긴 이야기예요.",
+    hero: "학생들이 남긴 진짜 후기를 확인해보세요.",
   },
   faq: {
     title: "자주 묻는 질문",
-    description: "예약 전 궁금한 점을 미리 확인해보세요.",
+    description:
+      "지노스키 강습 FAQ — 처음 타도 되는지, 몇 살부터인지, 예약금·취소 규정, 패찰과 리프트권, 집합 장소, 준비물과 날씨까지 답을 모았어요.",
   },
 };
 

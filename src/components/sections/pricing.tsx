@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { EARLY_BIRD, isEarlyBirdActive } from "@/lib/pricing";
 import { Clock, Users, ChevronDown, Check, Repeat, Phone, MessageCircle } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useContent } from "@/lib/use-content";
 import type { FullCareGroupSizeCode, SiteContent } from "@/config/content/types";
 import { Container } from "@/components/shared/container";
@@ -206,14 +206,15 @@ function FullCareCard({
         />
       </button>
 
-      <AnimatePresence initial={false}>
-        {open && (
+      {/* 접혀 있어도 시간표 글은 HTML에 남겨 둬요 (검색엔진·AI가 읽게) — 높이만 0으로 */}
+      {(
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            initial={false}
+            animate={open ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
+            aria-hidden={!open}
+            inert={!open}
           >
             <div className="flex flex-col gap-5 border-t border-white/10 pt-6">
               {program.schedule.map((block) => (
@@ -250,8 +251,7 @@ function FullCareCard({
               </div>
             )}
           </motion.div>
-        )}
-      </AnimatePresence>
+      )}
     </motion.div>
   );
 }
@@ -348,21 +348,17 @@ function SeasonProgramCard() {
                   )}
                 />
               </button>
-              <AnimatePresence initial={false}>
-                {open && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                    className="overflow-hidden"
-                  >
-                    <p className="px-4 pb-4 text-[13.5px] leading-relaxed text-snow-700">
-                      {benefit.description}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <motion.div
+                initial={false}
+                animate={open ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden"
+                    aria-hidden={!open}
+              >
+                <p className="px-4 pb-4 text-[13.5px] leading-relaxed text-snow-700">
+                  {benefit.description}
+                </p>
+              </motion.div>
             </div>
           );
         })}

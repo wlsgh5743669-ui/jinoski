@@ -49,7 +49,8 @@ export function Faq() {
           <span className="text-[15.5px] font-bold text-ink-900">{item.question}</span>
           <ChevronDown size={18} className={cn("shrink-0 text-snow-500 transition-transform", open && "rotate-180")} />
         </button>
-        {open && <p className="whitespace-pre-line px-5 pb-5 text-[14.5px] leading-relaxed text-snow-700">{item.answer}</p>}
+        {/* 닫혀 있어도 HTML에는 답이 들어 있게 (검색엔진·AI가 읽을 수 있게) — 화면에서만 숨김 */}
+        <p hidden={!open} className="whitespace-pre-line px-5 pb-5 text-[14.5px] leading-relaxed text-snow-700">{item.answer}</p>
       </div>
     );
   };

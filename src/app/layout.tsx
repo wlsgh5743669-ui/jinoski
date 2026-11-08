@@ -1,32 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { getContent, defaultLocale } from "@/config/site";
+import { structuredData } from "@/lib/structured-data";
 import "./globals.css";
 
 const fallback = getContent(defaultLocale);
-
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "SportsActivityLocation",
-  name: "지노스키 JinoSki",
-  alternateName: ["지노스키", "JinoSki", "지노 스키앤보드스쿨", "JINO SKI & BOARD SCHOOL"],
-  description: fallback.siteConfig.description,
-  url: fallback.siteConfig.url,
-  image: `${fallback.siteConfig.url}${fallback.siteConfig.ogImage}`,
-  telephone: fallback.contact.phone,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "한치골길 262 비발디파크",
-    addressLocality: "홍천군 서면",
-    addressRegion: "강원도",
-    addressCountry: "KR",
-  },
-  areaServed: "비발디파크",
-  founder: {
-    "@type": "Person",
-    name: fallback.contact.representativeName,
-  },
-};
 
 export const metadata: Metadata = {
   metadataBase: new URL(fallback.siteConfig.url),

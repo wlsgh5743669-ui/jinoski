@@ -2,9 +2,9 @@ import type { SiteContent } from "./types";
 
 const siteConfig = {
   name: "JinoSki",
-  title: "JinoSki | 韩国大明滑雪场高端滑雪·单板滑雪学校",
+  title: "JinoSki（지노스키）| 韩国大明维瓦尔第滑雪场 双板·单板教学",
   description:
-    "JinoSki 是韩国大明滑雪场（Vivaldi Park）的高端一对一滑雪·单板滑雪课程品牌。安全、系统的教学，让您的第一个冬天成为最难忘的回忆。",
+    "JinoSki（지노스키）是位于韩国江原道洪川大明维瓦尔第滑雪场（Vivaldi Park）的双板·单板滑雪学校，距首尔约1.5小时车程。一位教练最多带3人，2小时一对一课程₩140,000起，4岁儿童到成人均可，每节课免费提供照片和视频。",
   url: "https://jinoski.com",
   ogImage: "/images/og-image-2627.jpg",
   locale: "zh_CN",
@@ -695,35 +695,35 @@ const shootSamples: SiteContent["shootSamples"] = {
 };
 
 const galleryItems = [
-  { type: "image", src: "/images/gallery-1.jpg", alt: "夜间单板滑雪", tall: true },
-  { type: "image", src: "/images/gallery-2.jpg", alt: "转弯技巧（Carving）" },
-  { type: "image", src: "/images/gallery-3.jpg", alt: "幼儿单板课程", tall: true },
-  { type: "image", src: "/images/gallery-4.jpg", alt: "夜间课程", tall: true },
-  { type: "image", src: "/images/gallery-5.jpg", alt: "团体课程现场" },
-  { type: "image", src: "/images/gallery-6.jpg", alt: "教练滑行指导", tall: true },
-  { type: "image", src: "/images/gallery-7.jpg", alt: "大明滑雪场 SKI WORLD" },
-  { type: "image", src: "/images/gallery-8.jpg", alt: "单板滑雪", tall: true },
-  { type: "image", src: "/images/gallery-9.jpg", alt: "幼儿滑雪课程", tall: true },
-  { type: "image", src: "/images/gallery-10.jpg", alt: "幼儿滑雪课程" },
-  { type: "image", src: "/images/gallery-11.jpg", alt: "青少年滑雪课程", tall: true },
-  { type: "image", src: "/images/gallery-12.jpg", alt: "青少年滑雪课程", tall: true },
-  { type: "image", src: "/images/gallery-13.jpg", alt: "滑雪课程现场", tall: true },
-  { type: "image", src: "/images/gallery-14.jpg", alt: "滑雪课程现场", tall: true },
-  { type: "image", src: "/images/gallery-15.jpg", alt: "雪道上的滑雪课程", tall: true },
-  { type: "image", src: "/images/gallery-16.jpg", alt: "雪景中的滑雪课程", tall: true },
-  { type: "image", src: "/images/gallery-17.jpg", alt: "手持拍摄设备的教练", tall: true },
-  { type: "image", src: "/images/gallery-18.jpg", alt: "与教练的合影自拍", tall: true },
-  { type: "image", src: "/images/gallery-19.jpg", alt: "教练与学员", tall: true },
-  { type: "image", src: "/images/gallery-20.jpg", alt: "课后留念照", tall: true },
-  { type: "image", src: "/images/gallery-21.jpg", alt: "正在拍摄课程的教练", tall: true },
-  { type: "image", src: "/images/gallery-22.jpg", alt: "团体滑雪课程", tall: true },
-  { type: "image", src: "/images/gallery-23.jpg", alt: "团体滑雪课程" },
-  { type: "image", src: "/images/gallery-24.jpg", alt: "团体滑雪课程" },
-  { type: "image", src: "/images/gallery-25.jpg", alt: "团体滑雪课程", tall: true },
-  { type: "image", src: "/images/gallery-26.jpg", alt: "家庭滑雪课程", tall: true },
-  { type: "image", src: "/images/gallery-27.jpg", alt: "家庭滑雪课程", tall: true },
-  { type: "image", src: "/images/gallery-28.jpg", alt: "刻滑转弯练习" },
-  { type: "image", src: "/images/gallery-29.jpg", alt: "青少年滑雪课程", tall: true },
+  { type: "image", src: "/images/gallery-1.jpg", alt: "在大明维瓦尔第滑雪场雪道上摆姿势的单板学员", tall: true },
+  { type: "image", src: "/images/gallery-2.jpg", alt: "沿橙色护栏刻滑转弯的儿童滑雪者" },
+  { type: "image", src: "/images/gallery-3.jpg", alt: "JinoSki 教练跪下帮幼儿调整单板姿势", tall: true },
+  { type: "image", src: "/images/gallery-4.jpg", alt: "教练与孩子并排沿护栏滑下", tall: true },
+  { type: "image", src: "/images/gallery-5.jpg", alt: "在维瓦尔第 Ski World 雪道下进行的 JinoSki 团体课程" },
+  { type: "image", src: "/images/gallery-6.jpg", alt: "戴着雪镜竖起大拇指的 JinoSki 创始人朴镇浩教练", tall: true },
+  { type: "image", src: "/images/gallery-7.jpg", alt: "在 VIVALDI PARK 护栏旁初级道陪孩子滑雪的教练" },
+  { type: "image", src: "/images/gallery-8.jpg", alt: "教练紧跟在孩子身边查看姿势", tall: true },
+  { type: "image", src: "/images/gallery-9.jpg", alt: "阳光下高举双手的幼儿滑雪学员", tall: true },
+  { type: "image", src: "/images/gallery-10.jpg", alt: "戴头盔和雪镜微笑的幼儿学员" },
+  { type: "image", src: "/images/gallery-11.jpg", alt: "在雪道上比V字手势的青少年学员", tall: true },
+  { type: "image", src: "/images/gallery-12.jpg", alt: "回头微笑的青少年滑雪学员", tall: true },
+  { type: "image", src: "/images/gallery-13.jpg", alt: "拄着雪杖听教练讲解的学员", tall: true },
+  { type: "image", src: "/images/gallery-14.jpg", alt: "戴绿色臂章在雪道上等候的学员", tall: true },
+  { type: "image", src: "/images/gallery-15.jpg", alt: "站在雾凇树林间雪道上的滑雪者", tall: true },
+  { type: "image", src: "/images/gallery-16.jpg", alt: "晴空下雪景中的滑雪者", tall: true },
+  { type: "image", src: "/images/gallery-17.jpg", alt: "用相机查看课程视频的 JinoSki 教练", tall: true },
+  { type: "image", src: "/images/gallery-18.jpg", alt: "JinoSki 教练与儿童学员的自拍合影", tall: true },
+  { type: "image", src: "/images/gallery-19.jpg", alt: "课后教练与孩子的合影", tall: true },
+  { type: "image", src: "/images/gallery-20.jpg", alt: "蓝天下举着雪杖合影的教练与学员", tall: true },
+  { type: "image", src: "/images/gallery-21.jpg", alt: "用长焦镜头为学员拍照的 JinoSki 教练", tall: true },
+  { type: "image", src: "/images/gallery-22.jpg", alt: "在维瓦尔第雪道上排队练习的团体课程", tall: true },
+  { type: "image", src: "/images/gallery-23.jpg", alt: "在宽阔初级道上练习转弯的团体课程" },
+  { type: "image", src: "/images/gallery-24.jpg", alt: "跟着教练排成一列滑下的团体课程" },
+  { type: "image", src: "/images/gallery-25.jpg", alt: "逆光雪道上的团体滑雪课程", tall: true },
+  { type: "image", src: "/images/gallery-26.jpg", alt: "为家庭学员示范动作的 JinoSki 教练", tall: true },
+  { type: "image", src: "/images/gallery-27.jpg", alt: "全家一起学滑雪", tall: true },
+  { type: "image", src: "/images/gallery-28.jpg", alt: "压低重心练习刻滑转弯的学员" },
+  { type: "image", src: "/images/gallery-29.jpg", alt: "在雪道上与教练交谈的青少年学员", tall: true },
 ];
 
 // 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기: 24/25·25/26 시즌)
@@ -1333,34 +1333,40 @@ const datePicker = {
 };
 
 const reservePage = {
-  title: "立即预约",
-  description: "在线申请 JinoSki 大明滑雪场高端滑雪·单板滑雪课程。",
+  title: "预约课程",
+  description:
+    "预约 JinoSki 大明维瓦尔第滑雪场双板·单板课程 —— 选好日期、时间和人数，确认教练档期后联系您。外国游客通过 PayPal 支付 220 美元定金，余款上课当天支付。",
 };
 
+// 每页的搜索·AI摘要文字 — 品牌名一次 + 该页独有的信息 (2026-11-08)
 const pageMeta = {
   lessons: {
-    title: "课程项目",
-    description: "从入门到高级,单日课程和儿童课程 — 选择适合您目标的课程。",
+    title: "大明滑雪场双板·单板课程项目",
+    description:
+      "JinoSki 课程种类 —— 入门·初级·中级·高级2小时课程，7小时一日·夜间全程课程，以及4岁起的儿童双板·单板课程，均在韩国大明维瓦尔第滑雪场进行。",
   },
   pricing: {
-    title: "价格说明",
-    description: "预约前请提前确认时间表及大明滑雪场教学许可证（挂牌）费用。",
+    title: "滑雪课程价格",
+    description:
+      "JinoSki 价格 —— 2小时课程 1人₩140,000、2人₩200,000、3人₩240,000；3小时、4小时及7小时全程课程价格；教学许可（挂牌）2小时₩25,000；缆车票·装备租赁6折。",
   },
   instructor: {
-    title: "教练介绍",
-    description: "认识带领 JinoSki 的朴珍浩教练。",
+    title: "朴镇浩教练介绍",
+    description:
+      "JinoSki 创始人朴镇浩 —— 韩国滑雪指导者联盟（KSIA）双板 Level 2·单板 Level 1，EFR 急救教练，摄影技能资格，在大明维瓦尔第滑雪场执教8个雪季以上。",
   },
   gallery: {
-    title: "作品集",
-    description: "从滑雪、单板滑雪到海底世界 — 镜头记录下的 JinoSki 瞬间。",
+    title: "课程现场照片",
+    description: "JinoSki 雪场现场 —— 在大明维瓦尔第滑雪场拍摄的儿童·青少年·家庭·团体滑雪课程、刻滑转弯和夜间单板照片。",
   },
   reviews: {
-    title: "客户评价",
-    description: "查看 JinoSki 学员留下的真实评价。",
+    title: "学员评价",
+    description: "JinoSki 学员评价 —— 累计学员670名以上，平均满意度4.8分。家庭、儿童和情侣分享大明滑雪场课程体验。",
+    hero: "查看 JinoSki 学员留下的真实评价。",
   },
   faq: {
     title: "常见问题",
-    description: "预约前请先确认常见问题解答。",
+    description: "JinoSki 常见问题 —— 零基础能否上课、几岁开始、定金与取消规定、教学许可与缆车票、集合地点、准备物品和天气变化。",
   },
 };
 

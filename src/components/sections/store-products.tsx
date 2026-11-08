@@ -50,7 +50,7 @@ export function StoreProducts() {
                     <div className="relative aspect-square overflow-hidden bg-snow-100">
                       <Image
                         src={p.image}
-                        alt={p.name}
+                        alt={`지노스키 ${p.name} — ${p.summary} ${p.price}`}
                         fill
                         sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                         className={cn("object-cover", p.comingSoon && "grayscale-[40%]")}
