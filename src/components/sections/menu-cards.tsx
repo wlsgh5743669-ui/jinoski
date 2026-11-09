@@ -27,7 +27,13 @@ const KO_DETAIL: Record<Key, string> = {
   pricing: "시간표 · 강습료 · 리프트 40% 할인",
   instructor: "대한스키지도자연맹 공인 강사진",
   gallery: "렌즈에 담긴 JinoSki의 겨울",
-  reviews: "수강생이 직접 남긴 진짜 후기",
+  reviews: "리뷰 이벤트(커피·사진 인화) 참여 후기 모음",
+};
+
+/** 영어·중국어 후기 타일: 리뷰 이벤트 참여 후기라는 표시를 같이 보여줘요 */
+const REVIEWS_DETAIL: Record<string, string> = {
+  en: "Student reviews · left as part of our review event (coffee or photo prints)",
+  zh: "学员评价 · 参加评价活动（赠送咖啡或照片冲印）后留下",
 };
 
 const noSubscribe = () => () => {};
@@ -44,7 +50,12 @@ export function MenuCards() {
         <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
           {TILES.map(({ key, href, image, focus }) => {
             const meta = pageMeta[key];
-            const detail = locale === "ko" ? KO_DETAIL[key] : meta.description;
+            const detail =
+              locale === "ko"
+                ? KO_DETAIL[key]
+                : key === "reviews"
+                  ? REVIEWS_DETAIL[locale] ?? meta.description
+                  : meta.description;
             const wide = key === "reviews";
             return (
               <Link

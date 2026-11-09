@@ -1322,6 +1322,8 @@ const ui: SiteContent["ui"] = {
     prevAriaLabel: "이전 후기",
     nextAriaLabel: "다음 후기",
     sourceBadge: "네이버 스마트스토어 실제 구매 후기",
+    eventNote: "24/25·25/26 시즌 스마트스토어 리뷰 이벤트(커피·사진 인화)에 참여해 남겨 주신 후기예요.",
+    eventChip: "리뷰 이벤트 참여",
     readMore: "더보기",
     readLess: "접기",
     tapHint: "사진을 누르면 후기가 보여요",

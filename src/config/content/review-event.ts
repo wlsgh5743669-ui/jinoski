@@ -29,7 +29,7 @@ const ko: ReviewEventContent = {
   eyebrow: "Review Event",
   title: "인스타 · 네이버 클립 · 스마트스토어 후기 이벤트",
   description:
-    "레슨 때 받은 사진과 영상을 인스타그램·네이버 클립 등 숏폼으로 올리거나, 스마트스토어에 후기를 남겨주세요. 지노스키가 직접 인화한 사진으로 감사의 마음을 전해드려요.",
+    "레슨 때 받은 사진과 영상을 인스타그램·네이버 클립 등 숏폼으로 올려 주시면, 지노스키가 직접 인화한 사진으로 감사의 마음을 전해드려요. 스마트스토어 구매 후기는 네이버 리뷰 포인트만 적립되고 선물 대상은 아니에요.",
   period: "기간: 26/27 시즌 내내 · 시즌 베스트는 시즌 종료 후 발표",
   stepsTitle: "참여 방법",
   steps: [
@@ -70,7 +70,7 @@ const en: ReviewEventContent = {
   },
   eyebrow: "Review Event",
   title: "Instagram · Naver Clip · Smart Store Review Event",
-  description: "Share the photos and videos from your lesson on Instagram, Naver Clip or other short-form platforms, or leave a Smart Store review — we'll thank you with prints made in-house.",
+  description: "Share the photos and videos from your lesson on Instagram, Naver Clip or other short-form platforms and we'll thank you with prints made in-house. Smart Store purchase reviews earn Naver review points only and are not eligible for gifts.",
   period: "Runs all 26/27 season · Season best announced after the season",
   stepsTitle: "How to join",
   steps: [
@@ -110,7 +110,7 @@ const zh: ReviewEventContent = {
   },
   eyebrow: "Review Event",
   title: "Instagram · Naver Clip · Smart Store 评价活动",
-  description: "将课程中拍摄的照片和视频发布到Instagram、Naver Clip等短视频平台，或在Smart Store留下评价，我们将以亲自打印的照片表示感谢。",
+  description: "将课程中拍摄的照片和视频发布到Instagram、Naver Clip等短视频平台，我们将以亲自打印的照片表示感谢。Smart Store购买评价仅可获得Naver评价积分，不属于赠礼对象。",
   period: "活动期间：26/27雪季全程 · 雪季结束后公布最佳作品",
   stepsTitle: "参与方式",
   steps: [

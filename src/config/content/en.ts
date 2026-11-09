@@ -1318,6 +1318,8 @@ const ui: SiteContent["ui"] = {
     prevAriaLabel: "Previous review",
     nextAriaLabel: "Next review",
     sourceBadge: "Verified Naver Smart Store purchase review",
+    eventNote: "These reviews were left by customers who joined our 24/25 and 25/26 season Smart Store review event (coffee or photo prints as a thank-you gift).",
+    eventChip: "Review event entry",
     readMore: "Read more",
     readLess: "Show less",
     tapHint: "Tap the photo to read the review",

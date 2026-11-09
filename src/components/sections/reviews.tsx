@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Star, Quote, X, Hand } from "lucide-react";
+import { Star, Quote, X, Hand, Gift } from "lucide-react";
 import { useContent } from "@/lib/use-content";
 import { cn } from "@/lib/utils";
 import { Container } from "@/components/shared/container";
@@ -31,6 +31,12 @@ export function Reviews() {
   return (
     <section className="bg-white pb-24 pt-12 sm:pb-32 sm:pt-16">
       <Container>
+        {/* 리뷰 이벤트(커피·사진 인화) 참여 후기라는 표시 — 공정위 추천·보증 지침: 후기와 같은 화면에 잘 보이게 */}
+        <p className="mx-auto mb-6 flex max-w-2xl items-start justify-center gap-2 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-center text-[13.5px] font-semibold leading-relaxed text-ink-900 sm:text-[14.5px]">
+          <Gift size={18} className="mt-0.5 shrink-0 text-amber-600" />
+          <span>{ui.reviews.eventNote}</span>
+        </p>
+
         <div className="flex flex-wrap justify-center gap-2">
           {filters.map((f) => (
             <button
@@ -104,7 +110,10 @@ function ReviewCard({ review, ui }: { review: ReviewItem; ui: ReviewsUi }) {
   if (!review.photo) {
     return (
       <div className="relative flex aspect-[3/4] flex-col overflow-hidden rounded-2xl border border-snow-300/60 bg-ice-200/60 p-4 sm:p-5">
-        <Quote size={20} className="shrink-0 text-brand-500" />
+        <div className="flex items-start justify-between gap-2">
+          <Quote size={20} className="shrink-0 text-brand-500" />
+          <EventChip label={ui.eventChip} />
+        </div>
         <Stars count={review.rating} className="mt-2 text-brand-500" />
         <p className="mt-2 flex-1 overflow-y-auto whitespace-pre-line text-[12.5px] leading-relaxed text-ink-800 sm:text-[13.5px]">
           {review.content}
@@ -139,6 +148,8 @@ function ReviewCard({ review, ui }: { review: ReviewItem; ui: ReviewsUi }) {
         )}
       />
 
+      <EventChip label={ui.eventChip} className="absolute left-2 top-2 z-10 sm:left-3 sm:top-3" />
+
       {/* Closed state: label at the bottom */}
       <div
         className={cn(
@@ -160,7 +171,7 @@ function ReviewCard({ review, ui }: { review: ReviewItem; ui: ReviewsUi }) {
           open ? "opacity-100" : "pointer-events-none opacity-0"
         )}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pt-7">
           <Stars count={review.rating} className="text-amber-300" />
           <X size={16} className="text-white/70" />
         </div>
@@ -170,6 +181,20 @@ function ReviewCard({ review, ui }: { review: ReviewItem; ui: ReviewsUi }) {
         <ReviewMeta review={review} ui={ui} dark />
       </div>
     </div>
+  );
+}
+
+function EventChip({ label, className }: { label: string; className?: string }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-900 ring-1 ring-amber-300",
+        className
+      )}
+    >
+      <Gift size={11} />
+      {label}
+    </span>
   );
 }
 

@@ -348,6 +348,10 @@ export type SiteContent = {
       prevAriaLabel: string;
       nextAriaLabel: string;
       sourceBadge: string;
+      /** 리뷰 이벤트(대가) 참여 후기라는 안내 — 목록 위에 크게 */
+      eventNote: string;
+      /** 카드마다 붙는 짧은 표시 */
+      eventChip: string;
       readMore: string;
       readLess: string;
       tapHint: string;

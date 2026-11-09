@@ -1274,6 +1274,8 @@ const ui: SiteContent["ui"] = {
     prevAriaLabel: "上一条评价",
     nextAriaLabel: "下一条评价",
     sourceBadge: "Naver Smart Store 真实购买评价",
+    eventNote: "以下评价来自参加 24/25·25/26 雪季 Smart Store 评价活动（赠送咖啡或照片冲印）的学员。",
+    eventChip: "参加评价活动",
     readMore: "展开",
     readLess: "收起",
     tapHint: "点击照片查看评价",
