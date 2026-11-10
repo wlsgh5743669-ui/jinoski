@@ -88,11 +88,18 @@ export function Footer() {
                 </li>
               ))}
               {locale === "ko" && (
-                <li>
-                  <Link href="/answers" className="text-[15px] transition-colors hover:text-white">
-                    강사가 답해요
-                  </Link>
-                </li>
+                <>
+                  <li>
+                    <Link href="/answers/vivaldi-park-ski-lesson" className="text-[15px] transition-colors hover:text-white">
+                      비발디파크 스키강습 총정리
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/answers" className="text-[15px] transition-colors hover:text-white">
+                      강사가 답해요
+                    </Link>
+                  </li>
+                </>
               )}
             </ul>
           </div>
