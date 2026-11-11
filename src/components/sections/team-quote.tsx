@@ -10,12 +10,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Copy,
+  Eye,
   ImageDown,
   Link2,
   MessageCircle,
   Minus,
   Plus,
   Send,
+  X,
 } from "lucide-react";
 import { renderQuoteImage } from "@/lib/quote-image";
 import { useStepHistory } from "@/lib/use-step-history";
@@ -208,6 +210,8 @@ export function TeamQuote() {
   /** 👥 부분 견적서: 고른 사람 번호 (null = 닫힘) */
   const [partOpen, setPartOpen] = useState(false);
   const [partPick, setPartPick] = useState<number[]>([]);
+  /** 👀 부분 견적서 보기: 사람별로 한 장씩(또는 고른 사람 한 장) 화면에 띄워요 (대표 11-12) */
+  const [partView, setPartView] = useState<{ title: string; amount: string; url: string; file: File }[] | null>(null);
   /** ✏️ 견적서에서 「고치기」로 들어온 단계 — 고친 뒤 견적서로 바로 돌아가는 버튼을 보여줘요 */
   const [editFrom6, setEditFrom6] = useState(false);
   const [showTotal, setShowTotal] = useState(false);
@@ -758,6 +762,53 @@ export function TeamQuote() {
       phone: contact.phone,
     }, loc), type, loc, mode);
   };
+  /** 견적서 사진 파일 이름: 지노스키_견적[_간단][_이름들]_여행이름.png */
+  const quoteFile = (blob: Blob, simple: boolean, only?: number[]) => {
+    const names = only ? `_${personRows.filter((x) => only.includes(x.index)).map((x) => x.label).join("_").replace(/[\\/:*?"<>|\s]/g, "").slice(0, 40)}` : "";
+    return new File([blob], `${qloc === "ko" ? "지노스키_견적" : "JinoSki_quote"}${simple ? (qloc === "ko" ? "_간단" : "_simple") : ""}${names}_${trQuote(trip, qloc).replace(/\s/g, "")}.png`, { type: "image/png" });
+  };
+  /** 휴대폰은 공유창(카톡으로 바로), PC는 내려받기 */
+  async function shareOrDownload(file: File) {
+    const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
+    if (nav.canShare?.({ files: [file] }) && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      try {
+        await nav.share({ files: [file], title: qloc === "ko" ? "지노스키 견적" : "JinoSki quote" });
+      } catch {
+        // 공유창 닫음
+      }
+    } else {
+      const url = URL.createObjectURL(file);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+  }
+  /** 👀 부분 견적서 보기 — each: 사람마다 한 장씩 전부 · picked: 고른 사람을 한 장으로 */
+  async function viewParts(kind: "each" | "picked") {
+    const groups = kind === "each" ? personRows.map((x) => [x.index]) : [personRows.filter((x) => partPick.includes(x.index)).map((x) => x.index)];
+    if (!groups.length || !groups[0].length) return;
+    setImgState("view:making");
+    trackEvent("quote_image", { people, days, mode: `view-${kind}` });
+    try {
+      const out: { title: string; amount: string; url: string; file: File }[] = [];
+      for (const only of groups) {
+        const rows = personRows.filter((x) => only.includes(x.index));
+        const file = quoteFile(await quoteImage("image/png", qloc, "detail", only), false, only);
+        out.push({ title: rows.map((x) => x.label).join(", "), amount: won(rows.reduce((a, x) => a + x.pay, 0)), url: URL.createObjectURL(file), file });
+      }
+      setPartView(out);
+    } finally {
+      setImgState("");
+    }
+  }
+  const closePartView = () => {
+    partView?.forEach((v) => URL.revokeObjectURL(v.url));
+    setPartView(null);
+  };
   /** 견적서 사진 저장: simple(간단 한 장) · detail(날짜별 금액표까지) · part(고른 사람만) */
   async function saveImage(mode: "simple" | "detail" | "part" = "detail") {
     const only = mode === "part" ? personRows.filter((x) => partPick.includes(x.index)).map((x) => x.index) : undefined;
@@ -766,25 +817,7 @@ export function TeamQuote() {
     trackEvent("quote_image", { people, days, mode });
     try {
       const blob = await quoteImage("image/png", qloc, mode === "simple" ? "simple" : "detail", only);
-      const names = only ? `_${personRows.filter((x) => only.includes(x.index)).map((x) => x.label).join("_").replace(/[\\/:*?"<>|\s]/g, "").slice(0, 40)}` : "";
-      const file = new File([blob], `${qloc === "ko" ? "지노스키_견적" : "JinoSki_quote"}${mode === "simple" ? (qloc === "ko" ? "_간단" : "_simple") : ""}${names}_${trQuote(trip, qloc).replace(/\s/g, "")}.png`, { type: "image/png" });
-      const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
-      if (nav.canShare?.({ files: [file] }) && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        try {
-          await nav.share({ files: [file], title: qloc === "ko" ? "지노스키 견적" : "JinoSki quote" });
-        } catch {
-          // 공유창 닫음
-        }
-      } else {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = file.name;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 2000);
-      }
+      await shareOrDownload(quoteFile(blob, mode === "simple", only));
       setImgState(`${mode}:done`);
       setTimeout(() => setImgState(""), 3000);
     } catch {
@@ -1784,7 +1817,15 @@ export function TeamQuote() {
                     </button>
                     {partOpen && (
                       <div className="mt-3">
-                        <p className="text-[12.5px] text-snow-600">견적서에 넣을 사람을 고르세요. 고른 사람의 금액표와 합계만 나와요.</p>
+                        <button
+                          type="button"
+                          onClick={() => void viewParts("each")}
+                          disabled={imgState.endsWith("making")}
+                          className="inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full border-2 border-ink-900 text-[15px] font-bold text-ink-900 disabled:opacity-40"
+                        >
+                          <Eye size={17} /> {imgState === "view:making" ? "만드는 중..." : `사람별로 따로 보기 · ${personRows.length}장`}
+                        </button>
+                        <p className="mt-3 text-[12.5px] text-snow-600">여러 명을 한 장에 넣으려면 사람을 고르세요. 고른 사람의 금액표와 합계만 나와요.</p>
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           {personRows.map((x) => {
                             const on = partPick.includes(x.index);
@@ -1808,11 +1849,20 @@ export function TeamQuote() {
                         {(() => {
                           const picked = personRows.filter((x) => partPick.includes(x.index));
                           return (
+                            <div className="mt-3 flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => void viewParts("picked")}
+                              disabled={!picked.length || imgState.endsWith("making")}
+                              className="inline-flex h-12 flex-none items-center justify-center gap-1.5 rounded-full border-2 border-ink-900 px-4 text-[15px] font-bold text-ink-900 disabled:opacity-40"
+                            >
+                              <Eye size={17} /> 보기
+                            </button>
                             <button
                               type="button"
                               onClick={() => void saveImage("part")}
                               disabled={!picked.length || imgState.endsWith("making")}
-                              className="mt-3 inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full bg-ink-900 text-[15px] font-bold text-white disabled:opacity-40"
+                              className="inline-flex h-12 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-full bg-ink-900 text-[15px] font-bold text-white disabled:opacity-40"
                             >
                               {imgState === "part:done" ? <Check size={17} /> : <ImageDown size={17} />}
                               {imgState === "part:making"
@@ -1823,6 +1873,7 @@ export function TeamQuote() {
                                     ? `${picked.length}명 견적서 저장 · ${won(picked.reduce((a, x) => a + x.pay, 0))}`
                                     : "사람을 골라주세요"}
                             </button>
+                            </div>
                           );
                         })()}
                       </div>
@@ -1830,6 +1881,40 @@ export function TeamQuote() {
                   </div>
                 )}
                 {imgState.endsWith("done") && <p className="mt-1.5 text-center text-[12.5px] font-semibold text-brand-600">사진으로 저장했어요 · 카톡으로 보내주세요</p>}
+                {/* 👀 부분 견적서 보기 창: 사람마다 한 장씩 넘겨 보고, 장마다 저장 */}
+                {partView && (
+                  <div className="fixed inset-0 z-[80] flex flex-col bg-black/80" role="dialog" aria-modal="true" aria-label="부분 견적서 보기">
+                    <div className="flex items-center justify-between gap-3 bg-ink-900 px-4 py-3 text-white">
+                      <b className="text-[16px]">부분 견적서 {partView.length > 1 ? `· 사람별 ${partView.length}장` : `· ${partView[0].title}`}</b>
+                      <button type="button" onClick={closePartView} className="inline-flex h-10 items-center gap-1 rounded-full bg-white/15 px-4 text-[14px] font-bold">
+                        <X size={16} /> 닫기
+                      </button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto px-3 py-4" onClick={(e) => { if (e.target === e.currentTarget) closePartView(); }}>
+                      <div className="mx-auto flex max-w-[560px] flex-col gap-5">
+                        {partView.map((v, i) => (
+                          <div key={v.url} className="overflow-hidden rounded-2xl bg-white">
+                            <div className="flex items-center justify-between gap-2 px-4 py-3">
+                              <span className="min-w-0 text-[15px] font-bold text-ink-900">
+                                {partView.length > 1 && <span className="mr-1.5 text-snow-500">{i + 1}/{partView.length}</span>}
+                                {v.title} <span className="font-semibold text-brand-600">{v.amount}</span>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => void shareOrDownload(v.file)}
+                                className="inline-flex h-10 flex-none items-center gap-1.5 rounded-full bg-ink-900 px-4 text-[14px] font-bold text-white"
+                              >
+                                <ImageDown size={16} /> 저장
+                              </button>
+                            </div>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={v.url} alt={`${v.title} 부분 견적서`} className="block w-full" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <a
                   href={contact.kakaoChannel}
                   target="_blank"
