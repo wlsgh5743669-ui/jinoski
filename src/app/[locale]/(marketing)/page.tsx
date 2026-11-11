@@ -24,9 +24,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <WhyJinoSki />
       {locale === "ko" && (
         <ImageGuide
-          eyebrow="FAQ"
+          eyebrow="WHY"
           title="지노스키, 이런 점이 달라요"
-          desc="강점·다른 강습과 다른 점·자주 묻는 질문을 4장으로 정리했어요. 눌러서 크게 보세요."
+          desc="지노스키 강점과 흔한 단체 강습과 다른 점을 2장으로 정리했어요. 눌러서 크게 보세요."
           cards={WHY_CARDS}
           event="why_card_open"
           className="bg-white pb-6 pt-14 sm:pt-20"

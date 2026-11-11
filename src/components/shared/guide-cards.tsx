@@ -80,7 +80,14 @@ export function GuideCards({
           className={cn(
             "-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none]",
             variant === "responsive" && "sm:mx-0 sm:grid sm:overflow-visible sm:px-0",
-            variant === "responsive" && (cards.length === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3"),
+            variant === "responsive" &&
+              (cards.length === 4
+                ? "sm:grid-cols-2 lg:grid-cols-4"
+                : cards.length === 2
+                  ? "sm:grid-cols-2"
+                  : cards.length === 1
+                    ? "sm:max-w-[420px] sm:grid-cols-1"
+                    : "sm:grid-cols-3"),
             className
           )}
         >
@@ -89,7 +96,7 @@ export function GuideCards({
               key={c.src}
               type="button"
               onClick={() => show(i)}
-              className={cn("w-[78%] shrink-0 snap-center overflow-hidden rounded-2xl bg-white ring-1 ring-snow-300/60", variant === "responsive" && "sm:w-auto")}
+              className={cn(cards.length === 1 ? "w-full" : "w-[78%]", "shrink-0 snap-center overflow-hidden rounded-2xl bg-white ring-1 ring-snow-300/60", variant === "responsive" && "sm:w-auto")}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={c.src} alt={c.alt} loading="lazy" width={1080} height={1350} className="block h-auto w-full" />
@@ -229,12 +236,22 @@ export const PRICING_CARDS: GuideCard[] = [
   { src: "/images/guide/pricing-4.jpg", alt: "지노스키 결제 방법 — 강사 일정 확인 후 확정 안내, 예약금 30만원 입금으로 확정, 잔금은 강습 당일. 계좌이체 또는 스마트스토어 네이버페이·카드. 환불 3일 전 100%·1~2일 전 50%·당일 불가" },
 ];
 
-/** 메인 Why JinoSki 아래: 강점·다른 강습과 다른 점·자주 묻는 질문 (원본: 상담자료/지노스키_FAQ_강점/make.py, 2026-11-12) */
+/** 강점·다른 강습과 다른 점·자주 묻는 질문 카드 (원본: 상담자료/지노스키_FAQ_강점/make.py, 2026-11-12) */
+/** 메인 Why JinoSki 아래: 강점·다른 점 */
 export const WHY_CARDS: GuideCard[] = [
   { src: "/images/guide/why-3.jpg", alt: "지노스키의 강점 — 1:1~1:3 소수정예, 무선 헤드셋 코칭, 사진·영상 기본 포함, 강사진 전원 대한스키지도자연맹 공인 자격·영업배상책임보험, 4세부터 유아 1:1, 시즌 8회 전담 강사와 알림장. 비발디파크 강습 8년+, 대표 누적 강습 2,500회+, 평균 만족도 4.8, 한·영·중 상담" },
   { src: "/images/guide/why-4.jpg", alt: "다른 강습과 뭐가 달라요 — 흔한 단체 강습과 비교: 인원 1~3명, 시즌 8회는 같은 강사, 헤드셋으로 타는 중에 교정, 사진·영상 기본, 예약 전에 패찰·리프트·렌탈까지 총액 안내, 맞춤 피드백과 알림장. 리뷰 이벤트 참여 후기 인용" },
+];
+
+/** 자주 묻는 질문 화면 맨 위 */
+export const FAQ_CARDS: GuideCard[] = [
   { src: "/images/guide/why-1.jpg", alt: "자주 묻는 질문 1 — 처음 타도 괜찮은지, 유아는 4~7세 레슨, 2시간 1:1 14만·1:2 20만·1:3 24만원, 패찰은 비발디파크 외부강습 허가권(2시간 2.5만원), 리프트권·렌탈·식사는 별도, 장비는 현장 렌탈" },
   { src: "/images/guide/why-2.jpg", alt: "자주 묻는 질문 2 — 스키월드 광장 스키하우스 입구에서 만남, 사진·영상 기본 포함, 환불 3일 전 100%·1~2일 전 50%·당일 불가, 기상 악화로 슬로프 운영이 멈추면 무료 변경·전액 환불, 주말은 1~2주 전 예약, 예약금 30만원·잔금 강습 날" },
+];
+
+/** 요금 화면: 다른 강습과 다른 점 한 장 */
+export const COMPARE_CARDS: GuideCard[] = [
+  { src: "/images/guide/why-4.jpg", alt: "다른 강습과 뭐가 달라요 — 흔한 단체 강습과 비교: 인원 1~3명, 시즌 8회는 같은 강사, 헤드셋으로 타는 중에 교정, 사진·영상 기본, 예약 전에 패찰·리프트·렌탈까지 총액 안내, 맞춤 피드백과 알림장. 리뷰 이벤트 참여 후기 인용" },
 ];
 
 export const JUNIOR_CARDS: GuideCard[] = [

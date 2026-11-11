@@ -3,7 +3,7 @@ import { getContent, isLocale, defaultLocale } from "@/config/site";
 import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
 import { ImageGuide } from "@/components/sections/image-guide";
-import { PRICING_CARDS } from "@/components/shared/guide-cards";
+import { PRICING_CARDS, COMPARE_CARDS } from "@/components/shared/guide-cards";
 import { Pricing } from "@/components/sections/pricing";
 import { PaymentMethods } from "@/components/sections/payment-methods";
 import { LiftDiscountCard } from "@/components/sections/lift-discount-card";
@@ -54,6 +54,16 @@ export default async function PricingPage({
         />
       )}
       <Pricing />
+      {locale === "ko" && (
+        <ImageGuide
+          eyebrow="COMPARE"
+          title="같은 2시간, 뭐가 다를까요?"
+          desc="흔한 단체 강습과 지노스키를 나란히 놓았어요. 눌러서 크게 보세요."
+          cards={COMPARE_CARDS}
+          event="pricing_compare_open"
+          className="bg-white pb-14 pt-4 sm:pb-20 sm:pt-8"
+        />
+      )}
       <LiftDiscountCard />
       {locale !== "ko" && (
         <div className="-mt-6 bg-white px-5 pb-14">

@@ -3,6 +3,8 @@ import { getContent, isLocale, defaultLocale } from "@/config/site";
 import { pageMetadata } from "@/lib/page-metadata";
 import { PageHero } from "@/components/shared/page-hero";
 import { Faq } from "@/components/sections/faq";
+import { ImageGuide } from "@/components/sections/image-guide";
+import { FAQ_CARDS } from "@/components/shared/guide-cards";
 import { Container } from "@/components/shared/container";
 import { Link } from "@/i18n/navigation";
 import { ANSWERS } from "@/config/content/answers";
@@ -49,6 +51,15 @@ export default async function FaqPage({
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <PageHero eyebrow={eyebrow} title={title} description={description} />
+      {locale === "ko" && (
+        <ImageGuide
+          eyebrow="FAQ"
+          title="그림으로 먼저 보기"
+          desc="손님들이 가장 많이 묻는 질문 12개를 2장으로 모았어요. 아래에 글로도 있어요."
+          cards={FAQ_CARDS}
+          event="faq_card_open"
+        />
+      )}
       <Faq />
       {locale === "ko" && (
         <section className="bg-white pb-16 sm:pb-20">
