@@ -204,6 +204,9 @@ export function TeamQuote() {
   const [teacherPref, setTeacherPref] = useState(0);
   /** 마지막으로 보낸 견적 링크 — 손님이 견적을 바꾸면 「수정본 다시 보내기」가 떠요 */
   const [sentLink, setSentLink] = useState("");
+  /** 🛠 관리자 고치기: 운영 프로그램 「견적 화면 열기」로 들어오면 (서명 링크) 고친 견적을 원래 문의에 다시 저장할 수 있어요 (대표 11-12) */
+  const [staffEdit, setStaffEdit] = useState<{ key: string; exp: number; sig: string } | null>(null);
+  const [staffSave, setStaffSave] = useState<{ state: "" | "saving" | "saved" | "expired" | "failed"; link?: string; at?: string }>({ state: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
   const [copied, setCopied] = useState<"" | "text" | "link">("");
   const [imgState, setImgState] = useState(""); // "simple:making" · "detail:done" · "part:done" …
@@ -289,9 +292,17 @@ export function TeamQuote() {
     const tk0 = Number(q.get("tk"));
     if (dt) setDayTickets(dt.split("-").map((x) => ([0, 3, 5, 7].includes(Number(x)) && x !== "a" ? (Number(x) as TicketHours | 0) : undefined)));
     else if ([3, 5, 7].includes(tk0)) setDayTickets(Array.from({ length: d || 1 }, () => tk0 as TicketHours));
+    // 🛠 관리자 고치기 서명 (ik 문의 키 · ie 만료 · is 서명) — 읽고 나면 주소창에서 지워요 (이 주소를 손님에게 보내도 안 따라가게)
+    const ik = q.get("ik"), ie = Number(q.get("ie")), is = q.get("is");
+    let cleanUrl = "";
+    if (ik && ik.startsWith("q:") && ie > 0 && is && /^[0-9a-f]{40}$/.test(is)) {
+      setStaffEdit({ key: ik, exp: ie, sig: is });
+      q.delete("ik"); q.delete("ie"); q.delete("is");
+      cleanUrl = `${window.location.pathname}?${q.toString()}`;
+    }
     if (a + k > 0) {
       // ↩ 링크로 연 견적서에서 「뒤로」 → 맨 처음이 아니라 바로 앞 단계(리프트·장비)로 · 고친 뒤 견적서로 바로 (대표 11-11)
-      window.history.replaceState({ ...(window.history.state ?? {}), quoteStep: 5 }, "");
+      window.history.replaceState({ ...(window.history.state ?? {}), quoteStep: 5 }, "", cleanUrl || undefined);
       setEditFrom6(true);
     }
     setStep(a + k > 0 ? 6 : 2);
@@ -953,6 +964,50 @@ export function TeamQuote() {
       if (res.ok) setSentLink(myLink);
     } catch {
       setStatus("failed");
+    }
+  }
+
+  /** 🛠 관리자: 고친 견적을 원래 문의에 다시 저장 (손님 이름·번호·답변은 그대로 · 견적 내용·사진·금액표만 바뀜 · 손님 알림 없음) */
+  async function resaveToInquiry() {
+    if (!staffEdit || staffSave.state === "saving") return;
+    setStaffSave({ state: "saving" });
+    const link = shareUrl("ko");
+    let image = "";
+    try {
+      const blob = await quoteImage("image/jpeg", "ko");
+      if (blob.size < 1_500_000) {
+        image = await new Promise<string>((ok, no) => {
+          const r = new FileReader();
+          r.onload = () => ok(String(r.result));
+          r.onerror = () => no(r.error);
+          r.readAsDataURL(blob);
+        });
+      }
+    } catch {
+      image = "";
+    }
+    try {
+      const res = await fetch(`${KAKAO_NOTIFY_URL}/inquiries/resave`, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({
+          ...staffEdit,
+          link,
+          image,
+          headline: `1인 1회 약 ${won(perHead1)} · 합계 ${won(grand)}`,
+          date: `${period} (${trip})`,
+          program: `견적 ${lenText} · ${dayText}`,
+          timeSlot: timeText,
+          groupSize: `어른${adults} 어린이${kids} · 반 ${usedSplit.join("+")}`,
+          equipment: sportSummary,
+          breakdown: buildBreakdown(),
+          total: `${won(grand)} (수업 ${sessions}회)`,
+        }),
+      });
+      if (res.ok) setStaffSave({ state: "saved", link, at: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }) });
+      else setStaffSave({ state: res.status === 403 ? "expired" : "failed" });
+    } catch {
+      setStaffSave({ state: "failed" });
     }
   }
 
@@ -1932,8 +1987,39 @@ export function TeamQuote() {
                   )}
                 </p>
 
-                <div className="mt-5 rounded-2xl bg-ice-200/70 p-4">
-                  {status === "sent" ? (
+                <div className={cn("mt-5 rounded-2xl p-4", staffEdit ? "border-2 border-ink-900 bg-white" : "bg-ice-200/70")}>
+                  {staffEdit ? (
+                    <div data-notr>
+                      <p className="text-[15px] font-bold text-ink-900">🛠 관리자 모드 · 손님 견적 고치는 중</p>
+                      <p className="mt-1 text-[12.5px] leading-relaxed text-snow-600">
+                        위에서 인원·날짜·시간·이름을 고친 뒤 아래 버튼을 누르면 <b>원래 문의</b>에 그대로 다시 저장돼요. 손님 이름·번호·답변은 그대로 두고 견적 내용과 견적서 사진만 바뀌어요. 손님에게 알림은 가지 않아요.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => void resaveToInquiry()}
+                        disabled={staffSave.state === "saving" || (staffSave.state === "saved" && staffSave.link === shareUrl("ko"))}
+                        className="mt-3 inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full bg-ink-900 text-[15px] font-bold text-white disabled:opacity-40"
+                      >
+                        {staffSave.state === "saved" && staffSave.link === shareUrl("ko") ? <Check size={16} /> : <Send size={16} />}
+                        {staffSave.state === "saving"
+                          ? "저장하는 중..."
+                          : staffSave.state === "saved" && staffSave.link === shareUrl("ko")
+                            ? `저장했어요 (${staffSave.at})`
+                            : staffSave.state === "saved"
+                              ? `또 고쳤어요 · 다시 저장 · ${won(grand)}`
+                              : `고친 견적 원래 문의에 저장 · ${won(grand)}`}
+                      </button>
+                      {staffSave.state === "saved" && (
+                        <p className="mt-2 text-center text-[12.5px] font-semibold text-brand-600">✓ 운영 프로그램 「견적 문의」에 바로 반영됐어요 (화면을 새로 고치면 보여요)</p>
+                      )}
+                      {staffSave.state === "expired" && (
+                        <p className="mt-2 text-center text-[12.5px] font-semibold text-rose-500">링크가 오래됐어요. 운영 프로그램 「견적 문의」에서 「견적 화면 열기」를 다시 눌러 들어와 주세요.</p>
+                      )}
+                      {staffSave.state === "failed" && (
+                        <p className="mt-2 text-center text-[12.5px] font-semibold text-rose-500">저장하지 못했어요. 잠시 뒤 다시 눌러주세요.</p>
+                      )}
+                    </div>
+                  ) : status === "sent" ? (
                     <div className="text-center">
                       <p className="text-[15px] font-bold text-ink-900">✓ 접수됐어요! 강사 일정을 확인해서 {phone}로 연락드릴게요.</p>
                       {pw.trim().length >= 4 && (

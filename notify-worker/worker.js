@@ -9,6 +9,7 @@
  *   POST /notify          → 통합 상담 수신함(inbox.jinoski.com) 알림 → 카톡 「나와의 채팅」. body.inquiry가 있으면 문의 목록(q:)에 「채팅 상담」으로도 저장
  *   GET  /inquiries       → 홈페이지 문의 목록 (운영 프로그램용, Authorization: Bearer QUOTES_KEY)
  *   POST /inquiries/update → 문의 상태·메모·답변 변경 (운영 프로그램용)
+ *   POST /inquiries/resave → 🛠 관리자가 홈페이지 견적 화면에서 고친 견적을 원래 문의에 다시 저장 (운영 프로그램이 만든 서명 링크로만)
  *   GET/POST /blocklist   → 🚫 차단 번호·IP (운영 프로그램용) — 차단된 번호·IP의 문의는 보관만 하고 카톡 알림을 안 보냄 (손님 화면은 똑같이 「접수됨」)
  *   POST /my-quotes       → 손님이 휴대폰 번호 + 비밀번호로 내 견적·사장님 답변 확인
  *   GET  /setup?key=...   → 최초 1회: 카카오 로그인 → 토큰 저장
@@ -94,6 +95,49 @@ export default {
           await sendMemo(env, link ? `${msg}\n${link}` : msg);
         }
         return text("ok");
+      }
+
+      // ── 🛠 관리자가 손님 견적을 고쳐서 원래 문의에 다시 저장 (홈페이지 견적 화면 → 여기) ──
+      // 운영 프로그램 「견적 화면 열기」 링크에 붙은 서명(ik·ie·is = 문의 키·만료·HMAC)이 맞을 때만 받음.
+      // 손님 이름·번호·비밀번호·상태·답변·메모는 그대로 두고, 견적 내용(링크·사진·금액·금액표)만 바꿈. 카톡 알림은 안 보냄.
+      if (request.method === "POST" && url.pathname === "/inquiries/resave") {
+        if (!cors["Access-Control-Allow-Origin"]) return text("forbidden origin", 403);
+        if (!env.QUOTES_KEY) return text("not configured", 503, cors);
+        const b = JSON.parse(await request.text());
+        const key = typeof b.key === "string" ? b.key : "";
+        const exp = Number(b.exp) || 0;
+        const now = Math.floor(Date.now() / 1000);
+        // 링크는 운영 프로그램 화면을 열 때마다 새로 만들어짐 (12시간) — 지났으면 운영 프로그램에서 다시 열기
+        if (!key.startsWith("q:") || exp < now || exp > now + 60 * 60 * 24 * 3) return text("expired", 403, cors);
+        const want = (await hmacHex(env.QUOTES_KEY, `resave:${key}.${exp}`)).slice(0, 40);
+        if (!safeEqual(typeof b.sig === "string" ? b.sig : "", want)) return text("forbidden", 403, cors);
+        const rec = await env.TOKENS.get(key, "json");
+        if (!rec || rec.kind === CHAT_KIND) return text("not found", 404, cors);
+        const cut = (v, n = 300) => (typeof v === "string" ? v.slice(0, n) : "");
+        const link = typeof b.link === "string" && /^https:\/\/(www\.)?jinoski\.com\//.test(b.link) ? b.link : "";
+        if (!link) return text("bad link", 400, cors);
+        // 새 견적서 사진 (예전 사진은 90일 뒤 저절로 지워짐)
+        const m = typeof b.image === "string" && b.image.match(/^data:image\/(jpeg|png);base64,([A-Za-z0-9+/=]+)$/);
+        if (m && m[2].length < 2_500_000) {
+          const id = crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+          const bytes = Uint8Array.from(atob(m[2]), (c) => c.charCodeAt(0));
+          await env.TOKENS.put(`img:${id}`, bytes, { expirationTtl: 60 * 60 * 24 * 90, metadata: { type: `image/${m[1]}` } });
+          rec.image = `/img/${id}.jpg`;
+        }
+        rec.link = link;
+        rec.date = cut(b.date, 120) || rec.date;
+        rec.program = cut(b.program, 120) || rec.program;
+        rec.timeSlot = cut(b.timeSlot, 300) || rec.timeSlot;
+        rec.groupSize = cut(b.groupSize, 120) || rec.groupSize;
+        rec.equipment = cut(b.equipment, 120);
+        rec.total = cut(b.total, 80) || rec.total;
+        rec.headline = cut(b.headline, 120) || rec.headline;
+        const bd = cleanBreakdown(b.breakdown);
+        if (bd) rec.breakdown = bd;
+        rec.editedAt = new Date().toISOString(); // ✏️ 관리자가 고친 때 (운영 프로그램 카드에 표시)
+        rec.updatedAt = rec.editedAt;
+        await env.TOKENS.put(key, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 365 });
+        return new Response(JSON.stringify({ ok: true, total: rec.total, editedAt: rec.editedAt }), { headers: { "Content-Type": "application/json; charset=utf-8", ...cors } });
       }
 
       // ── 운영 프로그램용: 문의 목록 / 상태 변경 ──
@@ -236,6 +280,20 @@ export default {
 async function hashPw(salt, pw) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${salt}:${pw}`));
   return [...new Uint8Array(buf)].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+
+/** HMAC-SHA256 (hex) — 운영 프로그램이 만든 「고쳐서 다시 저장」 링크 서명 확인 */
+async function hmacHex(secret, msg) {
+  const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const buf = await crypto.subtle.sign("HMAC", k, new TextEncoder().encode(msg));
+  return [...new Uint8Array(buf)].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+/** 글자 수가 같을 때만, 걸리는 시간이 같게 비교 */
+function safeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let d = 0;
+  for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return d === 0;
 }
 
 // 손님에게 보여줄 항목만 (사장님 메모·전화번호 등은 빼고)
