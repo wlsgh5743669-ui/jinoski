@@ -204,7 +204,12 @@ export function TeamQuote() {
   const [sentLink, setSentLink] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
   const [copied, setCopied] = useState<"" | "text" | "link">("");
-  const [imgState, setImgState] = useState(""); // "simple:making" · "detail:done" …
+  const [imgState, setImgState] = useState(""); // "simple:making" · "detail:done" · "part:done" …
+  /** 👥 부분 견적서: 고른 사람 번호 (null = 닫힘) */
+  const [partOpen, setPartOpen] = useState(false);
+  const [partPick, setPartPick] = useState<number[]>([]);
+  /** ✏️ 견적서에서 「고치기」로 들어온 단계 — 고친 뒤 견적서로 바로 돌아가는 버튼을 보여줘요 */
+  const [editFrom6, setEditFrom6] = useState(false);
   const [showTotal, setShowTotal] = useState(false);
   const [totalTab, setTotalTab] = useState(0); // 0 = 전체, 1 = 1일차 …
 
@@ -280,6 +285,11 @@ export function TeamQuote() {
     const tk0 = Number(q.get("tk"));
     if (dt) setDayTickets(dt.split("-").map((x) => ([0, 3, 5, 7].includes(Number(x)) && x !== "a" ? (Number(x) as TicketHours | 0) : undefined)));
     else if ([3, 5, 7].includes(tk0)) setDayTickets(Array.from({ length: d || 1 }, () => tk0 as TicketHours));
+    if (a + k > 0) {
+      // ↩ 링크로 연 견적서에서 「뒤로」 → 맨 처음이 아니라 바로 앞 단계(리프트·장비)로 · 고친 뒤 견적서로 바로 (대표 11-11)
+      window.history.replaceState({ ...(window.history.state ?? {}), quoteStep: 5 }, "");
+      setEditFrom6(true);
+    }
     setStep(a + k > 0 ? 6 : 2);
     // 링크로 들어오면 소개 화면을 건너뛰고 견적서로 바로 이동
     setTimeout(() => {
@@ -696,17 +706,22 @@ export function TeamQuote() {
     return { label: x.label, sub: `${x.group}반 · 1:${size} · ${SPORT_LABEL[x.sport]} ${LEVEL_LABEL[x.level]}`, pay: x.pay, rows };
   };
   /** 견적서 이미지 (사진 저장 · 카톡 알림에 같이 사용) */
-  const quoteImage = (type: "image/png" | "image/jpeg" = "image/png", loc: QLocale = qloc, mode: "simple" | "detail" = "detail") =>
-    renderQuoteImage(trDeep({
+  /** only: 고른 사람만 (👥 부분 견적서 — 여러 집이 한 반일 때 집마다 따로 보내기 · 대표 11-11) */
+  const quoteImage = (type: "image/png" | "image/jpeg" = "image/png", loc: QLocale = qloc, mode: "simple" | "detail" = "detail", only?: number[]) => {
+    const picked = only ? personRows.filter((x) => only.includes(x.index)) : personRows;
+    const pickedSum = picked.reduce((a, x) => a + x.pay, 0);
+    return renderQuoteImage(trDeep({
       title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
       total: `1인 1회 약 ${won(perHead1)}`,
-      totalSub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}${ebSaved ? " · 얼리버드 강습료 10% 반영" : ""}`,
-      grand: won(grand),
-      grandLabel: `총 합계 (${adults + kids}명)`,
+      totalSub: only
+        ? `${picked.map((x) => x.label).join(", ")} · 함께 배우는 ${people}명 중 ${picked.length}명 · 반 ${usedSplit.join("+")}`
+        : `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}${ebSaved ? " · 얼리버드 강습료 10% 반영" : ""}`,
+      grand: won(only ? pickedSum : grand),
+      grandLabel: only ? `합계 (${picked.length}명)` : `총 합계 (${adults + kids}명)`,
       // 금액·시간이 똑같은 사람(예: 아이 둘)은 표 하나로 묶어요
       persons: (() => {
         const out: (ReturnType<typeof personBreakdown> & { count: number })[] = [];
-        for (const b of personRows.map(personBreakdown)) {
+        for (const b of picked.map(personBreakdown)) {
           const sub = b.sub.replace(/^\d+반 · /, "");
           const key = JSON.stringify([sub, b.pay, b.rows]);
           const same = out.find((o) => JSON.stringify([o.sub, o.pay, o.rows]) === key);
@@ -728,9 +743,10 @@ export function TeamQuote() {
           }]
         : [],
       notes: [
-        ...(sportSummary ? [`종목·실력: ${sportSummary}`] : []),
+        // 부분 견적서는 고른 사람 것만 (반 전체 인원·할인 합계는 빼요)
+        ...(sportSummary && !only ? [`종목·실력: ${sportSummary}`] : []),
         ebSaved
-          ? `얼리버드 10%는 강습료에만 적용 (-${won(ebSaved)}) · 리프트·장비 40% 할인 · 헬멧 할인 제외`
+          ? `얼리버드 10%는 강습료에만 적용${only ? " (위 금액에 반영)" : ` (-${won(ebSaved)})`} · 리프트·장비 40% 할인 · 헬멧 할인 제외`
           : "매 수업 사진·영상 무료 · 리프트·장비 40% 할인 · 헬멧 할인 제외",
         ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
         ...(fcNote ? [fcNote] : []),
@@ -741,13 +757,17 @@ export function TeamQuote() {
       refund: "환불: 3일 전 100% · 1~2일 전 50% · 당일·노쇼 환불 불가 · 날짜 변경 1회 무료(2일 전까지)",
       phone: contact.phone,
     }, loc), type, loc, mode);
-  /** 견적서 사진 저장: simple(간단 한 장) · detail(날짜별 금액표까지) */
-  async function saveImage(mode: "simple" | "detail" = "detail") {
+  };
+  /** 견적서 사진 저장: simple(간단 한 장) · detail(날짜별 금액표까지) · part(고른 사람만) */
+  async function saveImage(mode: "simple" | "detail" | "part" = "detail") {
+    const only = mode === "part" ? personRows.filter((x) => partPick.includes(x.index)).map((x) => x.index) : undefined;
+    if (only && !only.length) return;
     setImgState(`${mode}:making`);
     trackEvent("quote_image", { people, days, mode });
     try {
-      const blob = await quoteImage("image/png", qloc, mode);
-      const file = new File([blob], `${qloc === "ko" ? "지노스키_견적" : "JinoSki_quote"}${mode === "simple" ? (qloc === "ko" ? "_간단" : "_simple") : ""}_${trQuote(trip, qloc).replace(/\s/g, "")}.png`, { type: "image/png" });
+      const blob = await quoteImage("image/png", qloc, mode === "simple" ? "simple" : "detail", only);
+      const names = only ? `_${personRows.filter((x) => only.includes(x.index)).map((x) => x.label).join("_").replace(/[\\/:*?"<>|\s]/g, "").slice(0, 40)}` : "";
+      const file = new File([blob], `${qloc === "ko" ? "지노스키_견적" : "JinoSki_quote"}${mode === "simple" ? (qloc === "ko" ? "_간단" : "_simple") : ""}${names}_${trQuote(trip, qloc).replace(/\s/g, "")}.png`, { type: "image/png" });
       const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
       if (nav.canShare?.({ files: [file] }) && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         try {
@@ -1418,6 +1438,29 @@ export function TeamQuote() {
                 <p className="text-[14px] text-snow-600">
                   {trip} · {period} · {lenText} · 수업 {sessions}회
                 </p>
+                {/* ✏️ 부분 수정: 고칠 단계로 바로 갔다가 「고친 대로 견적서 보기」로 돌아와요 (대표 11-11) */}
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  <span className="text-[12.5px] font-semibold text-snow-500">✏️ 고치기</span>
+                  {([
+                    [1, "날짜"],
+                    [2, "인원"],
+                    [3, "수업"],
+                    [4, "반"],
+                    [5, "이름·리프트·장비"],
+                  ] as const).map(([n, l]) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => {
+                        setEditFrom6(true);
+                        go(n);
+                      }}
+                      className="h-8 rounded-full bg-ice-200 px-3 text-[13px] font-semibold text-ink-900 ring-1 ring-snow-300/60"
+                    >
+                      {l}
+                    </button>
+                  ))}
+                </div>
 
                 <div className="mt-4 rounded-2xl bg-ink-900 p-5 text-white">
                   <p className="text-[13px] text-white/60">1인 1회 강습료</p>
@@ -1726,6 +1769,66 @@ export function TeamQuote() {
                     </button>
                   ))}
                 </div>
+                {/* 👥 부분 견적서: 여러 집이 같이 배울 때 사람을 골라 그 사람들 금액만 (대표 11-11) */}
+                {people > 1 && (
+                  <div className="mt-2 rounded-2xl border-2 border-dashed border-snow-300 p-3">
+                    <button
+                      type="button"
+                      onClick={() => setPartOpen((v) => !v)}
+                      className="flex w-full items-center justify-between gap-2 text-left"
+                    >
+                      <span className="inline-flex items-center gap-1.5 text-[15px] font-bold text-ink-900">
+                        <ImageDown size={17} /> 골라서 저장 (부분 견적서)
+                      </span>
+                      <span className="text-[12px] font-medium text-snow-500">{partOpen ? "접기" : "집마다 따로 보낼 때"}</span>
+                    </button>
+                    {partOpen && (
+                      <div className="mt-3">
+                        <p className="text-[12.5px] text-snow-600">견적서에 넣을 사람을 고르세요. 고른 사람의 금액표와 합계만 나와요.</p>
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {personRows.map((x) => {
+                            const on = partPick.includes(x.index);
+                            return (
+                              <button
+                                key={x.index}
+                                type="button"
+                                aria-pressed={on}
+                                onClick={() => setPartPick((p) => (on ? p.filter((i) => i !== x.index) : [...p, x.index]))}
+                                className={cn(
+                                  "inline-flex h-10 items-center gap-1 rounded-full px-3.5 text-[14px] font-semibold ring-1",
+                                  on ? "bg-brand-500 text-white ring-brand-500" : "bg-white text-ink-900 ring-snow-300"
+                                )}
+                              >
+                                {on && <Check size={14} />} {x.label}
+                                <span className={cn("text-[11.5px] font-medium", on ? "text-white/70" : "text-snow-500")}>{won(x.pay)}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        {(() => {
+                          const picked = personRows.filter((x) => partPick.includes(x.index));
+                          return (
+                            <button
+                              type="button"
+                              onClick={() => void saveImage("part")}
+                              disabled={!picked.length || imgState.endsWith("making")}
+                              className="mt-3 inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full bg-ink-900 text-[15px] font-bold text-white disabled:opacity-40"
+                            >
+                              {imgState === "part:done" ? <Check size={17} /> : <ImageDown size={17} />}
+                              {imgState === "part:making"
+                                ? "만드는 중..."
+                                : imgState === "part:done"
+                                  ? "저장 완료!"
+                                  : picked.length
+                                    ? `${picked.length}명 견적서 저장 · ${won(picked.reduce((a, x) => a + x.pay, 0))}`
+                                    : "사람을 골라주세요"}
+                            </button>
+                          );
+                        })()}
+                      </div>
+                    )}
+                  </div>
+                )}
                 {imgState.endsWith("done") && <p className="mt-1.5 text-center text-[12.5px] font-semibold text-brand-600">사진으로 저장했어요 · 카톡으로 보내주세요</p>}
                 <a
                   href={contact.kakaoChannel}
@@ -1856,13 +1959,26 @@ export function TeamQuote() {
                     {copied === "link" ? <Check size={15} /> : <Link2 size={15} />} {copied === "link" ? "링크 복사됨" : "견적 링크 복사"}
                   </button>
                 </div>
-                <button type="button" onClick={() => go(1)} className="mt-4 w-full text-center text-[13px] font-semibold text-snow-500 underline underline-offset-2">
+                <button type="button" onClick={() => { setEditFrom6(false); go(1); }} className="mt-4 w-full text-center text-[13px] font-semibold text-snow-500 underline underline-offset-2">
                   처음부터 다시 고르기
                 </button>
               </div>
             )}
           </div>
 
+          {/* ✏️ 견적서에서 고치러 왔으면: 나머지 단계 건너뛰고 견적서로 바로 */}
+          {editFrom6 && step < 5 && (
+            <button
+              type="button"
+              onClick={() => {
+                if ([1, 2, 3, 4, 5].every(canNext)) go(6);
+              }}
+              disabled={![1, 2, 3, 4, 5].every(canNext)}
+              className="mt-5 flex h-12 w-full items-center justify-center gap-1.5 rounded-full border-2 border-ink-900 bg-white text-[15px] font-bold text-ink-900 disabled:opacity-40"
+            >
+              📄 고친 대로 견적서 바로 보기
+            </button>
+          )}
           {/* 이전·다음 */}
           {step < 6 && (
             <div className="mt-5 flex gap-3">
