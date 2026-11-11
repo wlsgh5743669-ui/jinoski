@@ -207,6 +207,8 @@ export function TeamQuote() {
   /** 🛠 관리자 고치기: 운영 프로그램 「견적 화면 열기」로 들어오면 (서명 링크) 고친 견적을 원래 문의에 다시 저장할 수 있어요 (대표 11-12) */
   const [staffEdit, setStaffEdit] = useState<{ key: string; exp: number; sig: string } | null>(null);
   const [staffSave, setStaffSave] = useState<{ state: "" | "saving" | "saved" | "expired" | "failed"; link?: string; at?: string }>({ state: "" });
+  /** 🖼 운영 프로그램 「견적서 모두 보기」(view=all)로 들어오면 견적서가 준비되는 대로 간단·자세히·사람별을 한 번에 띄워요 */
+  const [autoView, setAutoView] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
   const [copied, setCopied] = useState<"" | "text" | "link">("");
   const [imgState, setImgState] = useState(""); // "simple:making" · "detail:done" · "part:done" …
@@ -292,6 +294,7 @@ export function TeamQuote() {
     const tk0 = Number(q.get("tk"));
     if (dt) setDayTickets(dt.split("-").map((x) => ([0, 3, 5, 7].includes(Number(x)) && x !== "a" ? (Number(x) as TicketHours | 0) : undefined)));
     else if ([3, 5, 7].includes(tk0)) setDayTickets(Array.from({ length: d || 1 }, () => tk0 as TicketHours));
+    if (q.get("view") === "all" && a + k > 0) setAutoView(true);
     // 🛠 관리자 고치기 서명 (ik 문의 키 · ie 만료 · is 서명) — 읽고 나면 주소창에서 지워요 (이 주소를 손님에게 보내도 안 따라가게)
     const ik = q.get("ik"), ie = Number(q.get("ie")), is = q.get("is");
     let cleanUrl = "";
@@ -798,14 +801,20 @@ export function TeamQuote() {
       setTimeout(() => URL.revokeObjectURL(url), 2000);
     }
   }
-  /** 👀 부분 견적서 보기 — each: 사람마다 한 장씩 전부 · picked: 고른 사람을 한 장으로 */
-  async function viewParts(kind: "each" | "picked") {
-    const groups = kind === "each" ? personRows.map((x) => [x.index]) : [personRows.filter((x) => partPick.includes(x.index)).map((x) => x.index)];
-    if (!groups.length || !groups[0].length) return;
-    setImgState("view:making");
+  /** 👀 견적서 보기 — all: 간단 + 자세히 + 사람마다 한 장씩 · each: 사람마다 한 장씩 · picked: 고른 사람을 한 장으로 */
+  async function viewParts(kind: "all" | "each" | "picked") {
+    const groups = kind === "picked" ? [personRows.filter((x) => partPick.includes(x.index)).map((x) => x.index)] : kind === "all" && people <= 1 ? [] : personRows.map((x) => [x.index]);
+    if (kind !== "all" && (!groups.length || !groups[0].length)) return;
+    setImgState(kind === "all" ? "viewall:making" : "view:making");
     trackEvent("quote_image", { people, days, mode: `view-${kind}` });
     try {
       const out: { title: string; amount: string; url: string; file: File }[] = [];
+      if (kind === "all") {
+        for (const simple of [true, false]) {
+          const file = quoteFile(await quoteImage("image/png", qloc, simple ? "simple" : "detail"), simple);
+          out.push({ title: simple ? "간단 견적서" : "자세한 견적서", amount: won(grand), url: URL.createObjectURL(file), file });
+        }
+      }
       for (const only of groups) {
         const rows = personRows.filter((x) => only.includes(x.index));
         const file = quoteFile(await quoteImage("image/png", qloc, "detail", only), false, only);
@@ -1010,6 +1019,17 @@ export function TeamQuote() {
       setStaffSave({ state: "failed" });
     }
   }
+
+  // 🖼 view=all 링크: 견적서 화면(6단계)이 그려지면 한 번만 「모두 보기」를 자동으로 엽니다
+  useEffect(() => {
+    if (!autoView || step !== 6 || people < 1) return;
+    const t = setTimeout(() => {
+      setAutoView(false);
+      void viewParts("all");
+    }, 400);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoView, step, people]);
 
   // ── 화면 ─────────────────────────────
   return (
@@ -1857,6 +1877,15 @@ export function TeamQuote() {
                     </button>
                   ))}
                 </div>
+                {/* 🖼 견적서 모두 보기: 간단 · 자세히 · 사람별을 한 화면에서 넘겨 보고 장마다 저장 (대표 11-12 「견적별로 다 볼 수 있게」) */}
+                <button
+                  type="button"
+                  onClick={() => void viewParts("all")}
+                  disabled={imgState.endsWith("making")}
+                  className="mt-2 inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-2xl border-2 border-snow-300 text-[14.5px] font-bold text-ink-900 disabled:opacity-40"
+                >
+                  <Eye size={17} /> {imgState === "viewall:making" ? "만드는 중..." : `견적서 모두 보기 · ${people > 1 ? `간단 · 자세히 · 사람별 ${people}장` : "간단 · 자세히"}`}
+                </button>
                 {/* 👥 부분 견적서: 여러 집이 같이 배울 때 사람을 골라 그 사람들 금액만 (대표 11-11) */}
                 {people > 1 && (
                   <div className="mt-2 rounded-2xl border-2 border-dashed border-snow-300 p-3">
@@ -1940,7 +1969,7 @@ export function TeamQuote() {
                 {partView && (
                   <div className="fixed inset-0 z-[80] flex flex-col bg-black/80" role="dialog" aria-modal="true" aria-label="부분 견적서 보기">
                     <div className="flex items-center justify-between gap-3 bg-ink-900 px-4 py-3 text-white">
-                      <b className="text-[16px]">부분 견적서 {partView.length > 1 ? `· 사람별 ${partView.length}장` : `· ${partView[0].title}`}</b>
+                      <b className="text-[16px]">{partView[0].title === "간단 견적서" ? `견적서 모두 보기 · ${partView.length}장` : `부분 견적서 ${partView.length > 1 ? `· 사람별 ${partView.length}장` : `· ${partView[0].title}`}`}</b>
                       <button type="button" onClick={closePartView} className="inline-flex h-10 items-center gap-1 rounded-full bg-white/15 px-4 text-[14px] font-bold">
                         <X size={16} /> 닫기
                       </button>
@@ -1963,7 +1992,7 @@ export function TeamQuote() {
                               </button>
                             </div>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={v.url} alt={`${v.title} 부분 견적서`} className="block w-full" />
+                            <img src={v.url} alt={v.title.endsWith("견적서") ? v.title : `${v.title} 견적서`} className="block w-full" />
                           </div>
                         ))}
                       </div>
