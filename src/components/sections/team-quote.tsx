@@ -1013,7 +1013,9 @@ export function TeamQuote() {
           total: `${won(grand)} (수업 ${sessions}회)`,
         }),
       });
-      if (res.ok) setStaffSave({ state: "saved", link, at: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }) });
+      // 워커가 「저장했다」고 분명히 답했을 때만 저장으로 봐요 (예전 워커는 모르는 주소에도 200을 줘서, 글자만 믿으면 안 됨)
+      const done = res.ok ? ((await res.json().catch(() => null)) as { ok?: boolean } | null) : null;
+      if (done?.ok === true) setStaffSave({ state: "saved", link, at: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }) });
       else setStaffSave({ state: res.status === 403 ? "expired" : "failed" });
     } catch {
       setStaffSave({ state: "failed" });
