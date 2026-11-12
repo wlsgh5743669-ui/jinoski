@@ -12,8 +12,6 @@ import { SeasonPopup } from "@/components/sections/season-popup";
 import { Consult } from "@/components/sections/consult";
 import { QuoteBanner } from "@/components/sections/quote-banner";
 import { QuickLinks } from "@/components/sections/quick-links";
-import { PhotoCardPick } from "@/components/sections/photo-card-pick";
-import { PHOTO_CARDS } from "@/config/content/photo-cards";
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -34,8 +32,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           className="bg-white pb-6 pt-14 sm:pt-20"
         />
       )}
-      {/* 포토카드 고르기 (회전 무대) — 한국어만, 내용은 config/content/photo-cards.ts */}
-      {locale === "ko" && PHOTO_CARDS.enabled && <PhotoCardPick />}
       <MenuCards />
       <YoutubeVideos />
       <ReviewEventBanner />
