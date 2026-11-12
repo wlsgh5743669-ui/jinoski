@@ -132,3 +132,66 @@ body {
 @media (min-width: 640px) {
   #jk-chat { right: 20px !important; bottom: 92px !important; }
 }
+
+/* ---------- 메인 포토카드 고르기 (sections/photo-card-pick.tsx) ---------- */
+.pcr-stage {
+  --cw: clamp(124px, 32vw, 176px);
+  position: relative;
+  height: calc(var(--cw) * 1.5 + 80px);
+  perspective: 1100px;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.pcr-stage.is-drag { cursor: grabbing; }
+.pcr-ring { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; }
+.pcr-ring .pcr-card { position: absolute; left: calc(var(--cw) / -2); top: calc(var(--cw) * -0.75); cursor: pointer; }
+.pcr-floor {
+  position: absolute; left: 50%; bottom: 10px; width: 70%; height: 24px; transform: translateX(-50%);
+  border-radius: 50%; background: radial-gradient(closest-side, rgba(45, 168, 255, 0.22), transparent); pointer-events: none;
+}
+.pcr-card { position: relative; width: var(--cw, 150px); aspect-ratio: 2 / 3; transform-style: preserve-3d; -webkit-tap-highlight-color: transparent; }
+.pcr-face, .pcr-back { position: absolute; inset: 0; border-radius: 16px; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.pcr-face {
+  background: #1a2333 center / cover no-repeat;
+  box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.6);
+  outline: 3px solid transparent; outline-offset: -3px; transition: outline-color 0.2s;
+}
+.pcr-face::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 48%, rgba(0, 0, 0, 0.66)); }
+.pcr-holo {
+  position: absolute; inset: 0; mix-blend-mode: soft-light; opacity: 0.75; pointer-events: none;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 120, 200, 0.55) 36%, rgba(120, 220, 255, 0.6) 46%, rgba(255, 250, 150, 0.55) 56%, transparent 72%);
+  background-size: 260% 100%; background-position: calc(50% + var(--holo, 0) * 1%) 0;
+}
+.pcr-no {
+  position: absolute; top: 9px; left: 11px; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); font-variant-numeric: tabular-nums;
+}
+.pcr-heart {
+  position: absolute; top: 7px; right: 8px; width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(0, 0, 0, 0.28); color: #fff; transition: transform 0.25s, background 0.2s;
+}
+.pcr-info { position: absolute; left: 11px; right: 11px; bottom: 10px; color: #fff; display: flex; flex-direction: column; }
+.pcr-name { font-weight: 800; font-size: calc(var(--cw, 150px) * 0.12); line-height: 1.15; letter-spacing: -0.01em; }
+.pcr-tag { font-size: calc(var(--cw, 150px) * 0.075); opacity: 0.9; }
+.pcr-brand { margin-top: 3px; font-size: 8px; letter-spacing: 0.14em; color: rgba(255, 255, 255, 0.7); }
+.pcr-back {
+  transform: rotateY(180deg); display: grid; place-items: center; box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.6);
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0 8px, transparent 8px 16px), linear-gradient(160deg, #1a568f, #0c2340);
+}
+.pcr-back span {
+  font-weight: 800; color: rgba(255, 255, 255, 0.85); letter-spacing: 0.2em; text-align: center; line-height: 1.3;
+  font-size: calc(var(--cw, 150px) * 0.1);
+}
+.pcr-back small { display: block; font-size: 0.55em; letter-spacing: 0.3em; opacity: 0.7; }
+.pcr-card.is-front .pcr-face { box-shadow: 0 22px 44px -12px rgba(0, 0, 0, 0.7); }
+.pcr-card.is-on .pcr-face { outline-color: #ff3d6e; }
+.pcr-card.is-on .pcr-heart { background: #ff3d6e; transform: scale(1.12); }
+.pcr-card:focus-visible { outline: none; }
+.pcr-card:focus-visible .pcr-face { outline-color: #2da8ff; }
+.pcr-fan .pcr-card {
+  --cw: clamp(104px, 26vw, 150px);
+  margin: 0 calc(var(--cw) * -0.12);
+  transform: rotate(var(--r, 0deg)) translateY(var(--y, 0px));
+}
