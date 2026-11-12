@@ -828,6 +828,8 @@ export function TeamQuote() {
   const closePartView = () => {
     partView?.forEach((v) => URL.revokeObjectURL(v.url));
     setPartView(null);
+    // 🖼 운영 프로그램 견적 문의 안에 끼워서 본 경우: 닫으면 그쪽 창도 같이 닫히게 알림 (내용 없는 신호만)
+    try { if (window.parent !== window) window.parent.postMessage({ type: "jino-quote-view-closed" }, "*"); } catch {}
   };
   /** 견적서 사진 저장: simple(간단 한 장) · detail(날짜별 금액표까지) · part(고른 사람만) */
   async function saveImage(mode: "simple" | "detail" | "part" = "detail") {
