@@ -6,6 +6,8 @@ import { ImageGuide } from "@/components/sections/image-guide";
 import { PRICING_CARDS, COMPARE_CARDS } from "@/components/shared/guide-cards";
 import { Pricing } from "@/components/sections/pricing";
 import { PaymentMethods } from "@/components/sections/payment-methods";
+import { AllInFullCare } from "@/components/sections/all-in-full-care";
+import { VvipPackage } from "@/components/sections/vvip-package";
 import { LiftDiscountCard } from "@/components/sections/lift-discount-card";
 import { MessengerCard } from "@/components/shared/messenger-buttons";
 
@@ -64,6 +66,8 @@ export default async function PricingPage({
           className="bg-white pb-14 pt-4 sm:pb-20 sm:pt-8"
         />
       )}
+      <AllInFullCare className="bg-white pb-14 pt-4 sm:pb-20" />
+      <VvipPackage />
       <LiftDiscountCard />
       {locale !== "ko" && (
         <div className="-mt-6 bg-white px-5 pb-14">

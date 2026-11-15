@@ -5,6 +5,8 @@ import { PageHero } from "@/components/shared/page-hero";
 import { LessonProgram } from "@/components/sections/lesson-program";
 import { JuniorBanner } from "@/components/sections/junior-banner";
 import { LevelFinder } from "@/components/sections/level-finder";
+import { AllInFullCare } from "@/components/sections/all-in-full-care";
+import { VvipPackage } from "@/components/sections/vvip-package";
 import { ImageGuide } from "@/components/sections/image-guide";
 import { DAY_LESSON_CARDS } from "@/components/shared/guide-cards";
 
@@ -38,6 +40,8 @@ export default async function LessonsPage({
     <>
       <PageHero eyebrow={eyebrow} title={title} description={description} />
       <LessonProgram />
+      <AllInFullCare />
+      <VvipPackage />
       <LevelFinder />
       {locale === "ko" && (
         <ImageGuide

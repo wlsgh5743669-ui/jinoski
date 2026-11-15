@@ -1,6 +1,8 @@
 import { Hero } from "@/components/sections/hero";
 import { Stats } from "@/components/sections/stats";
 import { WhyJinoSki } from "@/components/sections/why-jinoski";
+import { AllInFullCare } from "@/components/sections/all-in-full-care";
+import { VvipPackage } from "@/components/sections/vvip-package";
 import { ImageGuide } from "@/components/sections/image-guide";
 import { WHY_CARDS } from "@/components/shared/guide-cards";
 import { MenuCards } from "@/components/sections/menu-cards";
@@ -32,6 +34,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           className="bg-white pb-6 pt-14 sm:pt-20"
         />
       )}
+      <AllInFullCare className="bg-white py-14 sm:py-20" />
+      <VvipPackage />
       <MenuCards />
       <YoutubeVideos />
       <ReviewEventBanner />
