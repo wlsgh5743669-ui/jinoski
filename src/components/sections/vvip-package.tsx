@@ -12,9 +12,9 @@ import { approxUsd } from "@/lib/usd";
  *   2박 3일   = 1일째 풀케어 + 2일째 반나절 4시간 + 3일째 풀케어
  * 매일: 전담 강사·리프트권·장비·바이저 헬멧·프리미엄 스키복·사진·영상·비발디 단지 안 무료 드랍.
  * 영상 2편(1분 하이라이트 · AI 자세 분석), 2·3일은 첫날 vs 마지막 날 비교. 숙소는 포함 안 함.
- * 원화 가격 + 예약금 PayPal + 잔금 첫 강습 날 현장 원화·카드 (대표 11-16 「이대로 바꿔줘」).
- *   예약금: 하루 30만원($220 링크 1개) · 1박2일·2박3일 60만원($220 링크 수량 2개 = $440).
- *   달러는 참고용(approxUsd, 1달러 1,364원 올림).
+ * 원화 가격 + 전액 미리 PayPal (대표 11-16 「강사 스케줄상 전액 미리 받는 걸로」).
+ *   일정·강사 확정 뒤 대표가 PayPal 결제 요청(인보이스)을 표의 달러 금액으로 보냄(approxUsd, 1달러 1,364원 올림).
+ *   현장 잔금 없음. 환불은 일반 규칙(3일 전 100% · 1~2일 전 50% · 당일 불가).
  * 근거(원화, 만원 단위로 맞춤):
  *   풀케어 날 = 풀케어 레슨료 + 1인 15만원(VIP 레슨과 같음)
  *   반나절 날 = 4시간 레슨료(33만/45만/53만) + 1인 12만원(리프트 5시간·장비 6시간 40% 할인 + 바이저 헬멧 + 스키복 4시간)
@@ -80,9 +80,9 @@ const TXT = {
       ["3 days", "2 nights"],
     ],
     notes: [
-      "Book with a PayPal deposit once your dates and instructor are confirmed — $220 (₩300,000) for one day, $440 (₩600,000) for 2- or 3-day packages",
-      "Pay the rest on your first lesson day, in Korean won by cash or card",
-      "Prices are in Korean won · US dollars are a guide only",
+      "Pay the full amount in advance by PayPal — we send you a PayPal payment request once your dates and instructor are confirmed",
+      "You pay the US dollar amount shown · nothing to pay on the day",
+      "Full refund up to 3 days before your first lesson · 50% 1–2 days before",
       "Accommodation is not included",
       "Same price on weekdays, weekends and holidays · adults and kids",
       "Ski socks are a free gift · gloves are extra — ₩20,000 a pair from us, or bring your own",
@@ -132,9 +132,9 @@ const TXT = {
       ["3天", "2晚"],
     ],
     notes: [
-      "确认日期和教练后，用 PayPal 支付定金即可预约 — 1天 $220（₩300,000），2天或3天套餐 $440（₩600,000）",
-      "余款在第一天上课时现场支付，韩元现金或刷卡均可",
-      "价格以韩元为准 · 美元仅供参考",
+      "需通过 PayPal 提前支付全额 — 确认日期和教练后，我们会发送 PayPal 付款请求",
+      "按表中美元金额支付 · 当天无需再付款",
+      "第一天课程3天前取消可全额退款 · 1~2天前退50%",
       "不含住宿",
       "平日·周末·节假日同价 · 成人和儿童同价",
       "滑雪袜免费赠送 · 手套另购 ₩20,000/副，也可自备",
