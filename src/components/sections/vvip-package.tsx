@@ -156,7 +156,7 @@ export function VvipPackage({ className = "bg-white pb-14 sm:pb-20" }: { classNa
     <section className={className}>
       <Container>
         <div className="mx-auto max-w-3xl overflow-hidden rounded-[28px] bg-[linear-gradient(160deg,#1a1408_0%,#0a0b0d_55%)] text-white shadow-[0_28px_70px_-30px_rgba(10,11,13,0.7)] ring-2 ring-[#E7C77F]">
-          <div className="px-6 pb-7 pt-7 sm:px-9 sm:pt-9">
+          <div className="px-4 pb-7 pt-7 min-[400px]:px-6 sm:px-9 sm:pt-9">
             <p className={`text-[12.5px] font-bold tracking-[0.18em] ${GOLD}`}>👑👑 {T.eyebrow}</p>
             <h2 className="mt-2 text-[30px] font-bold tracking-tight text-[#F1D693] sm:text-[38px]">{T.title}</h2>
             <p className="mt-2 text-[14.5px] leading-relaxed text-white/75 sm:text-[15.5px]">{T.desc}</p>
@@ -222,8 +222,8 @@ export function VvipPackage({ className = "bg-white pb-14 sm:pb-20" }: { classNa
 
             <p className={`mt-7 text-[13px] font-bold ${GOLD}`}>{T.priceTitle}</p>
             <div className="mt-2.5 overflow-hidden rounded-2xl ring-1 ring-[#D9B56A]/40">
-              <div className="grid grid-cols-[0.9fr_1fr_1fr_1fr] bg-white/[0.06] text-center text-[12px] font-semibold text-white/65 sm:text-[13px]">
-                <span className="px-1 py-2" />
+              <div className="grid grid-cols-3 bg-white/[0.06] text-center text-[12px] font-semibold text-white/65 sm:grid-cols-[0.9fr_1fr_1fr_1fr] sm:text-[13px]">
+                <span className="hidden px-1 py-2 sm:block" />
                 {T.cols.map((c) => (
                   <span key={c} className="px-1 py-2">
                     {c}
@@ -231,14 +231,14 @@ export function VvipPackage({ className = "bg-white pb-14 sm:pb-20" }: { classNa
                 ))}
               </div>
               {PLANS.map((d, ri) => (
-                <div key={d} className="grid grid-cols-[0.9fr_1fr_1fr_1fr] items-center border-t border-white/10 text-center">
-                  <span className="px-2 py-3 text-left leading-tight sm:px-3">
+                <div key={d} className="grid grid-cols-3 items-center border-t border-white/10 text-center sm:grid-cols-[0.9fr_1fr_1fr_1fr]">
+                  <span className="col-span-3 flex items-baseline gap-2 px-3 pt-3 text-left leading-tight sm:col-span-1 sm:block sm:py-3">
                     <span className="block text-[13.5px] font-semibold text-white/90 sm:text-[14.5px]">{T.rows[ri][0]}</span>
                     {T.rows[ri][1] && <span className="block text-[11.5px] text-white/55 sm:text-[12px]">{T.rows[ri][1]}</span>}
                   </span>
                   {VVIP_KRW[d].map((v, p) => (
-                    <span key={p} className="px-0.5 py-3">
-                      <span className="block text-[12.5px] font-extrabold tabular-nums tracking-tight text-[#F1D693] min-[400px]:text-[14px] sm:text-[18px]">{won(v)}</span>
+                    <span key={p} className="px-0.5 pb-3 pt-1.5 sm:py-3">
+                      <span className="block text-[12px] font-extrabold tabular-nums tracking-tighter text-[#F1D693] min-[360px]:text-[14.5px] min-[360px]:tracking-tight min-[480px]:text-[16px] sm:text-[18px]">{won(v)}</span>
                       <span className="block text-[11px] text-white/55 sm:text-[12px]">{approxUsd(v)}</span>
                     </span>
                   ))}

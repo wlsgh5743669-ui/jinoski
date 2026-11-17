@@ -39,9 +39,9 @@ export default async function LessonsPage({
   return (
     <>
       <PageHero eyebrow={eyebrow} title={title} description={description} />
+      <AllInFullCare className="bg-white pt-10 pb-8 sm:pt-14 sm:pb-10" />
+      <VvipPackage className="bg-white pb-6 sm:pb-10" />
       <LessonProgram />
-      <AllInFullCare />
-      <VvipPackage />
       <LevelFinder />
       {locale === "ko" && (
         <ImageGuide

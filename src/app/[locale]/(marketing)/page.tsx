@@ -3,6 +3,7 @@ import { Stats } from "@/components/sections/stats";
 import { WhyJinoSki } from "@/components/sections/why-jinoski";
 import { AllInFullCare } from "@/components/sections/all-in-full-care";
 import { VvipPackage } from "@/components/sections/vvip-package";
+import { VipStrip } from "@/components/sections/vip-strip";
 import { ImageGuide } from "@/components/sections/image-guide";
 import { WHY_CARDS } from "@/components/shared/guide-cards";
 import { MenuCards } from "@/components/sections/menu-cards";
@@ -21,6 +22,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <>
       <SeasonPopup />
       <Hero />
+      <VipStrip />
       <Stats />
       <QuickLinks />
       <WhyJinoSki />
