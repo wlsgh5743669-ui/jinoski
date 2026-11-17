@@ -62,9 +62,9 @@ const navLinks = [
 ];
 
 const heroContent = {
-  eyebrow: "JinoSki Premium Lesson",
+  eyebrow: "비발디파크 스키강습 · 스노보드 강습",
   headline: ["겨울은,", "배우는 순간부터", "더 즐거워집니다."],
-  description: "지노스키(JinoSki)는 비발디파크 프리미엄 스키·스노보드 레슨을 제공합니다.",
+  description: "지노스키(JinoSki)는 홍천 비발디파크 스키·스노보드 강습 전문 스쿨이에요.",
   primaryCta: { label: "예약하기", href: "/reserve" },
   secondaryCta: { label: "레슨 보기", href: "/lessons" },
   videoSrc: "/videos/hero-carving.mp4",

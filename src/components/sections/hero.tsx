@@ -3,6 +3,7 @@
 import { useRef, useSyncExternalStore } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
@@ -25,6 +26,7 @@ function getIsMobileServerSnapshot() {
 
 export function Hero() {
   const { heroContent } = useContent();
+  const locale = useLocale();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -68,16 +70,16 @@ export function Hero() {
 
       <Container className="relative z-10 pb-20 pt-40 sm:pb-24 lg:pb-28">
         <motion.div style={{ y }} className="max-w-3xl">
-          <motion.span
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-6 inline-block text-[13px] font-semibold uppercase tracking-[0.25em] text-brand-300"
-          >
-            {heroContent.eyebrow}
-          </motion.span>
-
           <h1 className="text-[42px] font-bold leading-[1.12] tracking-tightest text-white sm:text-[58px] lg:text-[76px]">
+            {/* 윗줄도 h1 안에: 한국어는 「비발디파크 스키강습 · 스노보드 강습」 (대표 11-17 구글 1등 목표) */}
+            <motion.span
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className={`mb-6 block font-semibold uppercase leading-normal text-brand-300 ${locale === "ko" ? "text-[14px] tracking-[0.04em] sm:text-[15px]" : "text-[13px] tracking-[0.25em]"}`}
+            >
+              {heroContent.eyebrow}
+            </motion.span>
             {heroContent.headline.map((line, i) => (
               <motion.span
                 key={line}
