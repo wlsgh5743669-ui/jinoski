@@ -704,6 +704,16 @@ export function BookingWizard() {
           <a href={`/${locale}/quote/`} className="text-[12.5px] font-bold text-[#003087] underline underline-offset-2">
             {locale === "zh" ? "多日·家庭报价计算 →" : "Multi-day & family quote →"}
           </a>
+          {/* VVIP는 전액 미리 결제 (대표 11-16) — 바로 가기 (대표 11-17) */}
+          <span className="mt-1.5 border-t border-[#003087]/15 pt-2 text-[12.5px] leading-snug text-snow-700">
+            <b className="text-ink-900">👑 {locale === "zh" ? "VVIP 套餐" : "VVIP Package"}:</b>{" "}
+            {locale === "zh"
+              ? "需提前支付全额，当天无需再付款。确认日期和教练后，我们会发送 PayPal 付款请求。"
+              : "pay the full amount in advance — nothing to pay on the day. We send a PayPal payment request once your dates and instructor are confirmed."}
+          </span>
+          <a href={`/${locale}/lessons/#vvip-package`} className="text-[12.5px] font-bold text-[#003087] underline underline-offset-2">
+            {locale === "zh" ? "查看 VVIP 套餐 →" : "See the VVIP Package →"}
+          </a>
         </div>
       )}
 

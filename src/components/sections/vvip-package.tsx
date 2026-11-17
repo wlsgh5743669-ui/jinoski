@@ -153,7 +153,7 @@ export function VvipPackage({ className = "bg-white pb-14 sm:pb-20" }: { classNa
   const T = TXT[locale];
 
   return (
-    <section className={className}>
+    <section id="vvip-package" className={`scroll-mt-24 ${className}`}>
       <Container>
         <div className="mx-auto max-w-3xl overflow-hidden rounded-[28px] bg-[linear-gradient(160deg,#1a1408_0%,#0a0b0d_55%)] text-white shadow-[0_28px_70px_-30px_rgba(10,11,13,0.7)] ring-2 ring-[#E7C77F]">
           <div className="px-4 pb-7 pt-7 min-[400px]:px-6 sm:px-9 sm:pt-9">
