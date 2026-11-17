@@ -704,15 +704,25 @@ export function BookingWizard() {
           <a href={`/${locale}/quote/`} className="text-[12.5px] font-bold text-[#003087] underline underline-offset-2">
             {locale === "zh" ? "多日·家庭报价计算 →" : "Multi-day & family quote →"}
           </a>
-          {/* VVIP는 전액 미리 결제 (대표 11-16) — 바로 가기 (대표 11-17) */}
-          <span className="mt-1.5 border-t border-[#003087]/15 pt-2 text-[12.5px] leading-snug text-snow-700">
-            <b className="text-ink-900">👑 {locale === "zh" ? "VVIP 套餐" : "VVIP Package"}:</b>{" "}
-            {locale === "zh"
-              ? "需提前支付全额，当天无需再付款。确认日期和教练后，我们会发送 PayPal 付款请求。"
-              : "pay the full amount in advance — nothing to pay on the day. We send a PayPal payment request once your dates and instructor are confirmed."}
-          </span>
-          <a href={`/${locale}/lessons/#vvip-package`} className="text-[12.5px] font-bold text-[#003087] underline underline-offset-2">
-            {locale === "zh" ? "查看 VVIP 套餐 →" : "See the VVIP Package →"}
+          {/* VVIP는 전액 미리 결제 (대표 11-16) — 한눈에 보이는 금색 카드·바로 가기 (대표 11-17) */}
+          <a
+            href={`/${locale}/lessons/#vvip-package`}
+            className="mt-2 block rounded-xl bg-[linear-gradient(160deg,#1a1408_0%,#0a0b0d_60%)] px-3.5 py-3 text-white ring-2 ring-[#E7C77F] transition-transform hover:scale-[1.01]"
+          >
+            <span className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5">
+              <span className="whitespace-nowrap text-[15px] font-bold tracking-tight text-[#F1D693]">👑 {locale === "zh" ? "VVIP 套餐" : "VVIP Package"}</span>
+              <span className="shrink-0 rounded-full bg-[#E7C77F] px-2.5 py-0.5 text-[11.5px] font-bold text-[#1a1408]">
+                {locale === "zh" ? "提前付全额" : "Paid in full in advance"}
+              </span>
+            </span>
+            <span className="mt-1.5 block text-[12.5px] leading-snug text-white/80">
+              {locale === "zh"
+                ? "当天无需再付款。确认日期和教练后，我们会发送 PayPal 付款请求。"
+                : "Nothing to pay on the day. We send a PayPal payment request once your dates and instructor are confirmed."}
+            </span>
+            <span className="mt-2 inline-block text-[12.5px] font-bold text-[#E7C77F] underline underline-offset-2">
+              {locale === "zh" ? "查看 VVIP 套餐 →" : "See the VVIP Package →"}
+            </span>
           </a>
         </div>
       )}
