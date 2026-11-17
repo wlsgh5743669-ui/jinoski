@@ -57,7 +57,8 @@ function Block({ b }: { b: AnswerBlock }) {
   return (
     <figure>
       <div className="overflow-x-auto rounded-2xl ring-1 ring-snow-300/70">
-        <table className="w-full min-w-[520px] border-collapse text-left text-[14px]">
+        {/* 칸이 2개인 표(항목·설명)는 휴대폰에서 옆으로 밀지 않고 줄바꿈 (2026-11-17) */}
+        <table className={`w-full border-collapse text-left text-[14px] ${b.head.length > 2 ? "min-w-[520px]" : ""}`}>
           <caption className="bg-snow-100 px-4 py-2.5 text-left text-[13px] font-semibold text-ink-800">{b.caption}</caption>
           <thead>
             <tr className="bg-ink-900 text-white">
@@ -73,7 +74,7 @@ function Block({ b }: { b: AnswerBlock }) {
               <tr key={r.join("|")} className="border-t border-snow-300/60 bg-white even:bg-ice-200">
                 {r.map((c, i) =>
                   i === 0 ? (
-                    <th key={i} scope="row" className="px-4 py-2.5 font-semibold text-ink-900">
+                    <th key={i} scope="row" className={`px-4 py-2.5 font-semibold text-ink-900 ${b.head.length > 2 ? "" : "w-[34%] align-top"}`}>
                       {c}
                     </th>
                   ) : (

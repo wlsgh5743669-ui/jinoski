@@ -154,7 +154,7 @@ const whyJinoSki = [
     highlight: "Insured · EFR certified",
     title: "Safety first",
     description:
-      "We carry business liability insurance for lessons, and your instructor is a certified Emergency First Response (EFR) instructor who takes care of everything from warm-ups to safety rules.",
+      "Every student is covered by lesson insurance, we also carry business liability insurance, and your instructor is a certified Emergency First Response (EFR) instructor who takes care of everything from warm-ups to safety rules.",
     icon: "ShieldCheck",
   },
 ];
