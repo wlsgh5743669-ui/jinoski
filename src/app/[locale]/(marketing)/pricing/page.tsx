@@ -9,6 +9,7 @@ import { PaymentMethods } from "@/components/sections/payment-methods";
 import { AllInFullCare } from "@/components/sections/all-in-full-care";
 import { VvipPackage } from "@/components/sections/vvip-package";
 import { LiftDiscountCard } from "@/components/sections/lift-discount-card";
+import { DesignatedInstructorCard } from "@/components/sections/designated-instructor-card";
 import { MessengerCard } from "@/components/shared/messenger-buttons";
 
 export async function generateMetadata({
@@ -69,6 +70,7 @@ export default async function PricingPage({
       <AllInFullCare className="bg-white pb-14 pt-4 sm:pb-20" />
       <VvipPackage />
       <LiftDiscountCard />
+      <DesignatedInstructorCard />
       {locale !== "ko" && (
         <div className="-mt-6 bg-white px-5 pb-14">
           <MessengerCard locale={locale} place="pricing" />

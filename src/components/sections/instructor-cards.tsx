@@ -7,7 +7,7 @@ import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { trackEvent } from "@/components/shared/analytics";
 import { useContent } from "@/lib/use-content";
-import { INSTRUCTOR_CARDS, CARD_PEOPLE, CARD_UI, type CardLang, type InstructorCard } from "@/config/content/instructor-cards";
+import { INSTRUCTOR_CARDS, CARD_PEOPLE, CARD_UI, type CardLang, type InstructorCard, DESIGNATED_FEE } from "@/config/content/instructor-cards";
 import { cn } from "@/lib/utils";
 
 const AUTO_MS = 2800; // 저절로 한 칸 돌아가는 간격
@@ -274,6 +274,15 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
               ))}
               {cur.extra && <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-[13.5px] font-bold text-emerald-700 sm:px-2.5 sm:py-1 sm:text-[12px]">{cur.extra}</span>}
             </div>
+            <a
+              href={`/${lang}/pricing/#designated`}
+              className={cn(
+                "mt-3 inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-[14px] font-bold sm:mt-2.5 sm:py-1.5 sm:text-[12.5px]",
+                cur.fee === "high" ? "bg-[#fbf1d9] text-[#8a6200]" : cur.fee === "mid" ? "bg-brand-50 text-brand-700" : "bg-snow-100 text-snow-700"
+              )}
+            >
+              🎯 {t.feeLine(t.feeTier[cur.fee], t.won(DESIGNATED_FEE[cur.fee]))}
+            </a>
             {cur.proofs?.length ? (
               <div className="mt-4 sm:mt-3">
                 <p className="text-[13.5px] font-semibold text-snow-600 sm:text-[12px]">{t.proofsTitle}</p>

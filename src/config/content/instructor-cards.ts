@@ -7,6 +7,14 @@
  * 자격증 사진 = 운영앱 자격증 파일에서 생년월일·주소·QR을 가려 public/images/instructors/certs/ 에 (박진호는 public/images/certs/*-jinho)
  * 새 강사 넣기: 사진을 넣고 아래 people 에 한 줄 추가. 한 줄 소개는 지어내지 말 것.
  */
+/**
+ * 지정강사 추가금 (대표 11-19): 손님이 강사를 지정하면 강습 하루에 1번(2시간이든 7시간이든 같음).
+ * 상급 5만 · 중급 3만 · 일반 1만, 추가금은 지정받은 강사가 전부 가져감. 새 강사는 대표에게 등급을 물어볼 것.
+ */
+export type FeeTier = "high" | "mid" | "base";
+export const DESIGNATED_FEE: Record<FeeTier, number> = { high: 50000, mid: 30000, base: 10000 };
+export const FEE_TIERS: FeeTier[] = ["high", "mid", "base"];
+
 export type InstructorCard = {
   id: string;
   name: string;
@@ -16,6 +24,8 @@ export type InstructorCard = {
   role?: string;
   /** 비발디파크 강습 경력 (예: 5년차) */
   years: string;
+  /** 지정강사 추가금 등급 (대표 11-19: 강사마다 직접 정함, 자격으로 계산 안 함) */
+  fee: FeeTier;
   /** 자격. gold = 금색 표시 (레벨2 이상) · blue = 파란색 (해외 자격, 대표 11-19 황인국 CSIA) */
   certs: { label: string; gold?: boolean; blue?: boolean }[];
   /** 자격확인서 취득 연도 */
@@ -36,6 +46,7 @@ export const INSTRUCTOR_CARDS = {
   people: [
     {
       id: "jinho",
+      fee: "high",
       gender: "m",
       name: "박진호",
       role: "대표 강사",
@@ -49,6 +60,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "jaehyun",
+      fee: "mid",
       gender: "m",
       name: "조재현",
       role: "팀장",
@@ -58,6 +70,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "teru",
+      fee: "high",
       gender: "m",
       name: "오노데라 테루",
       years: "7년차",
@@ -69,6 +82,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "ingook",
+      fee: "mid",
       gender: "m",
       name: "황인국",
       role: "팀장",
@@ -82,6 +96,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "jiyul",
+      fee: "high",
       gender: "f",
       name: "구지율",
       years: "6년차",
@@ -91,6 +106,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "hyoeun",
+      fee: "high",
       gender: "f",
       name: "김효은",
       years: "5년차",
@@ -102,6 +118,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "ari",
+      fee: "base",
       gender: "f",
       name: "김아리",
       years: "3년차",
@@ -114,6 +131,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "junseong",
+      fee: "high",
       gender: "m",
       name: "허준성",
       years: "3년차",
@@ -124,6 +142,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "yunsang",
+      fee: "base",
       gender: "m",
       name: "이윤상",
       years: "2년차",
@@ -134,6 +153,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "haeun",
+      fee: "base",
       gender: "f",
       name: "이하은",
       years: "2년차",
@@ -144,6 +164,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "hyojin",
+      fee: "base",
       gender: "f",
       name: "총효진",
       years: "2년차",
@@ -155,6 +176,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "hongyeol",
+      fee: "base",
       gender: "m",
       name: "김홍열",
       years: "2년차",
@@ -164,6 +186,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "donghyun",
+      fee: "base",
       gender: "m",
       name: "김동현",
       years: "2년차",
@@ -335,6 +358,9 @@ export type CardUI = {
   prevCert: string;
   nextCert: string;
   privacy: string;
+  feeTier: Record<FeeTier, string>;
+  feeLine: (tier: string, won: string) => string;
+  won: (n: number) => string;
 };
 
 export const CARD_UI: Record<CardLang, CardUI> = {
@@ -386,6 +412,9 @@ export const CARD_UI: Record<CardLang, CardUI> = {
     prevCert: "이전 자격증",
     nextCert: "다음 자격증",
     privacy: "개인정보 보호를 위해 생년월일·주소는 가렸어요",
+    feeTier: { high: "상급", mid: "중급", base: "일반" },
+    feeLine: (t, w) => `${t} 강사 · 지정하면 하루 1번 +${w}`,
+    won: (n) => `${n / 10000}만원`,
   },
   en: {
     eyebrow: "Our Instructors",
@@ -435,6 +464,9 @@ export const CARD_UI: Record<CardLang, CardUI> = {
     prevCert: "Previous certificate",
     nextCert: "Next certificate",
     privacy: "Birth date and address are hidden for privacy.",
+    feeTier: { high: "Senior", mid: "Experienced", base: "Standard" },
+    feeLine: (t, w) => `${t} · request by name +${w}/day`,
+    won: (n) => `₩${n.toLocaleString("en-US")}`,
   },
   zh: {
     eyebrow: "Our Instructors",
@@ -484,5 +516,8 @@ export const CARD_UI: Record<CardLang, CardUI> = {
     prevCert: "上一张",
     nextCert: "下一张",
     privacy: "为保护隐私，出生日期和地址已遮盖。",
+    feeTier: { high: "高级", mid: "中级", base: "普通" },
+    feeLine: (t, w) => `${t}教练 · 指定该教练 每天 +${w}`,
+    won: (n) => `₩${n.toLocaleString("en-US")}`,
   },
 };
