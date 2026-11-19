@@ -1,7 +1,7 @@
 /**
  * 강사진 페이지 「강사진을 만나 보세요」 회전 카드 (한국어 화면만).
  *
- * 대표 11-19: 교육생은 빼고, 운영앱에 자격확인서가 올라온 강사만 + 팀장 조재현·황인국 + 구지율·김홍열(확인서 없음 → 운영앱 자격만, 취득 연도 없음).
+ * 대표 11-19: 교육생은 빼고, 운영앱에 자격확인서가 올라온 강사만 + 팀장 조재현·황인국 + 구지율·김홍열(확인서 없음 → 운영앱 자격만, 취득 연도 없음). 테루는 일본 SAJ 지도원 합격증(운영앱 「기타」 자격증), 총효진은 스키·보드 레벨1.
  * 사진 = 운영앱 증명사진 → public/images/instructors/<id>.jpg (세로 3:4)
  * 년차 = 운영앱 년차 / 취득 = 자격확인서의 취득일(발급일)
  * 자격증 사진 = 운영앱 자격증 파일에서 생년월일·주소·QR을 가려 public/images/instructors/certs/ 에 (박진호는 public/images/certs/*-jinho)
@@ -31,7 +31,7 @@ export const INSTRUCTOR_CARDS = {
   enabled: true,
   eyebrow: "Our Instructors",
   title: "지노스키 강사진을 만나 보세요",
-  description: "모두 대한스키지도자연맹 공인 자격을 가진 강사예요. 옆으로 밀거나 카드를 누르면 강사 소개가 아래에 나와요.",
+  description: "모두 공인 자격(대한스키지도자연맹·일본 SAJ)을 가진 강사예요. 옆으로 밀거나 카드를 누르면 강사 소개가 아래에 나와요.",
   brand: "JINOSKI 26/27",
   people: [
     {
@@ -55,6 +55,17 @@ export const INSTRUCTOR_CARDS = {
       years: "7년차",
       certs: [{ label: "스키 레벨1" }, { label: "스키 티칭1" }],
       image: "/images/instructors/jaehyun.jpg",
+    },
+    {
+      id: "teru",
+      gender: "m",
+      name: "오노데라 테루",
+      years: "7년차",
+      certs: [{ label: "일본 SAJ 공인 지도원" }],
+      got: "SAJ 지도원 2026년도 합격",
+      languages: "일본어",
+      image: "/images/instructors/teru.jpg",
+      proofs: [{ label: "SAJ 지도원", src: "/images/instructors/certs/teru-saj.jpg" }],
     },
     {
       id: "ingook",
@@ -128,6 +139,17 @@ export const INSTRUCTOR_CARDS = {
       got: "스키 레벨1 2026년",
       image: "/images/instructors/haeun.jpg",
       proofs: [{ label: "스키 레벨1", src: "/images/instructors/certs/haeun-ski1.jpg" }],
+    },
+    {
+      id: "hyojin",
+      gender: "f",
+      name: "총효진",
+      years: "2년차",
+      certs: [{ label: "스키 레벨1" }, { label: "스노보드 레벨1" }],
+      got: "스키 레벨1 · 스노보드 레벨1 2025년",
+      languages: "중국어",
+      image: "/images/instructors/hyojin.jpg",
+      proofs: [{ label: "스키 레벨1", src: "/images/instructors/certs/cong-ski1.jpg" }, { label: "스노보드 레벨1", src: "/images/instructors/certs/cong-sb1.jpg" }],
     },
     {
       id: "hongyeol",
