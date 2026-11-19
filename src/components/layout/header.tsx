@@ -48,13 +48,29 @@ export function Header() {
     : { href: contact.smartStore, target: "_blank", rel: "noreferrer" };
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  // 대표 11-19: 휴대폰에서 내릴 땐 위쪽 메뉴(로고·언어)를 숨기고, 올리면 다시 보이게 (PC는 그대로)
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 24);
+      const d = y - lastY;
+      if (y < 120) setHidden(false);
+      else if (d > 6) setHidden(true);
+      else if (d < -6) setHidden(false);
+      if (Math.abs(d) > 6 || y < 120) lastY = y;
+    };
+    // 자주 묻는 질문의 붙는 칸(.hd-follow)이 메뉴가 숨으면 맨 위로 올라가게 html 에 표시
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.hd = hidden && !open ? "hide" : "";
+  }, [hidden, open]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -68,6 +84,7 @@ export function Header() {
       <header
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-all duration-500",
+          hidden && !open && "max-lg:pointer-events-none max-lg:-translate-y-full max-lg:opacity-0",
           scrolled
             ? "bg-white/80 shadow-[0_1px_0_0_rgba(10,11,13,0.06)] backdrop-blur-xl"
             : "bg-transparent"

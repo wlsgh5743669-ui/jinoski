@@ -60,7 +60,7 @@ export function Faq() {
       <Container>
         <div ref={top} className="mx-auto max-w-2xl">
           {cats.length > 0 && (
-            <div className="sticky top-[72px] z-10 -mx-5 mb-6 flex gap-2 overflow-x-auto bg-white/95 px-5 py-3 backdrop-blur [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
+            <div className="hd-follow sticky top-[72px] z-10 -mx-5 mb-6 flex gap-2 overflow-x-auto bg-white/95 px-5 py-3 backdrop-blur [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
               {[null, ...cats].map((c) => (
                 <button
                   key={c ?? "all"}

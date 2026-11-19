@@ -19,6 +19,21 @@ const noOf = (p: InstructorCard) => String(INSTRUCTOR_CARDS.people.indexOf(p) + 
 
 type Mode = "all" | "split";
 
+/** 대표 11-19 「나에게 맞는 강사 찾기」: 종목·언어·경력(3년차 이상) — 지금 있는 정보로만 (아이/어른은 정보가 없어 뺌) */
+type Filter = { sport: "all" | "ski" | "board"; lang: string; exp: "all" | "3" };
+const NO_FILTER: Filter = { sport: "all", lang: "all", exp: "all" };
+const FILTER_ROWS: { key: keyof Filter; label: string; opts: [string, string][] }[] = [
+  { key: "sport", label: "종목", opts: [["all", "전체"], ["ski", "스키"], ["board", "스노보드"]] },
+  { key: "lang", label: "언어", opts: [["all", "상관없어요"], ["영어", "English"], ["일본어", "日本語"], ["중국어", "中文"]] },
+  { key: "exp", label: "경력", opts: [["all", "상관없어요"], ["3", "3년차 이상"]] },
+];
+const isSki = (p: InstructorCard) => p.certs.some((c) => c.label.includes("스키") || c.label.includes("SAJ"));
+const isBoard = (p: InstructorCard) => p.certs.some((c) => c.label.includes("스노보드"));
+const fits = (p: InstructorCard, f: Filter) =>
+  (f.sport === "all" || (f.sport === "ski" ? isSki(p) : isBoard(p))) &&
+  (f.lang === "all" || (p.languages ?? "").includes(f.lang)) &&
+  (f.exp === "all" || (parseInt(p.years, 10) || 0) >= 3);
+
 /**
  * 강사진 페이지 「지노스키 강사진을 만나 보세요」 — 강사 포토카드가 원 모양으로 돌아가는 회전 무대 (한국어만).
  * 저절로 한 칸씩 돌고, 옆으로 밀거나 옆 카드를 누르면 앞으로 와요. 앞 카드 강사 소개가 아래 칸에 나와요.
@@ -36,6 +51,8 @@ export function InstructorCards() {
   const [active, setActive] = useState("all");
   // 크게 보는 자격증 사진
   const [view, setView] = useState<{ p: InstructorCard; k: number } | null>(null);
+  const [flt, setFlt] = useState<Filter>(NO_FILTER);
+  const filtering = flt.sport !== "all" || flt.lang !== "all" || flt.exp !== "all";
 
   const women = people.filter((p) => p.gender === "f");
   const men = people.filter((p) => p.gender === "m");
@@ -64,6 +81,7 @@ export function InstructorCards() {
   const cur = sel;
 
   const pick = (m: Mode) => {
+    if (filtering) setFlt(NO_FILTER);
     if (m === mode) return;
     setMode(m);
     setActive(m === "all" ? "all" : "f");
@@ -107,7 +125,42 @@ export function InstructorCards() {
           </div>
         )}
 
-        {mode === "all" || !canSplit ? (
+        {/* 나에게 맞는 강사 찾기 */}
+        <div className="mx-auto mt-5 max-w-[560px]" role="group" aria-label="나에게 맞는 강사 찾기">
+          <p className="text-center text-[14.5px] font-bold text-white">나에게 맞는 강사 찾기</p>
+          {FILTER_ROWS.map((row) => (
+            <div key={row.key} className="mt-2 flex items-center gap-2">
+              <span className="w-[2.6em] shrink-0 text-[12px] font-semibold text-white/50">{row.label}</span>
+              <div className="flex flex-wrap gap-1.5">
+                {row.opts.map(([v, t]) => (
+                  <button
+                    key={v}
+                    type="button"
+                    aria-pressed={flt[row.key] === v}
+                    onClick={() => {
+                      setFlt({ ...flt, [row.key]: v } as Filter);
+                      if (v !== "all") trackEvent("instructor_filter", { [row.key]: v });
+                    }}
+                    className={cn("ic-chip", flt[row.key] === v && "is-on")}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filtering ? (
+          <MatchBoard
+            key={`${flt.sport}-${flt.lang}-${flt.exp}`}
+            matched={people.filter((p) => fits(p, flt))}
+            others={people.filter((p) => !fits(p, flt))}
+            onPick={setSel}
+            onProof={openProof}
+            onReset={() => setFlt(NO_FILTER)}
+          />
+        ) : mode === "all" || !canSplit ? (
           <CardRing
             key="all"
             ringKey="all"
@@ -288,9 +341,23 @@ function CardRing({
     s.target -= diff * STEP;
     hold();
   };
-  const cb = useRef({ bringTo, onOpen, onFront, onTouch, slots });
+  // 앞 카드 뒤집기: 원 밖에 같은 자리·같은 크기로 띄운 카드가 뒤집혀요 (원 안에서 뒤집으면 휴대폰에서 앞뒤 순서가 꼬임)
+  const [flipP, setFlipP] = useState<InstructorCard | null>(null);
+  const [flipOn, setFlipOn] = useState(false);
+  const flipOpen = (p: InstructorCard) => {
+    setFlipP(p);
+    setFlipOn(false);
+    st.current.pauseUntil = Date.now() + 10 * 60 * 1000;
+    requestAnimationFrame(() => requestAnimationFrame(() => setFlipOn(true)));
+  };
+  const flipClose = () => {
+    setFlipOn(false);
+    st.current.pauseUntil = Date.now() + PAUSE_MS;
+    window.setTimeout(() => setFlipP(null), 650);
+  };
+  const cb = useRef({ bringTo, onOpen, onFront, onTouch, slots, flipOpen });
   useEffect(() => {
-    cb.current = { bringTo, onOpen, onFront, onTouch, slots };
+    cb.current = { bringTo, onOpen, onFront, onTouch, slots, flipOpen };
   });
   const pausedRef = useRef(paused);
   useEffect(() => {
@@ -351,6 +418,7 @@ function CardRing({
       // 펼쳐지며 도는 동안엔 아래 소개 칸을 바꾸지 않고, 다 펼쳐진 뒤에 앞 카드로
       if (f !== s.vf && s.open >= 1) {
         s.vf = f;
+        setFlipP(null);
         setFront(f);
         cb.current.onFront(cb.current.slots[f]);
       }
@@ -395,9 +463,9 @@ function CardRing({
         const i = el ? cards.indexOf(el) : -1;
         if (i >= 0 && i !== s.vf) cb.current.bringTo(i);
         else if (i >= 0) {
-          // 앞 카드를 누르면 아래 소개를 이 강사로 + 자격증 사진
+          // 앞 카드를 누르면 아래 소개를 이 강사로 + 카드가 뒤집혀 자격이 보여요
           cb.current.onFront(cb.current.slots[i]);
-          cb.current.onOpen(cb.current.slots[i]);
+          cb.current.flipOpen(cb.current.slots[i]);
         }
         return;
       }
@@ -457,39 +525,19 @@ function CardRing({
               role="button"
               tabIndex={i < N ? 0 : -1}
               aria-hidden={i >= N ? true : undefined}
-              aria-label={i === front && p.proofs?.length ? `${p.name} 강사 자격증 보기` : `${p.name} 강사 소개 보기`}
+              aria-label={i === front ? `${p.name} 강사 카드 뒤집기` : `${p.name} 강사 소개 보기`}
+              style={flipP && i === front ? { visibility: "hidden" } : undefined}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
                   if (i === front) {
                     onFront(p);
-                    onOpen(p);
+                    flipOpen(p);
                   } else bringTo(i);
                 }
               }}
             >
-              <div className="pcr-face" style={{ backgroundImage: `url("${p.image}")`, backgroundPosition: "center 20%" }}>
-                <div className="pcr-holo" />
-                <span className="pcr-no">No.{noOf(p)}</span>
-                <div className="pcr-info">
-                  <span className="pcr-name">{p.name}</span>
-                  <span className="pcr-tag">{sub(p)}</span>
-                  <span className="mt-1 flex flex-wrap gap-1">
-                    {p.certs.slice(0, 2).map((c) => (
-                      <span
-                        key={c.label}
-                        className={cn(
-                          "rounded-full px-1.5 py-px text-[10px] font-bold",
-                          c.gold ? "bg-[#E7C77F] text-[#2a1d00]" : "bg-white/20 text-white"
-                        )}
-                      >
-                        {c.label.replace("스노보드", "보드")}
-                      </span>
-                    ))}
-                  </span>
-                  <span className="pcr-brand">{INSTRUCTOR_CARDS.brand}</span>
-                </div>
-              </div>
+              <CardFace p={p} />
               <div className="pcr-back">
                 <span>
                   JINOSKI
@@ -500,6 +548,11 @@ function CardRing({
           ))}
         </div>
         <div className="pcr-floor" aria-hidden />
+        {flipP && (
+          <div className="icf-pop" onPointerDown={(e) => e.stopPropagation()}>
+            <FlipCard p={flipP} flipped={flipOn} onToggle={flipClose} onProof={onOpen} />
+          </div>
+        )}
       </div>
 
       {!label && (
@@ -523,6 +576,178 @@ function CardRing({
             ))}
           </div>
         </>
+      )}
+    </div>
+  );
+}
+
+/** 카드 앞면 (회전 원·맞는 강사 찾기 같이 씀) */
+function CardFace({ p }: { p: InstructorCard }) {
+  return (
+    <div className="pcr-face" style={{ backgroundImage: `url("${p.image}")`, backgroundPosition: "center 20%" }}>
+      <div className="pcr-holo" />
+      <span className="pcr-no">No.{noOf(p)}</span>
+      <div className="pcr-info">
+        <span className="pcr-name">{p.name}</span>
+        <span className="pcr-tag">{sub(p)}</span>
+        <span className="mt-1 flex flex-wrap gap-1">
+          {p.certs.slice(0, 2).map((c) => (
+            <span
+              key={c.label}
+              className={cn("rounded-full px-1.5 py-px text-[10px] font-bold", c.gold ? "bg-[#E7C77F] text-[#2a1d00]" : "bg-white/20 text-white")}
+            >
+              {c.label.replace("스노보드", "보드")}
+            </span>
+          ))}
+        </span>
+        <span className="pcr-brand">{INSTRUCTOR_CARDS.brand}</span>
+      </div>
+    </div>
+  );
+}
+
+/** 누르면 뒤집히는 카드: 뒷면에 자격·취득·언어 + 자격증 사진 */
+function FlipCard({
+  p,
+  flipped,
+  onToggle,
+  onProof,
+}: {
+  p: InstructorCard;
+  flipped: boolean;
+  onToggle: () => void;
+  onProof: (p: InstructorCard) => void;
+}) {
+  return (
+    <div
+      className={cn("icf-card", flipped && "is-flip")}
+      role="button"
+      tabIndex={0}
+      aria-pressed={flipped}
+      aria-label={`${p.name} 강사 카드 ${flipped ? "앞면 보기" : "뒤집기"}`}
+      onClick={onToggle}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onToggle();
+        }
+      }}
+    >
+      <div className="icf-in">
+        <CardFace p={p} />
+        <div className="icf-back" aria-hidden={!flipped}>
+          <p className="icf-name">
+            {p.name}
+            <span>{p.role ?? "강사"}</span>
+          </p>
+          <p className="icf-sub">비발디파크 강습 {p.years}</p>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {p.certs.map((c) => (
+              <span key={c.label} className={cn("icf-badge", c.gold && "is-gold")}>
+                {c.label}
+              </span>
+            ))}
+          </div>
+          {p.got && <p className="icf-line">취득 {p.got}</p>}
+          {p.languages && <p className="icf-line">외국어 {p.languages}</p>}
+          {p.extra && <p className="icf-line">{p.extra}</p>}
+          {/* 정보가 적은 카드만 빈 곳에 문양 (많으면 글씨와 겹침) */}
+          {p.certs.length + [p.got, p.languages, p.extra].filter(Boolean).length <= 3 && (
+            <span className="icf-mark" aria-hidden>
+              JINOSKI
+              <small>{INSTRUCTOR_CARDS.brand.replace("JINOSKI ", "")} · 공인 자격 강사</small>
+            </span>
+          )}
+          {p.proofs?.length ? (
+            <button
+              type="button"
+              className="icf-btn"
+              tabIndex={flipped ? 0 : -1}
+              onClick={(e) => {
+                e.stopPropagation();
+                onProof(p);
+              }}
+            >
+              자격증 사진 보기
+            </button>
+          ) : (
+            <a href="#team-certs" className="icf-btn" tabIndex={flipped ? 0 : -1} onClick={(e) => e.stopPropagation()}>
+              자격확인서 모음
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** 맞는 강사 찾기 결과: 맞는 강사는 앞으로 착착 모이고, 나머지는 위에 작게 */
+function MatchBoard({
+  matched,
+  others,
+  onPick,
+  onProof,
+  onReset,
+}: {
+  matched: InstructorCard[];
+  others: InstructorCard[];
+  onPick: (p: InstructorCard) => void;
+  onProof: (p: InstructorCard) => void;
+  onReset: () => void;
+}) {
+  const [flip, setFlip] = useState<string | null>(null);
+  useEffect(() => {
+    // 조건이 바뀌면 새로 만들어져요(key) → 첫 강사를 아래 소개 칸에
+    if (matched[0]) onPick(matched[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <div className="mt-6">
+      {others.length > 0 && (
+        <div className="flex items-center justify-center gap-2" aria-hidden>
+          <div className="flex -space-x-3">
+            {others.map((p, k) => (
+              <span
+                key={p.id}
+                className="icf-other h-7 w-7 rounded-full border-2 border-ink-900 bg-cover"
+                style={{ backgroundImage: `url("${p.image}")`, backgroundPosition: "center 18%", animationDelay: `${k * 25}ms` }}
+              />
+            ))}
+          </div>
+          <span className="whitespace-nowrap text-[12px] text-white/40">다른 강사 {others.length}명</span>
+        </div>
+      )}
+      <p className="mt-4 text-center text-[14px] font-semibold text-white" aria-live="polite">
+        {matched.length ? (
+          <>
+            맞는 강사 <span className="text-brand-300">{matched.length}명</span> · 카드를 누르면 뒤집혀요
+          </>
+        ) : (
+          "맞는 강사가 없어요. 조건을 하나 빼 보세요."
+        )}
+      </p>
+      {matched.length ? (
+        <div className="icf-grid mt-4">
+          {matched.map((p, k) => (
+            <div key={p.id} className="icf-gather" style={{ animationDelay: `${120 + k * 80}ms` }}>
+              <FlipCard
+                p={p}
+                flipped={flip === p.id}
+                onToggle={() => {
+                  setFlip(flip === p.id ? null : p.id);
+                  onPick(p);
+                }}
+                onProof={onProof}
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-4 flex justify-center">
+          <button type="button" onClick={onReset} className="ic-chip is-on">
+            처음처럼 모두 보기
+          </button>
+        </div>
       )}
     </div>
   );
