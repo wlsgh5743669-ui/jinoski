@@ -8,7 +8,7 @@
  * 새 강사 넣기: 사진을 넣고 아래 people 에 한 줄 추가. 한 줄 소개는 지어내지 말 것.
  */
 /**
- * 지정강사 추가금 (대표 11-19): 손님이 강사를 지정하면 강습 하루에 1번(2시간이든 7시간이든 같음).
+ * 지정강사 추가금 (대표 11-19): 한 팀이 시즌에 1번 내면 그 시즌 내내 같은 강사를 추가금 없이 계속 지정(인원·시간 상관없음).
  * 상급 5만 · 중급 3만 · 일반 1만, 추가금은 지정받은 강사가 전부 가져감. 새 강사는 대표에게 등급을 물어볼 것.
  */
 export type FeeTier = "high" | "mid" | "base";
@@ -413,7 +413,7 @@ export const CARD_UI: Record<CardLang, CardUI> = {
     nextCert: "다음 자격증",
     privacy: "개인정보 보호를 위해 생년월일·주소는 가렸어요",
     feeTier: { high: "상급", mid: "중급", base: "일반" },
-    feeLine: (t, w) => `${t} 강사 · 지정하면 하루 1번 +${w}`,
+    feeLine: (t, w) => `${t} 강사 · 지정하면 시즌 1번 +${w}`,
     won: (n) => `${n / 10000}만원`,
   },
   en: {
@@ -465,7 +465,7 @@ export const CARD_UI: Record<CardLang, CardUI> = {
     nextCert: "Next certificate",
     privacy: "Birth date and address are hidden for privacy.",
     feeTier: { high: "Senior", mid: "Experienced", base: "Standard" },
-    feeLine: (t, w) => `${t} · request by name +${w}/day`,
+    feeLine: (t, w) => `${t} · request by name +${w} once a season`,
     won: (n) => `₩${n.toLocaleString("en-US")}`,
   },
   zh: {
@@ -517,7 +517,7 @@ export const CARD_UI: Record<CardLang, CardUI> = {
     nextCert: "下一张",
     privacy: "为保护隐私，出生日期和地址已遮盖。",
     feeTier: { high: "高级", mid: "中级", base: "普通" },
-    feeLine: (t, w) => `${t}教练 · 指定该教练 每天 +${w}`,
+    feeLine: (t, w) => `${t}教练 · 指定该教练 每季一次 +${w}`,
     won: (n) => `₩${n.toLocaleString("en-US")}`,
   },
 };

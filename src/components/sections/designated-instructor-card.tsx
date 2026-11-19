@@ -5,15 +5,16 @@ import { Container } from "@/components/shared/container";
 import { CARD_PEOPLE, CARD_UI, DESIGNATED_FEE, FEE_TIERS, type CardLang, type FeeTier } from "@/config/content/instructor-cards";
 import { cn } from "@/lib/utils";
 
-/** 요금 안내 페이지: 지정강사 추가금 (대표 11-19 · 상급 5만·중급 3만·일반 1만, 하루 1번, 추가금은 강사에게 전부) */
+/** 요금 안내 페이지: 지정강사 추가금 (대표 11-19 · 상급 5만·중급 3만·일반 1만, 한 팀이 시즌에 1번 내면 그 시즌 내내 같은 강사 계속 지정, 추가금은 강사에게 전부) */
 const TXT = {
   ko: {
     eyebrow: "DESIGNATED INSTRUCTOR",
     title: "원하는 강사를 지정할 수 있어요",
     desc: "지노스키 강사는 모두 공인 자격을 가졌어요. 지정하지 않으면 추가금 없이 수업에 맞는 강사가 배정돼요. 특정 강사에게 배우고 싶으시면 아래 금액이 붙어요.",
-    per: "하루 1번",
+    per: "한 팀 · 시즌 1번",
     notes: [
-      "강습 하루에 1번만 붙어요. 2시간이든 7시간이든 같아요.",
+      "한 팀이 시즌에 1번만 내요. 한 번 내시면 이번 시즌 동안 같은 강사를 추가금 없이 계속 지정할 수 있어요.",
+      "인원이 몇 명이든, 2시간이든 7시간이든 금액은 같아요.",
       "추가금은 지정한 강사에게 전부 가요.",
       "예약 전에 그 강사의 일정을 먼저 확인해 드려요.",
     ],
@@ -23,9 +24,10 @@ const TXT = {
     eyebrow: "REQUEST AN INSTRUCTOR",
     title: "Choose your own instructor",
     desc: "Every JinoSki instructor is officially certified. If you don't request anyone, we match an instructor to your lesson at no extra cost. To learn from a specific instructor, the fee below applies.",
-    per: "per day",
+    per: "per group / season",
     notes: [
-      "Charged once per lesson day, whether the lesson is 2 hours or 7 hours.",
+      "Paid once per group per season. After that, you can request the same instructor all season at no extra cost.",
+      "Same fee however many people and however long the lesson.",
       "The whole fee goes to the instructor you choose.",
       "We'll check that instructor's schedule before you book.",
     ],
@@ -35,9 +37,10 @@ const TXT = {
     eyebrow: "指定教练",
     title: "可以指定想要的教练",
     desc: "JinoSki 所有教练都持有官方资格。不指定时，我们会按课程安排合适的教练，不收额外费用。如果想跟某位教练学，需支付以下指定费。",
-    per: "每天一次",
+    per: "每组每季一次",
     notes: [
-      "每个上课日只收一次，2小时或7小时都一样。",
+      "每组每个雪季只付一次。付过之后，本季再指定同一位教练不再加钱。",
+      "不论人数多少、课程2小时或7小时，金额都一样。",
       "指定费全部归您选择的教练。",
       "预约前会先确认该教练的时间。",
     ],
