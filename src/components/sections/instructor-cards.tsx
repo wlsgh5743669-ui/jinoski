@@ -7,7 +7,7 @@ import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { trackEvent } from "@/components/shared/analytics";
 import { useContent } from "@/lib/use-content";
-import { INSTRUCTOR_CARDS, type InstructorCard } from "@/config/content/instructor-cards";
+import { INSTRUCTOR_CARDS, CARD_PEOPLE, CARD_UI, type CardLang, type InstructorCard } from "@/config/content/instructor-cards";
 import { cn } from "@/lib/utils";
 
 const AUTO_MS = 2800; // 저절로 한 칸 돌아가는 간격
@@ -15,35 +15,46 @@ const PAUSE_MS = 6000; // 손댄 뒤 멈춰 있는 시간
 
 const mod = (a: number, n: number) => ((a % n) + n) % n;
 const sub = (p: InstructorCard) => [p.role, p.years].filter(Boolean).join(" · ");
-const noOf = (p: InstructorCard) => String(INSTRUCTOR_CARDS.people.indexOf(p) + 1).padStart(2, "0");
+const noOf = (p: InstructorCard) => String(INSTRUCTOR_CARDS.people.findIndex((q) => q.id === p.id) + 1).padStart(2, "0");
+const langOf = (l: string): CardLang => (l === "en" || l === "zh" ? l : "ko");
+/** 화면 언어(한국어·영어·중국어)에 맞는 글 */
+const useT = () => CARD_UI[langOf(useLocale())];
 
 type Mode = "all" | "split";
 
 /** 대표 11-19 「나에게 맞는 강사 찾기」: 종목·언어·경력(3년차 이상) — 지금 있는 정보로만 (아이/어른은 정보가 없어 뺌) */
 type Filter = { sport: "all" | "ski" | "board"; lang: string; exp: "all" | "3" };
 const NO_FILTER: Filter = { sport: "all", lang: "all", exp: "all" };
-const FILTER_ROWS: { key: keyof Filter; label: string; opts: [string, string][] }[] = [
-  { key: "sport", label: "종목", opts: [["all", "전체"], ["ski", "스키"], ["board", "스노보드"]] },
-  { key: "lang", label: "언어", opts: [["all", "상관없어요"], ["영어", "English"], ["일본어", "日本語"], ["중국어", "中文"]] },
-  { key: "exp", label: "경력", opts: [["all", "상관없어요"], ["3", "3년차 이상"]] },
+// 단추 글씨는 CARD_UI.rows (언어별), 값은 한국어 원본 기준
+const FILTER_ROWS: { key: keyof Filter; vals: string[] }[] = [
+  { key: "sport", vals: ["all", "ski", "board"] },
+  { key: "lang", vals: ["all", "영어", "일본어", "중국어"] },
+  { key: "exp", vals: ["all", "3"] },
 ];
+// 찾기는 영어·중국어 화면에서도 한국어 원본으로 맞춰 봐요
+const KO_BY_ID = Object.fromEntries(INSTRUCTOR_CARDS.people.map((p) => [p.id, p]));
 const isSki = (p: InstructorCard) => p.certs.some((c) => c.label.includes("스키") || c.label.includes("SAJ"));
 const isBoard = (p: InstructorCard) => p.certs.some((c) => c.label.includes("스노보드"));
-const fits = (p: InstructorCard, f: Filter) =>
-  (f.sport === "all" || (f.sport === "ski" ? isSki(p) : isBoard(p))) &&
-  (f.lang === "all" || (p.languages ?? "").includes(f.lang)) &&
-  (f.exp === "all" || (parseInt(p.years, 10) || 0) >= 3);
+const fits = (q: InstructorCard, f: Filter) => {
+  const p = KO_BY_ID[q.id] ?? q;
+  return (
+    (f.sport === "all" || (f.sport === "ski" ? isSki(p) : isBoard(p))) &&
+    (f.lang === "all" || (p.languages ?? "").includes(f.lang)) &&
+    (f.exp === "all" || (parseInt(p.years, 10) || 0) >= 3)
+  );
+};
 
 /**
- * 강사진 페이지 「지노스키 강사진을 만나 보세요」 — 강사 포토카드가 원 모양으로 돌아가는 회전 무대 (한국어만).
+ * 강사진 페이지 「지노스키 강사진을 만나 보세요」 — 강사 포토카드가 원 모양으로 돌아가는 회전 무대 (한국어·영어·중국어, 대표 11-19).
  * 저절로 한 칸씩 돌고, 옆으로 밀거나 옆 카드를 누르면 앞으로 와요. 앞 카드 강사 소개가 아래 칸에 나와요.
  * 「전체 보기 / 여자·남자 나눠 보기」 단추: 나눠 보기는 위 원(여자 강사)·아래 원(남자 강사)으로, 바꿀 때 카드가 돌면서 활짝 펼쳐져요.
  * 회전 무대 모양(.pcr-*)은 globals.css, 내용·사진은 src/config/content/instructor-cards.ts
  * top = 강사 소개 페이지 맨 위(제목 h1·위 여백) — 대표 11-19 「강사들이 너무 묻혀 있는 거 같아」 → 강사진을 맨 위로
  */
 export function InstructorCards({ top = false }: { top?: boolean } = {}) {
-  const locale = useLocale();
-  const people = INSTRUCTOR_CARDS.people;
+  const lang = langOf(useLocale());
+  const t = CARD_UI[lang];
+  const people = CARD_PEOPLE[lang];
   const { contact } = useContent();
 
   const [mode, setMode] = useState<Mode>("all");
@@ -109,7 +120,7 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
     };
   }, []);
 
-  const show = INSTRUCTOR_CARDS.enabled && locale === "ko" && people.length > 0;
+  const show = INSTRUCTOR_CARDS.enabled && people.length > 0;
   if (!show) return null;
   const cur = sel;
 
@@ -141,32 +152,32 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
           as={top ? "h1" : "h2"}
           light
           align="center"
-          eyebrow={INSTRUCTOR_CARDS.eyebrow}
-          title={INSTRUCTOR_CARDS.title}
-          description={INSTRUCTOR_CARDS.description}
+          eyebrow={t.eyebrow}
+          title={t.title}
+          description={t.description}
         />
 
         {canSplit && (
           <div className="mt-6 flex justify-center">
-            <div className="ic-toggle" role="tablist" aria-label="강사 보기 방법">
+            <div className="ic-toggle" role="tablist" aria-label={t.viewAria}>
               <button type="button" role="tab" aria-selected={mode === "all"} onClick={() => pick("all")} className={cn(mode === "all" && "is-on")}>
-                전체 보기 <span>{people.length}</span>
+                {t.viewAll} <span>{people.length}</span>
               </button>
               <button type="button" role="tab" aria-selected={mode === "split"} onClick={() => pick("split")} className={cn(mode === "split" && "is-on")}>
-                여자·남자 나눠 보기
+                {t.split}
               </button>
             </div>
           </div>
         )}
 
         {/* 나에게 맞는 강사 찾기 */}
-        <div className="mx-auto mt-5 max-w-[560px]" role="group" aria-label="나에게 맞는 강사 찾기">
-          <p className="text-center text-[14.5px] font-bold text-white">나에게 맞는 강사 찾기</p>
+        <div className="mx-auto mt-5 max-w-[560px]" role="group" aria-label={t.finder}>
+          <p className="text-center text-[14.5px] font-bold text-white">{t.finder}</p>
           {FILTER_ROWS.map((row) => (
             <div key={row.key} className="mt-2 flex items-center gap-2">
-              <span className="w-[2.6em] shrink-0 text-[12px] font-semibold text-white/50">{row.label}</span>
+              <span className={cn("shrink-0 text-[12px] font-semibold text-white/50", lang === "en" ? "w-[5.6em]" : "w-[2.6em]")}>{t.rows[row.key][0]}</span>
               <div className="flex flex-wrap gap-1.5">
-                {row.opts.map(([v, t]) => (
+                {row.vals.map((v, j) => (
                   <button
                     key={v}
                     type="button"
@@ -177,7 +188,7 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
                     }}
                     className={cn("ic-chip", flt[row.key] === v && "is-on")}
                   >
-                    {t}
+                    {t.rows[row.key][1][j]}
                   </button>
                 ))}
               </div>
@@ -208,7 +219,7 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
           <div key="split">
             <CardRing
               ringKey="f"
-              label="여자 강사"
+              label={t.women}
               small
               people={women}
               paused={!!view}
@@ -218,7 +229,7 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
             />
             <CardRing
               ringKey="m"
-              label="남자 강사"
+              label={t.men}
               small
               dir={-1}
               delay={180}
@@ -238,17 +249,17 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
             className="min-h-0 w-full flex-1 bg-cover sm:h-[117px] sm:w-[88px] sm:flex-none sm:shrink-0 sm:rounded-2xl"
             style={{ backgroundImage: `url("${cur.image}")`, backgroundPosition: "center 20%" }}
             role="img"
-            aria-label={`${cur.name} 강사 사진`}
+            aria-label={t.photoAlt(cur.name)}
           />
           <div className="min-w-0 shrink-0 px-5 pb-6 pt-4 sm:p-0">
             <p className="text-[30px] font-bold leading-tight sm:text-[21px]">
               {cur.name}
-              <span className="ml-1.5 text-[15px] font-semibold text-snow-600 sm:text-[13px]">{cur.role ?? "강사"}</span>
+              <span className="ml-1.5 text-[15px] font-semibold text-snow-600 sm:text-[13px]">{cur.role ?? t.role}</span>
             </p>
             <p className="mt-1 text-[15.5px] leading-snug text-snow-700 sm:text-[13.5px]">
-              {["비발디파크 강습 " + cur.years, cur.languages && "외국어 " + cur.languages].filter(Boolean).join(" · ")}
+              {[t.yearsLine(cur.years), cur.languages && t.langLine(cur.languages)].filter(Boolean).join(" · ")}
             </p>
-            {cur.got && <p className="mt-0.5 text-[15.5px] font-semibold text-brand-700 sm:text-[13.5px]">자격 취득 {cur.got}</p>}
+            {cur.got && <p className="mt-0.5 text-[15.5px] font-semibold text-brand-700 sm:text-[13.5px]">{t.got}{cur.got}</p>}
             <div className="mt-3 flex flex-wrap gap-1.5 sm:mt-2.5">
               {cur.certs.map((c) => (
                 <span
@@ -265,7 +276,7 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
             </div>
             {cur.proofs?.length ? (
               <div className="mt-4 sm:mt-3">
-                <p className="text-[13.5px] font-semibold text-snow-600 sm:text-[12px]">자격증 사진 · 눌러서 크게 보기</p>
+                <p className="text-[13.5px] font-semibold text-snow-600 sm:text-[12px]">{t.proofsTitle}</p>
                 <div className="mt-2 flex gap-3 sm:mt-1.5 sm:gap-2">
                   {cur.proofs.map((pr, k) => (
                     <button
@@ -273,7 +284,7 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
                       type="button"
                       onClick={() => openProof(cur, k)}
                       className="group w-[104px] text-center sm:w-[64px]"
-                      aria-label={`${cur.name} ${pr.label} 자격증 크게 보기`}
+                      aria-label={t.proofAria(cur.name, pr.label)}
                     >
                       <span
                         className="block h-[104px] w-[104px] rounded-xl sm:h-[64px] sm:w-[64px] sm:rounded-lg border border-snow-200 bg-snow-50 bg-cover bg-center shadow-sm transition group-hover:border-brand-400"
@@ -292,14 +303,14 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
                   onClick={() => openProof(cur)}
                   className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-snow-300 px-3.5 py-3 text-[15px] font-bold text-ink-900 sm:py-2 sm:text-[13.5px]"
                 >
-                  <FileBadge size={15} /> 자격증 보기
+                  <FileBadge size={15} /> {t.certBtn}
                 </button>
               ) : (
                 <a
                   href="#team-certs"
                   className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-snow-300 px-3.5 py-3 text-[15px] font-bold text-ink-900 sm:py-2 sm:text-[13.5px]"
                 >
-                  <FileBadge size={15} /> 자격확인서 모음 보기
+                  <FileBadge size={15} /> {t.certAll}
                 </a>
               )}
               <a
@@ -309,7 +320,7 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
                 onClick={openChat}
                 className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-brand-500 px-3.5 py-3 text-[15px] font-bold text-white sm:py-2 sm:text-[13.5px]"
               >
-                <MessageSquareText size={15} /> 상담하기
+                <MessageSquareText size={15} /> {t.chat}
               </a>
             </div>
           </div>
@@ -350,6 +361,7 @@ function CardRing({
   onTouch: () => void;
   onOpen: (p: InstructorCard) => void;
 }) {
+  const t = useT();
   const N = people.length;
   const SLOTS = N <= 6 ? N * 2 : N;
   const STEP = 360 / SLOTS;
@@ -536,14 +548,14 @@ function CardRing({
     <div ref={sectionRef} className={cn(small && "mt-5")} data-ring={ringKey}>
       {label && (
         <div className="ic-ring-label flex items-center justify-center gap-3">
-          <button type="button" onClick={() => step(-1)} aria-label={`${label} 이전`} className={cn(navBtn, "h-9 w-9")}>
+          <button type="button" onClick={() => step(-1)} aria-label={`${label} · ${t.prev}`} className={cn(navBtn, "h-9 w-9")}>
             <ChevronLeft size={18} />
           </button>
           <p className="min-w-[8em] text-center">
             <span className="text-[15px] font-bold text-white">{label}</span>
-            <span className="ml-1.5 text-[13px] font-semibold text-brand-300">{N}명</span>
+            <span className="ml-1.5 text-[13px] font-semibold text-brand-300">{t.count(N)}</span>
           </p>
-          <button type="button" onClick={() => step(1)} aria-label={`${label} 다음`} className={cn(navBtn, "h-9 w-9")}>
+          <button type="button" onClick={() => step(1)} aria-label={`${label} · ${t.next}`} className={cn(navBtn, "h-9 w-9")}>
             <ChevronRight size={18} />
           </button>
         </div>
@@ -561,7 +573,7 @@ function CardRing({
               role="button"
               tabIndex={i < N ? 0 : -1}
               aria-hidden={i >= N ? true : undefined}
-              aria-label={i === front ? `${p.name} 강사 카드 뒤집기` : `${p.name} 강사 소개 보기`}
+              aria-label={i === front ? t.cardFlip(p.name) : t.cardShow(p.name)}
               style={flipP && i === front ? { visibility: "hidden" } : undefined}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -595,14 +607,14 @@ function CardRing({
         <>
           {/* 앞 카드 이름 + ‹ › */}
           <div className="mt-2 flex items-center justify-center gap-4">
-            <button type="button" onClick={() => step(-1)} aria-label="이전 강사" className={cn(navBtn, "h-12 w-12")}>
+            <button type="button" onClick={() => step(-1)} aria-label={t.prev} className={cn(navBtn, "h-12 w-12")}>
               <ChevronLeft size={22} />
             </button>
             <div className="min-w-[7em] text-center" aria-live="polite">
               <div className="text-[17px] font-bold text-white">{curP.name}</div>
               <div className="text-[12.5px] text-white/60">{sub(curP)}</div>
             </div>
-            <button type="button" onClick={() => step(1)} aria-label="다음 강사" className={cn(navBtn, "h-12 w-12")}>
+            <button type="button" onClick={() => step(1)} aria-label={t.next} className={cn(navBtn, "h-12 w-12")}>
               <ChevronRight size={22} />
             </button>
           </div>
@@ -654,13 +666,15 @@ function FlipCard({
   onToggle: () => void;
   onProof: (p: InstructorCard) => void;
 }) {
+  const t = useT();
+  const long = langOf(useLocale()) !== "ko";
   return (
     <div
       className={cn("icf-card", flipped && "is-flip")}
       role="button"
       tabIndex={0}
       aria-pressed={flipped}
-      aria-label={`${p.name} 강사 카드 ${flipped ? "앞면 보기" : "뒤집기"}`}
+      aria-label={flipped ? t.cardFront(p.name) : t.cardFlip(p.name)}
       onClick={onToggle}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -671,12 +685,12 @@ function FlipCard({
     >
       <div className="icf-in">
         <CardFace p={p} />
-        <div className="icf-back" aria-hidden={!flipped}>
+        <div className={cn("icf-back", long && "is-long")} aria-hidden={!flipped}>
           <p className="icf-name">
             {p.name}
-            <span>{p.role ?? "강사"}</span>
+            <span>{p.role ?? t.role}</span>
           </p>
-          <p className="icf-sub">비발디파크 강습 {p.years}</p>
+          <p className="icf-sub">{t.yearsLine(p.years)}</p>
           <div className="mt-1 flex flex-wrap gap-1">
             {p.certs.map((c) => (
               <span key={c.label} className={cn("icf-badge", c.gold && "is-gold", c.blue && "is-blue")}>
@@ -684,14 +698,14 @@ function FlipCard({
               </span>
             ))}
           </div>
-          {p.got && <p className="icf-line">취득 {p.got}</p>}
-          {p.languages && <p className="icf-line">외국어 {p.languages}</p>}
+          {p.got && <p className="icf-line">{t.backGot}{p.got}</p>}
+          {p.languages && <p className="icf-line">{t.langLine(p.languages)}</p>}
           {p.extra && <p className="icf-line">{p.extra}</p>}
           {/* 정보가 적은 카드만 빈 곳에 문양 (많으면 글씨와 겹침) */}
           {p.certs.length + [p.got, p.languages, p.extra].filter(Boolean).length <= 3 && (
             <span className="icf-mark" aria-hidden>
               JINOSKI
-              <small>{INSTRUCTOR_CARDS.brand.replace("JINOSKI ", "")} · 공인 자격 강사</small>
+              <small>{INSTRUCTOR_CARDS.brand.replace("JINOSKI ", "")} · {t.backMark}</small>
             </span>
           )}
           {p.proofs?.length ? (
@@ -704,11 +718,11 @@ function FlipCard({
                 onProof(p);
               }}
             >
-              자격증 사진 보기
+              {t.backProof}
             </button>
           ) : (
             <a href="#team-certs" className="icf-btn" tabIndex={flipped ? 0 : -1} onClick={(e) => e.stopPropagation()}>
-              자격확인서 모음
+              {t.backAll}
             </a>
           )}
         </div>
@@ -731,6 +745,7 @@ function MatchBoard({
   onProof: (p: InstructorCard) => void;
   onReset: () => void;
 }) {
+  const t = useT();
   const [flip, setFlip] = useState<string | null>(null);
   useEffect(() => {
     // 조건이 바뀌면 새로 만들어져요(key) → 첫 강사를 아래 소개 칸에
@@ -750,16 +765,18 @@ function MatchBoard({
               />
             ))}
           </div>
-          <span className="whitespace-nowrap text-[12px] text-white/40">다른 강사 {others.length}명</span>
+          <span className="whitespace-nowrap text-[12px] text-white/40">{t.others(others.length)}</span>
         </div>
       )}
       <p className="mt-4 text-center text-[14px] font-semibold text-white" aria-live="polite">
         {matched.length ? (
           <>
-            맞는 강사 <span className="text-brand-300">{matched.length}명</span> · 카드를 누르면 뒤집혀요
+            {t.matchedPre}
+            <span className="text-brand-300">{t.matchedN(matched.length)}</span>
+            {t.matchedPost}
           </>
         ) : (
-          "맞는 강사가 없어요. 조건을 하나 빼 보세요."
+          t.none
         )}
       </p>
       {matched.length ? (
@@ -781,7 +798,7 @@ function MatchBoard({
       ) : (
         <div className="mt-4 flex justify-center">
           <button type="button" onClick={onReset} className="ic-chip is-on">
-            처음처럼 모두 보기
+            {t.reset}
           </button>
         </div>
       )}
@@ -790,6 +807,7 @@ function MatchBoard({
 }
 
 function ProofViewer({ person, k, setK, onClose }: { person: InstructorCard; k: number; setK: (k: number) => void; onClose: () => void }) {
+  const t = useT();
   const list = person.proofs ?? [];
   const pr = list[k];
   const go = (d: number) => setK((k + d + list.length) % list.length);
@@ -797,20 +815,20 @@ function ProofViewer({ person, k, setK, onClose }: { person: InstructorCard; k: 
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={`${person.name} 강사 자격증`}
+      aria-label={t.viewerAria(person.name)}
       onClick={onClose}
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
     >
       <button
         type="button"
-        aria-label="닫기"
+        aria-label={t.close}
         onClick={onClose}
         className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white"
       >
         <X size={20} />
       </button>
       <p className="mb-3 text-center text-[15px] font-bold text-white">
-        {person.name} 강사 · {pr.label}
+        {t.viewerTitle(person.name, pr.label)}
         {list.length > 1 && (
           <span className="ml-2 text-[13px] font-semibold text-white/60">
             {k + 1} / {list.length}
@@ -819,12 +837,12 @@ function ProofViewer({ person, k, setK, onClose }: { person: InstructorCard; k: 
       </p>
       <div className="relative flex max-w-full items-center" onClick={(e) => e.stopPropagation()}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={pr.src} alt={`${person.name} 강사 ${pr.label} 자격증`} className="max-h-[74vh] max-w-full rounded-xl bg-white object-contain" />
+        <img src={pr.src} alt={t.certAlt(person.name, pr.label)} className="max-h-[74vh] max-w-full rounded-xl bg-white object-contain" />
         {list.length > 1 && (
           <>
             <button
               type="button"
-              aria-label="이전 자격증"
+              aria-label={t.prevCert}
               onClick={() => go(-1)}
               className="absolute left-1 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white"
             >
@@ -832,7 +850,7 @@ function ProofViewer({ person, k, setK, onClose }: { person: InstructorCard; k: 
             </button>
             <button
               type="button"
-              aria-label="다음 자격증"
+              aria-label={t.nextCert}
               onClick={() => go(1)}
               className="absolute right-1 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white"
             >
@@ -841,7 +859,7 @@ function ProofViewer({ person, k, setK, onClose }: { person: InstructorCard; k: 
           </>
         )}
       </div>
-      <p className="mt-3 text-center text-[12px] text-white/60">개인정보 보호를 위해 생년월일·주소는 가렸어요</p>
+      <p className="mt-3 text-center text-[12px] text-white/60">{t.privacy}</p>
     </div>
   );
 }

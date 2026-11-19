@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "next-intl";
 import { Lightbox } from "@/components/shared/lightbox";
 
 import Image from "next/image";
@@ -13,18 +14,25 @@ import { Reveal } from "@/components/shared/reveal";
 /**
  * 대표 박진호 강사 소개.
  * compact = 한국어 강사 소개 페이지에서 강사진 카드 아래 작은 칸 「지노스키를 만든 사람」 (대표 11-19 「내가 너무 대문짝만하게 나오잖아」).
- * 영어·중국어는 강사진 카드가 없어서 지금처럼 크게 보여 줘요.
+ * 영어·중국어도 같은 작은 칸 (대표 11-19). 큰 모양(compact 아님)은 지금 안 씀.
  */
+const FOUNDER = {
+  ko: { label: "지노스키를 만든 사람", role: (y: number) => `대표 강사 · 경력 ${y}년+`, bio: (y: number) => `${y}년 넘게 비발디파크에서 스키·스노보드를 가르치고, 포토그래퍼로 레슨의 순간을 사진과 영상으로 기록해요.` },
+  en: { label: "The founder of JinoSki", role: (y: number) => `Head Instructor · ${y}+ yrs`, bio: (y: number) => `Teaching skiing and snowboarding at Vivaldi Park for over ${y} years, and capturing each lesson in photos and video as a photographer.` },
+  zh: { label: "JinoSki 创始人", role: (y: number) => `首席教练 · 执教${y}年以上`, bio: (y: number) => `在大明维瓦尔第执教双板与单板${y}年以上，同时作为摄影师，用照片和视频记录每一堂课的瞬间。` },
+};
 export function Instructor({ compact = false }: { compact?: boolean } = {}) {
   const { instructor, ui, shootSamples } = useContent();
   const [certImage, setCertImage] = useState<string | null>(null);
+  const loc = useLocale();
+  const f = FOUNDER[loc === "en" || loc === "zh" ? loc : "ko"];
   if (compact) {
     return (
       <section className="bg-ink-900 pb-20 sm:pb-28">
         <Container>
           <Reveal className="mx-auto max-w-3xl">
             <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-5 sm:p-8">
-              <h2 className="text-[13px] font-semibold text-brand-300">지노스키를 만든 사람</h2>
+              <h2 className="text-[13px] font-semibold text-brand-300">{f.label}</h2>
               <div className="mt-4 flex items-center gap-4 sm:gap-6">
                 <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl sm:h-32 sm:w-32">
                   <Image
@@ -39,7 +47,7 @@ export function Instructor({ compact = false }: { compact?: boolean } = {}) {
                   <p className="text-[22px] font-bold leading-tight text-white sm:text-[26px]">
                     {instructor.name}
                     <span className="ml-2 text-[14px] font-medium text-white/50 sm:text-[15px]">
-                      대표 강사 · 경력 {instructor.experienceYears}년+
+                      {f.role(instructor.experienceYears)}
                     </span>
                   </p>
                   <p className="mt-2 text-[15.5px] font-semibold leading-snug text-brand-300 sm:text-[17px]">
@@ -48,7 +56,7 @@ export function Instructor({ compact = false }: { compact?: boolean } = {}) {
                 </div>
               </div>
               <p className="mt-4 text-[14.5px] leading-relaxed text-white/70 sm:text-[15.5px]">
-                {instructor.experienceYears}년 넘게 비발디파크에서 스키·스노보드를 가르치고, 포토그래퍼로 레슨의 순간을 사진과 영상으로 기록해요.
+                {f.bio(instructor.experienceYears)}
               </p>
               <ul className="mt-5 flex flex-wrap gap-2">
                 {instructor.certifications.map((cert) =>

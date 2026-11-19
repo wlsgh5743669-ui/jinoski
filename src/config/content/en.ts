@@ -1399,9 +1399,9 @@ const pageMeta = {
       "JinoSki prices — 2-hour lesson ₩140,000 for 1 person, ₩200,000 for 2, ₩240,000 for 3; 3-hour, 4-hour and 7-hour Full Care rates; lesson permit ₩25,000 per 2 hours; lift and rental 40% off.",
   },
   instructor: {
-    title: "Instructor Jinho Park",
+    title: "JinoSki Instructors",
     description:
-      "Jinho Park, founder of JinoSki — KSIA Ski Level 2 and Snowboard Level 1, EFR first-aid instructor and certified photographer, teaching at Vivaldi Park for 8+ seasons.",
+      "13 JinoSki instructors, all with official certifications (Korea Ski Instructors Association · Japan SAJ), teaching at Vivaldi Park with head instructor Jinho Park (KSIA Ski Level 2 · Snowboard Level 1).",
   },
   gallery: {
     title: "Lesson Photo Gallery",

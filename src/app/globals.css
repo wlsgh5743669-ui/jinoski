@@ -221,6 +221,8 @@ body {
   transform: rotateY(180deg); background: #fffaf1; border: 2px solid #d4b062; color: #13213a; padding: 10px 10px 44px;
   font-size: calc(var(--cw, 150px) * 0.075); line-height: 1.4; box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.6); text-align: left;
 }
+/* 영어·중국어 뒷면은 글이 길어서 조금 작게 (버튼에 안 가리게) */
+.icf-back.is-long { font-size: calc(var(--cw, 150px) * 0.064); line-height: 1.3; }
 .icf-name { font-weight: 800; font-size: 1.45em; line-height: 1.15; }
 .icf-name span { margin-left: 4px; font-size: 0.6em; font-weight: 700; color: #8a6a22; }
 .icf-sub { color: #6b5a33; font-weight: 600; }
