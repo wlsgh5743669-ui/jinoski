@@ -318,8 +318,9 @@ function CardRing({
       s.R = Math.max(1, Math.round(baseR * e));
       cards.forEach((c, i) => {
         c.style.transform = `rotateY(${i * STEP}deg) translateZ(${s.R}px) scale(${(0.35 + 0.65 * e).toFixed(3)})`;
-        c.style.opacity = String(Math.min(1, s.open * 1.6));
       });
+      // 투명도는 카드마다가 아니라 무대 전체에 (카드에 주면 휴대폰에서 앞뒤 순서가 꼬여 깜빡여요)
+      stage.style.opacity = String(Math.min(1, s.open * 1.6));
     };
     const layout = () => {
       const w = cards[0]?.offsetWidth || 150;
@@ -343,7 +344,8 @@ function CardRing({
       cards.forEach((c, i) => {
         const rel = mod(i * STEP + s.rot + 180, 360) - 180;
         c.style.setProperty("--holo", (rel * 1.2).toFixed(1));
-        c.style.filter = `brightness(${(1 - Math.min(Math.abs(rel), 150) / 300).toFixed(3)})`;
+        // 옆·뒤 카드 어둡게: filter 대신 덮개 투명도 (filter는 3D를 납작하게 만들어 깜빡임)
+        c.style.setProperty("--dim", (Math.min(Math.abs(rel), 150) / 300).toFixed(3));
         c.classList.toggle("is-front", i === f);
       });
       // 펼쳐지며 도는 동안엔 아래 소개 칸을 바꾸지 않고, 다 펼쳐진 뒤에 앞 카드로
