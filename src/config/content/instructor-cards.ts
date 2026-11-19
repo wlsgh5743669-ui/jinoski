@@ -1,7 +1,7 @@
 /**
  * 강사진 페이지 「강사진을 만나 보세요」 회전 카드 (한국어 화면만).
  *
- * 대표 11-19: 교육생은 빼고, 운영앱에 자격확인서가 올라온 강사만 + 팀장 조재현·황인국(확인서 없음 → 운영앱 자격만, 취득 연도 없음).
+ * 대표 11-19: 교육생은 빼고, 운영앱에 자격확인서가 올라온 강사만 + 팀장 조재현·황인국 + 구지율·김홍열(확인서 없음 → 운영앱 자격만, 취득 연도 없음).
  * 사진 = 운영앱 증명사진 → public/images/instructors/<id>.jpg (세로 3:4)
  * 년차 = 운영앱 년차 / 취득 = 자격확인서의 취득일(발급일)
  * 자격증 사진 = 운영앱 자격증 파일에서 생년월일·주소·QR을 가려 public/images/instructors/certs/ 에 (박진호는 public/images/certs/*-jinho)
@@ -63,6 +63,14 @@ export const INSTRUCTOR_CARDS = {
       image: "/images/instructors/ingook.jpg",
     },
     {
+      id: "jiyul",
+      name: "구지율",
+      years: "6년차",
+      certs: [{ label: "스키 레벨1" }, { label: "스키 티칭2" }],
+      languages: "영어",
+      image: "/images/instructors/jiyul.jpg",
+    },
+    {
       id: "hyoeun",
       name: "김효은",
       years: "5년차",
@@ -109,6 +117,14 @@ export const INSTRUCTOR_CARDS = {
       got: "스키 레벨1 2026년",
       image: "/images/instructors/haeun.jpg",
       proofs: [{ label: "스키 레벨1", src: "/images/instructors/certs/haeun-ski1.jpg" }],
+    },
+    {
+      id: "hongyeol",
+      name: "김홍열",
+      years: "2년차",
+      certs: [{ label: "스키 레벨1" }],
+      languages: "영어",
+      image: "/images/instructors/hongyeol.jpg",
     },
     {
       id: "donghyun",
