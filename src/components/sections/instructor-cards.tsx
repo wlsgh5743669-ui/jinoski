@@ -244,9 +244,9 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
 
         {/* 앞 카드 강사 소개 — 휴대폰은 내리면 화면 가득 확 커져요 (.ic-grow, globals.css) */}
         <div ref={growRef} className="ic-grow mx-auto mt-6 max-w-[560px] overflow-hidden rounded-3xl bg-white">
-        <div key={cur.id} className="ic-panel flex h-full flex-col text-ink-900 sm:h-auto sm:flex-row sm:gap-4 sm:p-5">
+        <div key={cur.id} className="ic-panel flex min-h-[100svh] flex-col text-ink-900 sm:min-h-0 sm:flex-row sm:gap-4 sm:p-5">
           <div
-            className="min-h-0 w-full flex-1 bg-cover sm:h-[117px] sm:w-[88px] sm:flex-none sm:shrink-0 sm:rounded-2xl"
+            className="min-h-[82vw] w-full flex-1 bg-cover sm:min-h-0 sm:h-[117px] sm:w-[88px] sm:flex-none sm:shrink-0 sm:rounded-2xl"
             style={{ backgroundImage: `url("${cur.image}")`, backgroundPosition: "center 20%" }}
             role="img"
             aria-label={t.photoAlt(cur.name)}

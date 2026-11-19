@@ -261,7 +261,7 @@ body {
 @media (max-width: 639px) {
   .ic-grow {
     width: 100vw; max-width: none; margin-left: calc(50% - 50vw);
-    height: 100vh; height: 100svh; /* 휴대폰 한 화면에 딱 — 사진이 줄고 글·버튼은 안 잘려요 */
+    min-height: 100vh; min-height: 100svh; /* 적어도 한 화면 가득 · 글이 길면 칸이 길어져요 (사진이 얇게 접히지 않게, 대표 11-19) */
     transform: scale(calc(0.82 + 0.18 * var(--g, 1)));
     transform-origin: 50% 0;
     border-radius: calc(28px * (1 - var(--g, 1)));
