@@ -114,7 +114,7 @@ export const INSTRUCTOR_CARDS = {
       id: "junseong",
       gender: "m",
       name: "허준성",
-      years: "2년차",
+      years: "3년차",
       certs: [{ label: "스키 레벨1" }, { label: "스키 티칭2" }],
       got: "스키 레벨1 2025년",
       image: "/images/instructors/junseong.jpg",
