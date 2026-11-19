@@ -10,6 +10,8 @@
 export type InstructorCard = {
   id: string;
   name: string;
+  /** 「여자·남자 나눠 보기」에서 위(f 여자 강사)·아래(m 남자 강사) 원 */
+  gender: "f" | "m";
   /** 이름 옆 작은 글씨 (대표 강사 · 팀장 등). 비우면 「강사」 */
   role?: string;
   /** 비발디파크 강습 경력 (예: 5년차) */
@@ -34,6 +36,7 @@ export const INSTRUCTOR_CARDS = {
   people: [
     {
       id: "jinho",
+      gender: "m",
       name: "박진호",
       role: "대표 강사",
       years: "8년+",
@@ -46,6 +49,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "jaehyun",
+      gender: "m",
       name: "조재현",
       role: "팀장",
       years: "7년차",
@@ -54,6 +58,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "ingook",
+      gender: "m",
       name: "황인국",
       role: "팀장",
       years: "6년차",
@@ -64,6 +69,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "jiyul",
+      gender: "f",
       name: "구지율",
       years: "6년차",
       certs: [{ label: "스키 레벨1" }, { label: "스키 티칭2" }],
@@ -72,6 +78,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "hyoeun",
+      gender: "f",
       name: "김효은",
       years: "5년차",
       certs: [{ label: "스키 레벨1" }, { label: "스키 티칭1" }],
@@ -82,6 +89,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "ari",
+      gender: "f",
       name: "김아리",
       years: "3년차",
       certs: [{ label: "스키 레벨1" }],
@@ -93,6 +101,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "junseong",
+      gender: "m",
       name: "허준성",
       years: "2년차",
       certs: [{ label: "스키 레벨1" }, { label: "스키 티칭2" }],
@@ -102,6 +111,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "yunsang",
+      gender: "m",
       name: "이윤상",
       years: "2년차",
       certs: [{ label: "스키 레벨1" }, { label: "스키 티칭1" }],
@@ -111,6 +121,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "haeun",
+      gender: "f",
       name: "이하은",
       years: "2년차",
       certs: [{ label: "스키 레벨1" }, { label: "스노보드 레벨1" }],
@@ -120,6 +131,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "hongyeol",
+      gender: "m",
       name: "김홍열",
       years: "2년차",
       certs: [{ label: "스키 레벨1" }],
@@ -128,6 +140,7 @@ export const INSTRUCTOR_CARDS = {
     },
     {
       id: "donghyun",
+      gender: "m",
       name: "김동현",
       years: "2년차",
       certs: [{ label: "스노보드 레벨1" }],
