@@ -246,7 +246,7 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
         <div ref={growRef} className="ic-grow mx-auto mt-6 max-w-[560px] overflow-hidden rounded-3xl bg-white">
         <div key={cur.id} className="ic-panel flex min-h-[100svh] flex-col text-ink-900 sm:min-h-0 sm:flex-row sm:gap-4 sm:p-5">
           <div
-            className="min-h-[82vw] w-full flex-1 bg-cover sm:min-h-0 sm:h-[117px] sm:w-[88px] sm:flex-none sm:shrink-0 sm:rounded-2xl"
+            className="h-[103vw] w-full flex-none bg-cover sm:h-[117px] sm:w-[88px] sm:shrink-0 sm:rounded-2xl"
             style={{ backgroundImage: `url("${cur.image}")`, backgroundPosition: "center 20%" }}
             role="img"
             aria-label={t.photoAlt(cur.name)}
