@@ -39,8 +39,9 @@ const fits = (p: InstructorCard, f: Filter) =>
  * 저절로 한 칸씩 돌고, 옆으로 밀거나 옆 카드를 누르면 앞으로 와요. 앞 카드 강사 소개가 아래 칸에 나와요.
  * 「전체 보기 / 여자·남자 나눠 보기」 단추: 나눠 보기는 위 원(여자 강사)·아래 원(남자 강사)으로, 바꿀 때 카드가 돌면서 활짝 펼쳐져요.
  * 회전 무대 모양(.pcr-*)은 globals.css, 내용·사진은 src/config/content/instructor-cards.ts
+ * top = 강사 소개 페이지 맨 위(제목 h1·위 여백) — 대표 11-19 「강사들이 너무 묻혀 있는 거 같아」 → 강사진을 맨 위로
  */
-export function InstructorCards() {
+export function InstructorCards({ top = false }: { top?: boolean } = {}) {
   const locale = useLocale();
   const people = INSTRUCTOR_CARDS.people;
   const { contact } = useContent();
@@ -76,6 +77,38 @@ export function InstructorCards() {
     return () => window.removeEventListener("keydown", onKey);
   }, [view]);
 
+  // 휴대폰: 강사 소개 칸이 화면에 들어오면서 작은 카드 → 화면 가득으로 커져요 (--g 0→1, 대표 11-19 「화면 꽉차게 확 확 커지는 느낌」)
+  const growRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = growRef.current;
+    if (!el) return;
+    const mq = window.matchMedia("(max-width: 639px)");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0;
+    const upd = () => {
+      raf = 0;
+      if (!mq.matches || reduce) {
+        el.style.setProperty("--g", "1");
+        return;
+      }
+      const vh = window.innerHeight;
+      const top = el.getBoundingClientRect().top;
+      const g = Math.min(1, Math.max(0, (vh * 0.95 - top) / (vh * 0.6)));
+      el.style.setProperty("--g", g.toFixed(3));
+    };
+    const on = () => {
+      if (!raf) raf = requestAnimationFrame(upd);
+    };
+    upd();
+    window.addEventListener("scroll", on, { passive: true });
+    window.addEventListener("resize", on);
+    return () => {
+      window.removeEventListener("scroll", on);
+      window.removeEventListener("resize", on);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   const show = INSTRUCTOR_CARDS.enabled && locale === "ko" && people.length > 0;
   if (!show) return null;
   const cur = sel;
@@ -102,9 +135,10 @@ export function InstructorCards() {
   };
 
   return (
-    <section className="ic-ring overflow-hidden bg-ink-900 pb-20 pt-4 sm:pb-28">
+    <section className={cn("ic-ring overflow-hidden bg-ink-900 pb-20 sm:pb-28", top ? "pt-32 sm:pt-40" : "pt-4")}>
       <Container>
         <SectionHeading
+          as={top ? "h1" : "h2"}
           light
           align="center"
           eyebrow={INSTRUCTOR_CARDS.eyebrow}
@@ -197,72 +231,73 @@ export function InstructorCards() {
           </div>
         )}
 
-        {/* 앞 카드 강사 소개 */}
-        <div key={cur.id} className="ic-panel mx-auto mt-6 flex max-w-[560px] gap-4 rounded-3xl bg-white p-5 text-ink-900">
+        {/* 앞 카드 강사 소개 — 휴대폰은 내리면 화면 가득 확 커져요 (.ic-grow, globals.css) */}
+        <div ref={growRef} className="ic-grow mx-auto mt-6 max-w-[560px] overflow-hidden rounded-3xl bg-white">
+        <div key={cur.id} className="ic-panel flex h-full flex-col text-ink-900 sm:h-auto sm:flex-row sm:gap-4 sm:p-5">
           <div
-            className="h-[117px] w-[88px] shrink-0 rounded-2xl bg-cover"
+            className="min-h-0 w-full flex-1 bg-cover sm:h-[117px] sm:w-[88px] sm:flex-none sm:shrink-0 sm:rounded-2xl"
             style={{ backgroundImage: `url("${cur.image}")`, backgroundPosition: "center 20%" }}
             role="img"
             aria-label={`${cur.name} 강사 사진`}
           />
-          <div className="min-w-0">
-            <p className="text-[21px] font-bold leading-tight">
+          <div className="min-w-0 shrink-0 px-5 pb-6 pt-4 sm:p-0">
+            <p className="text-[30px] font-bold leading-tight sm:text-[21px]">
               {cur.name}
-              <span className="ml-1.5 text-[13px] font-semibold text-snow-600">{cur.role ?? "강사"}</span>
+              <span className="ml-1.5 text-[15px] font-semibold text-snow-600 sm:text-[13px]">{cur.role ?? "강사"}</span>
             </p>
-            <p className="mt-1 text-[13.5px] leading-snug text-snow-700">
+            <p className="mt-1 text-[15.5px] leading-snug text-snow-700 sm:text-[13.5px]">
               {["비발디파크 강습 " + cur.years, cur.languages && "외국어 " + cur.languages].filter(Boolean).join(" · ")}
             </p>
-            {cur.got && <p className="mt-0.5 text-[13.5px] font-semibold text-brand-700">자격 취득 {cur.got}</p>}
-            <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {cur.got && <p className="mt-0.5 text-[15.5px] font-semibold text-brand-700 sm:text-[13.5px]">자격 취득 {cur.got}</p>}
+            <div className="mt-3 flex flex-wrap gap-1.5 sm:mt-2.5">
               {cur.certs.map((c) => (
                 <span
                   key={c.label}
                   className={cn(
-                    "rounded-full px-2.5 py-1 text-[12px] font-bold",
+                    "rounded-full px-3 py-1.5 text-[13.5px] font-bold sm:px-2.5 sm:py-1 sm:text-[12px]",
                     c.gold ? "bg-[#fbf1d9] text-[#8a6200]" : c.blue ? "bg-[#1f6fd6] text-white" : "bg-brand-50 text-brand-700"
                   )}
                 >
                   {c.label}
                 </span>
               ))}
-              {cur.extra && <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[12px] font-bold text-emerald-700">{cur.extra}</span>}
+              {cur.extra && <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-[13.5px] font-bold text-emerald-700 sm:px-2.5 sm:py-1 sm:text-[12px]">{cur.extra}</span>}
             </div>
             {cur.proofs?.length ? (
-              <div className="mt-3">
-                <p className="text-[12px] font-semibold text-snow-600">자격증 사진 · 눌러서 크게 보기</p>
-                <div className="mt-1.5 flex gap-2">
+              <div className="mt-4 sm:mt-3">
+                <p className="text-[13.5px] font-semibold text-snow-600 sm:text-[12px]">자격증 사진 · 눌러서 크게 보기</p>
+                <div className="mt-2 flex gap-3 sm:mt-1.5 sm:gap-2">
                   {cur.proofs.map((pr, k) => (
                     <button
                       key={pr.src}
                       type="button"
                       onClick={() => openProof(cur, k)}
-                      className="group w-[64px] text-center"
+                      className="group w-[104px] text-center sm:w-[64px]"
                       aria-label={`${cur.name} ${pr.label} 자격증 크게 보기`}
                     >
                       <span
-                        className="block h-[64px] w-[64px] rounded-lg border border-snow-200 bg-snow-50 bg-cover bg-center shadow-sm transition group-hover:border-brand-400"
+                        className="block h-[104px] w-[104px] rounded-xl sm:h-[64px] sm:w-[64px] sm:rounded-lg border border-snow-200 bg-snow-50 bg-cover bg-center shadow-sm transition group-hover:border-brand-400"
                         style={{ backgroundImage: `url("${pr.src}")` }}
                       />
-                      <span className="mt-1 block truncate text-[11px] font-semibold text-snow-700">{pr.label}</span>
+                      <span className="mt-1 block truncate text-[12.5px] font-semibold text-snow-700 sm:text-[11px]">{pr.label}</span>
                     </button>
                   ))}
                 </div>
               </div>
             ) : null}
-            <div className="mt-3.5 flex flex-wrap gap-2">
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-3.5 sm:flex sm:flex-wrap">
               {cur.proofs?.length ? (
                 <button
                   type="button"
                   onClick={() => openProof(cur)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-snow-300 px-3.5 py-2 text-[13.5px] font-bold text-ink-900"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-snow-300 px-3.5 py-3 text-[15px] font-bold text-ink-900 sm:py-2 sm:text-[13.5px]"
                 >
                   <FileBadge size={15} /> 자격증 보기
                 </button>
               ) : (
                 <a
                   href="#team-certs"
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-snow-300 px-3.5 py-2 text-[13.5px] font-bold text-ink-900"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-snow-300 px-3.5 py-3 text-[15px] font-bold text-ink-900 sm:py-2 sm:text-[13.5px]"
                 >
                   <FileBadge size={15} /> 자격확인서 모음 보기
                 </a>
@@ -272,12 +307,13 @@ export function InstructorCards() {
                 target="_blank"
                 rel="noreferrer"
                 onClick={openChat}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-brand-500 px-3.5 py-2 text-[13.5px] font-bold text-white"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-brand-500 px-3.5 py-3 text-[15px] font-bold text-white sm:py-2 sm:text-[13.5px]"
               >
                 <MessageSquareText size={15} /> 상담하기
               </a>
             </div>
           </div>
+        </div>
         </div>
       </Container>
 

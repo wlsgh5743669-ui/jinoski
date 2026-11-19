@@ -22,7 +22,22 @@ export async function generateMetadata({
   });
 }
 
-export default function InstructorPage() {
+export default async function InstructorPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  // 한국어: 강사진 카드를 맨 위로, 대표 소개는 아래 작은 칸 (대표 11-19). 영어·중국어는 강사진 카드가 없어서 그대로.
+  if (locale === "ko") {
+    return (
+      <>
+        <InstructorCards top />
+        <Instructor compact />
+        <TeamCertificates />
+      </>
+    );
+  }
   return (
     <>
       <Instructor />
