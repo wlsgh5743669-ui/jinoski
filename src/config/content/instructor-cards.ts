@@ -16,8 +16,8 @@ export type InstructorCard = {
   role?: string;
   /** 비발디파크 강습 경력 (예: 5년차) */
   years: string;
-  /** 자격. gold = 금색 표시 (레벨2 이상) */
-  certs: { label: string; gold?: boolean }[];
+  /** 자격. gold = 금색 표시 (레벨2 이상) · blue = 파란색 (해외 자격, 대표 11-19 황인국 CSIA) */
+  certs: { label: string; gold?: boolean; blue?: boolean }[];
   /** 자격확인서 취득 연도 */
   got?: string;
   /** 자격증 사진 (앞 카드나 「자격증 보기」를 누르면 크게 떠요). 생년월일·주소·QR은 가린 사진만 */
@@ -73,10 +73,12 @@ export const INSTRUCTOR_CARDS = {
       name: "황인국",
       role: "팀장",
       years: "6년차",
-      certs: [{ label: "스키 레벨1" }],
+      certs: [{ label: "스키 레벨1" }, { label: "CSIA 레벨1", blue: true }],
+      got: "CSIA 레벨1 2021년 · 스키 레벨1 2024년",
       languages: "영어",
       extra: "응급처치 이수",
       image: "/images/instructors/ingook.jpg",
+      proofs: [{ label: "스키 레벨1", src: "/images/instructors/certs/ingook-ski1.jpg" }, { label: "CSIA 레벨1", src: "/images/instructors/certs/ingook-csia1.jpg" }],
     },
     {
       id: "jiyul",

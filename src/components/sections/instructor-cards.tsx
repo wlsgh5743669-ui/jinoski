@@ -220,7 +220,7 @@ export function InstructorCards() {
                   key={c.label}
                   className={cn(
                     "rounded-full px-2.5 py-1 text-[12px] font-bold",
-                    c.gold ? "bg-[#fbf1d9] text-[#8a6200]" : "bg-brand-50 text-brand-700"
+                    c.gold ? "bg-[#fbf1d9] text-[#8a6200]" : c.blue ? "bg-[#1f6fd6] text-white" : "bg-brand-50 text-brand-700"
                   )}
                 >
                   {c.label}
@@ -594,7 +594,7 @@ function CardFace({ p }: { p: InstructorCard }) {
           {p.certs.slice(0, 2).map((c) => (
             <span
               key={c.label}
-              className={cn("rounded-full px-1.5 py-px text-[10px] font-bold", c.gold ? "bg-[#E7C77F] text-[#2a1d00]" : "bg-white/20 text-white")}
+              className={cn("rounded-full px-1.5 py-px text-[10px] font-bold", c.gold ? "bg-[#E7C77F] text-[#2a1d00]" : c.blue ? "bg-[#2f7fe6] text-white" : "bg-white/20 text-white")}
             >
               {c.label.replace("스노보드", "보드")}
             </span>
@@ -643,7 +643,7 @@ function FlipCard({
           <p className="icf-sub">비발디파크 강습 {p.years}</p>
           <div className="mt-1 flex flex-wrap gap-1">
             {p.certs.map((c) => (
-              <span key={c.label} className={cn("icf-badge", c.gold && "is-gold")}>
+              <span key={c.label} className={cn("icf-badge", c.gold && "is-gold", c.blue && "is-blue")}>
                 {c.label}
               </span>
             ))}
