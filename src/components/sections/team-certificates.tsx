@@ -32,7 +32,7 @@ export function TeamCertificates() {
     .filter((c) => c.n > 0);
 
   return (
-    <section className="bg-white py-16 sm:py-24">
+    <section id="team-certs" className="scroll-mt-20 bg-white py-16 sm:py-24">
       <Container>
         <SectionHeading eyebrow={tc.eyebrow} align="center" title={tc.title} description={tc.description} />
 

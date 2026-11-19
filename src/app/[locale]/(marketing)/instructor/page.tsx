@@ -3,6 +3,7 @@ import { getContent, isLocale, defaultLocale } from "@/config/site";
 import { pageMetadata } from "@/lib/page-metadata";
 import { TeamCertificates } from "@/components/sections/team-certificates";
 import { Instructor } from "@/components/sections/instructor";
+import { InstructorCards } from "@/components/sections/instructor-cards";
 
 export async function generateMetadata({
   params,
@@ -25,6 +26,7 @@ export default function InstructorPage() {
   return (
     <>
       <Instructor />
+      <InstructorCards />
       <TeamCertificates />
     </>
   );

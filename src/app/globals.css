@@ -206,6 +206,9 @@ body {
 .pcr-card.is-on .pcr-heart { background: #ff3d6e; transform: scale(1.12); }
 .pcr-card:focus-visible { outline: none; }
 .pcr-card:focus-visible .pcr-face { outline-color: #2da8ff; }
+/* 강사진 카드: 흰 배경 증명사진이라 번호는 진하게, 아래 이름 칸은 더 일찍 어둡게 */
+.ic-ring .pcr-no { color: #0b1626; text-shadow: none; opacity: 0.55; }
+.ic-ring .pcr-face::before { background: linear-gradient(180deg, transparent 42%, rgba(8, 20, 40, 0.35) 58%, rgba(8, 20, 40, 0.9)); }
 .pcr-fan .pcr-card {
   --cw: clamp(104px, 26vw, 150px);
   margin: 0 calc(var(--cw) * -0.12);
