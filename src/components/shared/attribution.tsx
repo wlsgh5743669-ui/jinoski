@@ -27,6 +27,7 @@ const PAGE_KO: [RegExp, string][] = [
   [/^\/guide/, "이용 가이드"],
   [/^\/notice/, "공지"],
   [/^\/store/, "스토어"],
+  [/^\/links/, "링크 모음(인스타)"],
   [/^\/privacy/, "개인정보처리방침"],
 ];
 
