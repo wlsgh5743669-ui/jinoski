@@ -76,7 +76,7 @@ export const INSTRUCTOR_CARDS = {
       years: "7년차",
       certs: [{ label: "일본 SAJ 공인 지도원" }],
       got: "SAJ 지도원 2026년도 합격",
-      languages: "일본어",
+      languages: "일본어, 영어",
       image: "/images/instructors/teru.jpg",
       proofs: [{ label: "SAJ 지도원", src: "/images/instructors/certs/teru-saj.jpg" }],
     },
@@ -159,6 +159,7 @@ export const INSTRUCTOR_CARDS = {
       years: "2년차",
       certs: [{ label: "스키 레벨1" }, { label: "스노보드 레벨1" }],
       got: "스키 레벨1 2026년",
+      languages: "중국어, 영어",
       image: "/images/instructors/haeun.jpg",
       proofs: [{ label: "스키 레벨1", src: "/images/instructors/certs/haeun-ski1.jpg" }],
     },
@@ -291,7 +292,7 @@ const tr = (p: InstructorCard, lang: "en" | "zh"): InstructorCard => {
     role: p.role && (ROLE[lang][p.role] ?? p.role),
     certs: p.certs.map((x) => c(x.label)),
     got: p.got && t?.got,
-    languages: p.languages && (LANG[lang][p.languages] ?? p.languages),
+    languages: p.languages && p.languages.split(", ").map((l) => LANG[lang][l] ?? l).join(", "),
     extra: p.extra && (EXTRA[lang][p.extra] ?? p.extra),
   };
   return {

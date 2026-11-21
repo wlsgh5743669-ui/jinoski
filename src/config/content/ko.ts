@@ -727,6 +727,7 @@ const teamCertificates: SiteContent["teamCertificates"] = {
     { image: "/images/certs/cert-sb-l1-04.jpg", level: "sb1" },
   ],
   levelLabels: { ski2: "스키 레벨2", ski1: "스키 레벨1", sb1: "스노보드 레벨1" },
+  topTier: { label: "레벨2 · 티칭2", names: ["박진호", "구지율", "허준성", "테루", "김효은"] },
 };
 
 // TODO: 샘플 영상(public/videos/sample.mp4)·사진(public/images/samples/*.jpg)을 넣고 아래를 채우면 섹션이 자동으로 나타나요.

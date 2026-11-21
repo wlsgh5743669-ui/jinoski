@@ -177,6 +177,8 @@ export type SiteContent = {
     description: string;
     items: { image: string; level: "ski2" | "ski1" | "sb1" }[];
     levelLabels: { ski2: string; ski1: string; sb1: string };
+    /** 맨 앞 금색 칸: 레벨2·티칭2 강사 이름 (대표 11-21). 있으면 「스키 레벨2」 칸 대신 나와요 */
+    topTier?: { label: string; names: string[] };
   };
   /** Photo/video deliverable samples. Section is hidden until video or images are set. */
   shootSamples: {

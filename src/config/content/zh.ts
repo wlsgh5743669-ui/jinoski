@@ -681,6 +681,7 @@ const teamCertificates: SiteContent["teamCertificates"] = {
     { image: "/images/certs/cert-sb-l1-04.jpg", level: "sb1" },
   ],
   levelLabels: { ski2: "双板 Level 2", ski1: "双板 Level 1", sb1: "单板 Level 1" },
+  topTier: { label: "Level 2 · Teaching 2", names: ["Jinho Park", "Jiyul Koo", "Junseong Heo", "Teru Onodera", "Hyoeun Kim"] },
 };
 
 // TODO: 샘플 영상(public/videos/sample.mp4)·사진(public/images/samples/*.jpg)을 넣고 아래를 채우면 섹션이 자동으로 나타나요.

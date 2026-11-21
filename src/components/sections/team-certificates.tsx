@@ -27,9 +27,14 @@ export function TeamCertificates() {
   const [expanded, setExpanded] = useState(false);
   if (tc.items.length === 0) return null;
 
-  const counts = (["ski2", "ski1", "sb1"] as const)
-    .map((lv) => ({ lv, n: tc.items.filter((i) => i.level === lv).length }))
-    .filter((c) => c.n > 0);
+  // 대표 11-21: 맨 앞은 「레벨2 · 티칭2」 강사 이름 칸(금색), 그 뒤는 자격확인서 장수
+  const top = tc.topTier;
+  const counts = [
+    ...(top ? [{ lv: "top", n: top.names.length, label: top.label, names: top.names, gold: true }] : []),
+    ...(["ski2", "ski1", "sb1"] as const)
+      .filter((lv) => !(top && lv === "ski2"))
+      .map((lv) => ({ lv, n: tc.items.filter((i) => i.level === lv).length, label: tc.levelLabels[lv], names: [] as string[], gold: lv === "ski2" })),
+  ].filter((c) => c.n > 0);
 
   return (
     <section id="team-certs" className="scroll-mt-20 bg-white py-16 sm:py-24">
@@ -37,16 +42,26 @@ export function TeamCertificates() {
         <SectionHeading eyebrow={tc.eyebrow} align="center" title={tc.title} description={tc.description} />
 
         <div className="mx-auto mt-10 grid max-w-3xl grid-cols-3 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-800 to-ink-900 text-white shadow-[0_24px_50px_-28px_rgba(11,79,135,0.7)]">
-          {counts.map(({ lv, n }, i) => (
+          {counts.map(({ lv, n, label, names, gold }, i) => (
             <div key={lv} className={cn("flex flex-col items-center px-2 py-6 sm:py-8", i > 0 && "border-l border-white/10")}>
-              <BadgeCheck size={20} className={lv === "ski2" ? "text-amber-300" : "text-brand-300"} />
+              <BadgeCheck size={20} className={gold ? "text-amber-300" : "text-brand-300"} />
               <p className="mt-2 text-[34px] font-bold leading-none tracking-tight sm:text-[44px]">
                 {n}
                 {t.unit && <span className="ml-0.5 text-[16px] font-semibold text-white/70 sm:text-[18px]">{t.unit}</span>}
               </p>
-              <p className="mt-2 text-center text-[12.5px] font-semibold leading-snug text-white/80 sm:text-[14px]">
-                {tc.levelLabels[lv]}
+              <p className={cn("mt-2 text-center text-[12.5px] font-semibold leading-snug sm:text-[14px]", gold ? "text-amber-200" : "text-white/80")}>
+                {label}
               </p>
+              {names.length > 0 && (
+                <p className="mt-1.5 text-center text-[11px] font-medium leading-relaxed text-white/60 sm:text-[12.5px]">
+                  {names.map((nm, k) => (
+                    <span key={nm}>
+                      {k > 0 && " · "}
+                      <span className="whitespace-nowrap">{nm}</span>
+                    </span>
+                  ))}
+                </p>
+              )}
             </div>
           ))}
         </div>
