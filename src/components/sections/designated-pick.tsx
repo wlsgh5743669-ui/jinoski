@@ -2,7 +2,7 @@
 
 // 🎯 견적 계산기: 지정 강사 고르기 (대표 11-22 「지정강사 구매하려는데 절차가 없네」)
 // 강사 소개 칸 「이 강사로 예약하기」 → /quote/?ins=<강사 id> 로 들어오면 미리 골라져 있어요.
-// 추가금은 한 팀이 시즌에 1번 (상급 5만 · 중급 3만 · 일반 1만) — 견적 합계와 따로 보여 주고, 사장님 알림에 같이 가요.
+// 추가금은 한 팀이 시즌에 1번 (상급 5만 · 중급 3만 · 일반 1만) — 견적 합계에 포함(첫 수업 날 한 줄), 사장님 알림·운영앱 금액표에 같이 가요.
 // 이 칸은 언어별 글을 직접 써서 번역층(data-notr)을 건너뛰어요.
 import { X } from "lucide-react";
 import { CARD_PEOPLE, DESIGNATED_FEE, FEE_TIERS, INSTRUCTOR_CARDS, type FeeTier } from "@/config/content/instructor-cards";
@@ -18,7 +18,7 @@ const T = {
     tier: { high: "상급", mid: "중급", base: "일반" } as Record<FeeTier, string>,
     picked: (n: string) => `${n} 강사 지정`,
     once: "한 팀이 시즌에 1번만 내요 · 이번 시즌에 이미 내셨으면 빼 드려요",
-    total: "지정 포함 예상 합계",
+    total: "예상 합계 (지정강사 포함)",
     banner: (n: string, w: string) => `${n} 강사 지정 · +${w} (시즌 1번)`,
     remove: "지정 빼기",
     see: "강사 소개 보기",
@@ -32,7 +32,7 @@ const T = {
     tier: { high: "Senior", mid: "Experienced", base: "Standard" } as Record<FeeTier, string>,
     picked: (n: string) => `${n} requested`,
     once: "Paid once per group per season · already paid this season? We'll take it off",
-    total: "Estimated total incl. request",
+    total: "Estimated total (incl. request)",
     banner: (n: string, w: string) => `${n} requested · +${w} (once a season)`,
     remove: "Remove",
     see: "Meet the instructors",
@@ -46,7 +46,7 @@ const T = {
     tier: { high: "高级", mid: "中级", base: "普通" } as Record<FeeTier, string>,
     picked: (n: string) => `已指定 ${n}`,
     once: "每组每季只付一次 · 本季已付过可扣除",
-    total: "含指定费预计合计",
+    total: "预计合计（含指定费）",
     banner: (n: string, w: string) => `已指定 ${n} · +${w}（每季一次）`,
     remove: "取消指定",
     see: "查看教练介绍",
@@ -63,9 +63,11 @@ export function designatedOf(id: string) {
   return { id: p.id, name: p.name, tier, fee, text: `지정강사 ${p.name} (${tier}) +${T.ko.won(fee)} · 한 팀 시즌 1번` };
 }
 
-function nameOf(id: string, lang: QLocale) {
+/** 화면 언어에 맞는 강사 이름 (영어·중국어 페이지는 영어 이름) */
+export function designatedName(id: string, lang: QLocale) {
   return CARD_PEOPLE[lang].find((x) => x.id === id)?.name ?? "";
 }
+const nameOf = designatedName;
 
 /** 계산기 맨 위 띠: 어느 단계에서든 지정한 강사가 보이게 */
 export function DesignatedBanner({ id, lang, onClear }: { id: string; lang: QLocale; onClear: () => void }) {
@@ -84,7 +86,7 @@ export function DesignatedBanner({ id, lang, onClear }: { id: string; lang: QLoc
   );
 }
 
-/** 견적서 단계: 강사 고르기 + 지정 포함 합계 */
+/** 견적서 단계: 강사 고르기 + 합계 (grand 는 이미 지정료가 들어간 금액) */
 export function DesignatedPick({ id, lang, grand, onPick }: { id: string; lang: QLocale; grand: number; onPick: (id: string) => void }) {
   const t = T[lang];
   const people = CARD_PEOPLE[lang];
@@ -151,7 +153,7 @@ export function DesignatedPick({ id, lang, grand, onPick }: { id: string; lang: 
           {grand > 0 && (
             <div className="mt-2.5 flex items-end justify-between gap-3 border-t border-snow-300/60 pt-2.5">
               <span className="text-[13px] font-semibold text-snow-600">{t.total}</span>
-              <span className="whitespace-nowrap text-[20px] font-bold tabular-nums text-ink-900">{lang === "ko" ? `${(grand + fee).toLocaleString("ko-KR")}원` : `₩${(grand + fee).toLocaleString("en-US")}`}</span>
+              <span className="whitespace-nowrap text-[20px] font-bold tabular-nums text-ink-900">{lang === "ko" ? `${grand.toLocaleString("ko-KR")}원` : `₩${grand.toLocaleString("en-US")}`}</span>
             </div>
           )}
         </div>

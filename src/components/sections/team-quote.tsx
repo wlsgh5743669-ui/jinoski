@@ -28,7 +28,7 @@ import { trackEvent } from "@/components/shared/analytics";
 import { useContent } from "@/lib/use-content";
 import { EARLY_BIRD, isEarlyBirdActive } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
-import { DesignatedBanner, DesignatedPick, designatedOf } from "@/components/sections/designated-pick";
+import { DesignatedBanner, DesignatedPick, designatedName, designatedOf } from "@/components/sections/designated-pick";
 import { HOLIDAYS, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, SEASON_OPEN_DATE, type TicketHours } from "@/config/lift-rental";
 
 const KAKAO_NOTIFY_URL =
@@ -492,14 +492,18 @@ export function TeamQuote() {
   const extrasTotal = extras.reduce((a, x) => a + x.sale * x.count, 0);
   const helmetTotal = helmets.reduce((a, x) => a + x.pp * x.count, 0);
   // 날짜별 합계 (토탈 보기: 전체 / 1일차 / 2일차 …)
+  // 🎯 지정강사 추가금은 첫 수업 날에 한 번 (한 팀 시즌 1번 · 대표 11-22 「합계에 넣어」)
+  const desFee = des?.fee ?? 0;
+  const desDay = Math.max(0, schedule.findIndex((d) => d.slots.length > 0));
   const dayTotals = schedule.map((d, i) => {
     const lesson = usedSplit.reduce((a, size) => a + groupCost(size, d.len), 0) * d.slots.length;
     const extra = extras.reduce((a, x) => a + x.perDayList[i].sale * x.count, 0);
     const helm = d.slots.length ? helmet.basic * HELMET_PRICE.basic + helmet.visor * HELMET_PRICE.visor : 0;
-    return { day: d.day, lesson, extra, helm, total: lesson + extra + helm };
+    const dfee = i === desDay ? desFee : 0;
+    return { day: d.day, lesson, extra, helm, des: dfee, total: lesson + extra + helm + dfee };
   });
   const lessonExact = dayTotals.reduce((a, d) => a + d.lesson, 0);
-  const grand = lessonExact + extrasTotal + helmetTotal;
+  const grand = lessonExact + extrasTotal + helmetTotal + desFee;
   const evenGroups = new Set(usedSplit).size === 1;
 
   // 반(강사)별로 앞에서부터 사람 배정 → 개인별 강습료
@@ -664,8 +668,8 @@ export function TeamQuote() {
     ...(days > 1
       ? ["■ 날짜별 합계", ...dayTotals.map((d) => `  ${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}: ${won(d.total)}`)]
       : []),
-    `예상 합계: ${won(grand)}${ebSaved ? ` (얼리버드 강습료 10% 할인 -${won(ebSaved)} 반영)` : ""}`,
-    ...(des ? [`지정강사 포함 합계: ${won(grand + des.fee)} (${des.name} +${won(des.fee)} · 시즌 1번)`] : []),
+    ...(des ? [`■ 지정강사 ${des.name} (${des.tier}) ${won(des.fee)} · 한 팀 시즌 1번 (이번 시즌 이미 냈으면 빠져요)`] : []),
+    `예상 합계: ${won(grand)}${ebSaved ? ` (얼리버드 강습료 10% 할인 -${won(ebSaved)} 반영)` : ""}${des ? " · 지정강사 포함" : ""}`,
     ...(fcNote ? [`※ ${fcNote}`] : []),
     "※ 의류는 제휴 렌탈샵 안내 드립니다.^^ · 강사 일정 확인 후 확정",
   ].join("\n");
@@ -766,13 +770,18 @@ export function TeamQuote() {
         right: d.slots.map((x) => x.time).join("  ·  ") || "-",
       })),
       // 날짜별 금액·시간은 위 「1인당 금액」 표에 다 있어서 여기는 할인 전후만 한 줄씩
-      teams: extras.length
-        ? [{
-            name: "리프트·장비 40% 할인",
-            amount: "",
-            lines: extras.map((x) => `${x.label.replace(" · ", " ")} 정가 ${won(x.regular)} → ${won(x.sale)} (1인)`),
-          }]
-        : [],
+      teams: [
+        ...(extras.length
+          ? [{
+              name: "리프트·장비 40% 할인",
+              amount: "",
+              lines: extras.map((x) => `${x.label.replace(" · ", " ")} 정가 ${won(x.regular)} → ${won(x.sale)} (1인)`),
+            }]
+          : []),
+        ...(des && !only
+          ? [{ name: `🎯 지정강사 ${designatedName(des.id, loc)}`, amount: won(des.fee), lines: ["한 팀 시즌 1번 · 이번 시즌 이미 내셨으면 빠져요"] }]
+          : []),
+      ],
       notes: [
         // 부분 견적서는 고른 사람 것만 (반 전체 인원·할인 합계는 빼요)
         ...(sportSummary && !only ? [`종목·실력: ${sportSummary}`] : []),
@@ -782,6 +791,7 @@ export function TeamQuote() {
         ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
         ...(fcNote ? [fcNote] : []),
         "의류는 제휴 렌탈샵 안내 드립니다.^^",
+        ...(des && !only ? [`🎯 지정강사 ${designatedName(des.id, loc)} ${won(des.fee)} (시즌 1번) 포함`] : []),
         "예상 견적이에요. 강사 일정 확인 후 확정 금액을 안내드려요.",
       ],
       payNote: "강사 일정 확정 연락을 받은 뒤 입금해주세요",
@@ -895,6 +905,7 @@ export function TeamQuote() {
       }
       if (n && helmet.basic) items.push({ label: "헬멧", qty: helmet.basic, unit: HELMET_PRICE.basic, amount: HELMET_PRICE.basic * helmet.basic });
       if (n && helmet.visor) items.push({ label: "바이저 헬멧", qty: helmet.visor, unit: HELMET_PRICE.visor, amount: HELMET_PRICE.visor * helmet.visor });
+      if (des && i === desDay) items.push({ label: `지정강사 ${des.name} (${des.tier}) · 한 팀 시즌 1번`, qty: 1, unit: des.fee, amount: des.fee });
       return {
         title: `${d.day}일차${startDate ? ` ${addDays(startDate, i)}` : ""}`,
         rate: prep[i]?.rateTag ?? "",
@@ -911,13 +922,13 @@ export function TeamQuote() {
       sub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}${sportSummary ? ` · ${sportSummary}` : ""}`,
       days,
       persons: personRows.map((x) => ({ label: x.label, group: x.group, desc: x.desc, lesson: x.lesson, lift: x.lift, helm: x.helm, pay: x.pay })),
-      totals: { lesson: lessonExact, lift: extrasTotal, helmet: helmetTotal, eb: ebSaved, grand },
+      totals: { lesson: lessonExact, lift: extrasTotal, helmet: helmetTotal, eb: ebSaved, ...(desFee ? { designated: desFee } : {}), grand },
       ...(des ? { designated: { id: des.id, name: des.name, tier: des.tier, fee: des.fee } } : {}),
       notes: [
         ...(fcNote ? [fcNote] : []),
         ebSaved ? `얼리버드 10%는 강습료에만 적용 (-${won(ebSaved)}) · 리프트·장비 40% 할인 · 헬멧 할인 제외` : "리프트·장비 40% 할인 · 헬멧 할인 제외",
         ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
-        ...(des ? [`${des.text} — 견적 합계와 별도 (이번 시즌 이미 냈으면 빼기)`] : []),
+        ...(des ? [`${des.text} — 합계에 포함 (이번 시즌 이미 냈으면 그 줄 빼기)`] : []),
         "매 수업 사진·영상 무료 · 의류는 제휴 렌탈샵 안내 드립니다.^^",
       ],
     };
@@ -975,7 +986,7 @@ export function TeamQuote() {
           equipment: sportSummary,
           breakdown: buildBreakdown(),
           level: "",
-          total: `${won(grand)} (수업 ${sessions}회)${des ? ` + 지정강사 ${des.name} ${won(des.fee)}` : ""}`,
+          total: `${won(grand)} (수업 ${sessions}회${des ? ` · 지정강사 ${des.name} ${won(des.fee)} 포함` : ""})`,
           note: [
             anyPrep ? prep.filter((d) => d.sum).map((d) => `${d.day}일 ${d.sum}`).join(" | ") : "",
             des ? `🎯 ${des.text}` : "",
@@ -1029,7 +1040,7 @@ export function TeamQuote() {
           groupSize: `어른${adults} 어린이${kids} · 반 ${usedSplit.join("+")}`,
           equipment: sportSummary,
           breakdown: buildBreakdown(),
-          total: `${won(grand)} (수업 ${sessions}회)${des ? ` + 지정강사 ${des.name} ${won(des.fee)}` : ""}`,
+          total: `${won(grand)} (수업 ${sessions}회${des ? ` · 지정강사 ${des.name} ${won(des.fee)} 포함` : ""})`,
         }),
       });
       // 워커가 「저장했다」고 분명히 답했을 때만 저장으로 봐요 (예전 워커는 모르는 주소에도 200을 줘서, 글자만 믿으면 안 됨)
@@ -1828,6 +1839,7 @@ export function TeamQuote() {
                       const lesson = d ? d.lesson : lessonExact;
                       const extra = d ? d.extra : extrasTotal;
                       const helm = d ? d.helm : helmetTotal;
+                      const dfee = d ? d.des : desFee;
                       const total = d ? d.total : grand;
                       const sched = d ? schedule[totalTab - 1] : null;
                       return (
@@ -1854,6 +1866,12 @@ export function TeamQuote() {
                               <div className="flex justify-between">
                                 <span className="text-snow-600">헬멧</span>
                                 <span className="tabular-nums">{won(helm)}</span>
+                              </div>
+                            )}
+                            {dfee > 0 && des && (
+                              <div className="flex justify-between">
+                                <span className="text-snow-600">🎯 지정강사 {designatedName(des.id, qloc)} (시즌 1번)</span>
+                                <span className="tabular-nums">{won(dfee)}</span>
                               </div>
                             )}
                           </div>

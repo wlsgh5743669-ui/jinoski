@@ -18,6 +18,11 @@ const krw = (n: number) => `₩${Math.round(n).toLocaleString("en-US")}`;
 const NUMW_EN = ["", "one", "two", "three", "four", "five"];
 
 const RULES: Rule[] = [
+  // 🎯 지정강사 (대표 11-22) — 강사 이름은 화면 언어로 이미 들어가 있어요
+  ["한 팀 시즌 1번 · 이번 시즌 이미 내셨으면 빠져요", "Once per group per season · already paid this season? It comes off", "每组每季一次 · 本季已付过可扣除"],
+  ["(시즌 1번) 포함", "(once a season) included", "（每季一次）已含"],
+  ["🎯 지정강사", "🎯 Requested instructor", "🎯 指定教练"],
+  ["(시즌 1번)", "(once a season)", "（每季一次）"],
   ["(패찰·점심 포함) · 눌러서 바꾸기", "(permit & lunch incl.) · tap to switch", "（含教学许可·午餐）· 点击切换"],
   ["풀케어는 패찰 + 식사 포함 (원데이 점심 · 나이트 저녁) · 따로 낼 돈 없어요", "Full Care includes lesson permit + meal (One Day lunch · Night dinner) · nothing extra to pay", "Full Care含教学许可 + 餐食（One Day午餐 · Night晚餐）· 无需另付"],
   ["원데이 풀케어는 패찰 + 점심 식사 포함 · 따로 낼 돈 없어요", "One Day Full Care includes lesson permit + lunch · nothing extra to pay", "One Day Full Care含教学许可 + 午餐 · 无需另付"],

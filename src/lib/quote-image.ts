@@ -68,7 +68,7 @@ export async function renderQuoteImage(
   /** simple: 총 합계 · 시간표 · 계좌만 (카톡 미리보기용 한 장) / detail: 날짜별 1인 금액표까지 */
   mode: "simple" | "detail" = "detail"
 ): Promise<Blob> {
-  if (mode === "simple") d = { ...d, persons: [], teams: [], notes: d.notes.slice(-1), grandTop: false } as QuoteImageData;
+  if (mode === "simple") d = { ...d, persons: [], teams: [], notes: [...d.notes.filter((n) => n.startsWith("🎯")), ...d.notes.slice(-1)], grandTop: false } as QuoteImageData;
   const tr = (s: string) => trQuote(s, loc);
   if (document.fonts?.ready) await document.fonts.ready;
   const inner = W - PAD * 2;
