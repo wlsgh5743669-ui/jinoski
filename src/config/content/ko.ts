@@ -34,7 +34,7 @@ const contact = {
   businessRegistrationNumber: "336-14-02452",
   mailOrderSalesNumber: "제2024-인천부평-2645호",
   meetingPoint: {
-    label: "비발디파크 매표소 A 안 Good Goods(굿굿즈) 앞",
+    label: "비발디파크 매표소 A 안 Good & Goods(굿앤굿스) 앞",
     // TODO: 집합 장소 사진을 public/images/meeting-point.jpg 로 넣고 아래 주석 해제
     // photo: "/images/meeting-point.jpg",
   },
@@ -132,7 +132,7 @@ const whyJinoSki = [
     title: "비발디파크 전문",
     description: "비발디파크 슬로프와 지형을 고려해 효율적이고 만족도 높은 레슨을 제공합니다.",
     icon: "Mountain",
-    proof: "집합은 매표소 A 안 Good Goods 앞",
+    proof: "집합은 매표소 A 안 Good & Goods 앞",
   },
   {
     number: "04",
@@ -415,7 +415,7 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
       icon: "⏰",
       title: "도착 시간",
       description:
-        "집합 장소는 비발디파크 시계탑 아래 매표소 A 문으로 들어오면 바로 보이는 Good Goods(굿굿즈) 앞이에요. 원활한 레슨 진행을 위해 강습 시작 20~30분 전까지 도착해주세요.",
+        "집합 장소는 비발디파크 시계탑 아래 매표소 A 문으로 들어오면 바로 보이는 Good & Goods(굿앤굿스) 앞이에요. 원활한 레슨 진행을 위해 강습 시작 20~30분 전까지 도착해주세요.",
     },
     {
       icon: "🎫",
@@ -1195,7 +1195,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     bookingNoticeTitle: "예약은 이렇게 진행돼요",
     bookingNoticeLines: [
       "① 지금 보내주시는 내용은 '예약 신청'이에요. 아직 확정 전이에요.",
-      "📍 집합 장소: 비발디파크 매표소 A 안 Good Goods(굿굿즈) 앞",
+      "📍 집합 장소: 비발디파크 매표소 A 안 Good & Goods(굿앤굿스) 앞",
       "② 강사 일정을 확인한 뒤 연락드려 예약을 확정해드려요.",
       "③ 확정 안내를 받으시면 강습료 전액을 결제해 주세요. 결제가 확인되면 예약이 확정돼요. 리프트권·장비(40% 할인)도 강습료와 함께 지노스키에 결제하시면 돼요.\n국민은행 010-4047-7711 · 예금주 박진호(지노컴퍼니) · 네이버페이·카드는 스마트스토어",
       "④ 환불 규정: 레슨 3일 전까지 100% 환불 · 1~2일 전 50% 환불 · 당일 취소·노쇼는 환불 불가",
@@ -1350,7 +1350,7 @@ const ui: SiteContent["ui"] = {
   directions: {
     eyebrow: "Directions",
     title: "오시는 길",
-    description: "집합 장소는 비발디파크 시계탑 아래 매표소 A 문으로 들어오면 바로 보이는 Good Goods(굿굿즈) 앞이에요. 편한 지도 앱으로 바로 길 찾기를 열어보세요.",
+    description: "집합 장소는 비발디파크 시계탑 아래 매표소 A 문으로 들어오면 바로 보이는 Good & Goods(굿앤굿스) 앞이에요. 편한 지도 앱으로 바로 길 찾기를 열어보세요.",
     naverMapLabel: "네이버 지도",
     kakaoMapLabel: "카카오맵",
     googleMapLabel: "구글 지도",
