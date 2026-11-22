@@ -49,6 +49,7 @@ import { JuniorBadge } from "@/components/shared/junior-badge";
 import { isJuniorProgram, JUNIOR_GRADES, JUNIOR_PASS_PROGRAM, JUNIOR_PRICES } from "@/config/junior-grade";
 import { getContent } from "@/config/site";
 import { approxUsd, withUsd } from "@/lib/usd";
+import { VIP_ADD_PER_PERSON, VIP_TOTALS } from "@/components/sections/all-in-full-care";
 import { HOLIDAYS, HOLIDAY_NAMES, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, isWeekendRate, type TicketHours } from "@/config/lift-rental";
 
 /** 영어·중국어 예약: 문자·카톡 대신 이메일로 접수하고 이메일로 확정 안내 */
@@ -93,6 +94,140 @@ const FOREIGN_TEXT = {
     copied: "已复制",
   },
 } as const;
+
+/**
+ * 외국인 VIP 레슨 (대표 11-22 「이게 우리 주력 상품이야」) — 소개 카드(all-in-full-care.tsx)의 버튼이 ?vip=1 로 보내요.
+ * 예전엔 요청란에 「VIP」라고 직접 적어야 했고 결제 순서 설명도 VVIP보다 약했어요.
+ * 값: 풀케어 레슨료 + 1인 150,000원 (리프트권 7시간·장비 8시간·바이저 헬멧·스키복 + 스키 양말 증정, 장갑 별도 20,000원).
+ */
+const VIP_TXT = {
+  ko: {
+    badge: "VIP 레슨",
+    label: "VIP 추가",
+    detail: (n: number) => `리프트 7시간·장비 8시간·헬멧·스키복·양말 · 1인 150,000원 × ${n}명`,
+    hint: "1인 150,000원 추가로 리프트·장비·헬멧·스키복까지",
+    incShort: "리프트·장비·헬멧·스키복 포함",
+    payNote: "강사 확정 후 전액 결제 · 강습 당일엔 따로 낼 돈이 없어요.",
+    after: "강사가 확정되면 전액 결제 안내를 보내 드려요. 장비·스키복 준비를 위해 키와 신발 사이즈도 여쭤볼게요.",
+  },
+  en: {
+    badge: "VIP Lesson",
+    label: "VIP add-on",
+    detail: (n: number) => `lift 7h · gear 8h · helmet · ski wear · socks · ₩150,000 × ${n}`,
+    hint: "+ ₩150,000 per person for lift, gear, helmet & ski wear",
+    incShort: "lift, gear, helmet & ski wear included",
+    payNote: "Paid in full by PayPal after we confirm your instructor — nothing to pay on the day.",
+    after: "Once your instructor is confirmed we'll send a PayPal request for the full amount, and ask everyone's height and shoe size so your gear and ski wear are ready.",
+  },
+  zh: {
+    badge: "VIP 课程",
+    label: "VIP 加购",
+    detail: (n: number) => `缆车7小时·装备8小时·头盔·滑雪服·袜子 · ₩150,000 × ${n}人`,
+    hint: "每人加 ₩150,000，含缆车票·装备·头盔·滑雪服",
+    incShort: "含缆车票·装备·头盔·滑雪服",
+    payNote: "确认教练后通过 PayPal 支付全款 — 上课当天无需再付。",
+    after: "确认教练后，我们会发送 PayPal 全款付款请求，并询问每个人的身高和鞋码，提前准备装备和滑雪服。",
+  },
+};
+const vipLine = (content: SiteContent) => {
+  const l = content.siteConfig.locale.slice(0, 2);
+  return VIP_TXT[(l === "en" || l === "zh" ? l : "ko") as keyof typeof VIP_TXT];
+};
+const vipAddOf = (state: WizardState) =>
+  state.vip && (state.program === "one-day" || state.program === "night") && state.groupSize
+    ? VIP_ADD_PER_PERSON * getGroupStudentCount(state.groupSize)
+    : 0;
+const formatWon = (n: number) => n.toLocaleString("en-US");
+
+const VIP_PANEL = {
+  en: {
+    title: "You're booking a VIP Lesson",
+    sub: "7 hours with your own instructor — lift ticket, gear, helmet and ski wear ready when you arrive.",
+    inc: ["Lift ticket · 7 hours", "Skis or snowboard + boots · 8 hours", "Visor helmet (goggles built in)", "Premium ski jacket & pants", "Ski socks — yours to keep"],
+    gloves: "Gloves not included — ₩20,000 a pair, or bring your own",
+    priceTitle: "Price for your whole group",
+    ex: ["1 person", "2 people", "3 people"],
+    payTitle: "How payment works",
+    pay: [
+      "Send this request (about 2 minutes) — nothing to pay yet.",
+      "Within 24 hours we confirm your instructor and time, and send a PayPal payment request for the full amount.",
+      "Pay by PayPal (cards accepted) and your booking is confirmed. Nothing more to pay on the day.",
+    ],
+    sizes: "After booking we'll ask everyone's height and shoe size.",
+    off: "Book a regular lesson instead",
+  },
+  zh: {
+    title: "您正在预约 VIP 课程",
+    sub: "专属教练7小时 — 缆车票、装备、头盔和滑雪服在您到达前都已备好。",
+    inc: ["缆车票 · 7小时", "双板或单板 + 雪鞋 · 8小时", "护目镜一体头盔（无需雪镜）", "高级滑雪服上衣+裤子", "滑雪袜 — 赠送"],
+    gloves: "不含手套 — ₩20,000/副，也可自备",
+    priceTitle: "整组价格",
+    ex: ["1人", "2人", "3人"],
+    payTitle: "付款流程",
+    pay: [
+      "提交预约申请（约2分钟）— 现在无需付款。",
+      "24小时内确认教练和时间，并发送 PayPal 全款付款请求。",
+      "通过 PayPal 付款（可用信用卡）即预约成功，上课当天无需再付款。",
+    ],
+    sizes: "预约后我们会询问每个人的身高和鞋码。",
+    off: "改为预约普通课程",
+  },
+};
+
+/** VIP로 들어온 손님에게: 첫 화면엔 포함 항목·값·결제 순서를 다 보여 주고, 다음 화면부턴 작은 띠만 */
+function VipPanel({ locale, full, onOff }: { locale: string; full: boolean; onOff: () => void }) {
+  const T = VIP_PANEL[locale === "zh" ? "zh" : "en"];
+  if (!full) {
+    return (
+      <p className="mt-4 flex items-center gap-2 self-start rounded-full bg-[#1a1408] px-3.5 py-1.5 text-[12.5px] font-bold text-[#F1D693] ring-1 ring-[#E7C77F]">
+        👑 {T.title}
+      </p>
+    );
+  }
+  return (
+    <div className="mt-6 overflow-hidden rounded-2xl bg-[linear-gradient(160deg,#1a1408_0%,#0a0b0d_60%)] text-white ring-2 ring-[#E7C77F]">
+      <div className="px-4 pb-4 pt-4 sm:px-5">
+        <p className="text-[17px] font-bold tracking-tight text-[#F1D693]">👑 {T.title}</p>
+        <p className="mt-1 text-[13px] leading-snug text-white/75">{T.sub}</p>
+        <ul className="mt-3 grid gap-x-3 gap-y-1 text-[13px] text-white/90 sm:grid-cols-2">
+          {T.inc.map((x) => (
+            <li key={x} className="flex gap-1.5">
+              <Check size={14} className="mt-[3px] shrink-0 text-[#E7C77F]" />
+              {x}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-1.5 text-[12px] text-white/55">{T.gloves}</p>
+
+        <p className="mt-4 text-[12.5px] font-bold text-[#E7C77F]">{T.priceTitle}</p>
+        <div className="mt-1.5 grid grid-cols-3 gap-1.5">
+          {VIP_TOTALS.map((total, i) => (
+            <div key={i} className="rounded-xl bg-white/[0.07] px-1 py-2 text-center ring-1 ring-[#D9B56A]/40">
+              <p className="text-[12px] text-white/65">{T.ex[i]}</p>
+              <p className="text-[13.5px] font-extrabold tabular-nums tracking-tight text-[#F1D693] min-[400px]:text-[15px]">₩{formatWon(total)}</p>
+              <p className="text-[11px] text-white/55">{approxUsd(total)}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="bg-white px-4 py-4 text-ink-900 sm:px-5">
+        <p className="text-[13.5px] font-bold">💳 {T.payTitle}</p>
+        <ol className="mt-2 flex flex-col gap-2">
+          {T.pay.map((x, i) => (
+            <li key={x} className="flex gap-2.5 text-[13px] leading-snug text-snow-700">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1a1408] text-[11px] font-bold text-[#F1D693]">{i + 1}</span>
+              {x}
+            </li>
+          ))}
+        </ol>
+        <p className="mt-2.5 text-[12.5px] text-snow-600">📏 {T.sizes}</p>
+        <button type="button" onClick={onOff} className="mt-3 text-[12.5px] font-semibold text-snow-500 underline underline-offset-2 hover:text-ink-900">
+          {T.off}
+        </button>
+      </div>
+    </div>
+  );
+}
 type ForeignLocale = keyof typeof FOREIGN_TEXT;
 const isForeignLocale = (l: string): l is ForeignLocale => l === "en" || l === "zh";
 const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
@@ -127,6 +262,8 @@ type WizardState = {
   email: string;
   messenger: string;
   msgApp: "" | "WhatsApp" | "WeChat" | "LINE" | "KakaoTalk";
+  /** 외국인 VIP 레슨 (풀케어 + 1인 150,000원 리프트·장비·헬멧·스키복) — ?vip=1 로 들어오면 켜져요 */
+  vip: boolean;
 };
 
 const INITIAL_STATE: WizardState = {
@@ -152,6 +289,7 @@ const INITIAL_STATE: WizardState = {
   email: "",
   messenger: "",
   msgApp: "",
+  vip: false,
 };
 
 function formatPrice(value: number, content: SiteContent): string {
@@ -176,7 +314,7 @@ const cut40 = (n: number) => Math.round((n * (1 - LIFT_RENTAL_DISCOUNT)) / 100) 
 
 /** 리프트권·장비 추가 금액 (추천 시간권 · 선택 날짜 주중/주말) */
 function liftExtra(state: WizardState) {
-  if (!state.program || state.liftOpt === "none" || state.liftAdults + state.liftKids === 0) return null;
+  if (!state.program || state.vip || state.liftOpt === "none" || state.liftAdults + state.liftKids === 0) return null;
   const t = ticketForProgram(state.program);
   const w = isWeekendRate(state.date) ? 1 : 0;
   const lift = LIFT_PRICES[t];
@@ -263,7 +401,12 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
       });
     }
   }
-  const grand = price.totalPrice + (ex?.total ?? 0);
+  const vipAdd = vipAddOf(state);
+  if (vipAdd) {
+    const VL = vipLine(content);
+    lines.push({ label: VL.label, detail: VL.detail(people), amount: formatPrice(vipAdd, content) });
+  }
+  const grand = price.totalPrice + (ex?.total ?? 0) + vipAdd;
 
   return {
     price,
@@ -293,7 +436,12 @@ async function notifyOwnerKakao(state: WizardState, content: SiteContent, locale
     : state.phone.trim();
   const note = (
     foreign
-      ? [`${locale === "zh" ? "중국어" : "영어"} 예약·${isValidEmail(state.email) ? "이메일" : state.msgApp || "메신저"} 회신`, msgLine(state), state.requestNote.trim()]
+      ? [
+          state.vip ? "👑 VIP(리프트 7h·장비 8h·바이저 헬멧·스키복·양말 준비 · 키·신발 사이즈 물어보기 · PayPal 전액 요청)" : "",
+          `${locale === "zh" ? "중국어" : "영어"} 예약·${isValidEmail(state.email) ? "이메일" : state.msgApp || "메신저"} 회신`,
+          msgLine(state),
+          state.requestNote.trim(),
+        ]
       : [state.requestNote.trim()]
   )
     .concat(marketingTag(state.marketing), attributionText())
@@ -308,7 +456,7 @@ async function notifyOwnerKakao(state: WizardState, content: SiteContent, locale
       name: state.name.trim(),
       phone: contact,
       date: state.date,
-      program: getProgramLabel(state.program, ko),
+      program: `${state.vip ? "👑 VIP 레슨 · " : ""}${getProgramLabel(state.program, ko)}`,
       timeSlot: getTimeSlotLabel(state.program, state.timeSlot, ko),
       groupSize: getGroupSizeLabel(state.groupSize as GroupSizeValue, ko),
       equipment: state.equipment ? getEquipmentLabel(state.equipment, ko) : "",
@@ -394,7 +542,7 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
         ].filter(Boolean)
       : [`${labels.phone}: ${state.phone.trim()}`]),
     `${labels.date}: ${state.date}`,
-    `${labels.program}: ${getProgramLabel(program, content)}`,
+    `${labels.program}: ${state.vip ? `${vipLine(content).badge} · ` : ""}${getProgramLabel(program, content)}`,
     `${labels.timeSlot}: ${getTimeSlotLabel(program, state.timeSlot, content)}`,
     `${labels.groupSize}: ${getGroupSizeLabel(groupSize as GroupSizeValue, content)}`,
     `${labels.equipment}: ${getEquipmentLabel(state.equipment, content)}`,
@@ -483,6 +631,7 @@ export function BookingWizard() {
     setState((prev) => ({
       ...prev,
       program,
+      vip: prev.vip && isFull,
       groupSize: "",
       timeSlot: isFull ? timeValues[0] : "",
       liftPassPayment: isFull ? "included" : "pay-together",
@@ -503,6 +652,8 @@ export function BookingWizard() {
     const levelParam = params.get("level");
     const ageGroupParam = params.get("ageGroup");
     const equipmentParam = params.get("equipment");
+    // 외국인 VIP 레슨 소개 카드에서 왔어요 — 요청란에 「VIP」라고 적지 않아도 되게 (대표 11-22)
+    const vipParam = params.get("vip") === "1" && isForeignLocale(locale);
 
     // Deliberately deferred to after mount: the static export has no access to
     // the URL at build time, so applying this during render would make the
@@ -528,6 +679,17 @@ export function BookingWizard() {
           setShowJuniorChoice(true);
         }
         if (isFull) setShowFullCareChoice(true);
+      }
+
+      if (vipParam) {
+        if (next.program !== "one-day" && next.program !== "night") {
+          next.program = "one-day";
+          next.timeSlot = getTimeSlotValues("one-day", content)[0];
+          next.liftPassPayment = "included";
+        }
+        next.vip = true;
+        next.liftOpt = "none";
+        setShowFullCareChoice(true);
       }
 
       if (
@@ -625,7 +787,8 @@ export function BookingWizard() {
             phone: state.phone,
             basePrice: price.basePrice,
             liftPassFee: price.liftPassFee,
-            totalPrice: price.totalPrice,
+            totalPrice: price.totalPrice + vipAddOf(state),
+            vip: state.vip,
             priceOnRequest: price.priceOnRequest,
             message: buildSummaryMessage(state, content),
           }),
@@ -675,7 +838,8 @@ export function BookingWizard() {
       </div>
 
       {!foreign && on(1) && <PayChoice storeUrl="/ko/store/" />}
-      {foreign && on(1) && (
+      {foreign && state.vip && <VipPanel locale={locale} full={on(1)} onOff={() => update("vip", false)} />}
+      {foreign && on(1) && !state.vip && (
         <a
           href={`/${locale}/quote/`}
           onClick={() => trackEvent("quote_open", { from: "reserve_top_foreign" })}
@@ -693,13 +857,13 @@ export function BookingWizard() {
           <span className="shrink-0 text-[18px] font-bold text-ink-900">→</span>
         </a>
       )}
-      {foreign && on(1) && (
+      {foreign && on(1) && !state.vip && (
         <div className="mt-2.5 flex flex-col gap-1.5 rounded-2xl border-2 border-[#003087]/30 bg-[#E8F0FE] px-4 py-3.5">
           <span className="text-[14.5px] font-bold text-[#003087]">💳 {locale === "zh" ? "海外客人：用 PayPal 付款" : "Overseas guests: pay with PayPal"}</span>
           <span className="text-[12.5px] leading-snug text-snow-700">
             {locale === "zh"
-              ? "先提交预约申请 → 我们确认教练和时间后，用 PayPal 支付30万韩元订金（约220美元）即可确认（余款上课当天支付）。也可以先看看多日报价。"
-              : "Send your booking request → once we confirm your instructor and time, pay a KRW 300,000 deposit (about USD 220) by PayPal to lock it in (balance on the lesson day). Planning several days? Try the multi-day quote."}
+              ? "先提交预约申请 → 我们确认教练和时间后，用 PayPal 支付全款即可确认（上课当天无需再付）。也可以先看看多日报价。"
+              : "Send your booking request → once we confirm your instructor and time, pay the full amount by PayPal to lock it in (nothing more to pay on the day). Planning several days? Try the multi-day quote."}
           </span>
           <a href={`/${locale}/quote/`} className="text-[12.5px] font-bold text-[#003087] underline underline-offset-2">
             {locale === "zh" ? "多日·家庭报价计算 →" : "Multi-day & family quote →"}
@@ -894,9 +1058,15 @@ export function BookingWizard() {
                           ? content.bookingWizard.fullCareInfo.oneDay
                           : content.bookingWizard.fullCareInfo.night}
                       </p>
-                      <p className="mt-1 text-[13px] font-medium text-brand-600">
-                        {programPriceHint(value, content)}
-                      </p>
+                      {state.vip ? (
+                        <p className="mt-1 text-[13px] font-semibold text-[#8A6A1F]">
+                          👑 VIP {withUsd(content.bookingWizard.guide.priceFrom(formatWon(VIP_TOTALS[0])), locale)} · {vipLine(content).hint}
+                        </p>
+                      ) : (
+                        <p className="mt-1 text-[13px] font-medium text-brand-600">
+                          {programPriceHint(value, content)}
+                        </p>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -932,7 +1102,11 @@ export function BookingWizard() {
                     const rowPrice = getPriceRows(program, content).find((r) => r.people === code)?.price;
                     const pass = getLiftPassPrice(program, content);
                     const full = program === "one-day" || program === "night";
-                    const description = rowPrice
+                    const people = getGroupStudentCount(code);
+                    const vipTotal = state.vip && full ? VIP_TOTALS[people - 1] : undefined;
+                    const description = vipTotal
+                      ? `👑 VIP ${formatPrice(vipTotal, content)} · ${vipLine(content).incShort}`
+                      : rowPrice
                       ? full
                         ? `${g.lessonFee(rowPrice)} · ${g.liftPassIncluded}`
                         : `${g.lessonFee(rowPrice)}${pass ? ` · ${g.liftPassPlus(pass)}` : ""}`
@@ -947,7 +1121,7 @@ export function BookingWizard() {
                   onSelect={(v) => update("groupSize", v)}
                 />
               )}
-              {on(4) && state.program && <LiftRentalNote program={state.program} date={state.date} locale={locale} />}
+              {on(4) && state.program && !state.vip && <LiftRentalNote program={state.program} date={state.date} locale={locale} />}
 
               {on(5) && (
                 <OptionList
@@ -1220,7 +1394,7 @@ export function BookingWizard() {
                     );
                   })()}
 
-                  {price && state.program && (() => {
+                  {price && state.program && !state.vip && (() => {
                     const L = liftLoc(content);
                     const lc = content.siteConfig.locale.slice(0, 2);
                     const T = {
@@ -1321,7 +1495,7 @@ export function BookingWizard() {
                           <span className="tabular-nums text-brand-300">{breakdown.total}</span>
                         </div>
                         <p className="mt-1 text-[12px] leading-relaxed text-white/45">
-                          {content.bookingWizard.guide.extrasNotice}
+                          {state.vip ? vipLine(content).payNote : content.bookingWizard.guide.extrasNotice}
                         </p>
                       </div>
                     );
@@ -1483,7 +1657,7 @@ function PayChoice({ storeUrl }: { storeUrl: string }) {
       <div className="flex flex-col rounded-2xl border-2 border-brand-500 bg-brand-50 px-4 py-3.5">
         <span className="text-[14.5px] font-bold text-brand-600">📝 예약·상담 문의</span>
         <span className="mt-1 text-[12.5px] font-semibold leading-snug text-brand-600">👉 혼자·하루 강습</span>
-        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">아래에서 신청 · 확정 후 예약금 30만원</span>
+        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">아래에서 신청 · 확정 후 전액 결제</span>
       </div>
       <a
         href="/ko/quote/"
@@ -1693,6 +1867,12 @@ function ForeignSummaryView({
       <p className="mt-3 text-[14.5px] leading-relaxed text-snow-700">
         {sent ? ft.description(state.email.trim() || msgLine(state)) : ft.failedDescription}
       </p>
+      {state.vip && (
+        <div className="mt-4 rounded-2xl bg-[linear-gradient(160deg,#1a1408_0%,#0a0b0d_60%)] px-4 py-3.5 text-[13px] leading-relaxed text-white/85 ring-2 ring-[#E7C77F]">
+          <p className="font-bold text-[#F1D693]">👑 {vipLine(content).badge}</p>
+          <p className="mt-1">{vipLine(content).after}</p>
+        </div>
+      )}
 
       <pre className="mt-6 whitespace-pre-wrap rounded-2xl border border-snow-300/60 bg-white p-6 text-[14px] leading-relaxed text-ink-800">
         {message}

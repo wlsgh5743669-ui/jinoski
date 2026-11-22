@@ -34,7 +34,7 @@ export function NoticeList() {
   return (
     <div className="flex flex-col gap-3">
       {NOTICES.map((n) => {
-        const active = now ? isNoticeActive(n, now) : true;
+        const active = isNoticeActive(n, now ?? undefined);
         const isOpen = open === n.id;
         return (
           <article id={n.id} key={n.id} className={cn("scroll-mt-28 rounded-2xl bg-white ring-1 ring-snow-300/60", !active && "opacity-70")}>
@@ -79,7 +79,8 @@ export function NoticeList() {
 export function NoticeStrip() {
   const l = useL();
   const now = useToday();
-  const n: Notice | undefined = now ? NOTICES.find((x) => isNoticeActive(x, now)) : NOTICES[0];
+  // 정적 HTML도 빌드한 날 기준으로 끝난 공지는 빼요 (11-22: 끝난 얼리버드 공지가 처음 화면에 보였어요)
+  const n: Notice | undefined = NOTICES.find((x) => isNoticeActive(x, now ?? undefined));
   if (!n) return null;
   return (
     <Link href={`/notice#${n.id}`} className="flex items-center gap-2.5 rounded-2xl bg-ink-900 px-4 py-3 text-white transition-opacity hover:opacity-90">

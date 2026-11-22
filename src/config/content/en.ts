@@ -584,7 +584,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "How do I pay?",
     answer:
-      "① Once we confirm your instructor and time, please pay a deposit of KRW 300,000 (about USD 220; the full amount if your total is less). Your booking is confirmed when we receive it.\n② Pay the balance on the lesson day.\n③ Lift tickets and equipment rental (40% off the ticket-office price) are paid to JinoSki together with the lesson fee — on the day you just pick them up.\n\n· PayPal or international credit card (USD) — easiest for overseas guests. We send the exact USD amount with your confirmation.\n· Korean bank transfer (KRW): KB Kookmin Bank 010-4047-7711, account holder 박진호 (Jino Company).\n\nPrices are set in Korean won (KRW). USD amounts shown on this website are approximate.",
+      "① Once we confirm your instructor and time, please pay the full amount. Your booking is confirmed when we receive it.\n② There's nothing more to pay for the lesson on the day.\n③ Lift tickets and equipment rental (40% off the ticket-office price) are paid to JinoSki together with the lesson fee — on the day you just pick them up.\n\n· PayPal or international credit card (USD) — easiest for overseas guests. We send the exact USD amount with your confirmation.\n· Korean bank transfer (KRW): KB Kookmin Bank 010-4047-7711, account holder 박진호 (Jino Company).\n\nPrices are set in Korean won (KRW). USD amounts shown on this website are approximate.",
   },
   {
     question: "Can I pay with Alipay or WeChat Pay?",
@@ -1054,7 +1054,7 @@ const reservationSteps = [
   {
     step: "STEP 3",
     title: "Confirm Booking",
-    description: "Finalize the lesson schedule, gear, and location, and pay the deposit.",
+    description: "Finalize the lesson schedule, gear, and location, and pay for your lesson.",
   },
   {
     step: "STEP 4",
@@ -1190,7 +1190,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       "① What you send now is a booking request — it is not confirmed yet.",
       "📍 Meeting point: Ski World plaza at Vivaldi Park (Ski House entrance)",
       "② We check the instructor's schedule and contact you to confirm.",
-      "③ After confirmation, pay a KRW 300,000 deposit (about USD 220, PayPal or bank transfer) — the balance is paid on the lesson day. Lift tickets & rental (40% off) are paid to JinoSki together with the lesson fee.\nPayPal: link in your confirmation · KB Kookmin Bank 010-4047-7711 · Account holder: 박진호 (Jino Company)",
+      "③ After confirmation, pay the full amount (PayPal or bank transfer) — nothing more to pay for the lesson on the day. Lift tickets & rental (40% off) are paid to JinoSki together with the lesson fee.\nPayPal: link in your confirmation · KB Kookmin Bank 010-4047-7711 · Account holder: 박진호 (Jino Company)",
       "④ Refund policy: 100% refund up to 3 days before · 50% refund 1–2 days before · no refund for same-day cancellations or no-shows",
       "⑤ Rescheduling: one free change up to 2 days before (to a date the instructor is free, within the season) · after that, the refund policy applies",
       "⑥ If slopes close due to bad weather, you get a free reschedule or a full refund.",
@@ -1384,7 +1384,7 @@ const datePicker = {
 const reservePage = {
   title: "Book a Lesson",
   description:
-    "Book a JinoSki ski or snowboard lesson at Vivaldi Park — pick a date, time and group size and we confirm once an instructor is free. International guests pay a USD 220 deposit by PayPal; the rest is paid on lesson day.",
+    "Book a JinoSki ski or snowboard lesson at Vivaldi Park — pick a date, time and group size and we confirm once an instructor is free. International guests pay the full amount by PayPal once we confirm.",
 };
 
 // Search / AI summary text per page — brand once + facts unique to that page (2026-11-08)
@@ -1418,7 +1418,7 @@ const pageMeta = {
   faq: {
     title: "FAQ",
     description:
-      "JinoSki FAQ — first-timers, minimum age, deposit and cancellation, lesson permit and lift tickets, meeting point, what to bring and bad weather.",
+      "JinoSki FAQ — first-timers, minimum age, payment and cancellation, lesson permit and lift tickets, meeting point, what to bring and bad weather.",
   },
 };
 

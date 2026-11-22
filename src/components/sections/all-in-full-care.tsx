@@ -14,7 +14,7 @@ import { LIFT_PRICES, RENTAL_PRICES } from "@/config/lift-rental";
  */
 export const VIP_ADD_PER_PERSON = 150000;
 const FULL_CARE = [550000, 700000, 900000]; // 1:1 · 1:2 · 1:3 풀케어 레슨료(그룹 전체, 패찰 포함)
-const VIP_TOTALS = FULL_CARE.map((fee, i) => fee + VIP_ADD_PER_PERSON * (i + 1)); // 700,000 · 1,000,000 · 1,350,000
+export const VIP_TOTALS = FULL_CARE.map((fee, i) => fee + VIP_ADD_PER_PERSON * (i + 1)); // 700,000 · 1,000,000 · 1,350,000
 /**
  * 「합리적」 비교 (대표 11-17 「외국인들이 잘 보이게, 합리적이라는 느낌으로」):
  * 따로 사면 = 비발디 매표소 주말 정가(어른) 리프트 7시간 + 장비 8시간 + 스키복 7시간(외국인 렌탈가 35,000).
@@ -62,12 +62,13 @@ const TXT = {
     same: "Same price on weekdays, weekends and holidays · adults and kids",
     times: "Choose One Day (meet 08:40) or Night (meet 13:30)",
     notes: [
+      "Paid in full by PayPal once we confirm your instructor — nothing to pay on the day",
       "Gloves are extra — ₩20,000 a pair from us, or bring your own",
       "Tell us everyone's height and shoe size after booking",
       "4 or more people? Ask us for a group price",
     ],
     cta: "Book a VIP Lesson",
-    ask: "Pick One Day or Night Full Care and write “VIP” in the request box — or just tell us in chat.",
+    ask: "VIP is already selected on the next screen — just pick One Day or Night. We confirm your instructor within 24 hours, then send a PayPal request for the full amount.",
     won: (n: number) => `₩${n.toLocaleString("en-US")}`,
   },
   zh: {
@@ -101,9 +102,9 @@ const TXT = {
     ex: ["1人", "2人", "3人"],
     same: "平日·周末·节假日同价 · 成人和儿童同价",
     times: "可选一日（08:40集合）或夜间（13:30集合）",
-    notes: ["手套另购 ₩20,000/副，也可自备", "预约后请告诉我们每个人的身高和鞋码", "4人以上请咨询团体价格"],
+    notes: ["确认教练后通过 PayPal 支付全款 — 上课当天无需再付", "手套另购 ₩20,000/副，也可自备", "预约后请告诉我们每个人的身高和鞋码", "4人以上请咨询团体价格"],
     cta: "预约 VIP 课程",
-    ask: "选择一日或夜间 Full Care，并在备注栏写「VIP」，或直接在聊天中告诉我们。",
+    ask: "下一页已自动选好 VIP，只需选择一日或夜间。我们会在24小时内确认教练，然后发送 PayPal 全款付款请求。",
     won: (n: number) => `₩${n.toLocaleString("en-US")}`,
   },
 };
@@ -216,7 +217,7 @@ export function AllInFullCare({ className = "bg-white py-14 sm:py-20" }: { class
             </ul>
             <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
               <a
-                href={`/${locale}/reserve/?program=one-day`}
+                href={`/${locale}/reserve/?program=one-day&vip=1`}
                 className="inline-flex shrink-0 items-center justify-center rounded-full bg-ink-900 px-6 py-3 text-[15px] font-bold text-white transition-transform hover:scale-[1.02]"
               >
                 {T.cta}

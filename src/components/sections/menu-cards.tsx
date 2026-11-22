@@ -41,7 +41,7 @@ const noSubscribe = () => () => {};
 export function MenuCards() {
   const { pageMeta, stats } = useContent();
   const locale = useLocale();
-  const earlyBird = useSyncExternalStore(noSubscribe, isEarlyBirdActive, () => true);
+  const earlyBird = useSyncExternalStore(noSubscribe, isEarlyBirdActive, () => isEarlyBirdActive());
   const rating = stats.find((s) => s.suffix === "★");
 
   return (
