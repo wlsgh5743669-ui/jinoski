@@ -32,7 +32,7 @@ const contact = {
   businessRegistrationNumber: "336-14-02452",
   mailOrderSalesNumber: "第2024-仁川富平-2645号",
   meetingPoint: {
-    label: "维瓦尔第公园 Ski World 广场（Ski House 入口）",
+    label: "维瓦尔第公园 A售票处内 Good Goods 店前",
     // TODO: 집합 장소 사진을 public/images/meeting-point.jpg 로 넣고 아래 주석 해제
     // photo: "/images/meeting-point.jpg",
   },
@@ -392,7 +392,7 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
     {
       icon: "⏰",
       title: "到达时间",
-      description: "集合地点为大明维瓦尔第公园 Ski World 广场（Ski House 入口）。请提前20~30分钟到达。",
+      description: "集合地点为大明维瓦尔第公园 A售票处内 Good Goods 店前。请提前20~30分钟到达。",
     },
     {
       icon: "🎫",
@@ -1149,7 +1149,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     bookingNoticeTitle: "预约流程",
     bookingNoticeLines: [
       "① 现在发送的是“预约申请”，尚未确认。",
-      "📍 集合地点：维瓦尔第公园 Ski World 广场（Ski House 入口）",
+      "📍 集合地点：维瓦尔第公园 A售票处内 Good Goods 店前",
       "② 确认教练日程后我们会联系您确认预约。",
       "③ 收到确认通知后，请支付全款（PayPal或银行转账），上课当天无需再付课程费。缆车票·装备（6折）与课程费一起付给JinoSki。\nPayPal：确认时发送链接 · 国民银行（KB Kookmin）010-4047-7711 · 户名 박진호（Jino Company）",
       "④ 退款规定：课程3天前取消全额退款 · 1~2天前退款50% · 当天取消或未到场不予退款",
@@ -1301,7 +1301,7 @@ const ui: SiteContent["ui"] = {
   directions: {
     eyebrow: "Directions",
     title: "交通指南",
-    description: "集合地点为维瓦尔第公园 Ski World 广场（Ski House 入口）。使用您习惯的地图应用立即查看路线。",
+    description: "集合地点为维瓦尔第公园 A售票处内 Good Goods 店前。使用您习惯的地图应用立即查看路线。",
     naverMapLabel: "Naver地图",
     kakaoMapLabel: "Kakao地图",
     googleMapLabel: "谷歌地图",

@@ -32,7 +32,7 @@ const contact = {
   businessRegistrationNumber: "336-14-02452",
   mailOrderSalesNumber: "No. 2024-Incheon Bupyeong-2645",
   meetingPoint: {
-    label: "Ski World plaza, Vivaldi Park (Ski House entrance)",
+    label: "Vivaldi Park, inside Ticket Office A (in front of Good Goods)",
     // TODO: 집합 장소 사진을 public/images/meeting-point.jpg 로 넣고 아래 주석 해제
     // photo: "/images/meeting-point.jpg",
   },
@@ -428,7 +428,7 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
       icon: "⏰",
       title: "Arrival time",
       description:
-        "The meeting point is the Ski World plaza at Vivaldi Park (Ski House entrance). Please arrive 20–30 minutes before your lesson starts.",
+        "The meeting point is in front of the Good Goods shop, just inside Ticket Office A (under the clock tower) at Vivaldi Park. Please arrive 20–30 minutes before your lesson starts.",
     },
     {
       icon: "🎫",
@@ -1188,7 +1188,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     bookingNoticeTitle: "How booking works",
     bookingNoticeLines: [
       "① What you send now is a booking request — it is not confirmed yet.",
-      "📍 Meeting point: Ski World plaza at Vivaldi Park (Ski House entrance)",
+      "📍 Meeting point: inside Ticket Office A at Vivaldi Park, in front of Good Goods",
       "② We check the instructor's schedule and contact you to confirm.",
       "③ After confirmation, pay the full amount (PayPal or bank transfer) — nothing more to pay for the lesson on the day. Lift tickets & rental (40% off) are paid to JinoSki together with the lesson fee.\nPayPal: link in your confirmation · KB Kookmin Bank 010-4047-7711 · Account holder: 박진호 (Jino Company)",
       "④ Refund policy: 100% refund up to 3 days before · 50% refund 1–2 days before · no refund for same-day cancellations or no-shows",
@@ -1345,7 +1345,7 @@ const ui: SiteContent["ui"] = {
   directions: {
     eyebrow: "Directions",
     title: "Getting Here",
-    description: "The meeting point is the Ski World plaza at Vivaldi Park (Ski House entrance). Open your favorite map app for directions.",
+    description: "The meeting point is in front of the Good Goods shop, just inside Ticket Office A (under the clock tower) at Vivaldi Park. Open your favorite map app for directions.",
     naverMapLabel: "Naver Map",
     kakaoMapLabel: "Kakao Map",
     googleMapLabel: "Google Maps",

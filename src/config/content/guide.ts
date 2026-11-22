@@ -36,7 +36,7 @@ const ko: GuideContent = {
       icon: "pin",
       title: "집합 장소 · 도착 시간",
       items: [
-        "비발디파크 스키월드 광장, 스키하우스 입구에서 만나요.",
+        "비발디파크 시계탑 아래 매표소 A 문으로 들어오면 바로 보이는 Good Goods(굿굿즈) 앞에서 만나요.",
         "레슨 시작 20~30분 전까지 도착해 주세요. 장비 착용·화장실·렌탈 시간을 생각하면 여유 있게 오시는 게 좋아요.",
         "도착하시면 카카오톡 채널이나 전화(010-4047-7711)로 알려주세요. 강사가 바로 찾아가요.",
       ],
@@ -111,7 +111,7 @@ const en: GuideContent = {
       icon: "pin",
       title: "Meeting point & arrival",
       items: [
-        "We meet at the Ski World plaza, at the Ski House entrance of Vivaldi Park.",
+        "We meet inside Ticket Office A at Vivaldi Park (under the clock tower), in front of the Good Goods shop.",
         "Please arrive 20–30 minutes before your lesson to allow time for rental, gear and restrooms.",
         "Let us know when you arrive (+82-10-4047-7711 or the inquiry form) and your instructor will come to you.",
       ],
@@ -186,7 +186,7 @@ const zh: GuideContent = {
       icon: "pin",
       title: "集合地点与到达时间",
       items: [
-        "集合地点：Vivaldi Park 滑雪世界广场（Ski House 入口）。",
+        "集合地点：Vivaldi Park 钟楼下 A售票处门内，Good Goods 商店前。",
         "请在课程开始前20–30分钟到达，预留租赁、穿戴装备和洗手间的时间。",
         "到达后请联系我们（+82-10-4047-7711 或在线咨询），教练会来找您。",
       ],
