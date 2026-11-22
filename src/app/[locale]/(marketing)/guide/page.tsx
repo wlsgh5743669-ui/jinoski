@@ -48,7 +48,7 @@ export default async function GuidePage({ params }: { params: Promise<{ locale: 
       {l === "ko" && (
         <ImageGuide
           title="비발디파크 이용 한눈에 보기"
-          desc="집합 장소·렌탈·준비물을 3장으로 정리했어요. 눌러서 크게 보세요."
+          desc="집합 장소·만나는 곳 지도·렌탈·준비물을 4장으로 정리했어요. 눌러서 크게 보세요."
           cards={VIVALDI_CARDS}
           event="vivaldi_guide_card_open"
           className="bg-white py-14 sm:py-20"
