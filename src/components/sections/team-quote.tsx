@@ -28,6 +28,7 @@ import { trackEvent } from "@/components/shared/analytics";
 import { useContent } from "@/lib/use-content";
 import { EARLY_BIRD, isEarlyBirdActive } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
+import { DesignatedBanner, DesignatedPick, designatedOf } from "@/components/sections/designated-pick";
 import { HOLIDAYS, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, SEASON_OPEN_DATE, type TicketHours } from "@/config/lift-rental";
 
 const KAKAO_NOTIFY_URL =
@@ -202,6 +203,9 @@ export function TeamQuote() {
   /** 손님이 정하는 비밀번호 — 나중에 「내 견적 확인」에서 답변 볼 때 사용 */
   const [pw, setPw] = useState("");
   const [teacherPref, setTeacherPref] = useState(0);
+  // 🎯 지정 강사 id (강사 소개 「이 강사로 예약하기」 → ?ins=yunsang) · 대표 11-22
+  const [ins, setIns] = useState("");
+  const des = designatedOf(ins);
   /** 마지막으로 보낸 견적 링크 — 손님이 견적을 바꾸면 「수정본 다시 보내기」가 떠요 */
   const [sentLink, setSentLink] = useState("");
   /** 🛠 관리자 고치기: 운영 프로그램 「견적 화면 열기」로 들어오면 (서명 링크) 고친 견적을 원래 문의에 다시 저장할 수 있어요 (대표 11-12) */
@@ -223,6 +227,12 @@ export function TeamQuote() {
   const [totalTab, setTotalTab] = useState(0); // 0 = 전체, 1 = 1일차 …
 
   const people = adults + kids;
+
+  useEffect(() => {
+    const v = new URLSearchParams(window.location.search).get("ins") ?? "";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (designatedOf(v)) setIns(v);
+  }, []);
 
   // 링크로 받은 견적 → 바로 견적서 화면 (?sd=2026-12-26&d=3&a=2&k=4&l=2h&n=2&g=3-3&lr=0-2&lo=0-0&h=2-0&tk=7)
   useEffect(() => {
@@ -608,6 +618,7 @@ export function TeamQuote() {
     `인원: 어른 ${adults}명 · 어린이 ${kids}명 (반 ${usedSplit.join("+")}, 강사 ${usedSplit.length}명)`,
     ...(sportSummary ? [`종목·실력: ${sportSummary}`] : []),
     ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
+    ...(des ? [`🎯 ${des.text}`] : []),
     `수업: 총 ${sessions}회 (${schedule.filter((d) => d.slots.length).map((d) => dayLine(d)).join(" / ")})`,
     ...(days >= 1
       ? [
@@ -654,6 +665,7 @@ export function TeamQuote() {
       ? ["■ 날짜별 합계", ...dayTotals.map((d) => `  ${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}: ${won(d.total)}`)]
       : []),
     `예상 합계: ${won(grand)}${ebSaved ? ` (얼리버드 강습료 10% 할인 -${won(ebSaved)} 반영)` : ""}`,
+    ...(des ? [`지정강사 포함 합계: ${won(grand + des.fee)} (${des.name} +${won(des.fee)} · 시즌 1번)`] : []),
     ...(fcNote ? [`※ ${fcNote}`] : []),
     "※ 의류는 제휴 렌탈샵 안내 드립니다.^^ · 강사 일정 확인 후 확정",
   ].join("\n");
@@ -674,6 +686,7 @@ export function TeamQuote() {
       q.set("dt", Array.from({ length: days }, (_, i) => (dayTickets[i] === undefined ? "a" : String(dayTickets[i]))).join("-"));
     if (startDate) q.set("sd", startDate);
     if (teacherPref) q.set("tp", String(teacherPref));
+    if (des) q.set("ins", des.id);
     return `${window.location.origin}/${loc}/quote/?${q.toString()}`;
   }
   async function copy(kind: "text" | "link") {
@@ -899,10 +912,12 @@ export function TeamQuote() {
       days,
       persons: personRows.map((x) => ({ label: x.label, group: x.group, desc: x.desc, lesson: x.lesson, lift: x.lift, helm: x.helm, pay: x.pay })),
       totals: { lesson: lessonExact, lift: extrasTotal, helmet: helmetTotal, eb: ebSaved, grand },
+      ...(des ? { designated: { id: des.id, name: des.name, tier: des.tier, fee: des.fee } } : {}),
       notes: [
         ...(fcNote ? [fcNote] : []),
         ebSaved ? `얼리버드 10%는 강습료에만 적용 (-${won(ebSaved)}) · 리프트·장비 40% 할인 · 헬멧 할인 제외` : "리프트·장비 40% 할인 · 헬멧 할인 제외",
         ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
+        ...(des ? [`${des.text} — 견적 합계와 별도 (이번 시즌 이미 냈으면 빼기)`] : []),
         "매 수업 사진·영상 무료 · 의류는 제휴 렌탈샵 안내 드립니다.^^",
       ],
     };
@@ -946,6 +961,7 @@ export function TeamQuote() {
           headline: `1인 1회 약 ${won(perHead1)} · 합계 ${won(grand)}`,
           request: [
             qloc === "en" ? "🌐 영어 페이지 손님 (영어 답변)" : qloc === "zh" ? "🌐 중국어 페이지 손님 (중국어 답변)" : "",
+            des ? `🎯 ${des.text}` : "",
             teacherPref ? `강사 ${TEACHER_PREFS[teacherPref]}` : "",
             note.trim(),
           ].filter(Boolean).join(" / "),
@@ -959,9 +975,10 @@ export function TeamQuote() {
           equipment: sportSummary,
           breakdown: buildBreakdown(),
           level: "",
-          total: `${won(grand)} (수업 ${sessions}회)`,
+          total: `${won(grand)} (수업 ${sessions}회)${des ? ` + 지정강사 ${des.name} ${won(des.fee)}` : ""}`,
           note: [
             anyPrep ? prep.filter((d) => d.sum).map((d) => `${d.day}일 ${d.sum}`).join(" | ") : "",
+            des ? `🎯 ${des.text}` : "",
             teacherPref ? `강사 ${TEACHER_PREFS[teacherPref]}` : "",
             note.trim(),
             marketingTag(marketing),
@@ -1012,7 +1029,7 @@ export function TeamQuote() {
           groupSize: `어른${adults} 어린이${kids} · 반 ${usedSplit.join("+")}`,
           equipment: sportSummary,
           breakdown: buildBreakdown(),
-          total: `${won(grand)} (수업 ${sessions}회)`,
+          total: `${won(grand)} (수업 ${sessions}회)${des ? ` + 지정강사 ${des.name} ${won(des.fee)}` : ""}`,
         }),
       });
       // 워커가 「저장했다」고 분명히 답했을 때만 저장으로 봐요 (예전 워커는 모르는 주소에도 200을 줘서, 글자만 믿으면 안 됨)
@@ -1052,6 +1069,7 @@ export function TeamQuote() {
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white">
             <div className="h-full rounded-full bg-brand-500 transition-all" style={{ width: `${(step / STEPS.length) * 100}%` }} />
           </div>
+          {des && <DesignatedBanner id={des.id} lang={qloc} onClear={() => setIns("")} />}
 
           <div className="mt-6 rounded-3xl bg-white p-5 ring-1 ring-snow-300/60 sm:p-7">
             <h2 className="text-[24px] font-bold tracking-tight text-ink-900 sm:text-[26px]">{STEPS[step - 1]}</h2>
@@ -2076,6 +2094,9 @@ export function TeamQuote() {
                     </div>
                   ) : (
                     <>
+                      <div className="-mx-1 mb-4">
+                        <DesignatedPick id={ins} lang={qloc} grand={grand} onPick={setIns} />
+                      </div>
                       <p className="text-[14.5px] font-bold text-ink-900">연락처 남기고 견적 받기</p>
                       <div className="mt-2 grid gap-2 sm:grid-cols-2">
                         <input

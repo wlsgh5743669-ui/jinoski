@@ -361,6 +361,8 @@ export type CardUI = {
   privacy: string;
   feeTier: Record<FeeTier, string>;
   feeLine: (tier: string, won: string) => string;
+  /** 강사 소개 칸 「이 강사로 예약하기」 → 견적 계산기에 이 강사 지정해서 열림 (대표 11-22) */
+  bookBtn: string;
   won: (n: number) => string;
 };
 
@@ -415,6 +417,7 @@ export const CARD_UI: Record<CardLang, CardUI> = {
     privacy: "개인정보 보호를 위해 생년월일·주소는 가렸어요",
     feeTier: { high: "상급", mid: "중급", base: "일반" },
     feeLine: (t, w) => `${t} 강사 · 지정하면 시즌 1번 +${w}`,
+    bookBtn: "이 강사로 예약하기",
     won: (n) => `${n / 10000}만원`,
   },
   en: {
@@ -467,6 +470,7 @@ export const CARD_UI: Record<CardLang, CardUI> = {
     privacy: "Birth date and address are hidden for privacy.",
     feeTier: { high: "Senior", mid: "Experienced", base: "Standard" },
     feeLine: (t, w) => `${t} · request by name +${w} once a season`,
+    bookBtn: "Book with this instructor",
     won: (n) => `₩${n.toLocaleString("en-US")}`,
   },
   zh: {
@@ -519,6 +523,7 @@ export const CARD_UI: Record<CardLang, CardUI> = {
     privacy: "为保护隐私，出生日期和地址已遮盖。",
     feeTier: { high: "高级", mid: "中级", base: "普通" },
     feeLine: (t, w) => `${t}教练 · 指定该教练 每季一次 +${w}`,
+    bookBtn: "预约这位教练",
     won: (n) => `₩${n.toLocaleString("en-US")}`,
   },
 };

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
-import { ChevronLeft, ChevronRight, FileBadge, MessageSquareText, X } from "lucide-react";
+import { CalendarCheck, ChevronLeft, ChevronRight, FileBadge, MessageSquareText, X } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { trackEvent } from "@/components/shared/analytics";
@@ -251,7 +251,7 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
             role="img"
             aria-label={t.photoAlt(cur.name)}
           />
-          <div className="min-w-0 shrink-0 px-5 pb-6 pt-4 sm:p-0">
+          <div className="min-w-0 shrink-0 px-5 pb-6 pt-4 sm:flex-1 sm:shrink sm:p-0">
             <p className="text-[30px] font-bold leading-tight sm:text-[21px]">
               {cur.name}
               <span className="ml-1.5 text-[15px] font-semibold text-snow-600 sm:text-[13px]">{cur.role ?? t.role}</span>
@@ -306,6 +306,14 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
               </div>
             ) : null}
             <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-3.5 sm:flex sm:flex-wrap">
+              {/* 🎯 이 강사로 예약하기 → 견적 계산기에 이 강사가 지정된 채로 열려요 (대표 11-22 「지정강사 구매 절차가 없네」) */}
+              <a
+                href={`/${lang}/quote/?ins=${cur.id}`}
+                onClick={() => trackEvent("instructor_book", { instructor: cur.id })}
+                className="col-span-2 inline-flex items-center justify-center gap-1.5 rounded-xl bg-ink-900 px-4 py-3.5 text-[16px] font-bold text-white sm:py-2 sm:text-[13.5px]"
+              >
+                <CalendarCheck size={16} /> {t.bookBtn} · +{t.won(DESIGNATED_FEE[cur.fee])}
+              </a>
               {cur.proofs?.length ? (
                 <button
                   type="button"
