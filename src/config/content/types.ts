@@ -34,10 +34,15 @@ export type SiteContent = {
   navLinks: { label: string; href: string }[];
   heroContent: {
     eyebrow: string;
+    /** 제목 위 별점 한 줄 (있으면 별 아이콘과 함께) */
+    trustLine?: string;
     headline: string[];
     description: string;
     primaryCta: { label: string; href: string };
     secondaryCta: { label: string; href: string };
+    /** 첫 화면 강사 얼굴 줄 ({n} = 강사 수). 없으면 안 보여요 */
+    teamLabel?: string;
+    teamLink?: string;
     videoSrc: string;
     videoSrcMobile: string;
     posterSrc: string;

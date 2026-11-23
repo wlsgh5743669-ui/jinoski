@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { CalendarCheck, ChevronLeft, ChevronRight, FileBadge, MessageSquareText, X } from "lucide-react";
 import { Container } from "@/components/shared/container";
-import { SectionHeading } from "@/components/shared/section-heading";
 import { trackEvent } from "@/components/shared/analytics";
 import { useContent } from "@/lib/use-content";
 import { INSTRUCTOR_CARDS, CARD_PEOPLE, CARD_UI, type CardLang, type InstructorCard, DESIGNATED_FEE } from "@/config/content/instructor-cards";
@@ -146,16 +145,56 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
   };
 
   return (
-    <section className={cn("ic-ring overflow-hidden bg-ink-900 pb-20 sm:pb-28", top ? "pt-32 sm:pt-40" : "pt-4")}>
+    <section className={cn("ic-ring overflow-hidden bg-ink-900 pb-20 sm:pb-28", top ? "pt-[88px] sm:pt-36" : "pt-4")}>
       <Container>
-        <SectionHeading
-          as={top ? "h1" : "h2"}
-          light
-          align="center"
-          eyebrow={t.eyebrow}
-          title={t.title}
-          description={t.description}
-        />
+        {/* 대표 11-23 「먼저 강사들이 쭉 나오면 멋있을 것 같아」: 제목 한 줄 → 강사 카드 → 보기 바꾸기·강사 찾기 */}
+        <div className="flex flex-col items-center gap-2 text-center sm:gap-3">
+          <span className="text-[12px] font-semibold uppercase tracking-[0.2em] text-brand-300 sm:text-[13px]">{t.eyebrow}</span>
+          {top ? (
+            <h1 className="text-[24px] font-bold leading-[1.2] tracking-tightest text-white sm:text-[40px] lg:text-[52px]">{t.title}</h1>
+          ) : (
+            <h2 className="text-[24px] font-bold leading-[1.2] tracking-tightest text-white sm:text-[40px] lg:text-[52px]">{t.title}</h2>
+          )}
+        </div>
+
+        {mode === "all" || !canSplit ? (
+          <CardRing
+            key="all"
+            ringKey="all"
+            people={people}
+            paused={!!view}
+            onFront={onFront("all")}
+            onTouch={onTouch("all")}
+            onOpen={openProof}
+          />
+        ) : (
+          <div key="split">
+            <CardRing
+              ringKey="f"
+              label={t.women}
+              small
+              people={women}
+              paused={!!view}
+              onFront={onFront("f")}
+              onTouch={onTouch("f")}
+              onOpen={openProof}
+            />
+            <CardRing
+              ringKey="m"
+              label={t.men}
+              small
+              dir={-1}
+              delay={180}
+              people={men}
+              paused={!!view}
+              onFront={onFront("m")}
+              onTouch={onTouch("m")}
+              onOpen={openProof}
+            />
+          </div>
+        )}
+
+        <p className="mx-auto mt-4 max-w-xl text-balance text-center text-[14px] leading-relaxed text-white/65 sm:text-[16px]">{t.description}</p>
 
         {canSplit && (
           <div className="mt-6 flex justify-center">
@@ -196,7 +235,7 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
           ))}
         </div>
 
-        {filtering ? (
+        {filtering && (
           <MatchBoard
             key={`${flt.sport}-${flt.lang}-${flt.exp}`}
             matched={people.filter((p) => fits(p, flt))}
@@ -205,41 +244,6 @@ export function InstructorCards({ top = false }: { top?: boolean } = {}) {
             onProof={openProof}
             onReset={() => setFlt(NO_FILTER)}
           />
-        ) : mode === "all" || !canSplit ? (
-          <CardRing
-            key="all"
-            ringKey="all"
-            people={people}
-            paused={!!view}
-            onFront={onFront("all")}
-            onTouch={onTouch("all")}
-            onOpen={openProof}
-          />
-        ) : (
-          <div key="split">
-            <CardRing
-              ringKey="f"
-              label={t.women}
-              small
-              people={women}
-              paused={!!view}
-              onFront={onFront("f")}
-              onTouch={onTouch("f")}
-              onOpen={openProof}
-            />
-            <CardRing
-              ringKey="m"
-              label={t.men}
-              small
-              dir={-1}
-              delay={180}
-              people={men}
-              paused={!!view}
-              onFront={onFront("m")}
-              onTouch={onTouch("m")}
-              onOpen={openProof}
-            />
-          </div>
         )}
 
         {/* 앞 카드 강사 소개 — 휴대폰은 내리면 화면 가득 확 커져요 (.ic-grow, globals.css) */}
@@ -578,7 +582,7 @@ function CardRing({
         </div>
       )}
 
-      <div ref={stageRef} className={cn("pcr-stage", small ? "is-sm mt-1" : "mt-8 sm:mt-12")}>
+      <div ref={stageRef} className={cn("pcr-stage", small ? "is-sm mt-1" : "mt-5 sm:mt-10")}>
         <div ref={ringRef} className="pcr-ring">
           {slots.map((p, i) => (
             <div

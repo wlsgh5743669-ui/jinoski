@@ -92,26 +92,15 @@ export function Header() {
       >
       <Container>
         <div className="flex h-[72px] items-center justify-between">
-          <div className="flex items-center gap-2.5 min-[360px]:gap-3.5">
-            <Link
-              href="/"
-              className={cn(
-                "text-[20px] font-bold tracking-tightest transition-colors",
-                scrolled ? "text-ink-900" : "text-white"
-              )}
-            >
-              JINO<span className="text-brand-500">SKI</span>
-            </Link>
-            {/* 휴대폰: 메뉴를 안 열어도 바로 언어 바꾸기 (대표 11-17) */}
-            <LanguageSwitcher
-              dark={!scrolled}
-              touch
-              className={cn(
-                "gap-0.5 rounded-full p-0.5 ring-1 lg:hidden",
-                scrolled ? "bg-snow-100 ring-snow-300" : "bg-black/25 ring-white/25 backdrop-blur-sm"
-              )}
-            />
-          </div>
+          <Link
+            href="/"
+            className={cn(
+              "text-[20px] font-bold tracking-tightest transition-colors",
+              scrolled ? "text-ink-900" : "text-white"
+            )}
+          >
+            JINO<span className="text-brand-500">SKI</span>
+          </Link>
 
           <nav className="hidden items-center gap-5 lg:flex xl:gap-8">
             {nav.map((item) =>
@@ -188,16 +177,27 @@ export function Header() {
             </Link>
           </div>
 
-          <button
-            aria-label={ui.header.menuOpenAriaLabel}
-            onClick={() => setOpen(true)}
-            className={cn(
-              "-mr-2 flex h-10 w-10 items-center justify-center rounded-full lg:hidden",
-              scrolled ? "text-ink-900" : "text-white"
-            )}
-          >
-            <Menu size={26} />
-          </button>
+          {/* 휴대폰: 메뉴를 안 열어도 바로 언어 바꾸기 (대표 11-17) · 메뉴 단추 옆으로 (대표 11-23) */}
+          <div className="flex items-center gap-1.5 min-[360px]:gap-2.5 lg:hidden">
+            <LanguageSwitcher
+              dark={!scrolled}
+              touch
+              className={cn(
+                "gap-0.5 rounded-full p-0.5 ring-1",
+                scrolled ? "bg-snow-100 ring-snow-300" : "bg-black/25 ring-white/25 backdrop-blur-sm"
+              )}
+            />
+            <button
+              aria-label={ui.header.menuOpenAriaLabel}
+              onClick={() => setOpen(true)}
+              className={cn(
+                "-mr-2 flex h-10 w-10 items-center justify-center rounded-full",
+                scrolled ? "text-ink-900" : "text-white"
+              )}
+            >
+              <Menu size={26} />
+            </button>
+          </div>
         </div>
       </Container>
     </header>

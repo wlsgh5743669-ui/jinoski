@@ -62,11 +62,15 @@ const navLinks = [
 ];
 
 const heroContent = {
-  eyebrow: "비발디파크 스키강습 · 스노보드 강습",
-  headline: ["겨울은,", "배우는 순간부터", "더 즐거워집니다."],
-  description: "지노스키(JinoSki)는 홍천 비발디파크 스키·스노보드 강습 전문 스쿨이에요.",
+  // 대표 11-23: 제목에 장소·종목, 별점·자격 강사를 버튼 위로, 버튼은 예약하기 + 가격 보기
+  eyebrow: "",
+  trustLine: "수강생 만족도 4.8 · 비발디파크 8시즌째",
+  headline: ["비발디파크", "스키·스노보드 강습"],
+  description: "1:1 또는 최대 3명까지만. 공인 자격 강사가 무전기로 바로 코칭해요.",
+  teamLabel: "공인 자격 강사 {n}명",
+  teamLink: "강사 소개 보기",
   primaryCta: { label: "예약하기", href: "/reserve" },
-  secondaryCta: { label: "레슨 보기", href: "/lessons" },
+  secondaryCta: { label: "가격 보기", href: "/pricing" },
   videoSrc: "/videos/hero-carving.mp4",
   videoSrcMobile: "/videos/hero-carving-mobile.mp4",
   posterSrc: "/images/hero-poster.jpg",
@@ -92,7 +96,7 @@ const stats = [
   {
     target: 8,
     decimals: 0,
-    suffix: "+",
+    suffix: "시즌+",
     label: "강습 경력",
     description: "비발디파크에서 8시즌 넘게",
   },

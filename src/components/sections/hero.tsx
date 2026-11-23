@@ -2,11 +2,12 @@
 
 import { useRef, useSyncExternalStore } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronRight, Star } from "lucide-react";
 import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
 import { Container } from "@/components/shared/container";
+import { INSTRUCTOR_CARDS } from "@/config/content/instructor-cards";
 
 const MOBILE_QUERY = "(max-width: 767px)";
 
@@ -68,18 +69,33 @@ export function Hero() {
         <div className="absolute inset-0 bg-hero-scrim" />
       </motion.div>
 
-      <Container className="relative z-10 pb-20 pt-40 sm:pb-24 lg:pb-28">
+      <Container className="relative z-10 pb-10 pt-32 sm:pb-24 sm:pt-40 lg:pb-28">
         <motion.div style={{ y }} className="max-w-3xl">
-          <h1 className="text-[42px] font-bold leading-[1.12] tracking-tightest text-white sm:text-[58px] lg:text-[76px]">
+          {heroContent.trustLine && (
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="mb-4 flex items-center gap-1.5 text-[14px] font-semibold text-amber-300 sm:mb-6 sm:text-[15px]"
+            >
+              <Star size={15} fill="currentColor" strokeWidth={0} aria-hidden />
+              {heroContent.trustLine}
+            </motion.p>
+          )}
+          <h1
+            className={`font-bold leading-[1.12] tracking-tightest text-white ${
+              heroContent.trustLine ? "text-[38px] sm:text-[56px] lg:text-[72px]" : "text-[42px] sm:text-[58px] lg:text-[76px]"
+            }`}
+          >
             {/* 윗줄도 h1 안에: 한국어는 「비발디파크 스키강습 · 스노보드 강습」 (대표 11-17 구글 1등 목표) */}
-            <motion.span
+            {heroContent.eyebrow && <motion.span
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               className={`mb-6 block font-semibold uppercase leading-normal text-brand-300 ${locale === "ko" ? "text-[14px] tracking-[0.04em] sm:text-[15px]" : "text-[13px] tracking-[0.25em]"}`}
             >
               {heroContent.eyebrow}
-            </motion.span>
+            </motion.span>}
             {heroContent.headline.map((line, i) => (
               <motion.span
                 key={line}
@@ -101,10 +117,48 @@ export function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-7 max-w-md text-balance text-[16px] leading-relaxed text-white/75 sm:text-[18px]"
+            className={`max-w-md text-balance text-[16px] leading-relaxed sm:text-[18px] ${heroContent.trustLine ? "mt-4 text-white/90 sm:mt-6" : "mt-7 text-white/75"}`}
           >
             {heroContent.description}
           </motion.p>
+
+          {heroContent.teamLabel && (
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.62, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-5 sm:mt-7"
+            >
+              {/* 대표 11-23: 첫 화면에 강사 얼굴 — 누르면 강사진 페이지 */}
+              <Link
+                href="/instructor"
+                className="group inline-flex items-center gap-3 rounded-full border border-white/20 bg-black/30 py-1.5 pl-1.5 pr-4 backdrop-blur-md transition-colors hover:border-white/40 hover:bg-black/40"
+              >
+                <span className="flex -space-x-2.5">
+                  {INSTRUCTOR_CARDS.people.slice(0, 6).map((p, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={p.id}
+                      src={p.image}
+                      alt=""
+                      width={34}
+                      height={34}
+                      className={`h-[34px] w-[34px] rounded-full object-cover object-top ring-2 ring-ink-900 sm:h-10 sm:w-10 ${i >= 5 ? "max-[359px]:hidden" : ""}`}
+                    />
+                  ))}
+                </span>
+                <span className="flex flex-col leading-tight">
+                  <span className="whitespace-nowrap text-[13.5px] font-semibold text-white sm:text-[14.5px]">
+                    {heroContent.teamLabel.replace("{n}", String(INSTRUCTOR_CARDS.people.length))}
+                  </span>
+                  <span className="flex items-center text-[12px] text-brand-300 sm:text-[13px]">
+                    {heroContent.teamLink}
+                    <ChevronRight size={13} className="transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </span>
+              </Link>
+            </motion.div>
+          )}
 
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -132,7 +186,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.8 }}
-        className="absolute inset-x-0 bottom-6 z-10 flex justify-center"
+        className="absolute inset-x-0 bottom-6 z-10 hidden justify-center sm:flex"
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}
