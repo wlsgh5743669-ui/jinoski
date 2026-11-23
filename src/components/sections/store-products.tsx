@@ -7,7 +7,6 @@ import { Reveal } from "@/components/shared/reveal";
 import { trackEvent } from "@/components/shared/analytics";
 import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
-import { useEarlyBird } from "@/lib/use-early-bird";
 import { storeProducts } from "@/config/store";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +18,6 @@ const STEPS = [
 
 export function StoreProducts() {
   const { contact } = useContent();
-  const eb = useEarlyBird();
 
   return (
     <section className="bg-ice-200 py-14 sm:py-20">
@@ -41,8 +39,8 @@ export function StoreProducts() {
 
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {storeProducts.map((p, i) => {
-              const badge = eb && p.earlyBird ? p.earlyBird.badge : p.badge;
-              const price = eb && p.earlyBird ? p.earlyBird.price : p.price;
+              const badge = p.badge;
+              const price = p.price;
               const href = p.url || contact.smartStore;
               return (
                 <Reveal key={p.id} delay={(i % 4) * 0.05} className="h-full">
@@ -59,11 +57,7 @@ export function StoreProducts() {
                         <span
                           className={cn(
                             "absolute right-3 top-3 rounded-full px-3 py-1 text-[12px] font-bold",
-                            p.comingSoon
-                              ? "bg-ink-900/80 text-white"
-                              : eb && p.earlyBird
-                                ? "bg-red-500 text-white"
-                                : "bg-white text-ink-900 shadow"
+                            p.comingSoon ? "bg-ink-900/80 text-white" : "bg-white text-ink-900 shadow"
                           )}
                         >
                           {badge}
@@ -85,11 +79,7 @@ export function StoreProducts() {
                         ))}
                       </ul>
                       <div className="mt-auto pt-4">
-                        {eb && p.earlyBird && (
-                          <p className="text-[13px] text-snow-500 line-through">{p.price}</p>
-                        )}
                         <p className={cn("text-[19px] font-bold", p.comingSoon ? "text-snow-500" : "text-ink-900")}>
-                          {eb && p.earlyBird && <span className="mr-1.5 text-red-500">10%</span>}
                           {price}
                         </p>
                         {p.priceNote && <p className="text-[11.5px] text-snow-500">{p.priceNote}</p>}

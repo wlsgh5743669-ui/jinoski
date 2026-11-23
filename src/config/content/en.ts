@@ -635,11 +635,10 @@ const seasonProgram: SiteContent["seasonProgram"] = {
   title: "26/27 Season 8-Lesson Package",
   subtitle: "For students who want to keep learning all season · book any time slot you like",
   passes: ["2 hours × 8 lessons"],
-  badge: "Early Bird 10% OFF",
   priceRows: [
-    { people: "1:1", original: "1,120,000KRW", price: "1,008,000KRW" },
-    { people: "1:2", original: "1,600,000KRW", price: "1,440,000KRW" },
-    { people: "1:3", original: "1,920,000KRW", price: "1,728,000KRW" },
+    { people: "1:1", price: "1,120,000KRW" },
+    { people: "1:2", price: "1,600,000KRW" },
+    { people: "1:3", price: "1,920,000KRW" },
   ],
   benefits: [
     {
@@ -673,8 +672,7 @@ const seasonProgram: SiteContent["seasonProgram"] = {
         "Consistent, repeated practice — not just one or two tries — builds confident riding and stable skiing. By the end of the season you'll notice a clear difference in yourself.",
     },
   ],
-  priceNote: "Early-bird price (10% off, book by Nov 20). Lesson permit fee is separate. Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
-  priceNoteRegular: "Lesson permit fee is separate. Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
+  priceNote: "Lesson permit fee is separate. Price depends on group size (1:1 / 1:2 / 1:3); call or message us on KakaoTalk to arrange your schedule.",
   phoneButton: "Call Us",
   kakaoButton: "KakaoTalk",
 };
@@ -1234,10 +1232,6 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     ageGroupLabel: "Student age group",
   },
   priceSummary: {
-    earlyBird: "Early-bird discount",
-    earlyBirdDetail: "10% off the lesson fee · book by Nov 20",
-    earlyBirdButton: "Get the early-bird 10% discount",
-    earlyBirdApplied: "Early-bird 10% discount applied",
     lessonFee: "Lesson fee",
     priceOnRequest: "Contact us",
     liftPassSeparateSuffix: "(separate)",

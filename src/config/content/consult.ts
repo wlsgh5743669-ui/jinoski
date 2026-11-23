@@ -9,7 +9,7 @@ export const consultText = {
       body: "가장 빠른 답변. 일정·사진·영상도 편하게 보내실 수 있어요.",
       button: "카톡으로 상담하기",
       addButton: "채널 추가하고 소식 받기",
-      addHint: "얼리버드·이벤트 소식을 카톡으로 먼저 받아보세요.",
+      addHint: "이벤트·새 소식을 카톡으로 먼저 받아보세요.",
     },
     phone: {
       title: "유선 상담",

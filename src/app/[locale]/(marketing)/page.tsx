@@ -11,7 +11,6 @@ import { Directions } from "@/components/sections/directions";
 import { Reservation } from "@/components/sections/reservation";
 import { YoutubeVideos } from "@/components/sections/youtube-videos";
 import { ReviewEventBanner } from "@/components/sections/review-event";
-import { SeasonPopup } from "@/components/sections/season-popup";
 import { Consult } from "@/components/sections/consult";
 import { QuoteBanner } from "@/components/sections/quote-banner";
 import { QuickLinks } from "@/components/sections/quick-links";
@@ -20,7 +19,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   return (
     <>
-      <SeasonPopup />
       <Hero />
       <VipStrip />
       <Stats />

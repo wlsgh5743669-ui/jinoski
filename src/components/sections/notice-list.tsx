@@ -79,7 +79,7 @@ export function NoticeList() {
 export function NoticeStrip({ hideLink }: { hideLink?: string } = {}) {
   const l = useL();
   const now = useToday();
-  // 정적 HTML도 빌드한 날 기준으로 끝난 공지는 빼요 (11-22: 끝난 얼리버드 공지가 처음 화면에 보였어요)
+  // 정적 HTML도 빌드한 날 기준으로 끝난 공지는 빼요 (11-22: 끝난 할인 공지가 처음 화면에 보였어요)
   const n: Notice | undefined = NOTICES.find((x) => isNoticeActive(x, now ?? undefined));
   if (!n || (hideLink && n.link?.href === hideLink)) return null;
   return (

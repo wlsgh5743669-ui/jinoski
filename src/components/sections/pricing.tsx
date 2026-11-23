@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { EARLY_BIRD, isEarlyBirdActive } from "@/lib/pricing";
+import { useState } from "react";
 import { Clock, Users, ChevronDown, Check, Repeat, Phone, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useContent } from "@/lib/use-content";
@@ -77,15 +76,10 @@ function FullCareCard({
   activeTab: "one-day" | "night";
   onTabChange: (tab: "one-day" | "night") => void;
 }) {
-  const { groupSizeFullCareLabels, ui, programLabels, bookingWizard, seasonProgram } = useContent();
+  const { groupSizeFullCareLabels, ui, programLabels, bookingWizard } = useContent();
   const usd = useUsd();
   const [open, setOpen] = useState(false);
   const program = programs.find((p) => p.slug === activeTab) ?? programs[0];
-  const [ebOn, setEbOn] = useState(false);
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setEbOn(isEarlyBirdActive() && (EARLY_BIRD.programs as string[]).includes(activeTab));
-  }, [activeTab]);
 
   return (
     <motion.div
@@ -142,8 +136,8 @@ function FullCareCard({
           {program.rows.map((row) => {
             const peopleCount = parseInt(row.people, 10) || 1;
             const base = Number(row.price.replace(/[^0-9]/g, ""));
-            const shown = ebOn ? base - Math.round((base * EARLY_BIRD.rate) / 1000) * 1000 : base;
-            const shownStr = row.price.replace(/[\d,]+/, shown.toLocaleString("en-US"));
+            const shown = base;
+            const shownStr = row.price;
             const perPersonPrice = Math.round(shown / peopleCount / 1000) * 1000;
             return (
               <div
@@ -153,10 +147,7 @@ function FullCareCard({
                 <span className="text-[13px] font-medium text-white/60">
                   {groupSizeFullCareLabels[row.people as FullCareGroupSizeCode]}
                 </span>
-                {ebOn && (
-                  <span className="whitespace-nowrap text-[11.5px] text-white/40 line-through">{row.price}</span>
-                )}
-                <span className={cn("whitespace-nowrap text-[13px] font-bold tabular-nums sm:text-[18px]", ebOn && "text-[#FF8A8A]")}>
+                <span className="whitespace-nowrap text-[13px] font-bold tabular-nums sm:text-[18px]">
                   {shownStr}
                 </span>
                 {usd(shownStr) !== shownStr && (
@@ -173,9 +164,6 @@ function FullCareCard({
         </div>
       )}
 
-      {ebOn && (
-        <p className="text-[12.5px] font-semibold text-[#FF8A8A]">🎁 {seasonProgram.badge ?? "얼리버드 10%"}</p>
-      )}
       {program.priceNote && (
         <p className="text-[12.5px] text-white/45">※ {program.priceNote}</p>
       )}
@@ -259,12 +247,6 @@ function FullCareCard({
 function SeasonProgramCard() {
   const usd = useUsd();
   const { seasonProgram, contact } = useContent();
-  // 얼리버드 기간(11/20까지)이 지나면 할인 표시를 숨기고 정상가로 보여줌
-  const [eb, setEb] = useState(() => isEarlyBirdActive());
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setEb(isEarlyBirdActive());
-  }, []);
   const [openBenefit, setOpenBenefit] = useState<number | null>(null);
 
   return (
@@ -300,23 +282,11 @@ function SeasonProgramCard() {
 
       {seasonProgram.priceRows && (
         <div className="rounded-2xl bg-snow-100/60 p-4">
-          {eb && seasonProgram.badge && (
-            <span className="mb-3 inline-block rounded-full bg-red-500 px-2.5 py-1 text-[12px] font-bold text-white">
-              {seasonProgram.badge}
-            </span>
-          )}
           <ul className="flex flex-col gap-2">
             {seasonProgram.priceRows.map((row) => (
               <li key={row.people} className="flex items-baseline justify-between gap-3">
                 <span className="text-[15px] font-bold text-ink-900">{row.people}</span>
-                {eb ? (
-                  <span className="flex items-baseline gap-2">
-                    <span className="text-[13px] text-snow-500 line-through">{row.original}</span>
-                    <span className="text-[17px] font-bold text-red-500">{usd(row.price)}</span>
-                  </span>
-                ) : (
-                  <span className="text-[17px] font-bold text-ink-900">{usd(row.original)}</span>
-                )}
+                <span className="text-[17px] font-bold text-ink-900">{usd(row.price)}</span>
               </li>
             ))}
           </ul>
@@ -365,7 +335,7 @@ function SeasonProgramCard() {
       </div>
 
       <p className="text-[13px] leading-relaxed text-snow-500">
-        ※ {eb ? seasonProgram.priceNote : seasonProgram.priceNoteRegular ?? seasonProgram.priceNote}
+        ※ {seasonProgram.priceNote}
       </p>
 
       <div className="mt-auto flex flex-col gap-3 sm:flex-row">
@@ -412,12 +382,6 @@ export function Pricing() {
   const activeLessonPricing = lessonPricing.find(
     (g) => g.program === activeDuration
   );
-  const [ebOn, setEbOn] = useState(false);
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setEbOn(isEarlyBirdActive());
-  }, []);
-  const ebFor = (d: string) => ebOn && (EARLY_BIRD.programs as string[]).includes(d);
   const money = (sample: string, n: number) => sample.replace(/[\d,]+/, n.toLocaleString("en-US"));
   const passInfo = content.liftPassPricing.find((p) => p.program === activeDuration);
 
@@ -467,17 +431,13 @@ export function Pricing() {
               <InfoCard
                 icon={Users}
                 title={content.programLabels[activeDuration]}
-                subtitle={ebFor(activeDuration) ? `${ui.pricing.perPersonPricingSubtitle} · 🎁 ${content.seasonProgram.badge ?? ""}` : ui.pricing.perPersonPricingSubtitle}
+                subtitle={ui.pricing.perPersonPricingSubtitle}
                 rows={activeLessonPricing.rows.map((r) => {
-                  const base = Number(r.price.replace(/[^0-9]/g, ""));
-                  const eb = ebFor(activeDuration);
-                  const price = eb ? base - Math.round((base * EARLY_BIRD.rate) / 1000) * 1000 : base;
+                  const price = Number(r.price.replace(/[^0-9]/g, ""));
                   const n = parseInt(r.people.split(":")[1] ?? "1", 10) || 1;
                   return {
                     label: r.people,
                     value: usd(money(r.price, price)),
-                    strike: eb ? r.price : undefined,
-                    hot: eb,
                     sub: n > 1 ? `${ui.pricing.perPersonPriceLabel} ${money(r.price, Math.round(price / n / 1000) * 1000)}` : undefined,
                   };
                 })}

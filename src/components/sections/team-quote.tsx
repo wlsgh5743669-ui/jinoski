@@ -26,7 +26,6 @@ import { asQLocale, trDeep, trQuote, useQuoteTranslate, type QLocale } from "@/l
 import { Container } from "@/components/shared/container";
 import { trackEvent } from "@/components/shared/analytics";
 import { useContent } from "@/lib/use-content";
-import { EARLY_BIRD, isEarlyBirdActive } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { DesignatedBanner, DesignatedPick, designatedName, designatedOf } from "@/components/sections/designated-pick";
 import { HOLIDAYS, LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, SEASON_OPEN_DATE, type TicketHours } from "@/config/lift-rental";
@@ -361,13 +360,6 @@ export function TeamQuote() {
   const sameN = dayPlans.every((p) => p.n === dayPlans[0]?.n);
   const dayText = sameN && dayPlans[0]?.n ? `하루 ${dayPlans[0].n}번` : "날짜별 일정";
   const sessions = schedule.reduce((a, d) => a + d.slots.length, 0);
-  const ebFor = (l: Len) => isEarlyBirdActive() && (EARLY_BIRD.programs as string[]).includes(l === "fc" ? "one-day" : l === "nc" ? "night" : l);
-  /** 얼리버드 할인액 (풀케어는 반나절 단위라 500원 단위) */
-  const ebCut = (l: Len, lesson: number) => {
-    const unit = isFC(l) ? 500 : 1000;
-    return Math.round((lesson * EARLY_BIRD.rate) / unit) * unit;
-  };
-  const eb = schedule.some((d) => d.slots.length && ebFor(d.len));
   void maxPerDay;
   /** 그날 수업에 맞는 리프트 추천: 2번 → 7시간, 2시간 1번 → 3시간, 3·4시간 1번 → 5시간, 수업 없는 날 → 안 씀 */
   const autoTicket = (i: number): TicketHours | 0 => {
@@ -388,12 +380,8 @@ export function TeamQuote() {
   }
   const lessonDays = schedule.filter((d) => d.slots.length > 0).length;
 
-  /** 반(강사 1명) 1회 비용 = 레슨료(얼리버드는 2·3시간 강습료만 10%) + 패찰 × 인원 */
-  const groupCost = (size: number, l: Len = len) => {
-    const lesson = prices.table[l][size - 1] ?? 0;
-    const discount = ebFor(l) ? ebCut(l, lesson) : 0;
-    return lesson - discount + prices.pass[l] * size;
-  };
+  /** 반(강사 1명) 1회 비용 = 레슨료 + 패찰 × 인원 */
+  const groupCost = (size: number, l: Len = len) => (prices.table[l][size - 1] ?? 0) + prices.pass[l] * size;
   /** 반 하나의 전체 강습료 (날짜마다 수업 시간이 달라도 합산) */
   const groupTotal = (size: number) => schedule.reduce((a, d) => a + groupCost(size, d.len) * d.slots.length, 0);
   // 스키·보드는 같은 반에서 못 배워요 → 스키 반들 먼저, 보드 반들 나중에
@@ -428,16 +416,6 @@ export function TeamQuote() {
     lessonPP: Math.round(groupTotal(size) / size / 100) * 100,
   }));
   const lessonTotal = groups.reduce((a, g) => a + g.lessonPP * g.size, 0);
-  // 얼리버드 10%는 강습료에만 (패찰·리프트·장비·헬멧 제외)
-  const ebSaved = schedule.reduce(
-    (a, d) =>
-      a +
-      (ebFor(d.len)
-        ? usedSplit.reduce((b, size) => b + ebCut(d.len, prices.table[d.len][size - 1] ?? 0), 0) *
-          d.slots.length
-        : 0),
-    0
-  );
   const lessonAvgPP = people ? Math.round(lessonTotal / people / 100) * 100 : 0;
   // 풀케어는 오전·오후 2번으로 나눠 계산하지만 손님께는 하루 금액으로 보여 줘요 (대표 11-24 「1:1 풀케어는 나누는 금액 ;;」)
   const allFC = lessonDays > 0 && schedule.every((d) => !d.slots.length || isFC(d.len));
@@ -673,7 +651,7 @@ export function TeamQuote() {
       ? ["■ 날짜별 합계", ...dayTotals.map((d) => `  ${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""}: ${won(d.total)}`)]
       : []),
     ...(des ? [`■ 지정강사 ${des.name} (${des.tier}) ${won(des.fee)} · 한 팀 시즌 1번 (이번 시즌 이미 냈으면 빠져요)`] : []),
-    `예상 합계: ${won(grand)}${ebSaved ? ` (얼리버드 강습료 10% 할인 -${won(ebSaved)} 반영)` : ""}${des ? " · 지정강사 포함" : ""}`,
+    `예상 합계: ${won(grand)}${des ? " · 지정강사 포함" : ""}`,
     ...(fcNote ? [`※ ${fcNote}`] : []),
     "※ 의류는 제휴 렌탈샵 안내 드립니다.^^ · 강사 일정 확인 후 확정",
   ].join("\n");
@@ -754,7 +732,7 @@ export function TeamQuote() {
       total: `${perLabel} 약 ${won(perHead1)}`,
       totalSub: only
         ? `${picked.map((x) => x.label).join(", ")} · 함께 배우는 ${people}명 중 ${picked.length}명 · 반 ${usedSplit.join("+")}`
-        : `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}${ebSaved ? " · 얼리버드 강습료 10% 반영" : ""}`,
+        : `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}`,
       grand: won(only ? pickedSum : grand),
       grandLabel: only ? `합계 (${picked.length}명)` : `총 합계 (${adults + kids}명)`,
       // 금액·시간이 똑같은 사람(예: 아이 둘)은 표 하나로 묶어요
@@ -789,9 +767,7 @@ export function TeamQuote() {
       notes: [
         // 부분 견적서는 고른 사람 것만 (반 전체 인원·할인 합계는 빼요)
         ...(sportSummary && !only ? [`종목·실력: ${sportSummary}`] : []),
-        ebSaved
-          ? `얼리버드 10%는 강습료에만 적용${only ? " (위 금액에 반영)" : ` (-${won(ebSaved)})`} · 리프트·장비 40% 할인 · 헬멧 할인 제외`
-          : "매 수업 사진·영상 무료 · 리프트·장비 40% 할인 · 헬멧 할인 제외",
+        "매 수업 사진·영상 무료 · 리프트·장비 40% 할인 · 헬멧 할인 제외",
         ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
         ...(fcNote ? [fcNote] : []),
         "의류는 제휴 렌탈샵 안내 드립니다.^^",
@@ -896,8 +872,6 @@ export function TeamQuote() {
             items.push({ label: `${LEN_LABEL[d.len]} 강습 1:${size}${cnt > 1 ? ` · ${cnt}반` : ""}${n > 1 ? ` · ${n}회` : ""}`, qty: cnt * n, unit: base, amount: base * cnt * n });
         }
         if (!fc && prices.pass[d.len]) items.push({ label: `패찰 ${LEN_LABEL[d.len]} (1인 1회)`, qty: people * n, unit: prices.pass[d.len], amount: prices.pass[d.len] * people * n });
-        const ebDay = ebFor(d.len) ? usedSplit.reduce((a, size) => a + ebCut(d.len, prices.table[d.len][size - 1] ?? 0), 0) * n : 0;
-        if (ebDay) items.push({ label: "얼리버드 10% 할인 (강습료만)", qty: 0, unit: 0, amount: -ebDay });
       }
       const t = ticketOf(i);
       for (const x of extras) {
@@ -926,11 +900,11 @@ export function TeamQuote() {
       sub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}${sportSummary ? ` · ${sportSummary}` : ""}`,
       days,
       persons: personRows.map((x) => ({ label: x.label, group: x.group, desc: x.desc, lesson: x.lesson, lift: x.lift, helm: x.helm, pay: x.pay })),
-      totals: { lesson: lessonExact, lift: extrasTotal, helmet: helmetTotal, eb: ebSaved, ...(desFee ? { designated: desFee } : {}), grand },
+      totals: { lesson: lessonExact, lift: extrasTotal, helmet: helmetTotal, ...(desFee ? { designated: desFee } : {}), grand },
       ...(des ? { designated: { id: des.id, name: des.name, tier: des.tier, fee: des.fee } } : {}),
       notes: [
         ...(fcNote ? [fcNote] : []),
-        ebSaved ? `얼리버드 10%는 강습료에만 적용 (-${won(ebSaved)}) · 리프트·장비 40% 할인 · 헬멧 할인 제외` : "리프트·장비 40% 할인 · 헬멧 할인 제외",
+        "리프트·장비 40% 할인 · 헬멧 할인 제외",
         ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
         ...(des ? [`${des.text} — 합계에 포함 (이번 시즌 이미 냈으면 그 줄 빼기)`] : []),
         "매 수업 사진·영상 무료 · 의류는 제휴 렌탈샵 안내 드립니다.^^",
@@ -1311,7 +1285,6 @@ export function TeamQuote() {
                             {people > 0 && (
                               <p className="mt-0.5 font-bold">
                                 이날 {usedSplit.length > 1 ? `${usedSplit.length}팀 ` : ""}합계 {won(usedSplit.reduce((a, size) => a + groupCost(size, p.len as Len) * 2, 0))}
-                                {ebFor(p.len as Len) ? " (얼리버드 10% 반영)" : ""}
                               </p>
                             )}
                           </div>
@@ -1613,17 +1586,7 @@ export function TeamQuote() {
                   <p className="whitespace-nowrap text-[30px] font-bold tabular-nums text-brand-300 sm:text-[34px]">약 {won(perHead1)}</p>
                   <p className="text-[12.5px] text-white/50">패찰 포함 · 매 수업 사진·영상 무료</p>
                   {fcNote && <p className="mt-1.5 rounded-lg bg-rose-500/20 px-2.5 py-1.5 text-[12.5px] font-semibold text-rose-200">🏆 {fcNote}</p>}
-                  {eb && ebSaved > 0 && (
-                    <p className="mt-2 inline-block rounded-full bg-red-500 px-3 py-1 text-[12.5px] font-bold text-white">
-                      🎁 얼리버드 강습료 10% 할인 · {won(ebSaved)} 아꼈어요
-                    </p>
-                  )}
                 </div>
-                {eb && (
-                  <p className="mt-2 text-[12px] text-snow-500">
-                    얼리버드 할인({EARLY_BIRD.endDate.slice(5).replace("-", "/")}까지 예약)은 2·3시간 강습료·풀케어(원데이·나이트)에만 적용돼요 · 패찰·리프트·장비·헬멧은 제외
-                  </p>
-                )}
 
                 <h3 className="mt-6 text-[16px] font-bold text-ink-900">개인별 금액 ({sessions}회 기준)</h3>
                 <ul className="mt-2 flex flex-col gap-2">
@@ -1764,7 +1727,7 @@ export function TeamQuote() {
                     {totalTab < 0 && (
                       <div className="mt-3">
                         <p className="text-[13px] text-snow-600">
-                          {totalTab === -1 ? "강습료만 (패찰 포함 · 얼리버드 반영)" : "리프트+장비 (비발디파크 정가에서 40% 할인 + 헬멧)"}
+                          {totalTab === -1 ? "강습료만 (패찰 포함)" : "리프트+장비 (비발디파크 정가에서 40% 할인 + 헬멧)"}
                         </p>
                         <p className="mt-2 text-[12px] font-semibold text-snow-500">날짜별</p>
                         <div className="mt-1 flex flex-col gap-1 text-[14px]">
@@ -2295,7 +2258,6 @@ function PriceGuide({ prices, people, rec: recIn }: { prices: { table: Record<Le
   const rec = recIn ?? (people > 0 ? even(people, Math.ceil(people / 3)) : []);
   const hotSet = new Set(rec);
   const TEAM_KO = ["", "한", "두", "세", "네", "다섯"];
-  const eb = isEarlyBirdActive();
   return (
     <div className="mt-2 flex flex-col gap-3 rounded-2xl bg-snow-100/60 p-4 ring-1 ring-snow-300/60">
       <div>
@@ -2368,7 +2330,6 @@ function PriceGuide({ prices, people, rec: recIn }: { prices: { table: Record<Le
         </div>
         <p className="mt-2 text-[12.5px] leading-relaxed text-snow-600">
           + 패찰(강습 허가권) 1인 {lens.map((l) => `${LEN_LABEL[l]} ${won(prices.pass[l])}`).join(" · ")} — 견적에 자동으로 포함돼요 · 7시간 풀케어(원데이·나이트)는 식사·사진·영상·패찰 포함
-          {eb && <span className="block font-semibold text-brand-600">얼리버드: 2·3시간 강습료·풀케어 {Math.round(EARLY_BIRD.rate * 100)}% 할인 적용 중</span>}
         </p>
       </div>
       <div className="border-t border-snow-300/60 pt-3">

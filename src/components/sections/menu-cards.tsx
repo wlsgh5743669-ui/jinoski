@@ -1,12 +1,10 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import Image from "next/image";
 import { useLocale } from "next-intl";
 import { ArrowUpRight, Star } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useContent } from "@/lib/use-content";
-import { isEarlyBirdActive } from "@/lib/pricing";
 import { Container } from "@/components/shared/container";
 import { cn } from "@/lib/utils";
 
@@ -36,12 +34,9 @@ const REVIEWS_DETAIL: Record<string, string> = {
   zh: "学员评价 · 参加评价活动（赠送咖啡或照片冲印）后留下",
 };
 
-const noSubscribe = () => () => {};
-
 export function MenuCards() {
   const { pageMeta, stats } = useContent();
   const locale = useLocale();
-  const earlyBird = useSyncExternalStore(noSubscribe, isEarlyBirdActive, () => isEarlyBirdActive());
   const rating = stats.find((s) => s.suffix === "★");
 
   return (
@@ -81,7 +76,7 @@ export function MenuCards() {
                   <div className="absolute -right-[24%] top-[6%] -z-10 w-[80%] rotate-[8deg] overflow-hidden rounded-xl shadow-[0_20px_40px_-12px_rgba(0,0,0,0.45)] ring-1 ring-white/30 transition-transform duration-500 group-hover:rotate-[4deg]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={earlyBird ? "/images/guide/pricing-1.jpg" : "/images/guide/pricing-1-regular.jpg"}
+                      src="/images/guide/pricing-1-regular.jpg"
                       alt=""
                       loading="lazy"
                       width={1080}

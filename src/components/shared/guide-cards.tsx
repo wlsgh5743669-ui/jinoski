@@ -1,14 +1,10 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useRef, useState } from "react";
 import { trackEvent } from "@/components/shared/analytics";
-import { isEarlyBirdActive } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
-/** regular: 얼리버드가 끝나면(11/21부터, 한국 시간) 대신 보여줄 정가판 이미지 */
-export type GuideCard = { src: string; alt: string; regular?: string };
-
-const noSubscribe = () => () => {};
+export type GuideCard = { src: string; alt: string };
 
 /**
  * 안내 이미지 카드 묶음 (1080×1350 세로 카드 3장 등).
@@ -18,7 +14,7 @@ const noSubscribe = () => () => {};
  * 누르면 화면 가득 크게 보고 옆으로 밀거나 ‹ › 로 넘겨요.
  */
 export function GuideCards({
-  cards: input,
+  cards,
   event,
   variant = "swipe",
   className,
@@ -28,9 +24,6 @@ export function GuideCards({
   variant?: "swipe" | "responsive" | "thumbs";
   className?: string;
 }) {
-  // 빌드된 HTML은 얼리버드판, 브라우저에선 오늘 날짜(한국 시간)로 판단
-  const earlyBird = useSyncExternalStore(noSubscribe, isEarlyBirdActive, () => true);
-  const cards = earlyBird ? input : input.map((c) => (c.regular ? { ...c, src: c.regular } : c));
   const [open, setOpen] = useState<number | null>(null);
   // 크게 보기에서 손가락으로 옆으로 밀어 넘기기
   const [drag, setDrag] = useState(0);
@@ -204,7 +197,7 @@ export function GuideCards({
 }
 
 // alt = 카드에 적힌 핵심 글(가격·시간·규정)을 그대로 — 검색엔진·AI·스크린리더가 이미지 속 내용을 읽을 수 있게 (2026-11-08)
-// 카드 문구를 바꾸면 alt도 같이 바꿔 주세요. 얼리버드처럼 기간이 끝나는 문구는 넣지 않아요.
+// 카드 문구를 바꾸면 alt도 같이 바꿔 주세요. 기간이 끝나는 할인 문구는 넣지 않아요.
 export const SEASON_LINK_CARDS: GuideCard[] = [
   { src: "/images/season-link/1.jpg", alt: "지노스키 시즌 강습 링크 화면 — 링크 하나로 다음 강습 D-day, 남은 횟수, 담당 강사, 날씨·준비물을 한눈에 확인" },
   { src: "/images/season-link/2.jpg", alt: "지노스키 시즌 강습 날짜 고르기 — 달력에서 직접 날짜를 고르면 바로 확정, 강습 2일 전까지 무료 변경 3회, 전날 문자 안내" },
@@ -212,7 +205,7 @@ export const SEASON_LINK_CARDS: GuideCard[] = [
 ];
 
 export const DAY_LESSON_CARDS: GuideCard[] = [
-  { src: "/images/guide/day-1.jpg", regular: "/images/guide/day-1-regular.jpg", alt: "지노스키 하루 강습 요금표(강사 1명 기준) — 2시간 1:1 14만원·1:2 20만원·1:3 24만원, 3시간 21만·30만·36만원, 4시간 28만·40만·48만원, 7시간 풀케어 55만·70만·90만원(패찰·식사 포함). 패찰 1인 2시간 25,000원·3시간 35,000원·4시간 50,000원 별도. 리프트권·장비 정가 40% 할인, 매 수업 사진·영상 무료" },
+  { src: "/images/guide/day-1-regular.jpg", alt: "지노스키 하루 강습 요금표(강사 1명 기준) — 2시간 1:1 14만원·1:2 20만원·1:3 24만원, 3시간 21만·30만·36만원, 4시간 28만·40만·48만원, 7시간 풀케어 55만·70만·90만원(패찰·식사 포함). 패찰 1인 2시간 25,000원·3시간 35,000원·4시간 50,000원 별도. 리프트권·장비 정가 40% 할인, 매 수업 사진·영상 무료" },
   { src: "/images/guide/day-2.jpg", alt: "비발디파크 강습 시간표 — 2시간: 1교시 09:00~11:00, 2교시 11:00~13:00, 3교시 13:20~15:20, 4교시 15:30~17:30, 5교시(야간) 19:00~21:00. 3·4시간: 오전 09:00, 오후 13:20, 야간 19:00 시작. 원데이 풀케어 08:40~16:30, 나이트 풀케어 13:30~22:10" },
   { src: "/images/guide/day-3.jpg", alt: "지노스키 예약 순서 — 홈페이지에서 날짜·프로그램·시간·인원·종목·실력 선택, 강사 일정 확인 후 확정 연락, 확정 후 전액 선결제(강습 날 현장에서 낼 돈 없음), 시계탑 아래 매표소 A 문 안 Good & Goods(굿앤굿스) 앞 집합. 환불 3일 전 100%·1~2일 전 50%·당일 불가, 2일 전까지 1회 무료 변경" },
 ];
@@ -233,7 +226,7 @@ export const STAY_CARDS: GuideCard[] = [
 ];
 
 export const PRICING_CARDS: GuideCard[] = [
-  { src: "/images/guide/pricing-1.jpg", regular: "/images/guide/pricing-1-regular.jpg", alt: "지노스키 시간제 강습 요금표 — 2시간 1:1 14만원·1:2 20만원·1:3 24만원, 3시간 21만·30만·36만원, 4시간 28만·40만·48만원, 7시간 풀케어 55만·70만·90만원(패찰·식사 포함). 패찰 별도. 시즌 8회 패키지(2시간×8회) 1:1 112만원·1:2 160만원·1:3 192만원" },
+  { src: "/images/guide/pricing-1-regular.jpg", alt: "지노스키 시간제 강습 요금표 — 2시간 1:1 14만원·1:2 20만원·1:3 24만원, 3시간 21만·30만·36만원, 4시간 28만·40만·48만원, 7시간 풀케어 55만·70만·90만원(패찰·식사 포함). 패찰 별도. 시즌 8회 패키지(2시간×8회) 1:1 112만원·1:2 160만원·1:3 192만원" },
   { src: "/images/guide/pricing-2.jpg", alt: "비발디파크 강습 시간표 — 2시간 1교시 09:00부터 5교시(야간) 19:00~21:00까지, 3·4시간은 오전 09:00·오후 13:20·야간 19:00 시작, 원데이 풀케어 08:40~16:30, 나이트 풀케어 13:30~22:10(정설 17:30~19:00)" },
   { src: "/images/guide/pricing-3.jpg", alt: "비발디파크 리프트권·장비 렌탈 40% 할인가 — 리프트 3시간 대인 주중 39,600원·주말 49,200원, 5시간 45,000·54,600원, 7시간 49,800·59,400원. 리프트+장비 3시간 대인 주중 57,600원·주말 72,600원. 소인은 13세 이하" },
   { src: "/images/guide/pricing-4.jpg", alt: "지노스키 결제 방법 — 강사 일정 확인 후 확정 안내, 전액 입금으로 예약 확정(선결제), 강습 날 현장에서 낼 돈 없음. 계좌이체 또는 스마트스토어 네이버페이·카드. 환불 3일 전 100%·1~2일 전 50%·당일 불가" },

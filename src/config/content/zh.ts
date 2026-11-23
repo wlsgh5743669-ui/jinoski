@@ -596,11 +596,10 @@ const seasonProgram: SiteContent["seasonProgram"] = {
   title: "26/27 季节课程 8次套餐",
   subtitle: "适合希望整个雪季持续学习的学员 · 可自由选择时间预约",
   passes: ["2小时 × 8次课程"],
-  badge: "早鸟优惠 10%",
   priceRows: [
-    { people: "1:1", original: "1,120,000韩元", price: "1,008,000韩元" },
-    { people: "1:2", original: "1,600,000韩元", price: "1,440,000韩元" },
-    { people: "1:3", original: "1,920,000韩元", price: "1,728,000韩元" },
+    { people: "1:1", price: "1,120,000韩元" },
+    { people: "1:2", price: "1,600,000韩元" },
+    { people: "1:3", price: "1,920,000韩元" },
   ],
   benefits: [
     {
@@ -634,8 +633,7 @@ const seasonProgram: SiteContent["seasonProgram"] = {
         "并非一两次体验，而是通过持续反复的练习，完成自信的滑行与稳定的滑雪。季节结束时，您会明显感受到与之前不同的自己。",
     },
   ],
-  priceNote: "早鸟10%优惠价（11月20日前预约）。教学许可证（挂牌）费用另计。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
-  priceNoteRegular: "教学许可证（挂牌）费用另计。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
+  priceNote: "教学许可证（挂牌）费用另计。价格根据人数（1:1 / 1:2 / 1:3）有所不同，日程请通过电话或KakaoTalk咨询。",
   phoneButton: "电话咨询",
   kakaoButton: "KakaoTalk咨询",
 };
@@ -1194,10 +1192,6 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     ageGroupLabel: "学员年龄段",
   },
   priceSummary: {
-    earlyBird: "早鸟优惠",
-    earlyBirdDetail: "课程费9折 · 11月20日前预约",
-    earlyBirdButton: "领取早鸟9折优惠",
-    earlyBirdApplied: "已享早鸟9折优惠",
     lessonFee: "课程费用",
     priceOnRequest: "另行咨询",
     liftPassSeparateSuffix: "（另计）",

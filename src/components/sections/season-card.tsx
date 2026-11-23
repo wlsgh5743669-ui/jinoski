@@ -8,18 +8,17 @@ import { trackEvent } from "@/components/shared/analytics";
 import { ConsentBox, marketingTag } from "@/components/shared/consent-box";
 import { attributionText } from "@/components/shared/attribution";
 import { cn } from "@/lib/utils";
-import { useEarlyBird } from "@/lib/use-early-bird";
 import { GuideCards, SEASON_LINK_CARDS } from "@/components/shared/guide-cards";
 
 type Hrs = "2h" | "3h";
 const PASS: Record<Hrs, number> = { "2h": 25000, "3h": 35000 };
 const won = (n: number) => `${n.toLocaleString("ko-KR")}원`;
-/** 8회 가격 = 레슨 1회 가격 × 8 (얼리버드 기간엔 10% 할인) */
-function seasonRows(lessonPricing: { program: string; rows: { people: string; price: string }[] }[], h: Hrs, eb: boolean) {
-  return (lessonPricing.find((g) => g.program === h)?.rows ?? []).map((r) => {
-    const full = Number(r.price.replace(/[^0-9]/g, "")) * 8;
-    return { people: r.people, full, price: eb ? Math.round((full * 0.9) / 1000) * 1000 : full, eb };
-  });
+/** 8회 가격 = 레슨 1회 가격 × 8 */
+function seasonRows(lessonPricing: { program: string; rows: { people: string; price: string }[] }[], h: Hrs) {
+  return (lessonPricing.find((g) => g.program === h)?.rows ?? []).map((r) => ({
+    people: r.people,
+    price: Number(r.price.replace(/[^0-9]/g, "")) * 8,
+  }));
 }
 
 const STORE_URL ="https://smartstore.naver.com/jinoski/products/11057867556";
@@ -29,8 +28,7 @@ const NOTIFY_URL = process.env.NEXT_PUBLIC_KAKAO_NOTIFY_URL || "https://jinoski-
 /** 예약하기 첫 화면의 작은 카드 → 시즌 강습 화면으로 */
 export function SeasonCard() {
   const { lessonPricing } = useContent();
-  const eb = useEarlyBird();
-  const r0 = seasonRows(lessonPricing, "2h", eb)[0];
+  const r0 = seasonRows(lessonPricing, "2h")[0];
   return (
     <Link
       href="/reserve/season"
@@ -40,7 +38,7 @@ export function SeasonCard() {
       <span className="flex flex-col">
         <span className="text-[14.5px] font-bold text-ink-900">🗓️ 시즌 강습 (2·3시간 × 8회)</span>
         <span className="mt-1 text-[12.5px] font-semibold leading-snug text-violet-700">👉 한 시즌 꾸준히 배울 분 · 날짜는 협의</span>
-        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">2시간 1:1 {r0 ? won(r0.price) : ""}부터{r0?.eb ? " · 얼리버드 10%" : ""}</span>
+        <span className="mt-0.5 text-[12px] leading-snug text-snow-600">2시간 1:1 {r0 ? won(r0.price) : ""}부터</span>
       </span>
       <span className="shrink-0 text-[18px] font-bold text-ink-900">→</span>
     </Link>
@@ -51,9 +49,8 @@ export function SeasonCard() {
 export function SeasonView() {
   const { lessonPricing, contact } = useContent();
   const [hrs, setHrs] = useState<Hrs>("2h");
-  const eb = useEarlyBird();
-  const rows2 = seasonRows(lessonPricing, "2h", eb);
-  const rows3 = seasonRows(lessonPricing, "3h", eb);
+  const rows2 = seasonRows(lessonPricing, "2h");
+  const rows3 = seasonRows(lessonPricing, "3h");
   const rows = hrs === "2h" ? rows2 : rows3;
   const [page, setPage] = useState<"info" | "form">("info");
   const [name, setName] = useState("");
@@ -140,7 +137,7 @@ export function SeasonView() {
           {/* ② 가격 */}
           <section>
             <p className={h2}>
-              가격 (8회 합계){eb ? <span className="ml-1.5 rounded-full bg-rose-500 px-2 py-0.5 text-[11px] text-white">얼리버드 10% 할인</span> : null}
+              가격 (8회 합계)
             </p>
             <div className={cn(card, "mt-2 py-2")}>
               <div className="grid grid-cols-[48px_1fr_1fr] gap-x-2 border-b border-snow-300/50 pb-1.5 text-[12px] font-bold text-snow-500">
@@ -153,8 +150,7 @@ export function SeasonView() {
                   <span className="text-[14px] font-semibold text-ink-800">{r.people}</span>
                   {[r, rows3[i]].map((x, j) => (
                     <span key={j} className="text-right">
-                      {x?.eb && <span className="block text-[11px] text-snow-400 line-through">{won(x.full)}</span>}
-                      <b className="text-[14.5px] text-rose-600">{x ? won(x.price) : "-"}</b>
+                      <b className="text-[14.5px] text-ink-900">{x ? won(x.price) : "-"}</b>
                     </span>
                   ))}
                 </div>

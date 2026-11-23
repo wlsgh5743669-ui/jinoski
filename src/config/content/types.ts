@@ -155,11 +155,9 @@ export type SiteContent = {
     title: string;
     subtitle: string;
     passes: string[];
-    badge?: string;
-    priceRows?: { people: string; original: string; price: string }[];
+    priceRows?: { people: string; price: string }[];
     benefits: { icon: string; title: string; description: string }[];
     priceNote: string;
-    priceNoteRegular?: string;
     phoneButton: string;
     kakaoButton: string;
   };
@@ -256,10 +254,6 @@ export type SiteContent = {
     };
     priceSummary: {
       lessonFee: string;
-      earlyBird: string;
-      earlyBirdDetail: string;
-      earlyBirdButton: string;
-      earlyBirdApplied: string;
       priceOnRequest: string;
       liftPassSeparateSuffix: string;
       payTogether: string;

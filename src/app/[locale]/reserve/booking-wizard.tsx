@@ -10,13 +10,7 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { useStepHistory } from "@/lib/use-step-history";
 import { useContent } from "@/lib/use-content";
-import {
-  calculateBookingPrice,
-  EARLY_BIRD,
-  getGroupStudentCount,
-  isEarlyBirdActive,
-  isEarlyBirdEligible,
-} from "@/lib/pricing";
+import { calculateBookingPrice, getGroupStudentCount } from "@/lib/pricing";
 import { buildGuidanceLines } from "@/lib/guidance-message";
 import {
   PROGRAM_VALUES,
@@ -258,7 +252,6 @@ type WizardState = {
   marketing: boolean;
   liftAdults: number;
   liftKids: number;
-  earlyBird: boolean;
   email: string;
   messenger: string;
   msgApp: "" | "WhatsApp" | "WeChat" | "LINE" | "KakaoTalk";
@@ -284,8 +277,6 @@ const INITIAL_STATE: WizardState = {
   marketing: false,
   liftAdults: 0,
   liftKids: 0,
-  // 얼리버드 기간이면 처음부터 할인 적용 (손님이 버튼을 안 눌러도 할인가로 보이게)
-  earlyBird: isEarlyBirdActive(),
   email: "",
   messenger: "",
   msgApp: "",
@@ -346,7 +337,6 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
     groupSize,
     liftPassPayment,
     content,
-    earlyBird: state.earlyBird,
   });
   const isFullCare = program === "one-day" || program === "night";
   const people = getGroupStudentCount(groupSize);
@@ -361,14 +351,6 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
     detail: lessonDetail,
     amount: price.priceOnRequest ? labels.priceOnRequest : formatPrice(price.basePrice, content),
   });
-
-  if (price.earlyBirdDiscount > 0) {
-    lines.push({
-      label: content.bookingWizard.priceSummary.earlyBird,
-      detail: content.bookingWizard.priceSummary.earlyBirdDetail,
-      amount: `-${formatPrice(price.earlyBirdDiscount, content)}`,
-    });
-  }
 
   if (isFullCare) {
     lines.push({ label: "", detail: labels.liftPassIncluded, amount: "" });
@@ -489,13 +471,9 @@ function programPriceHint(program: ProgramValue, content: SiteContent) {
   const locale = content.siteConfig.locale.slice(0, 2);
   const first = getPriceRows(program, content)[0]?.price;
   if (!first) return "";
-  const eb =
-    isEarlyBirdActive() && EARLY_BIRD.programs.includes(program)
-      ? ` · ${content.bookingWizard.priceSummary.earlyBird} 10%`
-      : "";
-  if (program === "one-day" || program === "night") return `${withUsd(g.priceFrom(first), locale)} · ${g.liftPassIncluded}${eb}`;
+  if (program === "one-day" || program === "night") return `${withUsd(g.priceFrom(first), locale)} · ${g.liftPassIncluded}`;
   const pass = getLiftPassPrice(program, content);
-  return (pass ? `${withUsd(g.priceFrom(first), locale)} · ${g.liftPassPlus(pass)}` : withUsd(g.priceFrom(first), locale)) + eb;
+  return pass ? `${withUsd(g.priceFrom(first), locale)} · ${g.liftPassPlus(pass)}` : withUsd(g.priceFrom(first), locale);
 }
 
 function buildSmsHref(phone: string, body: string): string {
@@ -614,9 +592,8 @@ export function BookingWizard() {
       groupSize: state.groupSize,
       liftPassPayment: state.liftPassPayment,
       content,
-      earlyBird: state.earlyBird,
     });
-  }, [state.program, state.groupSize, state.liftPassPayment, state.earlyBird, content]);
+  }, [state.program, state.groupSize, state.liftPassPayment, content]);
 
   function update<K extends keyof WizardState>(key: K, value: WizardState[K]) {
     setState((prev) => ({ ...prev, [key]: value }));
@@ -1359,37 +1336,6 @@ export function BookingWizard() {
                     rows={3}
                     className="rounded-2xl border border-snow-300/60 px-5 py-4 text-[15px] outline-none transition-colors focus:border-brand-500"
                   />
-
-                  {price && isEarlyBirdEligible(state.program) && (() => {
-                    const ps = content.bookingWizard.priceSummary;
-                    const on = state.earlyBird;
-                    return (
-                      <button
-                        type="button"
-                        onClick={() => update("earlyBird", !on)}
-                        aria-pressed={on}
-                        className={`mt-2 flex w-full items-center justify-between gap-3 rounded-2xl border-2 px-5 py-4 text-left transition-all active:scale-[0.99] ${
-                          on
-                            ? "border-red-500 bg-red-50 text-red-600"
-                            : "border-dashed border-red-400 bg-white text-ink-900 hover:bg-red-50"
-                        }`}
-                      >
-                        <span className="flex flex-col">
-                          <span className="text-[15px] font-bold">
-                            {on ? `✓ ${ps.earlyBirdApplied}` : `🎁 ${ps.earlyBirdButton}`}
-                          </span>
-                          <span className="text-[12.5px] text-snow-500">{ps.earlyBirdDetail}</span>
-                        </span>
-                        <span
-                          className={`shrink-0 rounded-full px-3 py-1 text-[13px] font-bold ${
-                            on ? "bg-red-500 text-white" : "bg-red-100 text-red-600"
-                          }`}
-                        >
-                          {on ? `-${formatPrice(price.earlyBirdDiscount, content)}` : "10%"}
-                        </span>
-                      </button>
-                    );
-                  })()}
 
                   {price && state.program && !state.vip && (() => {
                     const L = liftLoc(content);
