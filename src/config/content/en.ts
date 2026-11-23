@@ -764,6 +764,17 @@ const galleryItems = [
   { type: "image", src: "/images/gallery-27.jpg", alt: "Family learning to ski together", tall: true },
   { type: "image", src: "/images/gallery-28.jpg", alt: "Ski student practicing a low carving turn" },
   { type: "image", src: "/images/gallery-29.jpg", alt: "Junior ski student talking with the instructor on the slope", tall: true },
+  { type: "image", src: "/images/gallery-30.jpg", alt: "Junior ski student waving behind a JinoSki instructor's selfie", tall: true },
+  { type: "image", src: "/images/gallery-31.jpg", alt: "JinoSki instructors taking a selfie together on the slope", tall: true },
+  { type: "image", src: "/images/gallery-32.jpg", alt: "Family group ski lesson copying the instructor's stance on a beginner slope", tall: true },
+  { type: "image", src: "/images/gallery-33.jpg", alt: "JinoSki instructor explaining technique to two foreign students", tall: true },
+  { type: "image", src: "/images/gallery-34.jpg", alt: "Foreign students and their instructor posing in front of a sunrise slope at Vivaldi Park", tall: true },
+  { type: "image", src: "/images/gallery-35.jpg", alt: "Instructor holding a toddler from behind as they ski down together", tall: true },
+  { type: "image", src: "/images/gallery-36.jpg", alt: "Instructor showing a child how to hold poles on the Blues slope", tall: true },
+  { type: "image", src: "/images/gallery-37.jpg", alt: "Junior ski student standing on the slope on a clear day", tall: true },
+  { type: "image", src: "/images/gallery-38.jpg", alt: "Three young ski students in front of a slope with snow cannons", tall: true },
+  { type: "image", src: "/images/gallery-39.jpg", alt: "Child skiing down alone under night lights", tall: true },
+  { type: "image", src: "/images/gallery-40.jpg", alt: "Three kids striking playful poses on the slope on a cloudy day", tall: true },
 ];
 
 // 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기: 24/25·25/26 시즌)

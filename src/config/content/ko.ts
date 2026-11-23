@@ -771,6 +771,17 @@ const galleryItems = [
   { type: "image", src: "/images/gallery-27.jpg", alt: "가족 단위로 함께 배우는 스키 레슨", tall: true },
   { type: "image", src: "/images/gallery-28.jpg", alt: "낮은 자세로 카빙 턴을 연습하는 스키 수강생" },
   { type: "image", src: "/images/gallery-29.jpg", alt: "슬로프에서 강사와 이야기하는 주니어 스키 수강생", tall: true },
+  { type: "image", src: "/images/gallery-30.jpg", alt: "지노스키 강사 셀카 뒤에서 손 흔드는 주니어 스키 수강생", tall: true },
+  { type: "image", src: "/images/gallery-31.jpg", alt: "슬로프 위에서 함께 셀카를 찍은 지노스키 강사들", tall: true },
+  { type: "image", src: "/images/gallery-32.jpg", alt: "초급 슬로프에서 강사 설명을 들으며 자세를 따라 하는 가족 그룹 스키 레슨", tall: true },
+  { type: "image", src: "/images/gallery-33.jpg", alt: "외국인 수강생 두 명에게 자세를 설명하는 지노스키 강사", tall: true },
+  { type: "image", src: "/images/gallery-34.jpg", alt: "해 뜨는 비발디파크 슬로프 앞에서 강사와 기념 사진을 찍은 외국인 수강생", tall: true },
+  { type: "image", src: "/images/gallery-35.jpg", alt: "강사가 뒤에서 잡아 주며 함께 내려오는 유아 스키 레슨", tall: true },
+  { type: "image", src: "/images/gallery-36.jpg", alt: "블루스 슬로프에서 아이에게 폴 잡는 법을 알려 주는 강사", tall: true },
+  { type: "image", src: "/images/gallery-37.jpg", alt: "맑은 날 슬로프 위에서 폴을 짚고 선 주니어 스키 수강생", tall: true },
+  { type: "image", src: "/images/gallery-38.jpg", alt: "인공 눈이 뿌려지는 슬로프 앞에 선 어린이 스키 수강생 세 명", tall: true },
+  { type: "image", src: "/images/gallery-39.jpg", alt: "야간 조명 아래 혼자 내려오는 어린이 스키 수강생", tall: true },
+  { type: "image", src: "/images/gallery-40.jpg", alt: "흐린 날 슬로프에서 장난스럽게 포즈를 취한 어린이 수강생 세 명", tall: true },
 ];
 
 // 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기: 24/25·25/26 시즌)

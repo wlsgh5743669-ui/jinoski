@@ -725,6 +725,17 @@ const galleryItems = [
   { type: "image", src: "/images/gallery-27.jpg", alt: "全家一起学滑雪", tall: true },
   { type: "image", src: "/images/gallery-28.jpg", alt: "压低重心练习刻滑转弯的学员" },
   { type: "image", src: "/images/gallery-29.jpg", alt: "在雪道上与教练交谈的青少年学员", tall: true },
+  { type: "image", src: "/images/gallery-30.jpg", alt: "在教练自拍后方挥手的青少年滑雪学员", tall: true },
+  { type: "image", src: "/images/gallery-31.jpg", alt: "在雪道上一起自拍的 JinoSki 教练们", tall: true },
+  { type: "image", src: "/images/gallery-32.jpg", alt: "初级雪道上跟着教练练习姿势的家庭小组课", tall: true },
+  { type: "image", src: "/images/gallery-33.jpg", alt: "JinoSki 教练为两位外国学员讲解动作", tall: true },
+  { type: "image", src: "/images/gallery-34.jpg", alt: "在维瓦尔第公园日出雪道前与教练合影的外国学员", tall: true },
+  { type: "image", src: "/images/gallery-35.jpg", alt: "教练从后方扶着幼儿一起滑下", tall: true },
+  { type: "image", src: "/images/gallery-36.jpg", alt: "教练在 Blues 雪道上教孩子握雪杖", tall: true },
+  { type: "image", src: "/images/gallery-37.jpg", alt: "晴天站在雪道上的青少年滑雪学员", tall: true },
+  { type: "image", src: "/images/gallery-38.jpg", alt: "在造雪机前的三位儿童滑雪学员", tall: true },
+  { type: "image", src: "/images/gallery-39.jpg", alt: "夜间灯光下独自滑下的儿童学员", tall: true },
+  { type: "image", src: "/images/gallery-40.jpg", alt: "阴天在雪道上摆出搞怪姿势的三个孩子", tall: true },
 ];
 
 // 네이버 스마트스토어 실제 구매 리뷰 (2026-09-25 엑셀 내보내기: 24/25·25/26 시즌)
