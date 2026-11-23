@@ -439,7 +439,11 @@ export function TeamQuote() {
     0
   );
   const lessonAvgPP = people ? Math.round(lessonTotal / people / 100) * 100 : 0;
-  const perHead1 = people && sessions ? Math.round(lessonTotal / people / sessions / 1000) * 1000 : 0;
+  // 풀케어는 오전·오후 2번으로 나눠 계산하지만 손님께는 하루 금액으로 보여 줘요 (대표 11-24 「1:1 풀케어는 나누는 금액 ;;」)
+  const allFC = lessonDays > 0 && schedule.every((d) => !d.slots.length || isFC(d.len));
+  const perUnitN = allFC ? lessonDays : sessions;
+  const perLabel = allFC ? "1인 하루" : "1인 1회";
+  const perHead1 = people && perUnitN ? Math.round(lessonTotal / people / perUnitN / 1000) * 1000 : 0;
 
   /** 1인 리프트(·장비): 날짜마다 평일/주말 정가 → 40% 할인 (날짜별로 따로 계산해서 1일·2일·3일 금액도 보여줘요) */
   const extraPP = (child: boolean, withRental: boolean) => {
@@ -636,7 +640,7 @@ export function TeamQuote() {
         ]
       : []),
     "",
-    `■ 강습료 1인 ${evenGroups ? won(lessonAvgPP) : `약 ${won(lessonAvgPP)}`} (1회 약 ${won(perHead1)} × ${sessions}회, 패찰 포함)`,
+    `■ 강습료 1인 ${evenGroups ? won(lessonAvgPP) : `약 ${won(lessonAvgPP)}`} (${allFC ? `하루 약 ${won(perHead1)} × ${lessonDays}일` : `1회 약 ${won(perHead1)} × ${sessions}회`}, 패찰 포함)`,
     ...(extras.length
       ? [
           "■ 리프트·장비 (40% 할인)",
@@ -747,7 +751,7 @@ export function TeamQuote() {
     const pickedSum = picked.reduce((a, x) => a + x.pay, 0);
     return renderQuoteImage(trDeep({
       title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
-      total: `1인 1회 약 ${won(perHead1)}`,
+      total: `${perLabel} 약 ${won(perHead1)}`,
       totalSub: only
         ? `${picked.map((x) => x.label).join(", ")} · 함께 배우는 ${people}명 중 ${picked.length}명 · 반 ${usedSplit.join("+")}`
         : `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}${ebSaved ? " · 얼리버드 강습료 10% 반영" : ""}`,
@@ -918,7 +922,7 @@ export function TeamQuote() {
     return {
       v: 1,
       title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
-      headline: `1인 1회 약 ${won(perHead1)}`,
+      headline: `${perLabel} 약 ${won(perHead1)}`,
       sub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}${sportSummary ? ` · ${sportSummary}` : ""}`,
       days,
       persons: personRows.map((x) => ({ label: x.label, group: x.group, desc: x.desc, lesson: x.lesson, lift: x.lift, helm: x.helm, pay: x.pay })),
@@ -969,7 +973,7 @@ export function TeamQuote() {
           image,
           imageW: 1080,
           imageH,
-          headline: `1인 1회 약 ${won(perHead1)} · 합계 ${won(grand)}`,
+          headline: `${perLabel} 약 ${won(perHead1)} · 합계 ${won(grand)}`,
           request: [
             qloc === "en" ? "🌐 영어 페이지 손님 (영어 답변)" : qloc === "zh" ? "🌐 중국어 페이지 손님 (중국어 답변)" : "",
             des ? `🎯 ${des.text}` : "",
@@ -1033,7 +1037,7 @@ export function TeamQuote() {
           ...staffEdit,
           link,
           image,
-          headline: `1인 1회 약 ${won(perHead1)} · 합계 ${won(grand)}`,
+          headline: `${perLabel} 약 ${won(perHead1)} · 합계 ${won(grand)}`,
           date: `${period} (${trip})`,
           program: `견적 ${lenText} · ${dayText}`,
           timeSlot: timeText,
@@ -1074,7 +1078,7 @@ export function TeamQuote() {
               {step} / {STEPS.length}
             </span>
             {step > 1 && step < 6 && people > 0 && sessions > 0 && (
-              <span className="text-brand-600">1인 1회 약 {won(perHead1)}</span>
+              <span className="text-brand-600">{perLabel} 약 {won(perHead1)}</span>
             )}
           </div>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white">
@@ -1357,7 +1361,7 @@ export function TeamQuote() {
                   <p className="mt-3 text-[12.5px] text-snow-500">
                     하루 2번이면 중간에 점심 먹고 쉬어요 · 2시간 수업은 1+3교시 또는 2+4교시를 추천드려요 · 4시간 수업은 하루 1번만 돼요
                   </p>
-                  <p className="mt-1 text-right text-[14px] font-bold text-brand-600">총 수업 {sessions}회</p>
+                  <p className="mt-1 text-right text-[14px] font-bold text-brand-600">총 수업 {allFC ? `${lessonDays}일 (풀케어)` : `${sessions}회`}</p>
                 </div>
               </div>
             )}
@@ -1378,7 +1382,7 @@ export function TeamQuote() {
                     <p className="mt-1 text-[13.5px] leading-snug text-snow-700">
                       1명이라 강사 1명이 처음부터 끝까지 전담해요. 고를 것 없이 <b>다음</b>을 눌러주세요.
                     </p>
-                    <p className="mt-1.5 text-right text-[15px] font-bold tabular-nums text-ink-900">1인 1회 약 {won(perHead1)}</p>
+                    <p className="mt-1.5 text-right text-[15px] font-bold tabular-nums text-ink-900">{perLabel} 약 {won(perHead1)}</p>
                   </div>
                 ) : <>
                 {[
@@ -1394,7 +1398,8 @@ export function TeamQuote() {
                       desc={o.desc}
                       sp={o.sp}
                       on={usedSplit.join() === o.sp.join()}
-                      pp={sessions ? Math.round(o.sp.reduce((a, g) => a + Math.round(groupTotal(g) / g / 100) * 100 * g, 0) / people / sessions / 1000) * 1000 : 0}
+                      pp={perUnitN ? Math.round(o.sp.reduce((a, g) => a + Math.round(groupTotal(g) / g / 100) * 100 * g, 0) / people / perUnitN / 1000) * 1000 : 0}
+                      unit={perLabel}
                       onClick={() => setSplit(o.sp)}
                     />
                   ))}
@@ -1604,7 +1609,7 @@ export function TeamQuote() {
                 </div>
 
                 <div className="mt-4 rounded-2xl bg-ink-900 p-5 text-white">
-                  <p className="text-[13px] text-white/60">1인 1회 강습료</p>
+                  <p className="text-[13px] text-white/60">{perLabel} 강습료</p>
                   <p className="whitespace-nowrap text-[30px] font-bold tabular-nums text-brand-300 sm:text-[34px]">약 {won(perHead1)}</p>
                   <p className="text-[12.5px] text-white/50">패찰 포함 · 매 수업 사진·영상 무료</p>
                   {fcNote && <p className="mt-1.5 rounded-lg bg-rose-500/20 px-2.5 py-1.5 text-[12.5px] font-semibold text-rose-200">🏆 {fcNote}</p>}
@@ -2542,6 +2547,7 @@ function SplitButton({
   sp,
   on,
   pp,
+  unit = "1인 1회",
   onClick,
 }: {
   title: string;
@@ -2549,6 +2555,7 @@ function SplitButton({
   sp: number[];
   on: boolean;
   pp: number;
+  unit?: string;
   onClick: () => void;
 }) {
   return (
@@ -2572,7 +2579,7 @@ function SplitButton({
       </span>
       {pp > 0 && (
         <span className="shrink-0 text-right">
-          <span className="block text-[11px] text-snow-500">1인 1회</span>
+          <span className="block text-[11px] text-snow-500">{unit}</span>
           <span className="text-[15px] font-bold tabular-nums text-ink-900">약 {won(pp)}</span>
         </span>
       )}
