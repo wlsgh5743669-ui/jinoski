@@ -813,7 +813,7 @@ export function BookingWizard() {
   }
 
   return (
-    <div className="mx-auto flex min-h-[100svh] max-w-2xl flex-col px-5 py-10 sm:px-6">
+    <div className="mx-auto flex min-h-[100svh] max-w-2xl flex-col px-5 py-6 sm:px-6 sm:py-10">
       <div className="flex items-center justify-between">
         <Link
           href="/"
@@ -888,7 +888,7 @@ export function BookingWizard() {
         </div>
       )}
 
-      <div className={cn("flex-1", !foreign && on(1) ? "mt-8" : "mt-10")}>
+      <div className={cn("flex-1", !foreign && on(1) ? "mt-6 sm:mt-8" : "mt-6 sm:mt-10")}>
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={step}
@@ -901,7 +901,7 @@ export function BookingWizard() {
               {stepTitles[PAGE_HEAD[step - 1] - 1]}
             </h1>
 
-            <div className="mt-8">
+            <div className="mt-5 sm:mt-8">
               {on(1) && (
                 <DatePicker
                   value={state.date}
@@ -910,7 +910,7 @@ export function BookingWizard() {
               )}
 
               {on(2) && !showFullCareChoice && !showJuniorChoice && (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
                   {PROGRAM_VALUES.filter(
                     (value) => value !== "one-day" && value !== "night" && !isJuniorProgram(value)
                   ).map((value) => (
@@ -919,7 +919,7 @@ export function BookingWizard() {
                       type="button"
                       onClick={() => selectProgram(value)}
                       className={cn(
-                        "rounded-2xl border p-5 text-left transition-colors",
+                        "rounded-2xl border px-4 py-3 text-left transition-colors sm:p-5",
                         state.program === value
                           ? "border-brand-500 bg-brand-50"
                           : "border-snow-300/60 bg-white hover:border-brand-300"
@@ -928,7 +928,7 @@ export function BookingWizard() {
                       <span className="text-[15px] font-bold text-ink-900">
                         {getProgramLabel(value, content)}
                       </span>
-                      <p className="mt-1.5 text-[13px] font-medium text-brand-600">
+                      <p className="mt-1 text-[13px] font-medium text-brand-600">
                         {programPriceHint(value, content)}
                       </p>
                     </button>
@@ -937,7 +937,7 @@ export function BookingWizard() {
                     type="button"
                     onClick={() => setShowFullCareChoice(true)}
                     className={cn(
-                      "rounded-2xl border p-5 text-left transition-colors",
+                      "rounded-2xl border px-4 py-3 text-left transition-colors sm:p-5",
                       isFullCare
                         ? "border-brand-500 bg-brand-50"
                         : "border-snow-300/60 bg-white hover:border-brand-300"
@@ -946,7 +946,7 @@ export function BookingWizard() {
                     <span className="text-[15px] font-bold text-ink-900">
                       {content.bookingWizard.fullCareGroupLabel}
                     </span>
-                    <p className="mt-1.5 text-[13px] leading-relaxed text-snow-500">
+                    <p className="mt-1 text-[13px] leading-snug text-snow-500 sm:leading-relaxed">
                       {content.bookingWizard.fullCareInfo.groupDescription}
                     </p>
                     <p className="mt-1 text-[13px] font-medium text-brand-600">
@@ -957,21 +957,21 @@ export function BookingWizard() {
                     type="button"
                     onClick={() => setShowJuniorChoice(true)}
                     className={cn(
-                      "rounded-2xl border p-5 text-left transition-colors",
+                      "rounded-2xl border px-4 py-3 text-left transition-colors sm:p-5",
                       isJuniorProgram(state.program)
                         ? "border-brand-500 bg-brand-50"
                         : "border-snow-300/60 bg-white hover:border-brand-300"
                     )}
                   >
                     <span className="text-[15px] font-bold text-ink-900">{JR.title}</span>
-                    <p className="mt-1.5 text-[13px] leading-relaxed text-snow-500">{JR.desc}</p>
+                    <p className="mt-1 text-[13px] leading-snug text-snow-500 sm:leading-relaxed">{JR.desc}</p>
                     <p className="mt-1 text-[13px] font-medium text-brand-600">{programPriceHint("junior-a", content)}</p>
                   </button>
                 </div>
               )}
 
               {on(2) && showJuniorChoice && (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2 sm:gap-3">
                   <button
                     type="button"
                     onClick={() => setShowJuniorChoice(false)}
@@ -999,14 +999,14 @@ export function BookingWizard() {
                       type="button"
                       onClick={() => selectProgram(value)}
                       className={cn(
-                        "rounded-2xl border p-5 text-left transition-colors",
+                        "rounded-2xl border px-4 py-3 text-left transition-colors sm:p-5",
                         state.program === value
                           ? "border-brand-500 bg-brand-50"
                           : "border-snow-300/60 bg-white hover:border-brand-300"
                       )}
                     >
                       <span className="text-[15px] font-bold text-ink-900">{getProgramLabel(value, content)}</span>
-                      <p className="mt-1.5 text-[13px] leading-relaxed text-snow-500">{value === "junior-a" ? JR.a : JR.b}</p>
+                      <p className="mt-1 text-[13px] leading-snug text-snow-500 sm:leading-relaxed">{value === "junior-a" ? JR.a : JR.b}</p>
                       <ul className="mt-2.5 flex flex-col gap-1">
                         {JUNIOR_GRADES.filter((g) => (value === "junior-a" ? g.no <= 6 : g.no >= 7)).map((g) => (
                           <li key={g.no} className="flex items-center gap-2 text-[12.5px] text-ink-800">
@@ -1026,7 +1026,7 @@ export function BookingWizard() {
               )}
 
               {on(2) && showFullCareChoice && (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2 sm:gap-3">
                   <button
                     type="button"
                     onClick={() => setShowFullCareChoice(false)}
@@ -1041,7 +1041,7 @@ export function BookingWizard() {
                       type="button"
                       onClick={() => selectProgram(value)}
                       className={cn(
-                        "rounded-2xl border p-5 text-left transition-colors",
+                        "rounded-2xl border px-4 py-3 text-left transition-colors sm:p-5",
                         state.program === value
                           ? "border-brand-500 bg-brand-50"
                           : "border-snow-300/60 bg-white hover:border-brand-300"
@@ -1050,7 +1050,7 @@ export function BookingWizard() {
                       <span className="text-[15px] font-bold text-ink-900">
                         {getProgramLabel(value, content)}
                       </span>
-                      <p className="mt-1.5 text-[13px] leading-relaxed text-snow-500">
+                      <p className="mt-1 text-[13px] leading-snug text-snow-500 sm:leading-relaxed">
                         {value === "one-day"
                           ? content.bookingWizard.fullCareInfo.oneDay
                           : content.bookingWizard.fullCareInfo.night}
@@ -1090,7 +1090,7 @@ export function BookingWizard() {
                 <FullCareSchedule program={state.program!} content={content} />
               )}
 
-              {on(4) && PAGE_HEAD[step - 1] !== 4 && <h2 className="mb-4 mt-10 text-[18px] font-bold text-ink-900">{stepTitles[3]}</h2>}
+              {on(4) && PAGE_HEAD[step - 1] !== 4 && <h2 className="mb-3 mt-7 text-[18px] sm:mb-4 sm:mt-10 font-bold text-ink-900">{stepTitles[3]}</h2>}
               {on(4) && state.program && (
                 <OptionList
                   options={getGroupSizeOptions(state.program).map((code) => {
@@ -1137,7 +1137,7 @@ export function BookingWizard() {
               )}
 
               {on(6) && PAGE_HEAD[step - 1] !== 6 && (
-                <h2 className="mb-4 mt-10 text-[18px] font-bold text-ink-900">
+                <h2 className="mb-3 mt-7 text-[18px] sm:mb-4 sm:mt-10 font-bold text-ink-900">
                   {isJuniorProgram(state.program) ? JR.pick : stepTitles[5]}
                 </h2>
               )}
@@ -1173,7 +1173,7 @@ export function BookingWizard() {
                 </div>
               )}
               {on(6) && !isJuniorProgram(state.program) && (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2 sm:gap-3">
                   {LEVEL_VALUES.map((value) => {
                     const info = getLevelInfo(value, content, state.equipment);
                     return (
@@ -1182,7 +1182,7 @@ export function BookingWizard() {
                         type="button"
                         onClick={() => update("level", value)}
                         className={cn(
-                          "rounded-2xl border p-5 text-left transition-colors",
+                          "rounded-2xl border px-4 py-3 text-left transition-colors sm:p-5",
                           state.level === value
                             ? "border-brand-500 bg-brand-50"
                             : "border-snow-300/60 bg-white hover:border-brand-300"
@@ -1197,12 +1197,12 @@ export function BookingWizard() {
                           )}
                         </div>
                         {state.equipment && (
-                          <p className="mt-1.5 text-[13.5px] font-semibold text-brand-600">
+                          <p className="mt-1 text-[13.5px] font-semibold leading-snug text-brand-600">
                             {content.bookingWizard.guide.selfCheckPrefix}:{" "}
                             {content.levelSelfCheckByEquipment[state.equipment][value]}
                           </p>
                         )}
-                        <p className="mt-1 text-[13px] leading-relaxed text-snow-500">
+                        <p className="mt-0.5 text-[13px] leading-snug text-snow-500 sm:leading-relaxed">
                           {info.description}
                         </p>
                       </button>
@@ -1531,7 +1531,7 @@ export function BookingWizard() {
         </div>
       )}
 
-      <div className={cn("flex items-center gap-3", on(8) && !canProceed() ? "mt-3" : "mt-10")}>
+      <div className={cn("flex items-center gap-3", on(8) && !canProceed() ? "mt-3" : "mt-6 sm:mt-10")}>
         {step > 1 && (
           <button
             type="button"
@@ -1606,14 +1606,14 @@ function OptionList({
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2 sm:gap-3">
       {options.map((option) => (
         <button
           key={option.value}
           type="button"
           onClick={() => onSelect(option.value)}
           className={cn(
-            "flex items-center justify-between rounded-2xl border p-5 text-left transition-colors",
+            "flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition-colors sm:p-5",
             selected === option.value
               ? "border-brand-500 bg-brand-50"
               : "border-snow-300/60 bg-white hover:border-brand-300"
@@ -1624,7 +1624,7 @@ function OptionList({
               {option.label}
             </span>
             {option.description && (
-              <span className="mt-1 block text-[13px] leading-relaxed text-snow-500">
+              <span className="mt-0.5 block text-[13px] leading-snug text-snow-500 sm:leading-relaxed">
                 {option.description}
               </span>
             )}
@@ -1761,7 +1761,7 @@ function SummaryView({
         <p className="mt-1 text-[13px] text-snow-600">
           {content.preLessonGuidance.description}
         </p>
-        <ul className="mt-4 flex flex-col gap-3">
+        <ul className="mt-4 flex flex-col gap-2 sm:gap-3">
           {content.preLessonGuidance.items.map((item) => (
             <li key={item.title} className="flex items-start gap-2.5">
               <span className="text-[16px] leading-none">{item.icon}</span>
