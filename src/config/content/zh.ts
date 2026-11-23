@@ -60,11 +60,15 @@ const navLinks = [
 ];
 
 const heroContent = {
-  eyebrow: "JinoSki Premium Lesson",
-  headline: ["从学习的那一刻起,", "冬天", "变得更加快乐。"],
-  description: "JinoSki 提供大明滑雪场高端滑雪·单板滑雪课程。",
+  // 11-24: 与韩文版相同 — 地点+项目标题，评分和教练放在按钮上方
+  eyebrow: "",
+  trustLine: "学员满意度 4.8 · 大明滑雪场第8个雪季",
+  headline: ["大明滑雪场", "双板·单板滑雪课程"],
+  description: "1对1或最多3人小班。持证教练通过无线耳机实时指导。",
+  teamLabel: "{n}位持证教练",
+  teamLink: "认识教练团队",
   primaryCta: { label: "立即预约", href: "/reserve" },
-  secondaryCta: { label: "查看课程", href: "/lessons" },
+  secondaryCta: { label: "查看价格", href: "/pricing" },
   videoSrc: "/videos/hero-carving.mp4",
   videoSrcMobile: "/videos/hero-carving-mobile.mp4",
   posterSrc: "/images/hero-poster.jpg",

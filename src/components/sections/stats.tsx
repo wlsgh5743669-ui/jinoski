@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 export function Stats() {
   const { stats, statsEyebrow } = useContent();
   return (
-    <section className="relative bg-white py-16 sm:py-20">
+    <section className="relative bg-white pb-8 pt-14 sm:pb-10 sm:pt-20">
       <Container>
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="flex items-center gap-1 text-brand-500">

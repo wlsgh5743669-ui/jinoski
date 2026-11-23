@@ -76,12 +76,12 @@ export function NoticeList() {
 }
 
 /** 홈: 가장 최근 「진행 중」 공지 한 줄 */
-export function NoticeStrip() {
+export function NoticeStrip({ hideLink }: { hideLink?: string } = {}) {
   const l = useL();
   const now = useToday();
   // 정적 HTML도 빌드한 날 기준으로 끝난 공지는 빼요 (11-22: 끝난 얼리버드 공지가 처음 화면에 보였어요)
   const n: Notice | undefined = NOTICES.find((x) => isNoticeActive(x, now ?? undefined));
-  if (!n) return null;
+  if (!n || (hideLink && n.link?.href === hideLink)) return null;
   return (
     <Link href={`/notice#${n.id}`} className="flex items-center gap-2.5 rounded-2xl bg-ink-900 px-4 py-3 text-white transition-opacity hover:opacity-90">
       <Megaphone size={17} className="shrink-0 text-brand-300" />

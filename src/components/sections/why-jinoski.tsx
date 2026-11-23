@@ -41,7 +41,7 @@ export function WhyJinoSki() {
   };
 
   return (
-    <section className="bg-ice-gradient py-24 sm:py-32">
+    <section className="bg-ice-gradient pb-24 pt-14 sm:pb-32 sm:pt-20">
       <Container>
         <SectionHeading
           eyebrow={ui.whyJinoSki.eyebrow}

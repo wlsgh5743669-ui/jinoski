@@ -60,11 +60,15 @@ const navLinks = [
 ];
 
 const heroContent = {
-  eyebrow: "JinoSki Premium Lesson",
-  headline: ["Winter gets better,", "the moment", "you start learning."],
-  description: "JinoSki offers premium ski and snowboard lessons at Vivaldi Park.",
+  // 11-24: same layout as Korean — place + sport title, rating and instructors above the buttons
+  eyebrow: "",
+  trustLine: "Rated 4.8 by our students · 8 seasons at Vivaldi Park",
+  headline: ["Vivaldi Park", "Ski & Snowboard Lessons"],
+  description: "Private or small groups of up to 3. Certified instructors coach you live over a radio headset.",
+  teamLabel: "{n} certified instructors",
+  teamLink: "Meet the team",
   primaryCta: { label: "Book Now", href: "/reserve" },
-  secondaryCta: { label: "View Lessons", href: "/lessons" },
+  secondaryCta: { label: "Prices", href: "/pricing" },
   videoSrc: "/videos/hero-carving.mp4",
   videoSrcMobile: "/videos/hero-carving-mobile.mp4",
   posterSrc: "/images/hero-poster.jpg",
