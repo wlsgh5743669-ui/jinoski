@@ -566,15 +566,12 @@ function buildSummaryMessage(state: WizardState, content: SiteContent): string {
 
   if (state.requestNote.trim()) lines.push("", `${labels.note}: ${state.requestNote.trim()}`);
 
+  // 한국어는 예상 금액(요청사항)까지만 — 준비물·만나는 곳·환불은 예약 안내 카드(사진)로 보여 줘요 (대표 11-23)
+  if (content.siteConfig.locale.startsWith("ko")) return lines.join("\n");
+
   lines.push("", ...buildGuidanceLines(content));
   lines.push("", labels.closing);
-  lines.push(
-    `${labels.businessPhone}: ${
-      content.siteConfig.locale.startsWith("ko")
-        ? content.contact.phone
-        : "+82-" + content.contact.phone.replace(/^0/, "")
-    }`
-  );
+  lines.push(`${labels.businessPhone}: ${"+82-" + content.contact.phone.replace(/^0/, "")}`);
 
   return lines.join("\n");
 }
