@@ -245,7 +245,7 @@ type WizardState = {
   requestNote: string;
   /** 주니어 기술등급 심사: 도전할 등급 (1~10) */
   juniorGrade: number | null;
-  /** 리프트권·장비 같이 결제 (정가 40% 할인) */
+  /** 리프트권·장비 같이 결제 (정가 30% 할인) */
   liftOpt: "none" | "lift" | "both";
   /** 개인정보 동의(필수) · 시즌 안내 수신(선택) */
   consent: boolean;
@@ -293,9 +293,9 @@ function formatPrice(value: number, content: SiteContent): string {
 type BreakdownLine = { label: string; detail: string; amount: string };
 
 const LIFT_TXT = {
-  ko: { lift: "리프트권", rent: "장비 렌탈", h: (n: number) => `${n}시간`, adult: "대인", child: "소인", off: "정가 40% 할인", wk: "주말·공휴일 요금", wd: "주중 요금" },
-  en: { lift: "Lift ticket", rent: "Rental", h: (n: number) => `${n}h`, adult: "Adult", child: "Child", off: "40% off list price", wk: "weekend/holiday rate", wd: "weekday rate" },
-  zh: { lift: "缆车票", rent: "装备租赁", h: (n: number) => `${n}小时`, adult: "成人", child: "儿童", off: "原价6折", wk: "周末·节假日价格", wd: "平日价格" },
+  ko: { lift: "리프트권", rent: "장비 렌탈", h: (n: number) => `${n}시간`, adult: "대인", child: "소인", off: "정가 30% 할인", wk: "주말·공휴일 요금", wd: "주중 요금" },
+  en: { lift: "Lift ticket", rent: "Rental", h: (n: number) => `${n}h`, adult: "Adult", child: "Child", off: "30% off list price", wk: "weekend/holiday rate", wd: "weekday rate" },
+  zh: { lift: "缆车票", rent: "装备租赁", h: (n: number) => `${n}小时`, adult: "成人", child: "儿童", off: "原价7折", wk: "周末·节假日价格", wd: "平日价格" },
 };
 const liftLoc = (content: SiteContent) => {
   const l = content.siteConfig.locale.slice(0, 2);
@@ -580,9 +580,9 @@ export function BookingWizard() {
   // 주니어 기술등급 심사: 카드 하나 → 누르면 1~6등급 / 7~10등급 선택
   const [showJuniorChoice, setShowJuniorChoice] = useState(isJuniorProgram(state.program));
   const JR = {
-    ko: { slope: { easy: "초급~초중급 슬로프", mid: "중상급 슬로프", hard: "상급 슬로프" }, how: "2시간 진행 · 실력 확인 → 심사 종목 연습 → 공인 지도자 심사", inc: ["연맹 응시료 + 발급료 포함", "심사 장면 사진·영상", "합격하면 공식 등급 뱃지 + 인증서"], extra: "패찰 1인 25,000원 별도 · 리프트·장비 40% 할인 · 한 번에 한 등급 심사 · 합격 보장 아님", grade: "등급", more: "주니어 기술등급 자세히 보기", tip: "어느 등급인지 모르겠으면 낮은 등급부터 추천드려요. 예약 후 상담 때 정해도 돼요.", title: "🎖️ 주니어 기술등급 심사", desc: "만 7~17세 · 스키 · 대한스키지도자연맹 공식 뱃지 · 눌러서 등급 선택", pick: "도전할 등급을 골라주세요", a: "처음 ~ 중급 슬로프 실력 (스노우플라우 ~ 다이나믹 롱턴)", b: "상급 슬로프 실력 (다이나믹 숏턴 ~ 종합활강) · Level 3 심사위원" },
-    en: { slope: { easy: "green–blue slopes", mid: "red slopes", hard: "black slopes" }, how: "2 hours · level check → practice test elements → test by a certified instructor", inc: ["KSIA test fee + issuing fee included", "Photos & video of the test", "Official badge + certificate when passed"], extra: "Lesson permit ₩25,000 per person extra · lift & rental 40% off · one level per test · pass not guaranteed", grade: "Level", more: "More about junior badges", tip: "Not sure which level? We recommend starting lower — we can decide together after booking.", title: "🎖️ Junior Ski Badge Test", desc: "Ages 7–17 · ski · official KSIA badge · tap to choose a level", pick: "Choose the level to try", a: "Beginner to red slopes (snowplow – dynamic long turn)", b: "Black slopes (dynamic short turn – all-round run) · Level 3 examiner" },
-    zh: { slope: { easy: "初级~初中级雪道", mid: "中高级雪道", hard: "高级雪道" }, how: "2小时 · 确认水平 → 练习考核项目 → 认证指导者考核", inc: ["含联盟考试费及发证费", "考核照片·视频", "通过后颁发官方等级徽章 + 证书"], extra: "教学许可证（挂牌）每人₩25,000另计 · 缆车·装备6折 · 每次考核一个等级 · 不保证通过", grade: "级", more: "了解青少年技术等级", tip: "不确定等级时建议从较低等级开始，预约后咨询时再决定也可以。", title: "🎖️ 青少年滑雪技术等级考核", desc: "7~17周岁 · 双板 · KSIA官方徽章 · 点击选择等级", pick: "请选择要挑战的等级", a: "初级~中高级雪道水平（犁式~动态长转）", b: "高级雪道水平（动态短转~综合滑降）· Level 3 考官" },
+    ko: { slope: { easy: "초급~초중급 슬로프", mid: "중상급 슬로프", hard: "상급 슬로프" }, how: "2시간 진행 · 실력 확인 → 심사 종목 연습 → 공인 지도자 심사", inc: ["연맹 응시료 + 발급료 포함", "심사 장면 사진·영상", "합격하면 공식 등급 뱃지 + 인증서"], extra: "패찰 1인 25,000원 별도 · 리프트·장비 30% 할인 · 한 번에 한 등급 심사 · 합격 보장 아님", grade: "등급", more: "주니어 기술등급 자세히 보기", tip: "어느 등급인지 모르겠으면 낮은 등급부터 추천드려요. 예약 후 상담 때 정해도 돼요.", title: "🎖️ 주니어 기술등급 심사", desc: "만 7~17세 · 스키 · 대한스키지도자연맹 공식 뱃지 · 눌러서 등급 선택", pick: "도전할 등급을 골라주세요", a: "처음 ~ 중급 슬로프 실력 (스노우플라우 ~ 다이나믹 롱턴)", b: "상급 슬로프 실력 (다이나믹 숏턴 ~ 종합활강) · Level 3 심사위원" },
+    en: { slope: { easy: "green–blue slopes", mid: "red slopes", hard: "black slopes" }, how: "2 hours · level check → practice test elements → test by a certified instructor", inc: ["KSIA test fee + issuing fee included", "Photos & video of the test", "Official badge + certificate when passed"], extra: "Lesson permit ₩25,000 per person extra · lift & rental 30% off · one level per test · pass not guaranteed", grade: "Level", more: "More about junior badges", tip: "Not sure which level? We recommend starting lower — we can decide together after booking.", title: "🎖️ Junior Ski Badge Test", desc: "Ages 7–17 · ski · official KSIA badge · tap to choose a level", pick: "Choose the level to try", a: "Beginner to red slopes (snowplow – dynamic long turn)", b: "Black slopes (dynamic short turn – all-round run) · Level 3 examiner" },
+    zh: { slope: { easy: "初级~初中级雪道", mid: "中高级雪道", hard: "高级雪道" }, how: "2小时 · 确认水平 → 练习考核项目 → 认证指导者考核", inc: ["含联盟考试费及发证费", "考核照片·视频", "通过后颁发官方等级徽章 + 证书"], extra: "教学许可证（挂牌）每人₩25,000另计 · 缆车·装备7折 · 每次考核一个等级 · 不保证通过", grade: "级", more: "了解青少年技术等级", tip: "不确定等级时建议从较低等级开始，预约后咨询时再决定也可以。", title: "🎖️ 青少年滑雪技术等级考核", desc: "7~17周岁 · 双板 · KSIA官方徽章 · 点击选择等级", pick: "请选择要挑战的等级", a: "初级~中高级雪道水平（犁式~动态长转）", b: "高级雪道水平（动态短转~综合滑降）· Level 3 考官" },
   }[locale === "en" || locale === "zh" ? locale : "ko"];
 
   const price = useMemo(() => {
@@ -825,7 +825,7 @@ export function BookingWizard() {
               👉 {locale === "zh" ? "住几晚·每天上课·多个家庭一起？点这里" : "Staying a few nights, lessons every day or several families? Start here"}
             </span>
             <span className="mt-0.5 text-[12px] leading-snug text-snow-600">
-              {locale === "zh" ? "例：3天2夜 · 每天2次 · 缆车·装备6折 · 一次算好总价" : "e.g. 3 days · 2 lessons a day · lift & rental 40% off · see the total at once"}
+              {locale === "zh" ? "例：3天2夜 · 每天2次 · 缆车·装备7折 · 一次算好总价" : "e.g. 3 days · 2 lessons a day · lift & rental 30% off · see the total at once"}
             </span>
           </span>
           <span className="shrink-0 text-[18px] font-bold text-ink-900">→</span>
@@ -1341,9 +1341,9 @@ export function BookingWizard() {
                     const L = liftLoc(content);
                     const lc = content.siteConfig.locale.slice(0, 2);
                     const T = {
-                      ko: { title: "🎿 리프트권·장비도 같이 할까요?", sub: "정가 40% 할인 · 강습료와 함께 결제 · 현장에서는 받기만 하면 돼요", none: "필요 없음", lift: "리프트권만", both: "리프트권 + 장비", rec: "추천", gear: "장비" },
-                      en: { title: "🎿 Add lift ticket & rental?", sub: "40% off list price · paid with the lesson · just pick up on site", none: "No thanks", lift: "Lift only", both: "Lift + equipment", rec: "Recommended", gear: "equipment" },
-                      zh: { title: "🎿 需要缆车票·装备吗？", sub: "原价6折 · 与课程费一起支付 · 现场直接领取", none: "不需要", lift: "只要缆车票", both: "缆车票 + 装备", rec: "推荐", gear: "装备" },
+                      ko: { title: "🎿 리프트권·장비도 같이 할까요?", sub: "정가 30% 할인 · 강습료와 함께 결제 · 현장에서는 받기만 하면 돼요", none: "필요 없음", lift: "리프트권만", both: "리프트권 + 장비", rec: "추천", gear: "장비" },
+                      en: { title: "🎿 Add lift ticket & rental?", sub: "30% off list price · paid with the lesson · just pick up on site", none: "No thanks", lift: "Lift only", both: "Lift + equipment", rec: "Recommended", gear: "equipment" },
+                      zh: { title: "🎿 需要缆车票·装备吗？", sub: "原价7折 · 与课程费一起支付 · 现场直接领取", none: "不需要", lift: "只要缆车票", both: "缆车票 + 装备", rec: "推荐", gear: "装备" },
                     }[lc === "en" || lc === "zh" ? lc : "ko"];
                     const t = ticketForProgram(state.program);
                     const w = isWeekendRate(state.date) ? 1 : 0;
@@ -1610,7 +1610,7 @@ function PayChoice({ storeUrl }: { storeUrl: string }) {
         <span className="flex flex-col">
           <span className="text-[14.5px] font-bold text-ink-900">🏔️ 연박·가족 여러 팀 견적내기</span>
           <span className="mt-1 text-[12.5px] font-semibold leading-snug text-ink-900">👉 가족·여러 날·여러 팀이면 여기</span>
-          <span className="mt-0.5 text-[12px] leading-snug text-snow-600">2박 3일 · 하루 2회 · 리프트·장비 40% 할인까지 한 번에</span>
+          <span className="mt-0.5 text-[12px] leading-snug text-snow-600">2박 3일 · 하루 2회 · 리프트·장비 30% 할인까지 한 번에</span>
         </span>
         <span className="shrink-0 text-[18px] font-bold text-ink-900">→</span>
       </a>
@@ -1912,7 +1912,7 @@ function ticketForProgram(program: string): TicketHours {
   return 5;
 }
 
-/** 리프트·장비 40% 할인 안내 — 고른 날짜가 주말·공휴일이면 주말 요금으로 */
+/** 리프트·장비 30% 할인 안내 — 고른 날짜가 주말·공휴일이면 주말 요금으로 */
 function LiftRentalNote({ program, date, locale }: { program: string; date: string; locale: string }) {
   const L = locale.startsWith("en") ? "en" : locale.startsWith("zh") ? "zh" : "ko";
   const t = ticketForProgram(program);
@@ -1937,7 +1937,7 @@ function LiftRentalNote({ program, date, locale }: { program: string; date: stri
   }
   const T = {
     ko: {
-      title: "🎿 리프트권·장비 렌탈 정가 40% 할인",
+      title: "🎿 리프트권·장비 렌탈 정가 30% 할인",
       sub: "강습료와 함께 지노스키에 결제 · 현장에서는 받기만 하면 돼요",
       rate: wk ? "주말·공휴일 요금" : "주중 요금",
       basis: `리프트 ${t}시간권 · 장비 ${rent.hours}시간 기준 · 1인`,
@@ -1948,7 +1948,7 @@ function LiftRentalNote({ program, date, locale }: { program: string; date: stri
       foot: "헬멧·의류는 할인 제외 · 필요 없으면 요청사항에 「리프트 필요 없음」이라고 적어주세요",
     },
     en: {
-      title: "🎿 Lift ticket & rental 40% off",
+      title: "🎿 Lift ticket & rental 30% off",
       sub: "Paid to JinoSki together with the lesson — just pick up on site",
       rate: wk ? "Weekend/holiday rate" : "Weekday rate",
       basis: `${t}h lift ticket · ${rent.hours}h equipment · per person`,
@@ -1959,7 +1959,7 @@ function LiftRentalNote({ program, date, locale }: { program: string; date: stri
       foot: "Helmets & clothing not discounted · If you don't need it, just say so in the request note",
     },
     zh: {
-      title: "🎿 缆车票·装备租赁 原价6折（减40%）",
+      title: "🎿 缆车票·装备租赁 原价7折（减30%）",
       sub: "与课程费一起付给JinoSki · 到现场直接领取",
       rate: wk ? "周末·节假日价格" : "平日价格",
       basis: `${t}小时缆车票 · ${rent.hours}小时装备 · 每人`,

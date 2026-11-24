@@ -188,7 +188,7 @@ export function TeamQuote() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [split, setSplit] = useState<number[]>([]);
   const [showAllSplits, setShowAllSplits] = useState(false);
-  // 리프트·장비 (40% 할인) — 어른/어린이 각각 몇 명
+  // 리프트·장비 (30% 할인) — 어른/어린이 각각 몇 명
   // 사람마다 이름·리프트·장비·헬멧 (앞 adults명은 어른, 나머지는 어린이)
   const [persons, setPersons] = useState<Person[]>([]);
   // 날짜별 리프트 시간권: undefined = 그날 수업에 맞춰 자동 추천, 0 = 그날은 안 씀
@@ -423,7 +423,7 @@ export function TeamQuote() {
   const perLabel = allFC ? "1인 하루" : "1인 1회";
   const perHead1 = people && perUnitN ? Math.round(lessonTotal / people / perUnitN / 1000) * 1000 : 0;
 
-  /** 1인 리프트(·장비): 날짜마다 평일/주말 정가 → 40% 할인 (날짜별로 따로 계산해서 1일·2일·3일 금액도 보여줘요) */
+  /** 1인 리프트(·장비): 날짜마다 평일/주말 정가 → 30% 할인 (날짜별로 따로 계산해서 1일·2일·3일 금액도 보여줘요) */
   const extraPP = (child: boolean, withRental: boolean) => {
     const who = child ? "child" : "adult";
     const perDayList = Array.from({ length: days }, (_, d) => {
@@ -621,7 +621,7 @@ export function TeamQuote() {
     `■ 강습료 1인 ${evenGroups ? won(lessonAvgPP) : `약 ${won(lessonAvgPP)}`} (${allFC ? `하루 약 ${won(perHead1)} × ${lessonDays}일` : `1회 약 ${won(perHead1)} × ${sessions}회`}, 패찰 포함)`,
     ...(extras.length
       ? [
-          "■ 리프트·장비 (40% 할인)",
+          "■ 리프트·장비 (30% 할인)",
           ...extras.map((x) => `  ${x.label} ${x.count}명 · 1인 +${won(x.sale)}`),
           `  날짜별: ${schedule
             .map((d, i) => {
@@ -755,7 +755,7 @@ export function TeamQuote() {
       teams: [
         ...(extras.length
           ? [{
-              name: "리프트·장비 40% 할인",
+              name: "리프트·장비 30% 할인",
               amount: "",
               lines: extras.map((x) => `${x.label.replace(" · ", " ")} 정가 ${won(x.regular)} → ${won(x.sale)} (1인)`),
             }]
@@ -767,7 +767,7 @@ export function TeamQuote() {
       notes: [
         // 부분 견적서는 고른 사람 것만 (반 전체 인원·할인 합계는 빼요)
         ...(sportSummary && !only ? [`종목·실력: ${sportSummary}`] : []),
-        "매 수업 사진·영상 무료 · 리프트·장비 40% 할인 · 헬멧 할인 제외",
+        "매 수업 사진·영상 무료 · 리프트·장비 30% 할인 · 헬멧 할인 제외",
         ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
         ...(fcNote ? [fcNote] : []),
         "의류는 제휴 렌탈샵 안내 드립니다.^^",
@@ -879,7 +879,7 @@ export function TeamQuote() {
         if (!sale || !t) continue;
         const who = x.key.endsWith("-k") ? "어린이" : "어른";
         const rental = x.key.startsWith("lr");
-        items.push({ label: `${who} 리프트 ${t}h${rental ? ` + 장비 ${RENTAL_H[t]}h` : ""} (40% 할인)`, qty: x.count, unit: sale, amount: sale * x.count });
+        items.push({ label: `${who} 리프트 ${t}h${rental ? ` + 장비 ${RENTAL_H[t]}h` : ""} (30% 할인)`, qty: x.count, unit: sale, amount: sale * x.count });
       }
       if (n && helmet.basic) items.push({ label: "헬멧", qty: helmet.basic, unit: HELMET_PRICE.basic, amount: HELMET_PRICE.basic * helmet.basic });
       if (n && helmet.visor) items.push({ label: "바이저 헬멧", qty: helmet.visor, unit: HELMET_PRICE.visor, amount: HELMET_PRICE.visor * helmet.visor });
@@ -904,7 +904,7 @@ export function TeamQuote() {
       ...(des ? { designated: { id: des.id, name: des.name, tier: des.tier, fee: des.fee } } : {}),
       notes: [
         ...(fcNote ? [fcNote] : []),
-        "리프트·장비 40% 할인 · 헬멧 할인 제외",
+        "리프트·장비 30% 할인 · 헬멧 할인 제외",
         ...(teacherPref ? [`강사 희망: ${TEACHER_PREFS[teacherPref]}`] : []),
         ...(des ? [`${des.text} — 합계에 포함 (이번 시즌 이미 냈으면 그 줄 빼기)`] : []),
         "매 수업 사진·영상 무료 · 의류는 제휴 렌탈샵 안내 드립니다.^^",
@@ -1405,7 +1405,7 @@ export function TeamQuote() {
             {step === 5 && (
               <div className="mt-5 flex flex-col gap-4">
                 <p className="rounded-2xl bg-[#E8F9EE] px-4 py-3 text-[14px] font-semibold text-[#03803D]">
-                  지노스키 손님은 리프트·장비 <span className="text-[17px]">40% 할인</span>! 이름을 넣고 사람마다 골라주세요. (필요 없으면 그냥 다음)
+                  지노스키 손님은 리프트·장비 <span className="text-[17px]">30% 할인</span>! 이름을 넣고 사람마다 골라주세요. (필요 없으면 그냥 다음)
                 </p>
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-[12px] font-semibold text-snow-500">모두 한 번에:</span>
@@ -1632,7 +1632,7 @@ export function TeamQuote() {
                                   >
                                     {d.rateTag}
                                   </span>
-                                  리프트·장비 {won(d.liftCost)} (40% 할인)
+                                  리프트·장비 {won(d.liftCost)} (30% 할인)
                                 </p>
                               )}
                               <ul className="mt-1.5 flex flex-col gap-0.5">
@@ -1675,7 +1675,7 @@ export function TeamQuote() {
                     {extras.map((x) => (
                       <p key={x.key}>
                         {x.label} · {schedule.map((_, i) => ticketOf(i) || "-").join("/")}시간권 · <span className="line-through">{won(x.regular)}</span>{" "}
-                        <b className="text-[#03803D]">{won(x.sale)}</b> (40% 할인)
+                        <b className="text-[#03803D]">{won(x.sale)}</b> (30% 할인)
                       </p>
                     ))}
                     <p className="mt-1 text-[12px] text-snow-500">
@@ -1727,7 +1727,7 @@ export function TeamQuote() {
                     {totalTab < 0 && (
                       <div className="mt-3">
                         <p className="text-[13px] text-snow-600">
-                          {totalTab === -1 ? "강습료만 (패찰 포함)" : "리프트+장비 (비발디파크 정가에서 40% 할인 + 헬멧)"}
+                          {totalTab === -1 ? "강습료만 (패찰 포함)" : "리프트+장비 (비발디파크 정가에서 30% 할인 + 헬멧)"}
                         </p>
                         <p className="mt-2 text-[12px] font-semibold text-snow-500">날짜별</p>
                         <div className="mt-1 flex flex-col gap-1 text-[14px]">
@@ -1790,7 +1790,7 @@ export function TeamQuote() {
                               ))}
                             </div>
                             <p className="mt-2 text-[11.5px] leading-snug text-snow-500">
-                              정가 = 비발디파크 매표소 요금 · 40% 할인 후 100원 단위 올림 · 주말·공휴일은 주말 요금 · 장비는 리프트보다 1시간 길게 · 헬멧은 할인 제외
+                              정가 = 비발디파크 매표소 요금 · 30% 할인 후 100원 단위 올림 · 주말·공휴일은 주말 요금 · 장비는 리프트보다 1시간 길게 · 헬멧은 할인 제외
                             </p>
                           </div>
                         )}
@@ -1826,7 +1826,7 @@ export function TeamQuote() {
                             </div>
                             {extra > 0 && (
                               <div className="flex justify-between">
-                                <span className="text-snow-600">리프트·장비 (40% 할인)</span>
+                                <span className="text-snow-600">리프트·장비 (30% 할인)</span>
                                 <span className="tabular-nums">{won(extra)}</span>
                               </div>
                             )}
@@ -2368,7 +2368,7 @@ function PriceGuide({ prices, people, rec: recIn }: { prices: { table: Record<Le
   );
 }
 
-/** 비발디파크 매표소 리프트/렌탈 요금 안내판 사진 — 40% 할인 기준 정가를 손님이 직접 확인 */
+/** 비발디파크 매표소 리프트/렌탈 요금 안내판 사진 — 30% 할인 기준 정가를 손님이 직접 확인 */
 function PriceBoard() {
   return (
     <figure className="overflow-hidden rounded-2xl ring-1 ring-snow-300/60">
@@ -2384,14 +2384,14 @@ function PriceBoard() {
         />
       </a>
       <figcaption className="bg-snow-100 px-3 py-2 text-[12px] leading-relaxed text-snow-600">
-        📷 비발디파크 매표소 요금 안내판 (현장 사진) · 이 정가에서 <b className="text-[#03803D]">40% 할인</b>해 계산해요 · 누르면 크게 보여요
+        📷 비발디파크 매표소 요금 안내판 (현장 사진) · 이 정가에서 <b className="text-[#03803D]">30% 할인</b>해 계산해요 · 누르면 크게 보여요
       </figcaption>
       <DiscountTable />
     </figure>
   );
 }
 
-/** 지노스키 손님 40% 할인가 표 (리프트만 / 리프트+장비 · 주중·주말 · 대인·소인) */
+/** 지노스키 손님 30% 할인가 표 (리프트만 / 리프트+장비 · 주중·주말 · 대인·소인) */
 function DiscountTable() {
   const [mode, setMode] = useState<"lift" | "rental">("rental");
   const hours: TicketHours[] = [3, 5, 7];
@@ -2409,7 +2409,7 @@ function DiscountTable() {
   return (
     <div className="border-t border-snow-300/60 bg-white p-3">
       <div className="flex items-center justify-between gap-2">
-        <p className="whitespace-nowrap text-[14px] font-bold text-[#03803D]">40% 할인가</p>
+        <p className="whitespace-nowrap text-[14px] font-bold text-[#03803D]">30% 할인가</p>
         <div className="flex rounded-full bg-snow-100 p-0.5">
           {(["rental", "lift"] as const).map((m) => (
             <button

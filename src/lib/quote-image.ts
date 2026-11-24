@@ -188,8 +188,8 @@ export async function renderQuoteImage(
       const n = (v: number) => (v ? v.toLocaleString(loc === "ko" ? "ko-KR" : "en-US") : "-");
       const C = [ // 오른쪽 끝 x
         { h: tr("강습"), s: tr("패찰 포함"), x: PAD + 400 },
-        { h: tr("리프트"), s: "40%↓", x: PAD + 530 },
-        { h: tr("장비"), s: "40%↓", x: PAD + 645 },
+        { h: tr("리프트"), s: "30%↓", x: PAD + 530 },
+        { h: tr("장비"), s: "30%↓", x: PAD + 645 },
         { h: tr("헬멧"), s: "", x: PAD + 750 },
         { h: tr("합계"), s: loc === "ko" ? "(원)" : "(KRW)", x: W - PAD - 20 },
       ];
@@ -280,7 +280,7 @@ export async function renderQuoteImage(
         for (const w of wrap(ctx, l, inner)) {
           y += 38;
           if (!dry) {
-            ctx.fillStyle = l.includes("40%") ? GREEN : GRAY;
+            ctx.fillStyle = l.includes("30%") ? GREEN : GRAY;
             ctx.fillText(w, PAD, y);
           }
         }

@@ -6,9 +6,9 @@ import { trackEvent } from "@/components/shared/analytics";
 
 /** 홈 화면 연박·가족 견적 안내 배너 (ko/en/zh) */
 const QB = {
-  ko: { eyebrow: "연박 · 가족 여러 팀", t1: "2박 3일, 하루 2회, 가족 두 팀?", t2: "견적을 바로 계산해 보세요", chips: ["날짜별 시간표 자동", "리프트·장비 40% 할인", "견적서 이미지 저장"], cta: "연박 견적내기 →" },
-  en: { eyebrow: "Multi-day · families · groups", t1: "3 days, 2 lessons a day, two families?", t2: "See your total price right now", chips: ["Timetable by date", "Lift & rental 40% off", "Save your quote as an image"], cta: "Get a multi-day quote →" },
-  zh: { eyebrow: "多日 · 家庭 · 团体", t1: "3天、每天2节课、两个家庭？", t2: "马上算出总价", chips: ["按日期自动排课", "缆车·装备6折", "报价单可存图"], cta: "多日报价 →" },
+  ko: { eyebrow: "연박 · 가족 여러 팀", t1: "2박 3일, 하루 2회, 가족 두 팀?", t2: "견적을 바로 계산해 보세요", chips: ["날짜별 시간표 자동", "리프트·장비 30% 할인", "견적서 이미지 저장"], cta: "연박 견적내기 →" },
+  en: { eyebrow: "Multi-day · families · groups", t1: "3 days, 2 lessons a day, two families?", t2: "See your total price right now", chips: ["Timetable by date", "Lift & rental 30% off", "Save your quote as an image"], cta: "Get a multi-day quote →" },
+  zh: { eyebrow: "多日 · 家庭 · 团体", t1: "3天、每天2节课、两个家庭？", t2: "马上算出总价", chips: ["按日期自动排课", "缆车·装备7折", "报价单可存图"], cta: "多日报价 →" },
 };
 export function QuoteBanner() {
   const loc = useLocale();

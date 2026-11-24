@@ -22,7 +22,7 @@ const TILES: { key: Key; href: string; image?: string; focus?: string }[] = [
 /** 한국어 타일 한 줄 설명 (영어·중국어는 페이지 설명을 그대로 써요) */
 const KO_DETAIL: Record<Key, string> = {
   lessons: "입문부터 상급 · 원데이 · 유아까지",
-  pricing: "시간표 · 강습료 · 리프트 40% 할인",
+  pricing: "시간표 · 강습료 · 리프트 30% 할인",
   instructor: "대한스키지도자연맹 공인 강사진",
   gallery: "렌즈에 담긴 JinoSki의 겨울",
   reviews: "리뷰 이벤트(커피·사진 인화) 참여 후기 모음",

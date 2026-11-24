@@ -23,8 +23,8 @@ export const QA_EN: QA[] = [
     a: "One instructor takes up to 3 people, so groups of 4+ are split. e.g. 4 people → 2+2, 5 people → 3+2. If levels or ages differ, we group similar kids together. In the calculator's \"How should we split the classes?\" you can pick Budget (3 each), Small group (2 each) or Private 1:1 and see the price right away.",
   },
   {
-    q: "How do I get the 40% discount on lift tickets and rentals?",
-    a: "In the calculator's \"Need lift tickets or equipment?\" choose Lift only / Lift + equipment / Not needed for each person, and it's calculated at 40% off the Vivaldi Park ticket-office price. We'll arrange it when your lesson is confirmed so you can pick it up on site.",
+    q: "How do I get the 30% discount on lift tickets and rentals?",
+    a: "In the calculator's \"Need lift tickets or equipment?\" choose Lift only / Lift + equipment / Not needed for each person, and it's calculated at 30% off the Vivaldi Park ticket-office price. We'll arrange it when your lesson is confirmed so you can pick it up on site.",
   },
   {
     q: "How many hours of lift ticket should I buy?",
@@ -60,7 +60,7 @@ export const QA_EN: QA[] = [
   },
   {
     q: "When and how do we pay?",
-    a: "After you send your quote, we check instructor availability and contact you. Once confirmed, please pay the full quoted amount (PayPal or bank transfer) — your booking is confirmed when we receive it, and there's nothing more to pay for the lesson on the day. Lift tickets and rental (40% off) are paid to JinoSki together with the lesson fee, so on the day you just pick them up.",
+    a: "After you send your quote, we check instructor availability and contact you. Once confirmed, please pay the full quoted amount (PayPal or bank transfer) — your booking is confirmed when we receive it, and there's nothing more to pay for the lesson on the day. Lift tickets and rental (30% off) are paid to JinoSki together with the lesson fee, so on the day you just pick them up.",
   },
   {
     q: "What if our plans change or the weather is bad?",
@@ -90,8 +90,8 @@ export const QA_ZH: QA[] = [
     a: "每位教练最多带3人，所以4人以上会分班。例）4人 → 2人+2人，5人 → 3人+2人。水平或年龄不同时，会把相近的孩子分在一起。在计算器「怎么分班？」中选择经济（每班3人）· 精品小班（每班2人）· 1对1专属，即可马上算出价格。",
   },
   {
-    q: "缆车票·装备40%折扣怎么享受？",
-    a: "在计算器「需要缆车票·装备吗？」中为每个人选择只要缆车 / 缆车+装备 / 不需要，就会按维瓦尔第公园售票处原价打6折计算。课程确认时一并安排，到现场即可直接领取。",
+    q: "缆车票·装备30%折扣怎么享受？",
+    a: "在计算器「需要缆车票·装备吗？」中为每个人选择只要缆车 / 缆车+装备 / 不需要，就会按维瓦尔第公园售票处原价打7折计算。课程确认时一并安排，到现场即可直接领取。",
   },
   {
     q: "缆车票应该买几小时的？",
@@ -127,7 +127,7 @@ export const QA_ZH: QA[] = [
   },
   {
     q: "什么时候、怎么付款？",
-    a: "提交报价后，我们会确认教练日程并联系您。确认后请支付报价全款（PayPal或银行转账），收到后预约即确认，上课当天无需再付课程费。缆车票·装备（6折）与课程费一起付给JinoSki，当天现场直接领取即可。",
+    a: "提交报价后，我们会确认教练日程并联系您。确认后请支付报价全款（PayPal或银行转账），收到后预约即确认，上课当天无需再付课程费。缆车票·装备（7折）与课程费一起付给JinoSki，当天现场直接领取即可。",
   },
   {
     q: "中途行程变化或天气不好怎么办？",

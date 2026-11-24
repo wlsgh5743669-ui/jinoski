@@ -7,12 +7,12 @@ import { LIFT_PRICES, LIFT_RENTAL_DISCOUNT, RENTAL_PRICES, type TicketHours } fr
 import { approxUsd } from "@/lib/usd";
 import { cn } from "@/lib/utils";
 
-/** 요금 안내 페이지: 리프트권·장비 렌탈 정가 → 지노스키 40% 할인가 표 (ko/en/zh) */
+/** 요금 안내 페이지: 리프트권·장비 렌탈 정가 → 지노스키 30% 할인가 표 (ko/en/zh) */
 const TXT = {
   ko: {
     eyebrow: "LIFT & RENTAL",
-    title: "리프트권·장비 렌탈 40% 할인",
-    desc: "지노스키 강습생은 비발디파크 매표소 정가에서 40% 할인돼요. 강습료와 함께 결제하고, 당일엔 매표소 줄 없이 받기만 하면 돼요.",
+    title: "리프트권·장비 렌탈 30% 할인",
+    desc: "지노스키 강습생은 비발디파크 매표소 정가에서 30% 할인돼요. 강습료와 함께 결제하고, 당일엔 매표소 줄 없이 받기만 하면 돼요.",
     wd: "주중",
     wk: "주말·공휴일",
     adult: "대인 (14세 이상)",
@@ -31,8 +31,8 @@ const TXT = {
   },
   en: {
     eyebrow: "LIFT & RENTAL",
-    title: "Lift tickets & ski rental — 40% off",
-    desc: "JinoSki students get 40% off Vivaldi Park's ticket-office prices. Pay together with your lesson, then just pick everything up on the day — no ticket-office queue.",
+    title: "Lift tickets & ski rental — 30% off",
+    desc: "JinoSki students get 30% off Vivaldi Park's ticket-office prices. Pay together with your lesson, then just pick everything up on the day — no ticket-office queue.",
     wd: "Weekday",
     wk: "Weekend / holiday",
     adult: "Adult (14+)",
@@ -51,8 +51,8 @@ const TXT = {
   },
   zh: {
     eyebrow: "LIFT & RENTAL",
-    title: "缆车票·装备租赁 6折",
-    desc: "JinoSki学员享维瓦尔第公园售票处原价6折。与课程费一起支付，当天无需排队，直接领取即可。",
+    title: "缆车票·装备租赁 7折",
+    desc: "JinoSki学员享维瓦尔第公园售票处原价7折。与课程费一起支付，当天无需排队，直接领取即可。",
     wd: "平日",
     wk: "周末·节假日",
     adult: "成人（14岁以上）",

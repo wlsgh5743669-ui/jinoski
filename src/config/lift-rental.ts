@@ -2,7 +2,7 @@
 // 비발디파크 매표소 「리프트/렌탈 요금」 안내판과 동일 (주중 / 주말·공휴일). 요금이 바뀌면 숫자만 바꿔주세요.
 // 지노스키 고객은 정가에서 DISCOUNT 만큼 할인 (헬멧·의류는 할인 제외)
 
-export const LIFT_RENTAL_DISCOUNT = 0.4;
+export const LIFT_RENTAL_DISCOUNT = 0.3;
 
 export type TicketHours = 3 | 5 | 7;
 

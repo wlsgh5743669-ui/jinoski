@@ -438,7 +438,7 @@ const preLessonGuidance: SiteContent["preLessonGuidance"] = {
       icon: "🎫",
       title: "Lift ticket for riding",
       description:
-        "Your lift ticket for riding is separate from the lesson fee (and different from the lesson permit). JinoSki guests get lift tickets and rental at 40% off the ticket-office price, paid to JinoSki together with the lesson fee — you just pick them up on the day.",
+        "Your lift ticket for riding is separate from the lesson fee (and different from the lesson permit). JinoSki guests get lift tickets and rental at 30% off the ticket-office price, paid to JinoSki together with the lesson fee — you just pick them up on the day.",
     },
     {
       icon: "📞",
@@ -488,7 +488,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "Do I need to buy a lift ticket separately?",
     answer:
-      "Lift tickets are separate from the lesson fee.\nJinoSki guests get lift tickets and equipment rental at 40% off the ticket-office price, paid to JinoSki together with the lesson fee. On the day you just pick them up — no queue at the ticket office.",
+      "Lift tickets are separate from the lesson fee.\nJinoSki guests get lift tickets and equipment rental at 30% off the ticket-office price, paid to JinoSki together with the lesson fee. On the day you just pick them up — no queue at the ticket office.",
   },
   {
     question: "Are there any costs besides the lesson fee?",
@@ -588,7 +588,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "How do I pay?",
     answer:
-      "① Once we confirm your instructor and time, please pay the full amount. Your booking is confirmed when we receive it.\n② There's nothing more to pay for the lesson on the day.\n③ Lift tickets and equipment rental (40% off the ticket-office price) are paid to JinoSki together with the lesson fee — on the day you just pick them up.\n\n· PayPal or international credit card (USD) — easiest for overseas guests. We send the exact USD amount with your confirmation.\n· Korean bank transfer (KRW): KB Kookmin Bank 010-4047-7711, account holder 박진호 (Jino Company).\n\nPrices are set in Korean won (KRW). USD amounts shown on this website are approximate.",
+      "① Once we confirm your instructor and time, please pay the full amount. Your booking is confirmed when we receive it.\n② There's nothing more to pay for the lesson on the day.\n③ Lift tickets and equipment rental (30% off the ticket-office price) are paid to JinoSki together with the lesson fee — on the day you just pick them up.\n\n· PayPal or international credit card (USD) — easiest for overseas guests. We send the exact USD amount with your confirmation.\n· Korean bank transfer (KRW): KB Kookmin Bank 010-4047-7711, account holder 박진호 (Jino Company).\n\nPrices are set in Korean won (KRW). USD amounts shown on this website are approximate.",
   },
   {
     question: "Can I pay with Alipay or WeChat Pay?",
@@ -1197,13 +1197,13 @@ const bookingWizard: SiteContent["bookingWizard"] = {
     lessonFee: (price: string) => `Lesson ${price}`,
     liftPassPlus: (price: string) => `+ lesson permit ${price} per person`,
     liftPassIncluded: "Lesson permit included",
-    extrasNotice: "Lift tickets and equipment rental can be added at 40% off the ticket-office price and paid to JinoSki together with the lesson fee (you just pick them up on the day). For ski wear we'll recommend our partner rental shop.",
+    extrasNotice: "Lift tickets and equipment rental can be added at 30% off the ticket-office price and paid to JinoSki together with the lesson fee (you just pick them up on the day). For ski wear we'll recommend our partner rental shop.",
     bookingNoticeTitle: "How booking works",
     bookingNoticeLines: [
       "① What you send now is a booking request — it is not confirmed yet.",
       "📍 Meeting point: inside Ticket Office A at Vivaldi Park, in front of Good & Goods",
       "② We check the instructor's schedule and contact you to confirm.",
-      "③ After confirmation, pay the full amount (PayPal or bank transfer) — nothing more to pay for the lesson on the day. Lift tickets & rental (40% off) are paid to JinoSki together with the lesson fee.\nPayPal: link in your confirmation · KB Kookmin Bank 010-4047-7711 · Account holder: 박진호 (Jino Company)",
+      "③ After confirmation, pay the full amount (PayPal or bank transfer) — nothing more to pay for the lesson on the day. Lift tickets & rental (30% off) are paid to JinoSki together with the lesson fee.\nPayPal: link in your confirmation · KB Kookmin Bank 010-4047-7711 · Account holder: 박진호 (Jino Company)",
       "④ Refund policy: 100% refund up to 3 days before · 50% refund 1–2 days before · no refund for same-day cancellations or no-shows",
       "⑤ Rescheduling: one free change up to 2 days before (to a date the instructor is free, within the season) · after that, the refund policy applies",
       "⑥ If slopes close due to bad weather, you get a free reschedule or a full refund.",
@@ -1406,7 +1406,7 @@ const pageMeta = {
   pricing: {
     title: "Ski & Snowboard Lesson Prices",
     description:
-      "JinoSki prices — 2-hour lesson ₩140,000 for 1 person, ₩200,000 for 2, ₩240,000 for 3; 3-hour, 4-hour and 7-hour Full Care rates; lesson permit ₩25,000 per 2 hours; lift and rental 40% off.",
+      "JinoSki prices — 2-hour lesson ₩140,000 for 1 person, ₩200,000 for 2, ₩240,000 for 3; 3-hour, 4-hour and 7-hour Full Care rates; lesson permit ₩25,000 per 2 hours; lift and rental 30% off.",
   },
   instructor: {
     title: "JinoSki Instructors",

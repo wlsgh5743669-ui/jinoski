@@ -34,7 +34,7 @@ const T = {
     tierBNote: "Level 3 심사위원이 심사해요",
     ppl: { "1:1": "1명", "1:2": "2명 (강사 1 : 2)", "1:3": "3명 (강사 1 : 3)" },
     total: "반 전체 금액",
-    plus: "+ 패찰 1인 25,000원 별도 · 리프트권·장비는 정가 40% 할인",
+    plus: "+ 패찰 1인 25,000원 별도 · 리프트권·장비는 정가 30% 할인",
     book: "이 심사로 예약하기",
     stepsTitle: "이렇게 진행돼요",
     steps: [
@@ -84,7 +84,7 @@ const T = {
     tierBNote: "Tested by a Level 3 examiner",
     ppl: { "1:1": "1 child", "1:2": "2 children (1 : 2)", "1:3": "3 children (1 : 3)" },
     total: "Total per group",
-    plus: "+ lesson permit ₩25,000 per person · lift & rental 40% off",
+    plus: "+ lesson permit ₩25,000 per person · lift & rental 30% off",
     book: "Book this test",
     stepsTitle: "How it works",
     steps: [
@@ -134,7 +134,7 @@ const T = {
     tierBNote: "由 Level 3 考官考核",
     ppl: { "1:1": "1人", "1:2": "2人（1:2）", "1:3": "3人（1:3）" },
     total: "整班费用",
-    plus: "+ 教学许可证（挂牌）每人 ₩25,000 另计 · 缆车·装备6折",
+    plus: "+ 教学许可证（挂牌）每人 ₩25,000 另计 · 缆车·装备7折",
     book: "预约此考核",
     stepsTitle: "流程",
     steps: [
