@@ -16,6 +16,13 @@ import { getPrivacy } from "@/config/content/privacy";
 import { guideLinkLabel } from "@/config/content/guide";
 import { Container } from "@/components/shared/container";
 
+
+/** 사업자등록증에 적힌 그대로 (상호·사업장 주소). 레슨 장소(비발디파크)와 다를 수 있어요. */
+const BUSINESS = {
+  name: "지노컴퍼니",
+  address: "TODO_사업자등록증_주소",
+};
+
 export function Footer() {
   const { contact, navLinks, ui } = useContent();
   const locale = useLocale();
@@ -130,10 +137,14 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-2 border-t border-white/10 py-8 text-[12.5px] text-white/40">
+          {/* 사업자등록증 그대로 (토스페이먼츠 심사 11-24: 상호·사업장 주소·전화번호가 등록증과 같아야 해요) */}
           <p>
-            {ui.footer.representativeLabel} {contact.representativeName} ·{" "}
+            상호 {BUSINESS.name} · {ui.footer.representativeLabel} {contact.representativeName} ·{" "}
             {ui.footer.businessNumberLabel} {contact.businessRegistrationNumber} ·{" "}
             {ui.footer.mailOrderLabel} {contact.mailOrderSalesNumber}
+          </p>
+          <p>
+            사업장 주소 {BUSINESS.address} · 전화 {contact.phone}
           </p>
           <div className="flex flex-col gap-1 text-[13px] sm:flex-row sm:items-center sm:justify-between">
             <p>
