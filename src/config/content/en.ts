@@ -1410,7 +1410,7 @@ const pageMeta = {
   instructor: {
     title: "JinoSki Instructors",
     description:
-      "13 JinoSki instructors, all with official certifications (Korea Ski Instructors Association · Japan SAJ), teaching at Vivaldi Park with head instructor Jinho Park (KSIA Ski Level 2 · Snowboard Level 1).",
+      "14 JinoSki instructors, all with official certifications (Korea Ski Instructors Association · Japan SAJ), teaching at Vivaldi Park with head instructor Jinho Park (KSIA Ski Level 2 · Snowboard Level 1).",
   },
   gallery: {
     title: "Lesson Photo Gallery",

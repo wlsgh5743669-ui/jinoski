@@ -1364,7 +1364,7 @@ const pageMeta = {
   instructor: {
     title: "JinoSki 教练团队介绍",
     description:
-      "JinoSki 13位教练全部持有韩国滑雪指导者联盟（KSIA）或日本 SAJ 官方资格，与首席教练朴镇浩（双板 Level 2·单板 Level 1）一起在大明维瓦尔第执教。",
+      "JinoSki 14位教练全部持有韩国滑雪指导者联盟（KSIA）或日本 SAJ 官方资格，与首席教练朴镇浩（双板 Level 2·单板 Level 1）一起在大明维瓦尔第执教。",
   },
   gallery: {
     title: "课程现场照片",
