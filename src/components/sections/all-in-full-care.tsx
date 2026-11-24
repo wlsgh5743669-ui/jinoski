@@ -7,14 +7,14 @@ import { LIFT_PRICES, RENTAL_PRICES } from "@/config/lift-rental";
 
 /**
  * 외국인용 「VIP 레슨 (VIP Lesson)」 — 영어·중국어 화면만 (대표 11-14). 기존 풀케어 소개·가격은 그대로 둬요.
- * VIP 레슨 = 원데이·나이트 풀케어 7시간 + 1인 150,000원(리프트권 7시간·장비 8시간·바이저 헬멧·스키복 + 스키 양말 증정).
+ * VIP 레슨 = 원데이·나이트 풀케어 7시간 + 1인 160,000원(11-25부터, 전엔 150,000원 · 리프트권 7시간·장비 8시간·바이저 헬멧·스키복 + 스키 양말 증정).
  * 장갑은 포함 안 함 — 필요하면 1켤레 20,000원 추가(대표 11-15).
  * 근거: 리프트·장비 할인가(config/lift-rental.ts, 11-24부터 30%) + 바이저 헬멧 15,000 + 스키복 7시간 35,000 → 어른 주말 152,200원(40% 때 137,600원),
- *       양말 증정분까지 더해 1인 15만원 한 가지 (주중·주말·어른·어린이 같음).
+ *       양말 증정분까지 더해 1인 16만원 한 가지(리프트·장비 30% 할인으로 바뀌어 대표 11-25 「30% 기준으로 올려」) (주중·주말·어른·어린이 같음).
  */
-export const VIP_ADD_PER_PERSON = 150000;
+export const VIP_ADD_PER_PERSON = 160000;
 const FULL_CARE = [550000, 700000, 900000]; // 1:1 · 1:2 · 1:3 풀케어 레슨료(그룹 전체, 패찰 포함)
-export const VIP_TOTALS = FULL_CARE.map((fee, i) => fee + VIP_ADD_PER_PERSON * (i + 1)); // 700,000 · 1,000,000 · 1,350,000
+export const VIP_TOTALS = FULL_CARE.map((fee, i) => fee + VIP_ADD_PER_PERSON * (i + 1)); // 710,000 · 1,020,000 · 1,380,000
 /**
  * 「합리적」 비교 (대표 11-17 「외국인들이 잘 보이게, 합리적이라는 느낌으로」):
  * 따로 사면 = 비발디 매표소 주말 정가(어른) 리프트 7시간 + 장비 8시간 + 스키복 7시간(외국인 렌탈가 35,000).
@@ -22,7 +22,7 @@ export const VIP_TOTALS = FULL_CARE.map((fee, i) => fee + VIP_ADD_PER_PERSON * (
  */
 const SKIWEAR_7H = 35000;
 const SEPARATE = LIFT_PRICES[7].adult[1] + RENTAL_PRICES[7].adult[1] + SKIWEAR_7H; // 99,000 + 47,000 + 35,000 = 181,000
-const SAVE_PER_PERSON = SEPARATE - VIP_ADD_PER_PERSON; // 31,000
+const SAVE_PER_PERSON = SEPARATE - VIP_ADD_PER_PERSON; // 21,000
 
 const TXT = {
   en: {

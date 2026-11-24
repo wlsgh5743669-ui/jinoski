@@ -5,21 +5,21 @@ import { Container } from "@/components/shared/container";
 
 /**
  * 메인 첫 화면 바로 아래 VIP 레슨 띠 — 영어·중국어 화면만 (대표 11-17 「외국인들이 잘 보이게」).
- * 누르면 같은 화면의 VIP 레슨 칸(#vip-lesson)으로 내려가요. 「1인 450,000원부터」 = 3명 1,350,000원 ÷ 3.
+ * 누르면 같은 화면의 VIP 레슨 칸(#vip-lesson)으로 내려가요. 「1인 460,000원부터」 = 3명 1,380,000원 ÷ 3.
  */
 const TXT = {
   en: {
     tag: "For visitors",
     title: "VIP Lesson",
     body: "Your own instructor, lift ticket, rental gear, helmet and premium ski wear — one booking, nothing to queue for.",
-    price: "from ₩450,000 per person",
+    price: "from ₩460,000 per person",
     cta: "See the VIP Lesson",
   },
   zh: {
     tag: "外国游客专属",
     title: "VIP 课程",
     body: "专属教练、缆车票、租赁装备、头盔、高级滑雪服——一次预约全搞定，不用排队。",
-    price: "每人 ₩450,000 起",
+    price: "每人 ₩460,000 起",
     cta: "查看 VIP 课程",
   },
 };

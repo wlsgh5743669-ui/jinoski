@@ -92,14 +92,14 @@ const FOREIGN_TEXT = {
 /**
  * 외국인 VIP 레슨 (대표 11-22 「이게 우리 주력 상품이야」) — 소개 카드(all-in-full-care.tsx)의 버튼이 ?vip=1 로 보내요.
  * 예전엔 요청란에 「VIP」라고 직접 적어야 했고 결제 순서 설명도 VVIP보다 약했어요.
- * 값: 풀케어 레슨료 + 1인 150,000원 (리프트권 7시간·장비 8시간·바이저 헬멧·스키복 + 스키 양말 증정, 장갑 별도 20,000원).
+ * 값: 풀케어 레슨료 + 1인 160,000원 (리프트권 7시간·장비 8시간·바이저 헬멧·스키복 + 스키 양말 증정, 장갑 별도 20,000원).
  */
 const VIP_TXT = {
   ko: {
     badge: "VIP 레슨",
     label: "VIP 추가",
-    detail: (n: number) => `리프트 7시간·장비 8시간·헬멧·스키복·양말 · 1인 150,000원 × ${n}명`,
-    hint: "1인 150,000원 추가로 리프트·장비·헬멧·스키복까지",
+    detail: (n: number) => `리프트 7시간·장비 8시간·헬멧·스키복·양말 · 1인 160,000원 × ${n}명`,
+    hint: "1인 160,000원 추가로 리프트·장비·헬멧·스키복까지",
     incShort: "리프트·장비·헬멧·스키복 포함",
     payNote: "강사 확정 후 전액 결제 · 강습 당일엔 따로 낼 돈이 없어요.",
     after: "강사가 확정되면 전액 결제 안내를 보내 드려요. 장비·스키복 준비를 위해 키와 신발 사이즈도 여쭤볼게요.",
@@ -107,8 +107,8 @@ const VIP_TXT = {
   en: {
     badge: "VIP Lesson",
     label: "VIP add-on",
-    detail: (n: number) => `lift 7h · gear 8h · helmet · ski wear · socks · ₩150,000 × ${n}`,
-    hint: "+ ₩150,000 per person for lift, gear, helmet & ski wear",
+    detail: (n: number) => `lift 7h · gear 8h · helmet · ski wear · socks · ₩160,000 × ${n}`,
+    hint: "+ ₩160,000 per person for lift, gear, helmet & ski wear",
     incShort: "lift, gear, helmet & ski wear included",
     payNote: "Paid in full by PayPal after we confirm your instructor — nothing to pay on the day.",
     after: "Once your instructor is confirmed we'll send a PayPal request for the full amount, and ask everyone's height and shoe size so your gear and ski wear are ready.",
@@ -116,8 +116,8 @@ const VIP_TXT = {
   zh: {
     badge: "VIP 课程",
     label: "VIP 加购",
-    detail: (n: number) => `缆车7小时·装备8小时·头盔·滑雪服·袜子 · ₩150,000 × ${n}人`,
-    hint: "每人加 ₩150,000，含缆车票·装备·头盔·滑雪服",
+    detail: (n: number) => `缆车7小时·装备8小时·头盔·滑雪服·袜子 · ₩160,000 × ${n}人`,
+    hint: "每人加 ₩160,000，含缆车票·装备·头盔·滑雪服",
     incShort: "含缆车票·装备·头盔·滑雪服",
     payNote: "确认教练后通过 PayPal 支付全款 — 上课当天无需再付。",
     after: "确认教练后，我们会发送 PayPal 全款付款请求，并询问每个人的身高和鞋码，提前准备装备和滑雪服。",
@@ -255,7 +255,7 @@ type WizardState = {
   email: string;
   messenger: string;
   msgApp: "" | "WhatsApp" | "WeChat" | "LINE" | "KakaoTalk";
-  /** 외국인 VIP 레슨 (풀케어 + 1인 150,000원 리프트·장비·헬멧·스키복) — ?vip=1 로 들어오면 켜져요 */
+  /** 외국인 VIP 레슨 (풀케어 + 1인 160,000원 리프트·장비·헬멧·스키복) — ?vip=1 로 들어오면 켜져요 */
   vip: boolean;
 };
 
