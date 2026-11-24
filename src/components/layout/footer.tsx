@@ -20,7 +20,7 @@ import { Container } from "@/components/shared/container";
 /** 사업자등록증에 적힌 그대로 (상호·사업장 주소). 레슨 장소(비발디파크)와 다를 수 있어요. */
 const BUSINESS = {
   name: "지노컴퍼니",
-  address: "TODO_사업자등록증_주소",
+  address: "제주특별자치도 서귀포시 말질로 279, 1층",
 };
 
 export function Footer() {
