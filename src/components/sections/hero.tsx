@@ -21,8 +21,9 @@ function getIsMobileSnapshot() {
   return window.matchMedia(MOBILE_QUERY).matches;
 }
 
-function getIsMobileServerSnapshot() {
-  return false;
+/** 서버(정적 HTML)에서는 아직 모름 → 영상 주소를 안 넣어서, 휴대폰이 컴퓨터용 큰 영상을 받다 끊는 일이 없게 (11-25 점검) */
+function getIsMobileServerSnapshot(): boolean | null {
+  return null;
 }
 
 export function Hero() {
@@ -34,7 +35,7 @@ export function Hero() {
     offset: ["start start", "end start"],
   });
 
-  const isMobile = useSyncExternalStore(
+  const isMobile = useSyncExternalStore<boolean | null>(
     subscribeToMobileQuery,
     getIsMobileSnapshot,
     getIsMobileServerSnapshot
@@ -56,9 +57,9 @@ export function Hero() {
         className="absolute inset-0 h-full w-full"
       >
         <video
-          key={isMobile ? "mobile" : "desktop"}
+          key={isMobile === null ? "pending" : isMobile ? "mobile" : "desktop"}
           className="h-full w-full object-cover"
-          src={isMobile ? heroContent.videoSrcMobile : heroContent.videoSrc}
+          src={isMobile === null ? undefined : isMobile ? heroContent.videoSrcMobile : heroContent.videoSrc}
           poster={heroContent.posterSrc}
           autoPlay
           muted

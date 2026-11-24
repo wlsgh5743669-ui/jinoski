@@ -30,7 +30,7 @@ const contact = {
   location: "262 Hanchigol-gil, Seo-myeon, Hongcheon-gun, Gangwon-do, Vivaldi Park",
   representativeName: "Jinho Park",
   businessRegistrationNumber: "336-14-02452",
-  mailOrderSalesNumber: "No. 2024-Incheon Bupyeong-2645",
+  mailOrderSalesNumber: "2024-Incheon Bupyeong-2645",
   meetingPoint: {
     label: "Vivaldi Park, inside Ticket Office A (in front of Good & Goods)",
     // TODO: 집합 장소 사진을 public/images/meeting-point.jpg 로 넣고 아래 주석 해제

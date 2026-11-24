@@ -23,6 +23,14 @@ const BUSINESS = {
   address: "제주특별자치도 서귀포시 말질로 279, 1층",
 };
 
+/** 영어·중국어 화면은 영어로 (대표 11-25 「중국어 버전은 영어로」) */
+const BUSINESS_EN = {
+  name: "Jino Company (지노컴퍼니)",
+  representative: "Jinho Park",
+  mailOrder: "2024-Incheon Bupyeong-2645",
+  address: "1F, 279 Maljil-ro, Seogwipo-si, Jeju-do, Republic of Korea",
+};
+
 export function Footer() {
   const { contact, navLinks, ui } = useContent();
   const locale = useLocale();
@@ -138,14 +146,28 @@ export function Footer() {
 
         <div className="flex flex-col gap-2 border-t border-white/10 py-8 text-[12.5px] text-white/40">
           {/* 사업자등록증 그대로 (토스페이먼츠 심사 11-24: 상호·사업장 주소·전화번호가 등록증과 같아야 해요) */}
-          <p>
-            상호 {BUSINESS.name} · {ui.footer.representativeLabel} {contact.representativeName} ·{" "}
-            {ui.footer.businessNumberLabel} {contact.businessRegistrationNumber} ·{" "}
-            {ui.footer.mailOrderLabel} {contact.mailOrderSalesNumber}
-          </p>
-          <p>
-            사업장 주소 {BUSINESS.address} · 전화 {contact.phone}
-          </p>
+          {locale === "ko" ? (
+            <>
+              <p>
+                상호 {BUSINESS.name} · {ui.footer.representativeLabel} {contact.representativeName} ·{" "}
+                {ui.footer.businessNumberLabel} {contact.businessRegistrationNumber} ·{" "}
+                {ui.footer.mailOrderLabel} {contact.mailOrderSalesNumber}
+              </p>
+              <p>
+                사업장 주소 {BUSINESS.address} · 전화 {contact.phone}
+              </p>
+            </>
+          ) : (
+            <>
+              <p>
+                Business name {BUSINESS_EN.name} · CEO {BUSINESS_EN.representative} · Business Registration No.{" "}
+                {contact.businessRegistrationNumber} · Mail-order Sales No. {BUSINESS_EN.mailOrder}
+              </p>
+              <p>
+                Business address {BUSINESS_EN.address} · Phone {contact.phone}
+              </p>
+            </>
+          )}
           <div className="flex flex-col gap-1 text-[13px] sm:flex-row sm:items-center sm:justify-between">
             <p>
               &copy; {year} {ui.footer.copyrightSuffix}

@@ -360,6 +360,19 @@ export function TeamQuote() {
   const sameN = dayPlans.every((p) => p.n === dayPlans[0]?.n);
   const dayText = sameN && dayPlans[0]?.n ? `하루 ${dayPlans[0].n}번` : "날짜별 일정";
   const sessions = schedule.reduce((a, d) => a + d.slots.length, 0);
+  /** 풀케어 날은 「수업 2회」 대신 「주간」「나이트」 (대표 11-25) */
+  const sessionText = (() => {
+    const on = schedule.filter((d) => d.slots.length);
+    const fcDays = on.filter((d) => d.len === "fc").length;
+    const ncDays = on.filter((d) => d.len === "nc").length;
+    if (!fcDays && !ncDays) return `수업 ${sessions}회`;
+    const rest = on.filter((d) => !isFC(d.len)).reduce((a, d) => a + d.slots.length, 0);
+    return [
+      fcDays ? `주간${fcDays > 1 ? ` ${fcDays}일` : ""}` : "",
+      ncDays ? `나이트${ncDays > 1 ? ` ${ncDays}일` : ""}` : "",
+      rest ? `수업 ${rest}회` : "",
+    ].filter(Boolean).join(" + ");
+  })();
   void maxPerDay;
   /** 그날 수업에 맞는 리프트 추천: 2번 → 7시간, 2시간 1번 → 3시간, 3·4시간 1번 → 5시간, 수업 없는 날 → 안 씀 */
   const autoTicket = (i: number): TicketHours | 0 => {
@@ -728,7 +741,7 @@ export function TeamQuote() {
     const picked = only ? personRows.filter((x) => only.includes(x.index)) : personRows;
     const pickedSum = picked.reduce((a, x) => a + x.pay, 0);
     return renderQuoteImage(trDeep({
-      title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
+      title: `${trip} · ${period} · ${lenText} · ${sessionText}`,
       total: `${perLabel} 약 ${won(perHead1)}`,
       totalSub: only
         ? `${picked.map((x) => x.label).join(", ")} · 함께 배우는 ${people}명 중 ${picked.length}명 · 반 ${usedSplit.join("+")}`
@@ -895,7 +908,7 @@ export function TeamQuote() {
     });
     return {
       v: 1,
-      title: `${trip} · ${period} · ${lenText} · 수업 ${sessions}회`,
+      title: `${trip} · ${period} · ${lenText} · ${sessionText}`,
       headline: `${perLabel} 약 ${won(perHead1)}`,
       sub: `어른 ${adults} · 어린이 ${kids} · 반 ${usedSplit.join("+")}${sportSummary ? ` · ${sportSummary}` : ""}`,
       days,
@@ -964,7 +977,7 @@ export function TeamQuote() {
           equipment: sportSummary,
           breakdown: buildBreakdown(),
           level: "",
-          total: `${won(grand)} (수업 ${sessions}회${des ? ` · 지정강사 ${des.name} ${won(des.fee)} 포함` : ""})`,
+          total: `${won(grand)} (${sessionText}${des ? ` · 지정강사 ${des.name} ${won(des.fee)} 포함` : ""})`,
           note: [
             anyPrep ? prep.filter((d) => d.sum).map((d) => `${d.day}일 ${d.sum}`).join(" | ") : "",
             des ? `🎯 ${des.text}` : "",
@@ -1018,7 +1031,7 @@ export function TeamQuote() {
           groupSize: `어른${adults} 어린이${kids} · 반 ${usedSplit.join("+")}`,
           equipment: sportSummary,
           breakdown: buildBreakdown(),
-          total: `${won(grand)} (수업 ${sessions}회${des ? ` · 지정강사 ${des.name} ${won(des.fee)} 포함` : ""})`,
+          total: `${won(grand)} (${sessionText}${des ? ` · 지정강사 ${des.name} ${won(des.fee)} 포함` : ""})`,
         }),
       });
       // 워커가 「저장했다」고 분명히 답했을 때만 저장으로 봐요 (예전 워커는 모르는 주소에도 200을 줘서, 글자만 믿으면 안 됨)
@@ -1555,7 +1568,7 @@ export function TeamQuote() {
             {step === 6 && (
               <div className="mt-4">
                 <p className="text-[14px] text-snow-600">
-                  {trip} · {period} · {lenText} · 수업 {sessions}회
+                  {trip} · {period} · {lenText} · {sessionText}
                 </p>
                 {/* ✏️ 부분 수정: 고칠 단계로 바로 갔다가 「고친 대로 견적서 보기」로 돌아와요 (대표 11-11) */}
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
@@ -1588,7 +1601,7 @@ export function TeamQuote() {
                   {fcNote && <p className="mt-1.5 rounded-lg bg-rose-500/20 px-2.5 py-1.5 text-[12.5px] font-semibold text-rose-200">🏆 {fcNote}</p>}
                 </div>
 
-                <h3 className="mt-6 text-[16px] font-bold text-ink-900">개인별 금액 ({sessions}회 기준)</h3>
+                <h3 className="mt-6 text-[16px] font-bold text-ink-900">개인별 금액 ({sessionText.startsWith("수업 ") ? `${sessions}회` : sessionText} 기준)</h3>
                 <ul className="mt-2 flex flex-col gap-2">
                   {personRows.map((x) => (
                     <li key={x.index} className="rounded-2xl bg-ice-200/70 px-4 py-3">
@@ -1817,7 +1830,7 @@ export function TeamQuote() {
                               ? `${d.day}일차${startDate ? ` ${addDays(startDate, d.day - 1)}` : ""} · ${
                                   dayLine(sched!)
                                 }`
-                              : `${trip} 전체 · ${people}명 · 수업 ${sessions}회`}
+                              : `${trip} 전체 · ${people}명 · ${sessionText}`}
                           </p>
                           <div className="mt-2 flex flex-col gap-1 text-[14px]">
                             <div className="flex justify-between">

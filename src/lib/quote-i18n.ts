@@ -15,9 +15,30 @@ type Rule = [RegExp | string, string | ((...m: string[]) => string), string | ((
 const WD_EN: Record<string, string> = { 일: "Sun", 월: "Mon", 화: "Tue", 수: "Wed", 목: "Thu", 금: "Fri", 토: "Sat" };
 const WD_ZH: Record<string, string> = { 일: "周日", 월: "周一", 화: "周二", 수: "周三", 목: "周四", 금: "周五", 토: "周六" };
 const krw = (n: number) => `₩${Math.round(n).toLocaleString("en-US")}`;
+const MON_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const NUMW_EN = ["", "one", "two", "three", "four", "five"];
 
 const RULES: Rule[] = [
+  // 11-25 전체 점검에서 남은 한국어 · 중국어 화면도 영어로 (대표 「중국어 버전은 영어로」)
+  ["현장에서 리프트권·장비·헬멧을 이대로 준비해 드려요", "We'll have lift tickets, gear and helmets ready on site exactly as listed", "We'll have lift tickets, gear and helmets ready on site exactly as listed"],
+  ["📋 날짜별 준비표", "📋 Prep list by date", "📋 Prep list by date"],
+  [/견적서 모두 보기 · 간단 · 자세히 · 사람별 (\d+)장/g, "See all quotes · simple · detailed · $1 per-person", "See all quotes · simple · detailed · $1 per-person"],
+  ["견적서 모두 보기 · 간단 · 자세히", "See all quotes · simple · detailed", "See all quotes · simple · detailed"],
+  [/견적서 모두 보기 · (\d+)장/g, "All quotes · $1 pages", "All quotes · $1 pages"],
+  [/부분 견적서 · 사람별 (\d+)장/g, "Partial quote · $1 per-person", "Partial quote · $1 per-person"],
+  ["부분 견적서", "Partial quote", "Partial quote"],
+  ["만드는 중...", "Making...", "Making..."],
+  ["✏️ 고치기", "✏️ Edit", "✏️ Edit"],
+  ["골라서 저장 (부분 견적서)", "Save selected people (partial quote)", "Save selected people (partial quote)"],
+  ["골라서 저장", "Save selected people", "Save selected people"],
+  ["집마다 따로 보낼 때", "To send each family its own", "To send each family its own"],
+  ["간단 견적서", "Simple quote", "Simple quote"],
+  ["자세한 견적서", "Detailed quote", "Detailed quote"],
+  ["총액·일정·계좌", "Total · schedule · payment", "Total · schedule · payment"],
+  ["날짜별 금액표", "Price table by date", "Price table by date"],
+  [/(\d+)월 (\d+)일 개장 — 그 전 날짜는 고를 수 없어요/g, (_: string, m: string, d: string) => `Opens ${MON_EN[+m - 1]} ${d} — earlier dates can't be picked`, (_: string, m: string, d: string) => `Opens ${MON_EN[+m - 1]} ${d} — earlier dates can't be picked`],
+  // 풀케어 날 「주간」「나이트」 (대표 11-25)
+  [/개인별 금액 \(((?:주간|나이트)[^)]*) 기준\)/g, "Price per person ($1)", "Price per person ($1)"],
   // 🎯 지정강사 (대표 11-22) — 강사 이름은 화면 언어로 이미 들어가 있어요
   ["한 팀 시즌 1번 · 이번 시즌 이미 내셨으면 빠져요", "Once per group per season · already paid this season? It comes off", "每组每季一次 · 本季已付过可扣除"],
   ["(시즌 1번) 포함", "(once a season) included", "（每季一次）已含"],
@@ -407,6 +428,11 @@ const RULES: Rule[] = [
   ["견적", "Quote", "报价"],
   ["카톡", "KakaoTalk", "KakaoTalk"],
   ["지노스키", "JinoSki", "JinoSki"],
+  // 풀케어 날 「주간」「나이트」만 남은 글자 (맨 끝 · 「나이트 풀케어」 규칙 뒤)
+  [/주간 (\d+)일/g, "Daytime ×$1 days", "Daytime ×$1 days"],
+  [/나이트 (\d+)일/g, "Night ×$1 days", "Night ×$1 days"],
+  [/(^|[\s(·+])주간(?=$|[\s)·+])/g, "$1Daytime", "$1Daytime"],
+  [/(^|[\s(·+])나이트(?=$|[\s)·+])/g, "$1Night", "$1Night"],
 ];
 
 const HANGUL = /[가-힣]/;
