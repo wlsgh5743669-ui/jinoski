@@ -56,6 +56,7 @@ const navLinks = [
   { label: "FAQ", href: "/faq" },
   { label: "Booking", href: "/reserve" },
   { label: "Quote", href: "/quote" },
+  { label: "My Quote", href: "/quote/my" },
 ];
 
 const heroContent = {

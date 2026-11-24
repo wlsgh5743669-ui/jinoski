@@ -15,7 +15,7 @@ const NAV_GROUPS: { key: string; label: Record<"ko" | "en" | "zh", string>; href
   // 대표 11-19: 지노스키 묶음을 맨 위로
   { key: "about", label: { ko: "지노스키", en: "About", zh: "关于我们" }, hrefs: ["/notice", "/instructor", "/gallery", "/reviews"] },
   { key: "lesson", label: { ko: "레슨", en: "Lessons", zh: "课程" }, hrefs: ["/lessons", "/junior", "/snap"] },
-  { key: "price", label: { ko: "요금·견적", en: "Prices & Quote", zh: "价格·报价" }, hrefs: ["/pricing", "/quote"] },
+  { key: "price", label: { ko: "요금·견적", en: "Prices & Quote", zh: "价格·报价" }, hrefs: ["/pricing", "/quote", "/quote/my"] },
 ];
 /** 예약하기 버튼이 따로 있어서 메뉴에서는 빼요 */
 const HIDDEN = ["/reserve"];

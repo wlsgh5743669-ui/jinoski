@@ -33,11 +33,9 @@ export function QuotePhoto() {
               <a href={src} download={`지노스키_견적_${id}.jpg`} className="rounded-full bg-ink-900 px-5 py-2.5 text-[14px] font-bold text-white">
                 사진 저장
               </a>
-              {qloc === "ko" && (
-                <a href="/ko/quote/inbox/" className="rounded-full bg-white px-5 py-2.5 text-[14px] font-bold text-ink-900 ring-1 ring-snow-300/70">
-                  문의함
-                </a>
-              )}
+              <a href={qloc === "ko" ? "/ko/quote/inbox/" : `/${qloc}/quote/my/`} className="rounded-full bg-white px-5 py-2.5 text-[14px] font-bold text-ink-900 ring-1 ring-snow-300/70">
+                {qloc === "ko" ? "문의함" : "내 견적"}
+              </a>
             </div>
           </>
         )}

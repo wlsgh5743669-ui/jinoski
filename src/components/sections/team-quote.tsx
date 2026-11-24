@@ -199,8 +199,8 @@ export function TeamQuote() {
   const [note, setNote] = useState("");
   const [consent, setConsent] = useState(false);
   const [marketing, setMarketing] = useState(false);
-  /** (11-24 「내 견적 확인」 없앰 · 토스 심사) 비밀번호 칸은 뺐고 빈 값만 보내요 */
-  const [pw] = useState("");
+  /** 손님이 정하는 비밀번호 — 나중에 「내 견적 확인」에서 답변 볼 때 사용 */
+  const [pw, setPw] = useState("");
   const [teacherPref, setTeacherPref] = useState(0);
   // 🎯 지정 강사 id (강사 소개 「이 강사로 예약하기」 → ?ins=yunsang) · 대표 11-22
   const [ins, setIns] = useState("");
@@ -2059,6 +2059,11 @@ export function TeamQuote() {
                   ) : status === "sent" ? (
                     <div className="text-center">
                       <p className="text-[15px] font-bold text-ink-900">✓ 접수됐어요! 강사 일정을 확인해서 {phone}로 연락드릴게요.</p>
+                      {pw.trim().length >= 4 && (
+                        <a href={`/${qloc}/quote/my/`} className="mt-2 inline-block text-[13.5px] font-semibold text-brand-600 underline underline-offset-2">
+                          답변은 「내 견적 확인」에서 휴대폰 번호 + 비밀번호로 볼 수 있어요 →
+                        </a>
+                      )}
                       {typeof window !== "undefined" && shareUrl() !== sentLink ? (
                         <button
                           type="button"
@@ -2094,6 +2099,18 @@ export function TeamQuote() {
                           className="h-12 rounded-xl border border-snow-300/70 bg-white px-4 text-[15px] outline-none focus:border-brand-500"
                         />
                       </div>
+                      <input
+                        type="password"
+                        inputMode="numeric"
+                        autoComplete="new-password"
+                        placeholder="비밀번호 4자리 이상 · 답변 확인용 (선택)"
+                        value={pw}
+                        onChange={(e) => setPw(e.target.value.slice(0, 20))}
+                        className="mt-2 h-12 w-full rounded-xl border border-snow-300/70 bg-white px-4 text-[15px] outline-none focus:border-brand-500"
+                      />
+                      <p className="mt-1 text-[12px] text-snow-500">
+                        비밀번호를 정해두면 「내 견적 확인」에서 견적서와 지노스키 답변을 다시 볼 수 있어요
+                      </p>
                       <p className="mt-3 text-[13.5px] font-bold text-ink-900">
                         특이사항 · 강사 배정 희망 <span className="font-normal text-snow-500">(선택)</span>
                       </p>

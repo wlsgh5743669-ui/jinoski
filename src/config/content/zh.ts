@@ -56,6 +56,7 @@ const navLinks = [
   { label: "FAQ", href: "/faq" },
   { label: "预约咨询", href: "/reserve" },
   { label: "连住报价", href: "/quote" },
+  { label: "我的报价", href: "/quote/my" },
 ];
 
 const heroContent = {

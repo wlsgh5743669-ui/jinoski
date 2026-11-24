@@ -394,8 +394,6 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
     price,
     lines,
     total: price.priceOnRequest ? labels.priceOnRequest : formatPrice(grand, content),
-    /** 바로 결제 금액 (가격 문의 상품이면 null) */
-    grandAmount: price.priceOnRequest ? null : grand,
   };
 }
 
@@ -1694,8 +1692,6 @@ function SummaryView({
         {summary.description}
       </p>
 
-      <PayNowCard state={state} content={content} />
-
       <pre className="mt-6 whitespace-pre-wrap rounded-2xl border border-snow-300/60 bg-white p-6 text-[14px] leading-relaxed text-ink-800">
         {message}
       </pre>
@@ -1773,38 +1769,6 @@ function SummaryView({
   );
 }
 
-
-/**
- * 💳 바로 결제 (대표 11-24 「바로 결제 할수있게 부탁해」 — 토스페이먼츠 심사: 견적·문의 가격이 아니라 정찰제로 바로 결제).
- * 금액은 요금표로 계산한 값 그대로예요. 한국어 예약만 (해외카드는 토스 외화 결제 계약 뒤에 켬).
- */
-function PayNowCard({ state, content }: { state: WizardState; content: SiteContent }) {
-  const bd = useMemo(() => buildPriceBreakdown(state, content), [state, content]);
-  const orderId = useMemo(() => `JINO-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`.toUpperCase(), []);
-  if (!bd?.grandAmount || !state.program || !content.siteConfig.locale.startsWith("ko")) return null;
-  const name = `지노스키 ${state.vip ? "VIP " : ""}${getProgramLabel(state.program, content)}${state.groupSize ? ` ${state.groupSize}` : ""}`.slice(0, 100);
-  const q = new URLSearchParams({ a: String(bd.grandAmount), n: name, c: state.name.trim().slice(0, 40), o: orderId });
-  return (
-    <div className="mt-6 rounded-2xl border-2 border-brand-500 bg-brand-50/60 p-5">
-      <p className="text-[16px] font-bold text-ink-900">💳 지금 바로 결제할 수 있어요</p>
-      <p className="mt-1.5 text-[13.5px] leading-relaxed text-snow-700">
-        요금표 기준 금액 그대로예요. 결제하시면 강사 일정을 확인해 확정 안내를 보내 드리고, 원하는 시간이 마감이면 전액 환불해 드려요.
-      </p>
-      <div className="mt-3 flex items-end justify-between">
-        <span className="text-[13.5px] font-semibold text-snow-600">결제 금액</span>
-        <span className="text-[24px] font-bold tracking-tight text-ink-900">{bd.total}</span>
-      </div>
-      <a
-        href={`/ko/pay/?${q.toString()}`}
-        onClick={() => trackEvent("booking_pay_click", { program: state.program ?? "", amount: String(bd.grandAmount) })}
-        className="mt-4 flex h-14 w-full items-center justify-center rounded-full bg-brand-500 text-[16px] font-bold text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
-      >
-        카드·간편결제로 바로 결제
-      </a>
-      <p className="mt-2 text-center text-[12px] text-snow-500">계좌이체를 원하시면 확정 안내 때 계좌를 보내 드려요.</p>
-    </div>
-  );
-}
 
 function ForeignSummaryView({
   state,
