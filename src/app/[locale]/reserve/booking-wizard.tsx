@@ -572,6 +572,8 @@ export function BookingWizard() {
   useStepHistory(step, setStep, "reserveStep");
   const [state, setState] = useState<WizardState>(INITIAL_STATE);
   const [showSummary, setShowSummary] = useState(false);
+  /** 교시 조합 안내 (4시간으로 바꿈 · 리프트 시간 모자람) */
+  const [slotMsg, setSlotMsg] = useState<{ kind: "info" | "bad"; text: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [notifyOk, setNotifyOk] = useState(true);
   const foreign = isForeignLocale(locale);
@@ -606,6 +608,7 @@ export function BookingWizard() {
   function selectProgram(program: ProgramValue) {
     const timeValues = getTimeSlotValues(program, content);
     const isFull = program === "one-day" || program === "night";
+    setSlotMsg(null);
     setState((prev) => ({
       ...prev,
       program,
@@ -1065,17 +1068,50 @@ export function BookingWizard() {
                   )}
                   selected={isMultiSlot(state.program) ? state.timeSlot.split(",").filter(Boolean) : state.timeSlot}
                   onSelect={(v) => {
+                    setSlotMsg(null);
                     if (!isMultiSlot(state.program)) return update("timeSlot", v);
                     // 하루 2번까지: 누르면 넣고 다시 누르면 빼요 · 세 번째를 누르면 나중 것과 바꿔요
                     const cur = state.timeSlot.split(",").filter(Boolean);
-                    const next = cur.includes(v) ? cur.filter((x) => x !== v) : cur.length < 2 ? [...cur, v] : [cur[0], v];
-                    update("timeSlot", next.sort((a, b) => Number(a) - Number(b)).join(","));
+                    const next = (cur.includes(v) ? cur.filter((x) => x !== v) : cur.length < 2 ? [...cur, v] : [cur[0], v]).sort((a, b) => Number(a) - Number(b));
+                    if (next.length === 2) {
+                      const TX = SLOT_TXT[locale === "en" || locale === "zh" ? locale : "ko"];
+                      const times = state.program === "2h" ? content.scheduleTimes.twoHour : content.scheduleTimes.threeHour;
+                      const [a, b] = next.map(Number);
+                      const x = slotName(times[a].label);
+                      const y = slotName(times[b].label);
+                      // 1+2교시 · 3+4교시 → 이어서 4시간 레슨 (요금 같음: 2시간×2 = 4시간)
+                      if (state.program === "2h" && b === a + 1 && (a === 0 || a === 2)) {
+                        const fh = a === 0 ? 0 : 1;
+                        setState((prev) => ({ ...prev, program: "4h", timeSlot: String(fh) }));
+                        setSlotMsg({ kind: "info", text: TX.merge(x, y, content.scheduleTimes.fourHour[fh].time) });
+                        return;
+                      }
+                      // 첫 수업 시작 ~ 둘째 수업 끝이 리프트권 7시간을 넘으면 못 골라요 (1+4·1+5·2+5·3+5 · 3시간은 야간과 묶기)
+                      const span = slotMinutes(times[b].time)[1] - slotMinutes(times[a].time)[0];
+                      const tooLong = state.program === "2h" ? span > 7 * 60 : b === times.length - 1;
+                      if (tooLong) {
+                        setSlotMsg({ kind: "bad", text: TX.lift(x, y) });
+                        return;
+                      }
+                    }
+                    update("timeSlot", next.join(","));
                   }}
                   disabled={isFullCare}
                   disabledNote={
                     isFullCare ? content.bookingWizard.fixedTimeDisabledNote : undefined
                   }
                 />
+              )}
+
+              {on(3) && slotMsg && (
+                <p className={cn("mt-3 rounded-xl px-4 py-3 text-[13.5px] font-semibold leading-relaxed", slotMsg.kind === "bad" ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-800")}>
+                  {slotMsg.kind === "bad" ? "⚠️ " : "✅ "}{slotMsg.text}
+                </p>
+              )}
+              {on(3) && state.program === "2h" && state.timeSlot === "1,2" && (
+                <p className="mt-3 rounded-xl bg-amber-50 px-4 py-3 text-[13.5px] font-semibold leading-relaxed text-amber-800">
+                  🍱 {SLOT_TXT[locale === "en" || locale === "zh" ? locale : "ko"].lunch(slotName(content.scheduleTimes.twoHour[1].label), slotName(content.scheduleTimes.twoHour[2].label))}
+                </p>
               )}
 
               {on(3) && isFullCare && (
@@ -1237,6 +1273,82 @@ export function BookingWizard() {
                   </p>
                 </div>
               )}
+              {on(7) && (
+                <div className="-mt-4 mb-10">
+                  {price && state.program && !state.vip && (() => {
+                    const L = liftLoc(content);
+                    const lc = content.siteConfig.locale.slice(0, 2);
+                    const T = {
+                      ko: { title: "🎿 리프트권·장비도 같이 할까요?", sub: "정가 30% 할인 · 강습료와 함께 결제 · 현장에서는 받기만 하면 돼요", none: "필요 없음", lift: "리프트권만", both: "리프트권 + 장비", rec: "추천", gear: "장비" },
+                      en: { title: "🎿 Add lift ticket & rental?", sub: "30% off list price · paid with the lesson · just pick up on site", none: "No thanks", lift: "Lift only", both: "Lift + equipment", rec: "Recommended", gear: "equipment" },
+                      zh: { title: "🎿 需要缆车票·装备吗？", sub: "原价7折 · 与课程费一起支付 · 现场直接领取", none: "不需要", lift: "只要缆车票", both: "缆车票 + 装备", rec: "推荐", gear: "装备" },
+                    }[lc === "en" || lc === "zh" ? lc : "ko"];
+                    const t = ticketForProgram(state.program, sessionsOf(state.timeSlot));
+                    const w = isWeekendRate(state.date) ? 1 : 0;
+                    const people = getGroupStudentCount(state.groupSize || "1:1");
+                    const kidFirst = state.ageGroup === "kids" || state.ageGroup === "elementary";
+                    const choose = (opt: WizardState["liftOpt"]) =>
+                      setState((prev) => ({
+                        ...prev,
+                        liftOpt: opt,
+                        ...(opt !== "none" && prev.liftAdults + prev.liftKids === 0
+                          ? kidFirst
+                            ? { liftKids: people, liftAdults: 0 }
+                            : { liftAdults: people, liftKids: 0 }
+                          : {}),
+                      }));
+                    const step = (key: "liftAdults" | "liftKids", d: number) =>
+                      setState((prev) => ({ ...prev, [key]: Math.max(0, Math.min(10, prev[key] + d)) }));
+                    const per = (adult: boolean) =>
+                      cut40(LIFT_PRICES[t][adult ? "adult" : "child"][w]) +
+                      (state.liftOpt === "both" ? cut40(RENTAL_PRICES[t][adult ? "adult" : "child"][w]) : 0);
+                    return (
+                      <div className="mt-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4">
+                        <p className="text-[15px] font-bold text-ink-900">{T.title}</p>
+                        <p className="mt-0.5 text-[12.5px] text-snow-600">{T.sub}</p>
+                        <div className="mt-3 grid grid-cols-3 gap-1.5">
+                          {(["none", "lift", "both"] as const).map((o) => (
+                            <button
+                              key={o}
+                              type="button"
+                              onClick={() => choose(o)}
+                              className={cn(
+                                "rounded-xl border px-2 py-2.5 text-[13px] font-bold leading-tight",
+                                state.liftOpt === o ? "border-brand-500 bg-white text-brand-600 ring-1 ring-brand-500" : "border-snow-300/70 bg-white text-ink-700"
+                              )}
+                            >
+                              {T[o]}
+                            </button>
+                          ))}
+                        </div>
+                        {state.liftOpt !== "none" && (
+                          <>
+                            <p className="mt-3 text-[12.5px] font-semibold text-ink-700">
+                              {T.rec}: {L.lift} {L.h(t)}
+                              {state.liftOpt === "both" ? ` + ${T.gear} ${L.h(RENTAL_PRICES[t].hours)}` : ""} · {w ? L.wk : L.wd}
+                            </p>
+                            <div className="mt-2 flex flex-col gap-2">
+                              {([["liftAdults", true], ["liftKids", false]] as const).map(([key, adult]) => (
+                                <div key={key} className="flex items-center justify-between rounded-xl bg-white px-3 py-2">
+                                  <div>
+                                    <p className="text-[14px] font-bold text-ink-900">{adult ? `${L.adult} (14+)` : `${L.child} (≤13)`}</p>
+                                    <p className="text-[12px] text-rose-600">{formatPrice(per(adult), content)}</p>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <button type="button" aria-label="-" onClick={() => step(key, -1)} className="h-8 w-8 rounded-full bg-snow-100 text-[18px] font-bold text-ink-700">−</button>
+                                    <span className="w-5 text-center text-[15px] font-bold">{state[key]}</span>
+                                    <button type="button" aria-label="+" onClick={() => step(key, 1)} className="h-8 w-8 rounded-full bg-snow-100 text-[18px] font-bold text-ink-700">+</button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
 
               {on(8) && PAGE_HEAD[step - 1] !== 8 && <h2 className="mb-4 text-[18px] font-bold text-ink-900">{stepTitles[7]}</h2>}
               {on(8) && (
@@ -1326,7 +1438,22 @@ export function BookingWizard() {
                         <button
                           key={value}
                           type="button"
-                          onClick={() => update("ageGroup", value)}
+                          onClick={() =>
+                            setState((prev) => {
+                              // 리프트 칸 기본 인원(대인 n명 또는 소인 n명)을 아직 안 건드렸으면 연령대에 맞춰 바꿔요
+                              const people = getGroupStudentCount(prev.groupSize || "1:1");
+                              const kid = value === "kids" || value === "elementary";
+                              const auto =
+                                value !== "family" &&
+                                prev.liftOpt !== "none" &&
+                                (kid ? prev.liftKids === 0 && prev.liftAdults === people : prev.liftAdults === 0 && prev.liftKids === people);
+                              return {
+                                ...prev,
+                                ageGroup: value,
+                                ...(auto ? (kid ? { liftKids: people, liftAdults: 0 } : { liftAdults: people, liftKids: 0 }) : {}),
+                              };
+                            })
+                          }
                           className={cn(
                             "rounded-full border px-4 py-2.5 text-[13.5px] font-semibold transition-colors",
                             state.ageGroup === value
@@ -1352,78 +1479,7 @@ export function BookingWizard() {
                     className="rounded-2xl border border-snow-300/60 px-5 py-4 text-[15px] outline-none transition-colors focus:border-brand-500"
                   />
 
-                  {price && state.program && !state.vip && (() => {
-                    const L = liftLoc(content);
-                    const lc = content.siteConfig.locale.slice(0, 2);
-                    const T = {
-                      ko: { title: "🎿 리프트권·장비도 같이 할까요?", sub: "정가 30% 할인 · 강습료와 함께 결제 · 현장에서는 받기만 하면 돼요", none: "필요 없음", lift: "리프트권만", both: "리프트권 + 장비", rec: "추천", gear: "장비" },
-                      en: { title: "🎿 Add lift ticket & rental?", sub: "30% off list price · paid with the lesson · just pick up on site", none: "No thanks", lift: "Lift only", both: "Lift + equipment", rec: "Recommended", gear: "equipment" },
-                      zh: { title: "🎿 需要缆车票·装备吗？", sub: "原价7折 · 与课程费一起支付 · 现场直接领取", none: "不需要", lift: "只要缆车票", both: "缆车票 + 装备", rec: "推荐", gear: "装备" },
-                    }[lc === "en" || lc === "zh" ? lc : "ko"];
-                    const t = ticketForProgram(state.program, sessionsOf(state.timeSlot));
-                    const w = isWeekendRate(state.date) ? 1 : 0;
-                    const people = getGroupStudentCount(state.groupSize || "1:1");
-                    const kidFirst = state.ageGroup === "kids" || state.ageGroup === "elementary";
-                    const choose = (opt: WizardState["liftOpt"]) =>
-                      setState((prev) => ({
-                        ...prev,
-                        liftOpt: opt,
-                        ...(opt !== "none" && prev.liftAdults + prev.liftKids === 0
-                          ? kidFirst
-                            ? { liftKids: people, liftAdults: 0 }
-                            : { liftAdults: people, liftKids: 0 }
-                          : {}),
-                      }));
-                    const step = (key: "liftAdults" | "liftKids", d: number) =>
-                      setState((prev) => ({ ...prev, [key]: Math.max(0, Math.min(10, prev[key] + d)) }));
-                    const per = (adult: boolean) =>
-                      cut40(LIFT_PRICES[t][adult ? "adult" : "child"][w]) +
-                      (state.liftOpt === "both" ? cut40(RENTAL_PRICES[t][adult ? "adult" : "child"][w]) : 0);
-                    return (
-                      <div className="mt-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4">
-                        <p className="text-[15px] font-bold text-ink-900">{T.title}</p>
-                        <p className="mt-0.5 text-[12.5px] text-snow-600">{T.sub}</p>
-                        <div className="mt-3 grid grid-cols-3 gap-1.5">
-                          {(["none", "lift", "both"] as const).map((o) => (
-                            <button
-                              key={o}
-                              type="button"
-                              onClick={() => choose(o)}
-                              className={cn(
-                                "rounded-xl border px-2 py-2.5 text-[13px] font-bold leading-tight",
-                                state.liftOpt === o ? "border-brand-500 bg-white text-brand-600 ring-1 ring-brand-500" : "border-snow-300/70 bg-white text-ink-700"
-                              )}
-                            >
-                              {T[o]}
-                            </button>
-                          ))}
-                        </div>
-                        {state.liftOpt !== "none" && (
-                          <>
-                            <p className="mt-3 text-[12.5px] font-semibold text-ink-700">
-                              {T.rec}: {L.lift} {L.h(t)}
-                              {state.liftOpt === "both" ? ` + ${T.gear} ${L.h(RENTAL_PRICES[t].hours)}` : ""} · {w ? L.wk : L.wd}
-                            </p>
-                            <div className="mt-2 flex flex-col gap-2">
-                              {([["liftAdults", true], ["liftKids", false]] as const).map(([key, adult]) => (
-                                <div key={key} className="flex items-center justify-between rounded-xl bg-white px-3 py-2">
-                                  <div>
-                                    <p className="text-[14px] font-bold text-ink-900">{adult ? `${L.adult} (14+)` : `${L.child} (≤13)`}</p>
-                                    <p className="text-[12px] text-rose-600">{formatPrice(per(adult), content)}</p>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <button type="button" aria-label="-" onClick={() => step(key, -1)} className="h-8 w-8 rounded-full bg-snow-100 text-[18px] font-bold text-ink-700">−</button>
-                                    <span className="w-5 text-center text-[15px] font-bold">{state[key]}</span>
-                                    <button type="button" aria-label="+" onClick={() => step(key, 1)} className="h-8 w-8 rounded-full bg-snow-100 text-[18px] font-bold text-ink-700">+</button>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    );
-                  })()}
+
 
                   {price && (() => {
                     const breakdown = buildPriceBreakdown(state, content);
@@ -1923,18 +1979,46 @@ function FullCareSchedule({
 
 const MULTI_NOTE = {
   ko: {
-    two: "하루 2번 들으려면 시간을 두 개 골라주세요 · 1+3교시나 2+4교시를 추천해요 (중간에 점심·휴식)",
+    two: "하루 2번 들으려면 시간을 두 개 골라주세요 · 1+3교시나 2+4교시를 추천해요 (중간에 점심·휴식) · 1+2교시·3+4교시는 이어서 4시간 레슨으로 해요",
     three: "하루 2번 들으려면 시간을 두 개 골라주세요 · 오전+오후를 많이 해요",
   },
   en: {
-    two: "Want two lessons a day? Pick two times · we suggest periods 1+3 or 2+4 (lunch break in between)",
+    two: "Want two lessons a day? Pick two times · we suggest periods 1+3 or 2+4 (lunch break in between) · 1+2 or 3+4 become one 4-hour lesson",
     three: "Want two lessons a day? Pick two times · morning + afternoon is popular",
   },
   zh: {
-    two: "一天上两节课？请选两个时间 · 推荐第1+3节或第2+4节（中间午餐休息）",
+    two: "一天上两节课？请选两个时间 · 推荐第1+3节或第2+4节（中间午餐休息）· 第1+2节、第3+4节合并为4小时课",
     three: "一天上两节课？请选两个时间 · 上午+下午最常见",
   },
 };
+
+/** 교시 두 개 조합 안내 (대표 11-25: 1+2·3+4 → 4시간 레슨 · 2+3 점심 없음 · 리프트 7시간 넘으면 안 됨 · 4+5 가능) */
+const SLOT_TXT = {
+  ko: {
+    merge: (x: string, y: string, t: string) => `${x} + ${y}는 이어서 4시간 레슨(${t})으로 진행해요 · 요금은 같아요`,
+    lunch: (x: string, y: string) => `${x} + ${y}는 점심시간 없이 이어서 해요 (중간에 20분만 쉬어요) · 괜찮으시면 그대로 진행해 주세요`,
+    lift: (x: string, y: string) => `${x} + ${y}는 리프트권 시간(최대 7시간) 안에 다 탈 수 없어요 · 다른 시간을 골라주세요`,
+  },
+  en: {
+    merge: (x: string, y: string, t: string) => `${x} + ${y} becomes one 4-hour lesson (${t}) · same price`,
+    lunch: (x: string, y: string) => `${x} + ${y} run back to back with no lunch break (only a 20-min rest) · if that's fine, just continue`,
+    lift: (x: string, y: string) => `${x} + ${y} doesn't fit in the longest lift ticket (7 hours) · please pick other times`,
+  },
+  zh: {
+    merge: (x: string, y: string, t: string) => `${x} + ${y} 合并为一节4小时课（${t}）· 价格不变`,
+    lunch: (x: string, y: string) => `${x} + ${y} 中间没有午餐时间（只休息20分钟）· 可以的话请直接继续`,
+    lift: (x: string, y: string) => `${x} + ${y} 超出最长缆车票时间（7小时）· 请选其他时间`,
+  },
+};
+/** 「09:00 ~ 11:00」 → [540, 660] */
+function slotMinutes(t: string): number[] {
+  return (t.match(/\d{1,2}:\d{2}/g) ?? []).map((x) => {
+    const [h, m] = x.split(":").map(Number);
+    return h * 60 + m;
+  });
+}
+/** 「1교시 (오전)」 → 「1교시」 */
+const slotName = (label: string) => label.replace(/\s*[(（].*$/, "");
 
 /** 하루 몇 번 — 2시간·3시간은 시간을 두 개까지 골라요 (「0,2」 · 대표 11-25 「2시간 1번밖에 안 되네」) */
 function sessionsOf(timeSlot: string): number {
