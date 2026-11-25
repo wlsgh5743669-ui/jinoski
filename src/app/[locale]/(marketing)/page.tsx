@@ -14,6 +14,7 @@ import { ReviewEventBanner } from "@/components/sections/review-event";
 import { Consult } from "@/components/sections/consult";
 import { QuoteBanner } from "@/components/sections/quote-banner";
 import { QuickLinks } from "@/components/sections/quick-links";
+import { PartnerPopup } from "@/components/shared/partner-popup";
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -44,6 +45,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <Reservation hideContact />
       <Consult />
       <Directions />
+      {/* 제휴 숙소 더오딘펜션 소개 팝업 (한국어 첫 화면만 · A·B 번갈아) */}
+      {locale === "ko" && <PartnerPopup />}
     </>
   );
 }
