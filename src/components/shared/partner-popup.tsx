@@ -81,7 +81,7 @@ export function PartnerPopup() {
       className="fixed inset-0 z-[90] flex items-center justify-center bg-black/60 p-5 backdrop-blur-[2px]"
     >
       <div onClick={(e) => e.stopPropagation()} className="relative w-full overflow-hidden rounded-2xl bg-white shadow-2xl"
-        style={{ maxWidth: "min(360px, calc((100dvh - 110px) * 0.8))" }}>
+        style={{ maxWidth: "min(540px, calc((100dvh - 110px) * 0.8))" }}>
         <button
           type="button"
           aria-label="닫기"
@@ -99,11 +99,11 @@ export function PartnerPopup() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={v.src} alt={v.alt} width={900} height={1125} className="block h-auto w-full" />
         </a>
-        <div className="flex divide-x divide-snow-200 border-t border-snow-200 text-[14px]">
-          <button type="button" onClick={hideToday} className="flex-1 py-3 text-ink-600">
+        <div className="flex divide-x divide-snow-200 border-t border-snow-200 text-[14px] sm:text-[16px]">
+          <button type="button" onClick={hideToday} className="flex-1 py-3 text-ink-600 sm:py-4">
             오늘 하루 안 보기
           </button>
-          <button type="button" onClick={close} className="flex-1 py-3 font-bold text-ink-900">
+          <button type="button" onClick={close} className="flex-1 py-3 font-bold text-ink-900 sm:py-4">
             닫기
           </button>
         </div>
