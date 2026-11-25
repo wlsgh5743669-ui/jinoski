@@ -26,8 +26,8 @@ export const CHILD_LABEL = "어린이(13세 이하·초등)";
 export const HELMET_NOTE = "헬멧은 할인 제외 (현장 3,000~5,000원)";
 
 /** 26/27 시즌 개장일 — 이 날 전은 예약·견적 달력에서 고를 수 없어요. 개장일이 바뀌면 여기만 고치면 돼요. */
-export const SEASON_OPEN = "2026-12-04";
-export const SEASON_OPEN_DATE = new Date(2026, 11, 4);
+export const SEASON_OPEN = "2026-11-27"; // 대표 11-26 「27일 날 비발디파크 오픈」
+export const SEASON_OPEN_DATE = new Date(2026, 10, 27);
 
 /**
  * 26/27 시즌 공휴일 — 이 날은 리프트·장비를 「주말·공휴일」 요금으로 계산해요.

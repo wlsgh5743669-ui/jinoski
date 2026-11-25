@@ -132,7 +132,7 @@ export function DatePicker({
       {firstOfMonth <= SEASON_OPEN_DATE && today < SEASON_OPEN_DATE && (
         <p className="mt-4 rounded-xl bg-ice-100 px-3 py-2 text-center text-[12.5px] font-semibold text-brand-700">
           {L === "en"
-            ? `The season opens on Dec ${SEASON_OPEN_DATE.getDate()} — earlier dates can't be booked`
+            ? `The season opens on ${SEASON_OPEN_DATE.toLocaleString("en-US", { month: "short" })} ${SEASON_OPEN_DATE.getDate()} — earlier dates can't be booked`
             : L === "zh"
               ? `雪季${SEASON_OPEN_DATE.getMonth() + 1}月${SEASON_OPEN_DATE.getDate()}日开放，之前的日期无法预约`
               : `${SEASON_OPEN_DATE.getMonth() + 1}월 ${SEASON_OPEN_DATE.getDate()}일 개장 — 그 전 날짜는 예약할 수 없어요`}
