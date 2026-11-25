@@ -4,7 +4,7 @@ const siteConfig = {
   name: "JinoSki",
   title: "JinoSki (지노스키) | Ski & Snowboard Lessons at Vivaldi Park, Korea",
   description:
-    "JinoSki (지노스키) is a ski and snowboard school at Vivaldi Park in Hongcheon, Gangwon, about 1.5 hours from Seoul. One instructor teaches up to 3 people; a 2-hour private lesson starts at ₩140,000. Kids from age 4, adults, English and Chinese guests welcome, with free photos and video every lesson.",
+    "JinoSki is a ski & snowboard school at Vivaldi Park, 1.5h from Seoul. Up to 3 people per instructor, 2h private from ₩140,000, kids from 4, free photos & video.",
   url: "https://jinoski.com",
   ogImage: "/images/og-image-2627.jpg",
   locale: "en_US",
@@ -588,7 +588,7 @@ const faq: SiteContent["faq"] = [
   {
     question: "How do I pay?",
     answer:
-      "① Once we confirm your instructor and time, please pay the full amount. Your booking is confirmed when we receive it.\n② There's nothing more to pay for the lesson on the day.\n③ Lift tickets and equipment rental (30% off the ticket-office price) are paid to JinoSki together with the lesson fee — on the day you just pick them up.\n\n· PayPal or international credit card (USD) — easiest for overseas guests. We send the exact USD amount with your confirmation.\n· Korean bank transfer (KRW): KB Kookmin Bank 010-4047-7711, account holder 박진호 (Jino Company).\n\nPrices are set in Korean won (KRW). USD amounts shown on this website are approximate.",
+      "① Once we confirm your instructor and time, please pay the full amount. Your booking is confirmed when we receive it.\n② There's nothing more to pay for the lesson on the day.\n③ Lift tickets and equipment rental (30% off the ticket-office price) are paid to JinoSki together with the lesson fee — on the day you just pick them up.\n\n· PayPal or international credit card (USD) — easiest for overseas guests. We send the exact USD amount with your confirmation.\n· Korean bank transfer (KRW): KB Kookmin Bank 010-4047-7711, account holder 박진호 (PARK JINHO) · Jino Company. You can send KRW with a transfer app like Wise.\n\nPrices are set in Korean won (KRW). USD amounts shown on this website are approximate.",
   },
   {
     question: "Can I pay with Alipay or WeChat Pay?",
@@ -1203,7 +1203,7 @@ const bookingWizard: SiteContent["bookingWizard"] = {
       "① What you send now is a booking request — it is not confirmed yet.",
       "📍 Meeting point: inside Ticket Office A at Vivaldi Park, in front of Good & Goods",
       "② We check the instructor's schedule and contact you to confirm.",
-      "③ After confirmation, pay the full amount (PayPal or bank transfer) — nothing more to pay for the lesson on the day. Lift tickets & rental (30% off) are paid to JinoSki together with the lesson fee.\nPayPal: link in your confirmation · KB Kookmin Bank 010-4047-7711 · Account holder: 박진호 (Jino Company)",
+      "③ After confirmation, pay the full amount (PayPal or bank transfer) — nothing more to pay for the lesson on the day. Lift tickets & rental (30% off) are paid to JinoSki together with the lesson fee.\nPayPal: link in your confirmation · KB Kookmin Bank 010-4047-7711 · Account holder: 박진호 (PARK JINHO) · Jino Company · KRW via Wise or similar apps OK",
       "④ Refund policy: 100% refund up to 3 days before · 50% refund 1–2 days before · no refund for same-day cancellations or no-shows",
       "⑤ Rescheduling: one free change up to 2 days before (to a date the instructor is free, within the season) · after that, the refund policy applies",
       "⑥ If slopes close due to bad weather, you get a free reschedule or a full refund.",
@@ -1393,7 +1393,7 @@ const datePicker = {
 const reservePage = {
   title: "Book a Lesson",
   description:
-    "Book a JinoSki ski or snowboard lesson at Vivaldi Park — pick a date, time and group size and we confirm once an instructor is free. International guests pay the full amount by PayPal once we confirm.",
+    "Book a JinoSki ski or snowboard lesson at Vivaldi Park: pick date, time and group size. We confirm your instructor, then you pay in full by PayPal or transfer.",
 };
 
 // Search / AI summary text per page — brand once + facts unique to that page (2026-11-08)
@@ -1406,12 +1406,12 @@ const pageMeta = {
   pricing: {
     title: "Ski & Snowboard Lesson Prices",
     description:
-      "JinoSki prices — 2-hour lesson ₩140,000 for 1 person, ₩200,000 for 2, ₩240,000 for 3; 3-hour, 4-hour and 7-hour Full Care rates; lesson permit ₩25,000 per 2 hours; lift and rental 30% off.",
+      "JinoSki prices: 2-hour lesson ₩140,000 (1), ₩200,000 (2), ₩240,000 (3). 3h, 4h and 7h Full Care rates, permit ₩25,000, lift & rental 30% off.",
   },
   instructor: {
     title: "JinoSki Instructors",
     description:
-      "14 JinoSki instructors, all with official certifications (Korea Ski Instructors Association · Japan SAJ), teaching at Vivaldi Park with head instructor Jinho Park (KSIA Ski Level 2 · Snowboard Level 1).",
+      "14 certified JinoSki instructors (KSIA · SAJ) teaching at Vivaldi Park, led by head instructor Jinho Park (Ski Level 2 · Snowboard Level 1).",
   },
   gallery: {
     title: "Lesson Photo Gallery",

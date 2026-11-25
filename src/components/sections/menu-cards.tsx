@@ -65,7 +65,7 @@ export function MenuCards() {
                 {image ? (
                   <Image
                     src={image}
-                    alt=""
+                    alt={meta.title}
                     fill
                     sizes="(min-width:1024px) 20vw, 50vw"
                     className="-z-10 object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
@@ -77,7 +77,7 @@ export function MenuCards() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/images/guide/pricing-1-regular.jpg"
-                      alt=""
+                      alt={meta.title}
                       loading="lazy"
                       width={1080}
                       height={1350}

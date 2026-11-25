@@ -141,7 +141,7 @@ export function Hero() {
                     <img
                       key={p.id}
                       src={p.image}
-                      alt=""
+                      alt={locale === "ko" ? `지노스키 ${p.name} 강사` : "JinoSki instructor"}
                       width={34}
                       height={34}
                       className={`h-[34px] w-[34px] rounded-full object-cover object-top ring-2 ring-ink-900 sm:h-10 sm:w-10 ${i >= 5 ? "max-[359px]:hidden" : ""}`}

@@ -7,9 +7,9 @@ import { NoticeList } from "@/components/sections/notice-list";
 
 type L = "ko" | "en" | "zh";
 const T = {
-  ko: { eyebrow: "Notice", title: ["공지사항"], desc: "시즌 오픈, 이벤트, 운영 변경 소식을 알려드려요." },
+  ko: { eyebrow: "Notice", title: ["공지사항"], desc: "지노스키 비발디파크 스키·스노보드 강습 소식: 시즌 오픈 날짜, 이벤트, 운영 시간·요금 변경, 예약 안내를 가장 먼저 알려드려요." },
   en: { eyebrow: "Notice", title: ["News & Notices"], desc: "Season opening, events and schedule updates from JinoSki." },
-  zh: { eyebrow: "Notice", title: ["公告"], desc: "雪季开放、活动及运营变更等最新消息。" },
+  zh: { eyebrow: "Notice", title: ["公告"], desc: "JinoSki 维瓦尔第公园滑雪·单板课程最新消息：雪季开放日期、活动、营业时间及价格变更、预约须知，第一时间告诉您。" },
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {

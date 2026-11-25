@@ -178,7 +178,7 @@ const en: GuideContent = {
 const zh: GuideContent = {
   eyebrow: "Vivaldi Park Guide",
   title: ["上课前必看", "大明维瓦尔第滑雪场指南"],
-  description: "集合地点、交通方式、缆车票、装备租赁和准备物品，一次看清楚。",
+  description: "维瓦尔第公园滑雪课程出发前必看：集合地点（售票处A内 Good & Goods 前）、交通方式、缆车票、装备租赁和准备物品，一次看清楚。",
   updatedNote: "班车时刻、缆车票价格和开放日期每个雪季都会变化，请以官方网站最新信息为准。",
   sections: [
     {
