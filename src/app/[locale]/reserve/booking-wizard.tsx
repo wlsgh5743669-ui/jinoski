@@ -252,6 +252,9 @@ type WizardState = {
   marketing: boolean;
   liftAdults: number;
   liftKids: number;
+  /** 헬멧 (할인 제외 · 하루) — 기본 5,000원 · 바이저 15,000원 (대표 11-13 가격 · 11-25 「헬멧도 넣어줄래 일반과 바이저」) */
+  helmetBasic: number;
+  helmetVisor: number;
   email: string;
   messenger: string;
   msgApp: "" | "WhatsApp" | "WeChat" | "LINE" | "KakaoTalk";
@@ -277,6 +280,8 @@ const INITIAL_STATE: WizardState = {
   marketing: false,
   liftAdults: 0,
   liftKids: 0,
+  helmetBasic: 0,
+  helmetVisor: 0,
   email: "",
   messenger: "",
   msgApp: "",
@@ -319,6 +324,23 @@ function liftExtra(state: WizardState) {
   const liftTotal = liftA * a + liftK * k;
   const rentTotal = state.liftOpt === "both" ? rentA * a + rentK * k : 0;
   return { t, rentHours: rent.hours, weekend: w === 1, a, k, liftA, liftK, rentA, rentK, liftTotal, rentTotal, total: liftTotal + rentTotal };
+}
+
+/** 헬멧 하루 값 (견적 계산기 team-quote와 같은 값) */
+const HELMET_PRICE = { basic: 5000, visor: 15000 };
+const HELMET_TXT = {
+  ko: { title: "🪖 헬멧 (할인 제외 · 하루)", label: "헬멧", basic: "기본 헬멧", visor: "바이저 헬멧 (고글 일체형)", visorShort: "바이저", off: "할인 제외" },
+  en: { title: "🪖 Helmet (not discounted · per day)", label: "Helmet", basic: "Basic helmet", visor: "Visor helmet (built-in goggles)", visorShort: "Visor", off: "not discounted" },
+  zh: { title: "🪖 头盔（不打折 · 每天）", label: "头盔", basic: "普通头盔", visor: "带护目镜头盔", visorShort: "护目镜头盔", off: "不打折" },
+};
+const helmetLoc = (content: SiteContent) => {
+  const l = content.siteConfig.locale.slice(0, 2);
+  return HELMET_TXT[(l === "en" || l === "zh" ? l : "ko") as keyof typeof HELMET_TXT];
+};
+/** 헬멧 추가 금액 (VIP는 바이저 헬멧 포함이라 0) */
+function helmetExtra(state: WizardState) {
+  if (!state.program || state.vip) return 0;
+  return state.helmetBasic * HELMET_PRICE.basic + state.helmetVisor * HELMET_PRICE.visor;
 }
 
 /**
@@ -386,12 +408,25 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
       });
     }
   }
+  const helm = helmetExtra(state);
+  if (helm) {
+    const H = helmetLoc(content);
+    lines.push({
+      label: H.label,
+      detail: [
+        `${H.off}`,
+        state.helmetBasic ? `${H.basic} ${formatPrice(HELMET_PRICE.basic, content)} × ${state.helmetBasic}` : "",
+        state.helmetVisor ? `${H.visorShort} ${formatPrice(HELMET_PRICE.visor, content)} × ${state.helmetVisor}` : "",
+      ].filter(Boolean).join(" · "),
+      amount: formatPrice(helm, content),
+    });
+  }
   const vipAdd = vipAddOf(state);
   if (vipAdd) {
     const VL = vipLine(content);
     lines.push({ label: VL.label, detail: VL.detail(people), amount: formatPrice(vipAdd, content) });
   }
-  const grand = price.totalPrice + (ex?.total ?? 0) + vipAdd;
+  const grand = price.totalPrice + (ex?.total ?? 0) + helm + vipAdd;
 
   return {
     price,
@@ -1297,7 +1332,7 @@ export function BookingWizard() {
                             : { liftAdults: people, liftKids: 0 }
                           : {}),
                       }));
-                    const step = (key: "liftAdults" | "liftKids", d: number) =>
+                    const step = (key: "liftAdults" | "liftKids" | "helmetBasic" | "helmetVisor", d: number) =>
                       setState((prev) => ({ ...prev, [key]: Math.max(0, Math.min(10, prev[key] + d)) }));
                     const per = (adult: boolean) =>
                       cut40(LIFT_PRICES[t][adult ? "adult" : "child"][w]) +
@@ -1344,6 +1379,29 @@ export function BookingWizard() {
                             </div>
                           </>
                         )}
+                        {(() => {
+                          const H = helmetLoc(content);
+                          return (
+                            <>
+                              <p className="mt-4 text-[13.5px] font-bold text-ink-900">{H.title}</p>
+                              <div className="mt-2 flex flex-col gap-2">
+                                {([["helmetBasic", H.basic, HELMET_PRICE.basic], ["helmetVisor", H.visor, HELMET_PRICE.visor]] as const).map(([key, name, won]) => (
+                                  <div key={key} className="flex items-center justify-between rounded-xl bg-white px-3 py-2">
+                                    <div>
+                                      <p className="text-[14px] font-bold text-ink-900">{name}</p>
+                                      <p className="text-[12px] text-rose-600">{formatPrice(won, content)}</p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <button type="button" aria-label="-" onClick={() => step(key, -1)} className="h-8 w-8 rounded-full bg-snow-100 text-[18px] font-bold text-ink-700">−</button>
+                                      <span className="w-5 text-center text-[15px] font-bold">{state[key]}</span>
+                                      <button type="button" aria-label="+" onClick={() => step(key, 1)} className="h-8 w-8 rounded-full bg-snow-100 text-[18px] font-bold text-ink-700">+</button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </>
+                          );
+                        })()}
                       </div>
                     );
                   })()}
