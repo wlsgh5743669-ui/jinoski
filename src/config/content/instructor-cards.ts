@@ -1,7 +1,7 @@
 /**
  * 강사진 페이지 「강사진을 만나 보세요」 회전 카드 (한국어 원본 + 아래 영어·중국어 글).
  *
- * 대표 11-19: 교육생은 빼고, 운영앱에 자격확인서가 올라온 강사만 + 팀장 조재현·황인국 + 구지율·김홍열(확인서 없음 → 운영앱 자격만, 취득 연도 없음). 테루는 일본 SAJ 지도원 합격증(운영앱 「기타」 자격증), 총효진은 스키·보드 레벨1.
+ * 대표 11-19: 교육생은 빼고, 운영앱에 자격확인서가 올라온 강사만 + 팀장 조재현·황인국 + 구지율·김홍열(확인서 없음 → 운영앱 자격만, 취득 연도 없음 · 11-25 구지율·이우희 자격증 사진 넣음). 테루는 일본 SAJ 지도원 합격증(운영앱 「기타」 자격증), 총효진은 스키·보드 레벨1.
  * 사진 = 운영앱 증명사진 → public/images/instructors/<id>.jpg (세로 3:4)
  * 년차 = 운영앱 년차 / 취득 = 자격확인서의 취득일(발급일)
  * 자격증 사진 = 운영앱 자격증 파일에서 생년월일·주소·QR을 가려 public/images/instructors/certs/ 에 (박진호는 public/images/certs/*-jinho)
@@ -101,8 +101,10 @@ export const INSTRUCTOR_CARDS = {
       name: "구지율",
       years: "6년차",
       certs: [{ label: "스키 레벨1" }, { label: "스키 티칭2" }],
+      got: "스키 레벨1 2025년",
       languages: "영어",
       image: "/images/instructors/jiyul.jpg",
+      proofs: [{ label: "스키 레벨1", src: "/images/instructors/certs/jiyul-ski1.jpg" }, { label: "스키 티칭2", src: "/images/instructors/certs/jiyul-t2.jpg" }],
     },
     {
       id: "hyoeun",
@@ -182,8 +184,10 @@ export const INSTRUCTOR_CARDS = {
       name: "이우희",
       years: "2년차",
       certs: [{ label: "스노보드 레벨1" }],
+      got: "스노보드 레벨1 2026년",
       languages: "영어",
       image: "/images/instructors/woohee.jpg",
+      proofs: [{ label: "스노보드 레벨1", src: "/images/instructors/certs/woohee-sb1.jpg" }],
     },
     {
       id: "hongyeol",
@@ -259,14 +263,14 @@ const PEOPLE_TEXT: Record<"en" | "zh", Record<string, { name: string; got?: stri
     jaehyun: { name: "Jaehyun Cho" },
     teru: { name: "Teru Onodera", got: "Passed the SAJ instructor exam (2026)" },
     ingook: { name: "Ingook Hwang", got: "CSIA Level 1 (2021) · Ski Level 1 (2024)" },
-    jiyul: { name: "Jiyul Koo" },
+    jiyul: { name: "Jiyul Koo", got: "Ski Level 1 (2025)" },
     hyoeun: { name: "Hyoeun Kim", got: "Ski Level 1 (2022)" },
     ari: { name: "Ari Kim", got: "Ski Level 1 (2026)" },
     junseong: { name: "Junseong Heo", got: "Ski Level 1 (2025)" },
     yunsang: { name: "Yunsang Lee", got: "Ski Level 1 (2026)" },
     haeun: { name: "Haeun Lee", got: "Ski Level 1 (2026)" },
     hyojin: { name: "Hyojin Cong", got: "Ski Level 1 · Snowboard Level 1 (2025)" },
-    woohee: { name: "Woohee Lee" },
+    woohee: { name: "Woohee Lee", got: "Snowboard Level 1 (2026)" },
     hongyeol: { name: "Hongyeol Kim" },
     donghyun: { name: "Donghyun Kim", got: "Snowboard Level 1 (2026)" },
   },
@@ -275,14 +279,14 @@ const PEOPLE_TEXT: Record<"en" | "zh", Record<string, { name: string; got?: stri
     jaehyun: { name: "Jaehyun Cho" },
     teru: { name: "Teru Onodera", got: "2026年度 SAJ 指导员考试合格" },
     ingook: { name: "Ingook Hwang", got: "CSIA Level 1（2021年）· 双板 Level 1（2024年）" },
-    jiyul: { name: "Jiyul Koo" },
+    jiyul: { name: "Jiyul Koo", got: "双板 Level 1（2025年）" },
     hyoeun: { name: "Hyoeun Kim", got: "双板 Level 1（2022年）" },
     ari: { name: "Ari Kim", got: "双板 Level 1（2026年）" },
     junseong: { name: "Junseong Heo", got: "双板 Level 1（2025年）" },
     yunsang: { name: "Yunsang Lee", got: "双板 Level 1（2026年）" },
     haeun: { name: "Haeun Lee", got: "双板 Level 1（2026年）" },
     hyojin: { name: "Hyojin Cong", got: "双板 Level 1 · 单板 Level 1（2025年）" },
-    woohee: { name: "Woohee Lee" },
+    woohee: { name: "Woohee Lee", got: "单板 Level 1（2026年）" },
     hongyeol: { name: "Hongyeol Kim" },
     donghyun: { name: "Donghyun Kim", got: "单板 Level 1（2026年）" },
   },
