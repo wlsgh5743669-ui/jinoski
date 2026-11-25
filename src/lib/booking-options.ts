@@ -82,8 +82,15 @@ export function getTimeSlotLabel(
   content: SiteContent
 ): string {
   if (isHourlyProgram(program)) {
-    const slot = getScheduleTimesForProgram(program, content)[Number(value)];
-    return slot ? `${slot.label} (${slot.time})` : value;
+    // 하루 2번 (예약 화면에서 2시간·3시간은 두 개까지 골라요 · 대표 11-25) — 「0,2」
+    return value
+      .split(",")
+      .filter(Boolean)
+      .map((v) => {
+        const slot = getScheduleTimesForProgram(program, content)[Number(v)];
+        return slot ? `${slot.label} (${slot.time})` : v;
+      })
+      .join(" + ");
   }
   return program === "one-day"
     ? content.bookingWizard.fixedTimeNote.oneDay

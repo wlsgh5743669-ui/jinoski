@@ -34,11 +34,14 @@ export function calculateBookingPrice({
   groupSize,
   liftPassPayment,
   content,
+  sessions = 1,
 }: {
   program: ProgramValue;
   groupSize: string;
   liftPassPayment: string;
   content: SiteContent;
+  /** 하루 수업 횟수 (2시간·3시간 하루 2번) — 강습료·패찰이 횟수만큼 */
+  sessions?: number;
 }): BookingPriceResult {
   if (program === "one-day" || program === "night") {
     const fullCare = content.fullCarePrograms.find((p) => p.slug === program);
@@ -79,13 +82,14 @@ export function calculateBookingPrice({
       totalPrice: 0,
       priceOnRequest: true,
     };
-  const basePrice = parseWon(row.price);
+  const n = Math.max(1, Math.floor(sessions));
+  const basePrice = parseWon(row.price) * n;
 
   const passProgram = isJuniorProgram(program) ? JUNIOR_PASS_PROGRAM : program;
   const liftPassEntry = content.liftPassPricing.find((p) => p.program === passProgram);
   const liftPassFeePerPerson = liftPassEntry ? parseWon(liftPassEntry.price) : 0;
   const liftPassPersonCount = getGroupStudentCount(groupSize);
-  const liftPassFee = liftPassFeePerPerson * liftPassPersonCount;
+  const liftPassFee = liftPassFeePerPerson * liftPassPersonCount * n;
 
   const includeLiftPass = isHourlyProgram(program) && liftPassPayment === "pay-together";
   const totalPrice = includeLiftPass ? basePrice + liftPassFee : basePrice;

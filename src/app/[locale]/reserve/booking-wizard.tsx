@@ -306,7 +306,7 @@ const cut40 = (n: number) => Math.round((n * (1 - LIFT_RENTAL_DISCOUNT)) / 100) 
 /** 리프트권·장비 추가 금액 (추천 시간권 · 선택 날짜 주중/주말) */
 function liftExtra(state: WizardState) {
   if (!state.program || state.vip || state.liftOpt === "none" || state.liftAdults + state.liftKids === 0) return null;
-  const t = ticketForProgram(state.program);
+  const t = ticketForProgram(state.program, sessionsOf(state.timeSlot));
   const w = isWeekendRate(state.date) ? 1 : 0;
   const lift = LIFT_PRICES[t];
   const rent = RENTAL_PRICES[t];
@@ -332,20 +332,23 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
   const { program, groupSize, liftPassPayment } = state;
   if (!program || !groupSize) return null;
   const labels = content.bookingWizard.summary.messageLabels;
+  const sessions = isMultiSlot(program) ? sessionsOf(state.timeSlot) : 1;
   const price = calculateBookingPrice({
     program,
     groupSize,
     liftPassPayment,
     content,
+    sessions,
   });
   const isFullCare = program === "one-day" || program === "night";
   const people = getGroupStudentCount(groupSize);
+  const times = sessions > 1 ? ` ${timesText(sessions, content)}` : "";
   const lines: BreakdownLine[] = [];
 
   const programName = getProgramLabel(program, content);
   const lessonDetail = isFullCare
     ? `${programName} · ${labels.people(people)}`
-    : `${programName} · ${groupSize} (${labels.people(people)})`;
+    : `${programName} · ${groupSize} (${labels.people(people)})${times}`;
   lines.push({
     label: content.bookingWizard.priceSummary.lessonFee,
     detail: lessonDetail,
@@ -357,7 +360,7 @@ function buildPriceBreakdown(state: WizardState, content: SiteContent) {
   } else if (!price.priceOnRequest && price.liftPassPersonCount > 0) {
     lines.push({
       label: labels.liftPassAmount,
-      detail: `${labels.perPerson} ${formatPrice(price.liftPassFeePerPerson, content)} × ${labels.people(price.liftPassPersonCount)}${
+      detail: `${labels.perPerson} ${formatPrice(price.liftPassFeePerPerson, content)} × ${labels.people(price.liftPassPersonCount)}${times}${
         liftPassPayment === "pay-onsite" ? ` (${labels.liftPassOnsite})` : ""
       }`,
       amount: formatPrice(price.liftPassFee, content),
@@ -592,8 +595,9 @@ export function BookingWizard() {
       groupSize: state.groupSize,
       liftPassPayment: state.liftPassPayment,
       content,
+      sessions: isMultiSlot(state.program) ? sessionsOf(state.timeSlot) : 1,
     });
-  }, [state.program, state.groupSize, state.liftPassPayment, content]);
+  }, [state.program, state.groupSize, state.liftPassPayment, state.timeSlot, content]);
 
   function update<K extends keyof WizardState>(key: K, value: WizardState[K]) {
     setState((prev) => ({ ...prev, [key]: value }));
@@ -1046,6 +1050,11 @@ export function BookingWizard() {
                 </div>
               )}
 
+              {on(3) && isMultiSlot(state.program) && (
+                <p className="mb-3 rounded-xl bg-ice-100 px-4 py-3 text-[13.5px] font-semibold leading-relaxed text-brand-700">
+                  {MULTI_NOTE[locale === "en" || locale === "zh" ? locale : "ko"][state.program === "2h" ? "two" : "three"]}
+                </p>
+              )}
               {on(3) && state.program && (
                 <OptionList
                   options={getTimeSlotValues(state.program, content).map(
@@ -1054,8 +1063,14 @@ export function BookingWizard() {
                       label: getTimeSlotLabel(state.program!, v, content),
                     })
                   )}
-                  selected={state.timeSlot}
-                  onSelect={(v) => update("timeSlot", v)}
+                  selected={isMultiSlot(state.program) ? state.timeSlot.split(",").filter(Boolean) : state.timeSlot}
+                  onSelect={(v) => {
+                    if (!isMultiSlot(state.program)) return update("timeSlot", v);
+                    // 하루 2번까지: 누르면 넣고 다시 누르면 빼요 · 세 번째를 누르면 나중 것과 바꿔요
+                    const cur = state.timeSlot.split(",").filter(Boolean);
+                    const next = cur.includes(v) ? cur.filter((x) => x !== v) : cur.length < 2 ? [...cur, v] : [cur[0], v];
+                    update("timeSlot", next.sort((a, b) => Number(a) - Number(b)).join(","));
+                  }}
                   disabled={isFullCare}
                   disabledNote={
                     isFullCare ? content.bookingWizard.fixedTimeDisabledNote : undefined
@@ -1083,7 +1098,7 @@ export function BookingWizard() {
                       : rowPrice
                       ? full
                         ? `${g.lessonFee(rowPrice)} · ${g.liftPassIncluded}`
-                        : `${g.lessonFee(rowPrice)}${pass ? ` · ${g.liftPassPlus(pass)}` : ""}`
+                        : `${g.lessonFee(rowPrice)}${isMultiSlot(program) && sessionsOf(state.timeSlot) > 1 ? ` ${timesText(sessionsOf(state.timeSlot), content)}` : ""}${pass ? ` · ${g.liftPassPlus(pass)}` : ""}`
                       : undefined;
                     return {
                       value: code,
@@ -1095,7 +1110,7 @@ export function BookingWizard() {
                   onSelect={(v) => update("groupSize", v)}
                 />
               )}
-              {on(4) && state.program && !state.vip && <LiftRentalNote program={state.program} date={state.date} locale={locale} />}
+              {on(4) && state.program && !state.vip && <LiftRentalNote program={state.program} date={state.date} locale={locale} sessions={sessionsOf(state.timeSlot)} />}
 
               {on(5) && (
                 <OptionList
@@ -1209,7 +1224,7 @@ export function BookingWizard() {
                           {labels.perPerson} {formatPrice(price.liftPassFeePerPerson, content)}
                         </p>
                         <p className="mt-2 text-[14px] font-semibold tabular-nums text-ink-900">
-                          {formatPrice(price.liftPassFeePerPerson, content)} × {labels.people(price.liftPassPersonCount)} ={" "}
+                          {formatPrice(price.liftPassFeePerPerson, content)} × {labels.people(price.liftPassPersonCount)}{isMultiSlot(state.program) && sessionsOf(state.timeSlot) > 1 ? ` ${timesText(sessionsOf(state.timeSlot), content)}` : ""} ={" "}
                           {formatPrice(price.liftPassFee, content)}
                         </p>
                       </div>
@@ -1345,7 +1360,7 @@ export function BookingWizard() {
                       en: { title: "🎿 Add lift ticket & rental?", sub: "30% off list price · paid with the lesson · just pick up on site", none: "No thanks", lift: "Lift only", both: "Lift + equipment", rec: "Recommended", gear: "equipment" },
                       zh: { title: "🎿 需要缆车票·装备吗？", sub: "原价7折 · 与课程费一起支付 · 现场直接领取", none: "不需要", lift: "只要缆车票", both: "缆车票 + 装备", rec: "推荐", gear: "装备" },
                     }[lc === "en" || lc === "zh" ? lc : "ko"];
-                    const t = ticketForProgram(state.program);
+                    const t = ticketForProgram(state.program, sessionsOf(state.timeSlot));
                     const w = isWeekendRate(state.date) ? 1 : 0;
                     const people = getGroupStudentCount(state.groupSize || "1:1");
                     const kidFirst = state.ageGroup === "kids" || state.ageGroup === "elementary";
@@ -1533,7 +1548,8 @@ function OptionList({
   disabledNote,
 }: {
   options: { value: string; label: string; description?: string }[];
-  selected: string;
+  /** 여러 개 고를 수 있으면 배열 (2시간·3시간 하루 2번) */
+  selected: string | string[];
   onSelect: (value: string) => void;
   disabled?: boolean;
   disabledNote?: string;
@@ -1560,7 +1576,7 @@ function OptionList({
           onClick={() => onSelect(option.value)}
           className={cn(
             "flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition-colors sm:p-5",
-            selected === option.value
+            (Array.isArray(selected) ? selected.includes(option.value) : selected === option.value)
               ? "border-brand-500 bg-brand-50"
               : "border-snow-300/60 bg-white hover:border-brand-300"
           )}
@@ -1575,7 +1591,7 @@ function OptionList({
               </span>
             )}
           </span>
-          {selected === option.value && (
+          {(Array.isArray(selected) ? selected.includes(option.value) : selected === option.value) && (
             <Check size={18} className="text-brand-500" />
           )}
         </button>
@@ -1905,17 +1921,45 @@ function FullCareSchedule({
   );
 }
 
-/** 강습 길이에 맞는 리프트권 (2시간→3시간권, 3·4시간→5시간권, 풀케어→7시간권) */
-function ticketForProgram(program: string): TicketHours {
+const MULTI_NOTE = {
+  ko: {
+    two: "하루 2번 들으려면 시간을 두 개 골라주세요 · 1+3교시나 2+4교시를 추천해요 (중간에 점심·휴식)",
+    three: "하루 2번 들으려면 시간을 두 개 골라주세요 · 오전+오후를 많이 해요",
+  },
+  en: {
+    two: "Want two lessons a day? Pick two times · we suggest periods 1+3 or 2+4 (lunch break in between)",
+    three: "Want two lessons a day? Pick two times · morning + afternoon is popular",
+  },
+  zh: {
+    two: "一天上两节课？请选两个时间 · 推荐第1+3节或第2+4节（中间午餐休息）",
+    three: "一天上两节课？请选两个时间 · 上午+下午最常见",
+  },
+};
+
+/** 하루 몇 번 — 2시간·3시간은 시간을 두 개까지 골라요 (「0,2」 · 대표 11-25 「2시간 1번밖에 안 되네」) */
+function sessionsOf(timeSlot: string): number {
+  return Math.max(1, timeSlot.split(",").filter(Boolean).length);
+}
+function isMultiSlot(program: string | null) {
+  return program === "2h" || program === "3h";
+}
+function timesText(n: number, content: SiteContent) {
+  const l = content.siteConfig.locale.slice(0, 2);
+  return l === "en" ? `× ${n} lessons` : l === "zh" ? `× ${n}节` : `× ${n}회`;
+}
+
+/** 강습 길이에 맞는 리프트권 (2시간→3시간권, 3·4시간→5시간권, 풀케어·하루 2번→7시간권) */
+function ticketForProgram(program: string, sessions = 1): TicketHours {
+  if (sessions >= 2) return 7;
   if (program === "2h" || isJuniorProgram(program)) return 3;
   if (program === "one-day" || program === "night") return 7;
   return 5;
 }
 
 /** 리프트·장비 30% 할인 안내 — 고른 날짜가 주말·공휴일이면 주말 요금으로 */
-function LiftRentalNote({ program, date, locale }: { program: string; date: string; locale: string }) {
+function LiftRentalNote({ program, date, locale, sessions = 1 }: { program: string; date: string; locale: string; sessions?: number }) {
   const L = locale.startsWith("en") ? "en" : locale.startsWith("zh") ? "zh" : "ko";
-  const t = ticketForProgram(program);
+  const t = ticketForProgram(program, sessions);
   const wk = isWeekendRate(date);
   const w = wk ? 1 : 0;
   const cut = (n: number) => Math.round((n * (1 - LIFT_RENTAL_DISCOUNT)) / 100) * 100;
