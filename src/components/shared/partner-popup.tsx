@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { Globe, Phone, X } from "lucide-react";
 import { trackEvent } from "@/components/shared/analytics";
 
 /**
@@ -11,10 +11,11 @@ import { trackEvent } from "@/components/shared/analytics";
  *   사진 원본: 사업 폴더 홈페이지_팝업/개장/render_open_popup.py
  * - 더오딘펜션 (대표 11-25 「비발디에서 3분 펜션 소개 2장 · 전화 예약 10% 할인 · 팝업」 → 「A·B 번갈아」): 누르면 펜션 홈페이지(새 탭, 대표 11-26).
  *   할인 조건은 대표가 말한 것만(전화 예약 10%) — 연휴 제외 같은 말은 넣지 않음.
+ *   사진 아래 「전화 예약」「홈페이지」 단추 두 개 (대표 11-26 「오딘 전화번호칸하고 홈페이지 칸」).
  * - 차례: 개장 기간엔 개장 → 펜션 A → 개장 → 펜션 B → …, 끝나면 펜션 A·B 번갈아.
  * - 「오늘 하루 안 보기」는 그날 끝까지 모든 팝업, 닫기는 이번 방문 동안 다시 안 떠요.
  */
-type Popup = { key: string; partner: string; src: string; alt: string; href: string; label: string };
+type Popup = { key: string; partner: string; src: string; alt: string; href: string; label: string; tel?: string };
 
 const OPEN: Popup = {
   key: "open-1127",
@@ -31,6 +32,7 @@ const ODIN_A: Popup = {
   alt: "지노스키 제휴 숙소 더오딘펜션 · 비발디파크에서 차로 3분 · 전화 예약 10% 할인 · 033-435-0007",
   href: "https://theodin.co.kr/",
   label: "더오딘펜션 홈페이지 열기 (새 창)",
+  tel: "033-435-0007",
 };
 const ODIN_B: Popup = {
   ...ODIN_A,
@@ -121,7 +123,7 @@ export function PartnerPopup() {
       <div
         onClick={(e) => e.stopPropagation()}
         className="relative w-full overflow-hidden rounded-2xl bg-white shadow-2xl"
-        style={{ maxWidth: "min(540px, calc((100dvh - 110px) * 0.8))" }}
+        style={{ maxWidth: v.tel ? "min(540px, calc((100dvh - 170px) * 0.8))" : "min(540px, calc((100dvh - 110px) * 0.8))" }}
       >
         <button
           type="button"
@@ -141,6 +143,29 @@ export function PartnerPopup() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={v.src} alt={v.alt} width={900} height={1125} className="block h-auto w-full" />
         </a>
+        {v.tel && (
+          <div className="flex gap-2 border-t border-snow-200 px-3 py-3">
+            <a
+              href={`tel:${v.tel.replace(/-/g, "")}`}
+              aria-label={`더오딘펜션에 전화 걸기 ${v.tel}`}
+              onClick={() => trackEvent("partner_popup_call", { partner: v.partner, variant: v.key })}
+              className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl py-3 text-[15px] font-bold text-white sm:text-[17px]"
+              style={{ background: "#0A3F6B" }}
+            >
+              <Phone size={17} /> 전화 예약
+            </a>
+            <a
+              href={v.href}
+              target="_blank"
+              rel="noopener"
+              onClick={() => trackEvent("partner_popup_click", { partner: v.partner, variant: v.key })}
+              className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl py-3 text-[15px] font-bold text-white sm:text-[17px]"
+              style={{ background: "#2DA8FF" }}
+            >
+              <Globe size={17} /> 홈페이지
+            </a>
+          </div>
+        )}
         <div className="flex divide-x divide-snow-200 border-t border-snow-200 text-[14px] sm:text-[16px]">
           <button type="button" onClick={hideToday} className="flex-1 py-3 text-ink-600 sm:py-4">
             오늘 하루 안 보기
