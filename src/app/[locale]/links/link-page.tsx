@@ -46,9 +46,9 @@ const LINKS: Item[] = [
     href: (l) => `/${l}/instructor/`,
     tone: "plain",
     text: {
-      ko: ["강사 소개", "강사 14명 자격증·경력 보고 고르기"],
-      en: ["Our instructors", "14 certified instructors"],
-      zh: ["教练介绍", "14 位教练的资格与经历"],
+      ko: ["강사 소개", "강사 15명 자격증·경력 보고 고르기"],
+      en: ["Our instructors", "15 certified instructors"],
+      zh: ["教练介绍", "15 位教练的资格与经历"],
     },
   },
   {
@@ -140,7 +140,7 @@ const SOCIAL: { key: string; icon: LucideIcon; href: string; label: string }[] =
 ];
 
 const TOP: Record<Lang, { banner: string; name: string; line: string; home: string }> = {
-  ko: { banner: "2026-27 시즌 강습 예약 받는 중", name: "지노스키앤보드스쿨", line: "비발디파크 스키·스노보드 강습 · 강사 14명", home: "홈페이지 전체 보기" },
+  ko: { banner: "2026-27 시즌 강습 예약 받는 중", name: "지노스키앤보드스쿨", line: "비발디파크 스키·스노보드 강습 · 강사 15명", home: "홈페이지 전체 보기" },
   en: { banner: "Now booking the 2026-27 season", name: "JinoSki & Board School", line: "Ski and snowboard lessons at Vivaldi Park", home: "Visit our website" },
   zh: { banner: "2026-27 雪季课程预约中", name: "JinoSki 滑雪学校", line: "维瓦尔第滑雪场 双板·单板课程", home: "查看官网" },
 };

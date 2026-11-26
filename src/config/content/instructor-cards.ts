@@ -211,6 +211,18 @@ export const INSTRUCTOR_CARDS = {
       image: "/images/instructors/donghyun.jpg",
       proofs: [{ label: "스노보드 레벨1", src: "/images/instructors/certs/donghyun-sb1.jpg" }],
     },
+    {
+      // 대표 11-26 「2년차 1명 들어옴」 · 운영앱 INS-032 (사진 = 대표가 준 증명사진 → 카브 팀복)
+      id: "daehyun",
+      fee: "base",
+      gender: "m",
+      name: "김대현",
+      years: "2년차",
+      certs: [{ label: "스키 레벨1" }],
+      got: "스키 레벨1 2025년",
+      extra: "응급처치 이수",
+      image: "/images/instructors/daehyun.jpg",
+    },
   ] satisfies InstructorCard[] as InstructorCard[],
 };
 
@@ -273,6 +285,7 @@ const PEOPLE_TEXT: Record<"en" | "zh", Record<string, { name: string; got?: stri
     woohee: { name: "Woohee Lee", got: "Snowboard Level 1 (2026)" },
     hongyeol: { name: "Hongyeol Kim" },
     donghyun: { name: "Donghyun Kim", got: "Snowboard Level 1 (2026)" },
+    daehyun: { name: "Daehyun Kim", got: "Ski Level 1 (2025)" },
   },
   zh: {
     jinho: { name: "Jinho Park", got: "双板 Level 2（2024年）· 单板 Level 1（2022年）" },
@@ -289,6 +302,7 @@ const PEOPLE_TEXT: Record<"en" | "zh", Record<string, { name: string; got?: stri
     woohee: { name: "Woohee Lee", got: "单板 Level 1（2026年）" },
     hongyeol: { name: "Hongyeol Kim" },
     donghyun: { name: "Donghyun Kim", got: "单板 Level 1（2026年）" },
+    daehyun: { name: "Daehyun Kim", got: "双板 Level 1（2025年）" },
   },
 };
 
