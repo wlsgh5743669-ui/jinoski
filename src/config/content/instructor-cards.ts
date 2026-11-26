@@ -222,6 +222,7 @@ export const INSTRUCTOR_CARDS = {
       got: "스키 레벨1 2025년",
       extra: "응급처치 이수",
       image: "/images/instructors/daehyun.jpg",
+      proofs: [{ label: "스키 레벨1", src: "/images/instructors/certs/daehyun-ski1.jpg" }],
     },
   ] satisfies InstructorCard[] as InstructorCard[],
 };
