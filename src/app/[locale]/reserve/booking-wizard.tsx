@@ -608,7 +608,8 @@ export function BookingWizard() {
   const [state, setState] = useState<WizardState>(INITIAL_STATE);
   const [showSummary, setShowSummary] = useState(false);
   /** 교시 조합 안내 (4시간으로 바꿈 · 리프트 시간 모자람) */
-  const [slotMsg, setSlotMsg] = useState<{ kind: "info" | "bad"; text: string } | null>(null);
+  // 2시간·3시간 「하루 1번 / 하루 2번」 (대표 11-27 「2시간 두 번은 띄엄띄엄으로 무조건」)
+  const [twice, setTwice] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [notifyOk, setNotifyOk] = useState(true);
   const foreign = isForeignLocale(locale);
@@ -643,7 +644,7 @@ export function BookingWizard() {
   function selectProgram(program: ProgramValue) {
     const timeValues = getTimeSlotValues(program, content);
     const isFull = program === "one-day" || program === "night";
-    setSlotMsg(null);
+    setTwice(false);
     setState((prev) => ({
       ...prev,
       program,
@@ -1089,64 +1090,60 @@ export function BookingWizard() {
               )}
 
               {on(3) && isMultiSlot(state.program) && (
+                <div className="mb-3 grid grid-cols-2 gap-2 sm:gap-3">
+                  {([false, true] as const).map((two) => {
+                    const onNow = (state.timeSlot.includes(",") || twice) === two;
+                    return (
+                      <button
+                        key={String(two)}
+                        type="button"
+                        aria-pressed={onNow}
+                        onClick={() => {
+                          if (onNow) return;
+                          setTwice(two);
+                          update("timeSlot", "");
+                        }}
+                        className={cn(
+                          "rounded-2xl border px-4 py-3 text-[15px] font-bold transition-colors sm:py-4",
+                          onNow ? "border-brand-500 bg-brand-50 text-brand-700" : "border-snow-300/60 bg-white text-ink-700 hover:border-brand-300"
+                        )}
+                      >
+                        {TWICE_TXT[tl(locale)][two ? "two" : "one"]}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              {on(3) && isMultiSlot(state.program) && (state.timeSlot.includes(",") || twice) && (
                 <p className="mb-3 rounded-xl bg-ice-100 px-4 py-3 text-[13.5px] font-semibold leading-relaxed text-brand-700">
-                  {MULTI_NOTE[locale === "en" || locale === "zh" ? locale : "ko"][state.program === "2h" ? "two" : "three"]}
+                  {MULTI_NOTE[tl(locale)][state.program === "2h" ? "two" : "three"]}
                 </p>
               )}
               {on(3) && state.program && (
                 <OptionList
-                  options={getTimeSlotValues(state.program, content).map(
-                    (v) => ({
-                      value: v,
-                      label: getTimeSlotLabel(state.program!, v, content),
-                    })
-                  )}
-                  selected={isMultiSlot(state.program) ? state.timeSlot.split(",").filter(Boolean) : state.timeSlot}
-                  onSelect={(v) => {
-                    setSlotMsg(null);
-                    if (!isMultiSlot(state.program)) return update("timeSlot", v);
-                    // 하루 2번까지: 누르면 넣고 다시 누르면 빼요 · 세 번째를 누르면 나중 것과 바꿔요
-                    const cur = state.timeSlot.split(",").filter(Boolean);
-                    const next = (cur.includes(v) ? cur.filter((x) => x !== v) : cur.length < 2 ? [...cur, v] : [cur[0], v]).sort((a, b) => Number(a) - Number(b));
-                    if (next.length === 2) {
-                      const TX = SLOT_TXT[locale === "en" || locale === "zh" ? locale : "ko"];
-                      const times = state.program === "2h" ? content.scheduleTimes.twoHour : content.scheduleTimes.threeHour;
-                      const [a, b] = next.map(Number);
-                      const x = slotName(times[a].label);
-                      const y = slotName(times[b].label);
-                      // 1+2교시 · 3+4교시 → 이어서 4시간 레슨 (요금 같음: 2시간×2 = 4시간)
-                      if (state.program === "2h" && b === a + 1 && (a === 0 || a === 2)) {
-                        const fh = a === 0 ? 0 : 1;
-                        setState((prev) => ({ ...prev, program: "4h", timeSlot: String(fh) }));
-                        setSlotMsg({ kind: "info", text: TX.merge(x, y, content.scheduleTimes.fourHour[fh].time) });
-                        return;
-                      }
-                      // 첫 수업 시작 ~ 둘째 수업 끝이 리프트권 7시간을 넘으면 못 골라요 (1+4·1+5·2+5·3+5 · 3시간은 야간과 묶기)
-                      const span = slotMinutes(times[b].time)[1] - slotMinutes(times[a].time)[0];
-                      const tooLong = state.program === "2h" ? span > 7 * 60 : b === times.length - 1;
-                      if (tooLong) {
-                        setSlotMsg({ kind: "bad", text: TX.lift(x, y) });
-                        return;
-                      }
-                    }
-                    update("timeSlot", next.join(","));
-                  }}
+                  options={
+                    isMultiSlot(state.program) && (state.timeSlot.includes(",") || twice)
+                      ? TWICE_PAIRS[state.program as "2h" | "3h"].map((v) => {
+                          const times = state.program === "2h" ? content.scheduleTimes.twoHour : content.scheduleTimes.threeHour;
+                          const pair = v.split(",").map((i) => times[Number(i)]);
+                          return {
+                            value: v,
+                            label: pair.map((t) => slotName(t.label)).join(" + "),
+                            description: pair.map((t) => t.time).join("  ·  "),
+                          };
+                        })
+                      : getTimeSlotValues(state.program, content).map((v) => ({
+                          value: v,
+                          label: getTimeSlotLabel(state.program!, v, content),
+                        }))
+                  }
+                  selected={state.timeSlot}
+                  onSelect={(v) => update("timeSlot", v)}
                   disabled={isFullCare}
                   disabledNote={
                     isFullCare ? content.bookingWizard.fixedTimeDisabledNote : undefined
                   }
                 />
-              )}
-
-              {on(3) && slotMsg && (
-                <p className={cn("mt-3 rounded-xl px-4 py-3 text-[13.5px] font-semibold leading-relaxed", slotMsg.kind === "bad" ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-800")}>
-                  {slotMsg.kind === "bad" ? "⚠️ " : "✅ "}{slotMsg.text}
-                </p>
-              )}
-              {on(3) && state.program === "2h" && state.timeSlot === "1,2" && (
-                <p className="mt-3 rounded-xl bg-amber-50 px-4 py-3 text-[13.5px] font-semibold leading-relaxed text-amber-800">
-                  🍱 {SLOT_TXT[locale === "en" || locale === "zh" ? locale : "ko"].lunch(slotName(content.scheduleTimes.twoHour[1].label), slotName(content.scheduleTimes.twoHour[2].label))}
-                </p>
               )}
 
               {on(3) && isFullCare && (
@@ -2035,46 +2032,35 @@ function FullCareSchedule({
   );
 }
 
+const tl = (l: string) => (l === "en" || l === "zh" ? l : "ko") as "ko" | "en" | "zh";
+
+const TWICE_TXT = {
+  ko: { one: "하루 1번", two: "하루 2번" },
+  en: { one: "Once a day", two: "Twice a day" },
+  zh: { one: "一天1节", two: "一天2节" },
+};
+
+/** 하루 2번 묶음 — 2시간은 중간에 쉬는 시간을 두고 띄엄띄엄만 (리프트권 7시간 안) · 3시간은 오전+오후 (대표 11-27) */
+const TWICE_PAIRS: Record<"2h" | "3h", string[]> = {
+  "2h": ["0,2", "1,3", "3,4"],
+  "3h": ["0,1"],
+};
+
 const MULTI_NOTE = {
   ko: {
-    two: "하루 2번 들으려면 시간을 두 개 골라주세요 · 1+3교시나 2+4교시를 추천해요 (중간에 점심·휴식) · 1+2교시·3+4교시는 이어서 4시간 레슨으로 해요",
-    three: "하루 2번 들으려면 시간을 두 개 골라주세요 · 오전+오후를 많이 해요",
+    two: "2시간 두 번은 중간에 쉬는 시간을 두고 띄엄띄엄 해요 · 이어서 길게 받고 싶으면 4시간 레슨을 골라주세요",
+    three: "3시간 두 번은 오전 + 오후로 해요 (중간에 점심시간)",
   },
   en: {
-    two: "Want two lessons a day? Pick two times · we suggest periods 1+3 or 2+4 (lunch break in between) · 1+2 or 3+4 become one 4-hour lesson",
-    three: "Want two lessons a day? Pick two times · morning + afternoon is popular",
+    two: "Two 2-hour lessons always have a break in between · for one long lesson, choose the 4-hour lesson",
+    three: "Two 3-hour lessons are morning + afternoon (lunch break in between)",
   },
   zh: {
-    two: "一天上两节课？请选两个时间 · 推荐第1+3节或第2+4节（中间午餐休息）· 第1+2节、第3+4节合并为4小时课",
-    three: "一天上两节课？请选两个时间 · 上午+下午最常见",
+    two: "两节2小时课中间会安排休息 · 想连续上课请选择4小时课",
+    three: "两节3小时课为上午 + 下午（中间午餐时间）",
   },
 };
 
-/** 교시 두 개 조합 안내 (대표 11-25: 1+2·3+4 → 4시간 레슨 · 2+3 점심 없음 · 리프트 7시간 넘으면 안 됨 · 4+5 가능) */
-const SLOT_TXT = {
-  ko: {
-    merge: (x: string, y: string, t: string) => `${x} + ${y}는 이어서 4시간 레슨(${t})으로 진행해요 · 요금은 같아요`,
-    lunch: (x: string, y: string) => `${x} + ${y}는 점심시간 없이 이어서 해요 (중간에 20분만 쉬어요) · 괜찮으시면 그대로 진행해 주세요`,
-    lift: (x: string, y: string) => `${x} + ${y}는 리프트권 시간(최대 7시간) 안에 다 탈 수 없어요 · 다른 시간을 골라주세요`,
-  },
-  en: {
-    merge: (x: string, y: string, t: string) => `${x} + ${y} becomes one 4-hour lesson (${t}) · same price`,
-    lunch: (x: string, y: string) => `${x} + ${y} run back to back with no lunch break (only a 20-min rest) · if that's fine, just continue`,
-    lift: (x: string, y: string) => `${x} + ${y} doesn't fit in the longest lift ticket (7 hours) · please pick other times`,
-  },
-  zh: {
-    merge: (x: string, y: string, t: string) => `${x} + ${y} 合并为一节4小时课（${t}）· 价格不变`,
-    lunch: (x: string, y: string) => `${x} + ${y} 中间没有午餐时间（只休息20分钟）· 可以的话请直接继续`,
-    lift: (x: string, y: string) => `${x} + ${y} 超出最长缆车票时间（7小时）· 请选其他时间`,
-  },
-};
-/** 「09:00 ~ 11:00」 → [540, 660] */
-function slotMinutes(t: string): number[] {
-  return (t.match(/\d{1,2}:\d{2}/g) ?? []).map((x) => {
-    const [h, m] = x.split(":").map(Number);
-    return h * 60 + m;
-  });
-}
 /** 「1교시 (오전)」 → 「1교시」 */
 const slotName = (label: string) => label.replace(/\s*[(（].*$/, "");
 
