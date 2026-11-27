@@ -17,6 +17,7 @@ const WD_ZH: Record<string, string> = { 일: "周日", 월: "周一", 화: "周�
 const krw = (n: number) => `₩${Math.round(n).toLocaleString("en-US")}`;
 const MON_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const NUMW_EN = ["", "one", "two", "three", "four", "five"];
+const TEAM_N: Record<string, number> = { 한: 1, 두: 2, 세: 3, 네: 4, 다섯: 5, 여섯: 6 };
 
 const RULES: Rule[] = [
   // 11-25 전체 점검에서 남은 한국어 · 중국어 화면도 영어로 (대표 「중국어 버전은 영어로」)
@@ -354,6 +355,9 @@ const RULES: Rule[] = [
   ["줄이기", "Decrease", "减少"],
   ["늘리기", "Increase", "增加"],
   // ── 숫자가 들어간 표현 ──
+  // 견적서 1인당 금액 카드 머리줄 딱지 「1:2 두 팀」 (대표 11-28)
+  [/1:(\d+) (한|두|세|네|다섯|여섯) 팀/g, (_: string, s: string, w: string) => { const n = TEAM_N[w]; return `1:${s} × ${n} group${n > 1 ? "s" : ""}`; }, (_: string, s: string, w: string) => `1:${s} ${TEAM_N[w]}组`],
+  ["1:1 개인 레슨", "1:1 private", "1:1 私教"],
   [/(\d+)명이면 강사 (\d+)명 · \S+ 팀으로 나눠요/g, (_: string, p: string, n: string) => `${p} people → ${n} instructors, ${NUMW_EN[+n] ?? n} groups`, (_: string, p: string, n: string) => `${p}人 → ${n}位教练，分${n}组`],
   [/(\d+)명이면 강사 1명이 가르쳐요/g, "$1 people → one instructor", "$1人 → 一位教练"],
   [/총 수업 (\d+)회/g, "Total: $1 lessons", "共$1节课"],

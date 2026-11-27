@@ -698,6 +698,18 @@ export function TeamQuote() {
       // clipboard unavailable
     }
   }
+  /** 견적서 1인당 금액 카드 머리줄 오른쪽 딱지 (대표 11-28 「빈공간에 1대2 두팀 / 풀케어는 풀케어」): 반 구성 + 풀케어 */
+  const quoteTags = (() => {
+    const KN = ["", "한", "두", "세", "네", "다섯", "여섯"];
+    const sizes = [...new Set(usedSplit)];
+    const team =
+      usedSplit.length === 1 && usedSplit[0] === 1
+        ? "1:1 개인 레슨"
+        : sizes.length === 1
+          ? `1:${sizes[0]} ${KN[usedSplit.length] ?? usedSplit.length} 팀`
+          : usedSplit.map((n) => `1:${n}`).join(" + ");
+    return [team, ...(schedule.some((d) => d.slots.length && isFC(d.len)) ? ["풀케어"] : [])];
+  })();
   /** 💰 1인 금액을 날짜별로 (견적서 이미지): 날짜 · 강습(패찰 포함) · 리프트 · 장비 · 헬멧 · 그날 합계 */
   const personBreakdown = (x: (typeof personRows)[number]) => {
     const size = usedSplit[x.group - 1] ?? 1;
@@ -733,7 +745,7 @@ export function TeamQuote() {
     const lastT = [...rows].reverse().find((r) => r.lift || r.rent);
     if (lastT && liftLeft) { if (lastT.rent) lastT.rent += liftLeft; else lastT.lift += liftLeft; }
     rows.forEach((r) => { r.total = r.lesson + r.lift + r.rent + r.helm; });
-    return { label: x.label, sub: `${x.group}반 · 1:${size} · ${SPORT_LABEL[x.sport]} ${LEVEL_LABEL[x.level]}`, pay: x.pay, rows };
+    return { label: x.label, sub: `${x.group}반 · 1:${size} · ${SPORT_LABEL[x.sport]} ${LEVEL_LABEL[x.level]}`, pay: x.pay, rows, tags: quoteTags };
   };
   /** 견적서 이미지 (사진 저장 · 카톡 알림에 같이 사용) */
   /** only: 고른 사람만 (👥 부분 견적서 — 여러 집이 한 반일 때 집마다 따로 보내기 · 대표 11-11) */

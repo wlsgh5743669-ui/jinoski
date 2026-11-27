@@ -10,6 +10,7 @@ export type QuoteImageData = {
   /** 1인당 금액 풀어보기: 사람마다 강습료(몇 시간) · 패찰 · 리프트 · 장비 · 헬멧 → 합계 */
   persons?: {
     label: string; sub: string; pay: number; count?: number; // count: 금액이 같은 사람 수 (표 하나로 묶음)
+    tags?: string[]; // 머리줄 오른쪽 딱지: 반 구성(1:2 두 팀) · 풀케어 · VIP (대표 11-28)
     rows: { date: string; lessonLabel: string; lesson: number; lift: number; liftLabel: string; rent: number; rentLabel: string; helm: number; helmLabel: string; total: number }[];
   }[];
   schedule: { left: string; right: string }[];
@@ -196,27 +197,45 @@ export async function renderQuoteImage(
       for (const p of d.persons) {
         y += 30;
         const top = y;
-        const h = 76 + 70 + p.rows.length * 74 + 72;
+        const cnt = p.count ?? 1;
+        const tags = p.tags ?? [];
+        // 딱지가 있으면 「1인 금액 · N명 = …」은 이름 아래 둘째 줄로
+        const nameH = cnt > 1 && tags.length ? 108 : 76;
+        const h = nameH + 70 + p.rows.length * 74 + 72;
         if (!dry) {
           ctx.fillStyle = "#F8FAFC";
           if (typeof ctx.roundRect === "function") { ctx.beginPath(); ctx.roundRect(PAD, top, inner, h, 18); ctx.fill(); }
           else ctx.fillRect(PAD, top, inner, h);
+          // 오른쪽 딱지 (반 구성 · 풀케어 · VIP) — 오른쪽 끝부터 왼쪽으로
+          ctx.font = font(21, 800);
+          let tx = W - PAD - 20;
+          for (const t of [...tags].reverse()) {
+            const tw = ctx.measureText(t).width + 30;
+            const gold = t === "VIP" || t === "풀케어" || t === "Full Care";
+            ctx.fillStyle = gold ? NAVY : "#E0F2FE";
+            if (typeof ctx.roundRect === "function") { ctx.beginPath(); ctx.roundRect(tx - tw, top + 22, tw, 40, 20); ctx.fill(); }
+            else ctx.fillRect(tx - tw, top + 22, tw, 40);
+            ctx.fillStyle = gold ? "#FFCD5A" : "#0B6BCB";
+            ctx.textAlign = "center"; ctx.fillText(t, tx - tw / 2, top + 50); ctx.textAlign = "left";
+            tx -= tw + 10;
+          }
+          const room = tx - (PAD + 20) - 16; // 이름 + 반 설명이 들어갈 자리
           // 이름
-          const cnt = p.count ?? 1;
           ctx.fillStyle = INK; ctx.font = font(30, 800);
           let lab = p.label;
-          while (lab.length > 4 && ctx.measureText(lab).width > inner - 380) lab = lab.slice(0, -2) + "…";
+          const limit = tags.length ? room - 220 : inner - 380;
+          while (lab.length > 4 && ctx.measureText(lab).width > limit) lab = lab.slice(0, -2) + "…";
           ctx.fillText(lab, PAD + 20, top + 52);
           const lw = ctx.measureText(lab).width;
           ctx.fillStyle = GRAY; ctx.font = font(22, 500);
           ctx.fillText(p.sub, PAD + 20 + lw + 14, top + 52);
           if (cnt > 1) {
             ctx.textAlign = "right"; ctx.fillStyle = "#0B6BCB"; ctx.font = font(22, 700);
-            ctx.fillText(loc === "ko" ? `1인 금액 · ${cnt}명 = ${(p.pay * cnt).toLocaleString("ko-KR")}원` : `per person · ×${cnt} = ₩${(p.pay * cnt).toLocaleString("en-US")}`, W - PAD - 20, top + 52);
+            ctx.fillText(loc === "ko" ? `1인 금액 · ${cnt}명 = ${(p.pay * cnt).toLocaleString("ko-KR")}원` : `per person · ×${cnt} = ₩${(p.pay * cnt).toLocaleString("en-US")}`, W - PAD - 20, tags.length ? top + 92 : top + 52);
             ctx.textAlign = "left";
           }
           // 머리줄
-          const hy = top + 76;
+          const hy = top + nameH;
           ctx.fillStyle = "#E2E8F0"; ctx.fillRect(PAD, hy, inner, 62);
           ctx.fillStyle = GRAY; ctx.font = font(22, 700);
           ctx.fillText(tr("날짜"), PAD + 20, hy + 38);
